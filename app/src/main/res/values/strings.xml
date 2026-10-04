@@ -34,7 +34,7 @@
     <string name="section_wifi">Wi-Fi icon</string>
     <string name="section_signal">Mobile signal icon</string>
     <string name="style_none">Default (no style)</string>
-    <string name="styles_notice">Pick one style for each icon, then tap Apply. The first time a new style is added a reboot is needed.</string>
+    <string name="styles_notice">Pick one style for each icon and tap Apply. Applying just one and rebooting once is enough: after that you can switch to any other style whenever you like, instantly and with no reboot.</string>
     <string name="styles_off_note">Style removed. Reboot once to restore the default icon completely.</string>
     <string name="section_both">Wi-Fi + signal together</string>
 </resources>

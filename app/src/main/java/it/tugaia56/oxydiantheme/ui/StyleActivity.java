@@ -162,6 +162,7 @@ public class StyleActivity extends AppCompatActivity {
             TextView nameView = h.itemView.findViewById(R.id.name);
             nameView.setText(r.label);
             nameView.setTextColor(sel ? ThemePrefs.accentColor() : getColor(R.color.text));
+            fillPreviews(h.itemView.findViewById(R.id.previews), r, sel);
             RadioButton rb = h.itemView.findViewById(R.id.radio);
             rb.setChecked(sel);
             h.itemView.setOnClickListener(v -> {
@@ -174,6 +175,33 @@ public class StyleActivity extends AppCompatActivity {
         }
 
         @Override public int getItemCount() { return mShown.size(); }
+    }
+
+    /** Anteprima: le icone dello stile (stesse risorse che finiscono nell'overlay), colorate come la barra. */
+    private void fillPreviews(android.widget.LinearLayout box, Row r, boolean selected) {
+        box.removeAllViews();
+        if (r.style.isEmpty()) { box.setVisibility(View.GONE); return; }
+        box.setVisibility(View.VISIBLE);
+        List<String> names = new ArrayList<>();
+        if (r.slot == 0 || r.slot == 2) {
+            for (int i : r.slot == 0 ? new int[]{1, 2, 3, 4} : new int[]{2, 4}) names.add("pv_wifi_" + r.style + "_" + i);
+        }
+        if (r.slot == 1 || r.slot == 2) {
+            for (int i : r.slot == 1 ? new int[]{1, 2, 3, 4} : new int[]{2, 4}) names.add("pv_sig_" + r.style + "_" + i);
+        }
+        float d = getResources().getDisplayMetrics().density;
+        int size = (int) (22 * d), gap = (int) (10 * d);
+        int tint = selected ? ThemePrefs.accentColor() : getColor(R.color.text);
+        for (String n : names) {
+            int id = getResources().getIdentifier(n, "drawable", getPackageName());
+            if (id == 0) continue;
+            android.widget.ImageView iv = new android.widget.ImageView(this);
+            iv.setImageResource(id);
+            iv.setImageTintList(android.content.res.ColorStateList.valueOf(tint));
+            android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(size, size);
+            lp.setMarginEnd(gap);
+            box.addView(iv, lp);
+        }
     }
 
     private static Map<String, String> states() {

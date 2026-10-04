@@ -33,7 +33,7 @@
     <string name="section_wifi">Icona Wi-Fi</string>
     <string name="section_signal">Icona segnale mobile</string>
     <string name="style_none">Predefinito (nessuno stile)</string>
-    <string name="styles_notice">Scegli uno stile per ogni icona, poi tocca Applica. La prima volta che aggiungi uno stile serve un riavvio.</string>
+    <string name="styles_notice">Scegli uno stile per ogni icona e tocca Applica. Basta applicarne uno e riavviare una volta: poi puoi passare a qualsiasi altro stile quando vuoi, subito e senza riavviare.</string>
     <string name="styles_off_note">Stile tolto. Riavvia una volta per ripristinare del tutto l\'icona predefinita.</string>
     <string name="section_both">Wi-Fi + segnale insieme</string>
 </resources>
