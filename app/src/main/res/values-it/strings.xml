@@ -44,4 +44,12 @@
     <string name="options_title">Opzioni</string>
     <string name="options_default">Predefinito</string>
     <string name="options_note">Tocca Applica per usare le scelte.</string>
+    <string name="btn_accent">Accento</string>
+    <string name="accent_title">Colore accento</string>
+    <string name="accent_custom">Colore a scelta (esadecimale)</string>
+    <string name="accent_hint">Tocca Applica per rifare i temi con il nuovo accento.</string>
+    <string name="system_colors">Colori di sistema (accento e sfondo)</string>
+    <string name="btn_system_colors">Colori sistema</string>
+    <string name="sys_accent">Accento</string>
+    <string name="sys_background">Sfondo</string>
 </resources>

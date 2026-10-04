@@ -11,7 +11,11 @@ BB=/data/adb/magisk/busybox
 [ -x "$BB" ] || BB=/data/adb/ksu/bin/busybox
 {
 echo "=== oxydian_theme post-fs-data $(date) ==="
+# Anche gli overlay del vecchio Oxydian (modulo Obsidian) passano da qui: due montaggi
+# sovrapposti su /product/overlay si bloccano a vicenda a seconda di chi parte per primo.
+OLD=/data/adb/modules/Obsidian/product/overlay
 set -- "$SRC"/OxydianThemeComponent*.apk
+[ -e "$1" ] || set -- "$OLD"/ObsidianComponent*.apk
 [ -e "$1" ] || { echo "nessun APK in $SRC"; exit 0; }
 mount 2>/dev/null | grep -q "oxytheme_ovl on $TGT " && umount "$TGT" 2>/dev/null
 mount 2>/dev/null | grep -q " $T " && umount "$T" 2>/dev/null
@@ -19,6 +23,12 @@ mkdir -p "$T"
 mount -t tmpfs -o mode=0755,size=64m tmpfs "$T" || { echo "tmpfs fallito"; exit 1; }
 mkdir -p "$T/upper" "$T/work"
 for f in "$SRC"/OxydianThemeComponent*.apk; do
+  b=${f##*/}
+  cp -f "$f" "$T/upper/$b" && chown 0:0 "$T/upper/$b" && chmod 0644 "$T/upper/$b"
+  chcon u:object_r:vendor_overlay_file:s0 "$T/upper/$b" 2>/dev/null || chcon u:object_r:system_file:s0 "$T/upper/$b" 2>/dev/null
+done
+for f in "$OLD"/ObsidianComponent*.apk; do
+  [ -e "$f" ] || continue
   b=${f##*/}
   cp -f "$f" "$T/upper/$b" && chown 0:0 "$T/upper/$b" && chmod 0644 "$T/upper/$b"
   chcon u:object_r:vendor_overlay_file:s0 "$T/upper/$b" 2>/dev/null || chcon u:object_r:system_file:s0 "$T/upper/$b" 2>/dev/null

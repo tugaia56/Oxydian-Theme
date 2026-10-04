@@ -19,6 +19,11 @@ final class Dialogs {
         AlertDialog d = b.create();
         style(ctx, d);
         d.show();
+        int acc = ThemePrefs.accentColor();
+        for (int which : new int[]{AlertDialog.BUTTON_POSITIVE, AlertDialog.BUTTON_NEGATIVE, AlertDialog.BUTTON_NEUTRAL}) {
+            android.widget.Button btn = d.getButton(which);
+            if (btn != null) btn.setTextColor(acc);
+        }
     }
 
     static void style(Context ctx, Dialog d) {

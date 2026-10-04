@@ -26,3 +26,12 @@ for f in "$SRC"/OxydianThemeComponent*.apk; do
 done
 echo "=== fine ==="
 } >> "$LOG" 2>&1
+
+# I colori di sistema (overlay su "android") devono restare sopra gli overlay di altre app/moduli
+# (es. i vecchi accento/sfondo di Oxydian, ColorBlendr), che si riapplicano dopo l'avvio:
+# si riporta in cima, adesso e di nuovo dopo un po'.
+SYS=OxydianThemeComponentDS_SYS.overlay
+for t in 0 40 90; do
+  sleep $t
+  cmd overlay list 2>/dev/null | grep -q "^\[x\] $SYS\$" && cmd overlay set-priority "$SYS" highest >> "$LOG" 2>&1
+done

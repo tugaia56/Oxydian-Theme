@@ -70,6 +70,7 @@ public class StyleActivity extends AppCompatActivity {
         refreshShown();
         list.setAdapter(new Adapter());
         mApply.setOnClickListener(v -> onApply());
+        Tint.tree(findViewById(android.R.id.content));
     }
 
     private void buildRows() {

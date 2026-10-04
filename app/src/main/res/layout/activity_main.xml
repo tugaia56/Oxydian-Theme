@@ -23,6 +23,14 @@
         android:paddingHorizontal="4dp">
 
         <Button
+            android:id="@+id/btn_accent"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/btn_system_colors" />
+
+        <Button
             android:id="@+id/btn_styles"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="0dp"

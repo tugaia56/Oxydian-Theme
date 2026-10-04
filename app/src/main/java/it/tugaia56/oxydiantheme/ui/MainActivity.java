@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             {"com.oplus.contentportal", "CP"}, {"com.oplus.eyeprotect", "EP"}, {"com.oplus.games", "GA"},
             {"com.oplus.wirelesssettings", "WS"}, {"com.heytap.browser", "BR"},
             {"com.coloros.floatassistant", "FA"}, {"com.coloros.video", "VT"},
+            {"android", "SYS"},
     };
 
     private final List<AppEntry> mApps = new ArrayList<>();
@@ -96,8 +97,19 @@ public class MainActivity extends AppCompatActivity {
         mList.setLayoutManager(new LinearLayoutManager(this));
         mList.setAdapter(new Adapter());
 
-        mApply.setOnClickListener(v -> onApply());
+        mApply.setOnClickListener(v -> onApply(null));
         findViewById(R.id.btn_legend).setOnClickListener(v -> showLegend());
+        findViewById(R.id.btn_accent).setOnClickListener(v -> SystemColorsDialog.show(this, color -> {
+            for (AppEntry e : mApps) {
+                if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(e.pkg);
+            }
+            mStatus.setTextColor(color);
+            Tint.tree(findViewById(android.R.id.content));
+        mStatus.setTextColor(ThemePrefs.accentColor());
+            mList.getAdapter().notifyDataSetChanged();
+            Toast.makeText(this, R.string.accent_hint, Toast.LENGTH_LONG).show();
+            onApply(SystemColorsDialog.PKG);
+        }));
         findViewById(R.id.btn_styles).setOnClickListener(v ->
                 startActivity(new android.content.Intent(this, StyleActivity.class)));
         ((Button) findViewById(R.id.btn_all)).setOnClickListener(v -> setAll(true));
@@ -105,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
         loadApps();
         setupModuleAsync();
+        Tint.tree(findViewById(android.R.id.content));
     }
 
     @Override
@@ -230,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
         for (String[] t : DS_TARGETS) {
             try {
                 ApplicationInfo ai = pm.getApplicationInfo(t[0], 0);
-                dsList.add(new AppEntry(t[0], String.valueOf(pm.getApplicationLabel(ai)), t[1],
+                dsList.add(new AppEntry(t[0], "android".equals(t[0]) ? getString(R.string.system_colors) : String.valueOf(pm.getApplicationLabel(ai)), t[1],
                         ThemePrefs.isDarkShadowEnabled(t[0])));
             } catch (PackageManager.NameNotFoundException ignored) {
                 // bersaglio non presente su questo telefono
@@ -295,6 +308,7 @@ public class MainActivity extends AppCompatActivity {
             h.name.setTextColor(color);
             h.stat.setTextColor(color);
             h.stat.setText(label);
+            Tint.sw(h.sw);
             h.sw.setOnCheckedChangeListener(null);
             h.sw.setChecked(e.enabled);
             h.sw.setOnCheckedChangeListener((b, checked) -> {
@@ -302,8 +316,9 @@ public class MainActivity extends AppCompatActivity {
                 e.saveEnabled();
                 updateNotice();
             });
-            boolean hasOpt = !e.ds && !optionGroups(e.pkg).isEmpty();
+            boolean hasOpt = !optionGroups(e.pkg).isEmpty();
             h.opt.setVisibility(hasOpt ? View.VISIBLE : View.GONE);
+            Tint.button((com.google.android.material.button.MaterialButton) h.opt);
             h.opt.setOnClickListener(v -> showOptions(e));
             h.itemView.setOnClickListener(v -> h.sw.toggle());
         }
@@ -446,7 +461,8 @@ public class MainActivity extends AppCompatActivity {
         return out;
     }
 
-    private void onApply() {
+    /** @param onlyName se non nullo, applica solo la voce con questo pacchetto bersaglio (le altre restano come sono) */
+    private void onApply(String onlyPkg) {
         if (mBusy) return;
         mBusy = true;
         mApply.setEnabled(false);
@@ -465,6 +481,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 ModuleSetup.ensure();
                 for (AppEntry e : apps) {
+                    if (onlyPkg != null && !(e.ds && onlyPkg.equals(e.pkg))) continue;
                     boolean active = before.contains(e.overlay());
                     if (!e.enabled) {
                         if (active) toDisable.add(e.overlay());

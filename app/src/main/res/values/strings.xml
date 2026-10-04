@@ -45,4 +45,12 @@
     <string name="options_title">Options</string>
     <string name="options_default">Default</string>
     <string name="options_note">Tap Apply to use your choices.</string>
+    <string name="btn_accent">Accent</string>
+    <string name="accent_title">Accent color</string>
+    <string name="accent_custom">Custom color (hex)</string>
+    <string name="accent_hint">Tap Apply to rebuild the themes with the new accent.</string>
+    <string name="system_colors">System colors (accent and background)</string>
+    <string name="btn_system_colors">System colors</string>
+    <string name="sys_accent">Accent</string>
+    <string name="sys_background">Background</string>
 </resources>
