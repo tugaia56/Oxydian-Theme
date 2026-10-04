@@ -41,14 +41,39 @@ import it.tugaia56.oxydiantheme.utils.overlay.compiler.ThemeCompiler;
  */
 public class MainActivity extends AppCompatActivity {
 
+    /** Una riga: tema di un'app (cartella APP) oppure un bersaglio Dark Shadow (cartella con sigla). */
     private static class AppEntry {
         final String pkg;
         final String label;
+        final String dir;
+        final String name;
+        final boolean ds;
         boolean enabled;
         AppEntry(String pkg, String label, boolean enabled) {
-            this.pkg = pkg; this.label = label; this.enabled = enabled;
+            this(pkg, label, "APP", ThemeCompiler.overlayName(pkg), false, enabled);
         }
+        AppEntry(String pkg, String label, String dir, boolean enabled) {
+            this(pkg, label, dir, "DS_" + dir, true, enabled);
+        }
+        private AppEntry(String pkg, String label, String dir, String name, boolean ds, boolean enabled) {
+            this.pkg = pkg; this.label = label; this.dir = dir; this.name = name; this.ds = ds; this.enabled = enabled;
+        }
+        String overlay() { return ThemeCompiler.namedPackage(name); }
+        void saveEnabled() { if (ds) ThemePrefs.setDarkShadowEnabled(pkg, enabled); else ThemePrefs.setAppEnabled(pkg, enabled); }
+        String builtSig() { return ds ? ThemePrefs.getDarkShadowBuilt(pkg) : ThemePrefs.getBuiltSignature(pkg); }
+        void setBuilt(String sig) { if (ds) ThemePrefs.setDarkShadowBuilt(pkg, sig); else ThemePrefs.setBuiltSignature(pkg, sig); }
+        void clearBuilt() { if (ds) ThemePrefs.setDarkShadowBuilt(pkg, ""); else ThemePrefs.clearBuiltSignature(pkg); }
     }
+
+    /** Bersagli Dark Shadow: pacchetto, cartella negli asset. */
+    private static final String[][] DS_TARGETS = {
+            {"com.android.settings", "SST"}, {"com.android.systemui", "SUT"}, {"com.android.launcher", "LT"},
+            {"com.oneplus.calculator", "CA"}, {"com.oneplus.deskclock", "DC"}, {"com.oneplus.gallery", "GL"},
+            {"com.oneplus.oshare", "OS"}, {"com.oplus.apprecover", "AR"}, {"com.oplus.camera", "CM"},
+            {"com.oplus.contentportal", "CP"}, {"com.oplus.eyeprotect", "EP"}, {"com.oplus.games", "GA"},
+            {"com.oplus.wirelesssettings", "WS"}, {"com.heytap.browser", "BR"},
+            {"com.coloros.floatassistant", "FA"}, {"com.coloros.video", "VT"},
+    };
 
     private final List<AppEntry> mApps = new ArrayList<>();
     private RecyclerView mList;
@@ -105,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                     if (line.length() > 4) sys.put(line.substring(3).trim(), line.substring(0, 3));
                 }
                 for (AppEntry e : new ArrayList<>(mApps)) {
-                    String ov = ThemeCompiler.overlayPackage(e.pkg);
+                    String ov = e.overlay();
                     String m = sys.get(ov);
                     int s;
                     if ("[x]".equals(m)) s = ST_ACTIVE;
@@ -114,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                     else if (store.contains(ov)) s = ST_REBOOT;  // APK pronto, il sistema non lo conosce ancora
                     else if (m != null) s = ST_DISABLED;         // tolto dallo store, il sistema lo ricorda fino al riavvio
                     else s = ST_NONE;
-                    st.put(e.pkg, s);
+                    st.put(e.name, s);
                 }
             } catch (Throwable ignored) {}
             new Handler(Looper.getMainLooper()).post(() -> {
@@ -202,6 +227,18 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Exception ignored) {}
         mApps.sort(Comparator.comparing(e -> e.label.toLowerCase(Locale.ROOT)));
+        List<AppEntry> dsList = new ArrayList<>();
+        for (String[] t : DS_TARGETS) {
+            try {
+                ApplicationInfo ai = pm.getApplicationInfo(t[0], 0);
+                dsList.add(new AppEntry(t[0], String.valueOf(pm.getApplicationLabel(ai)), t[1],
+                        ThemePrefs.isDarkShadowEnabled(t[0])));
+            } catch (PackageManager.NameNotFoundException ignored) {
+                // bersaglio non presente su questo telefono
+            }
+        }
+        mApps.addAll(dsList);
+        mApps.sort(Comparator.comparing(e -> e.label.toLowerCase(Locale.ROOT)));
         mList.getAdapter().notifyDataSetChanged();
         updateNotice();
     }
@@ -216,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setAll(boolean on) {
         if (mBusy) return;
-        for (AppEntry e : mApps) { e.enabled = on; ThemePrefs.setAppEnabled(e.pkg, on); }
+        for (AppEntry e : mApps) { e.enabled = on; e.saveEnabled(); }
         mList.getAdapter().notifyDataSetChanged();
         updateNotice();
     }
@@ -244,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
             AppEntry e = mApps.get(pos);
             h.name.setText(e.label);
             h.pkg.setText(e.pkg);
-            Integer stObj = mState.get(e.pkg);
+            Integer stObj = mState.get(e.name);
             int stv = stObj == null ? ST_NONE : stObj;
             int color; int label;
             switch (stv) {
@@ -261,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
             h.sw.setChecked(e.enabled);
             h.sw.setOnCheckedChangeListener((b, checked) -> {
                 e.enabled = checked;
-                ThemePrefs.setAppEnabled(e.pkg, checked);
+                e.saveEnabled();
                 updateNotice();
             });
             h.itemView.setOnClickListener(v -> h.sw.toggle());
@@ -316,23 +353,23 @@ public class MainActivity extends AppCompatActivity {
             try {
                 ModuleSetup.ensure();
                 for (AppEntry e : apps) {
-                    boolean active = before.contains(ThemeCompiler.overlayPackage(e.pkg));
+                    boolean active = before.contains(e.overlay());
                     if (!e.enabled) {
-                        if (active) toDisable.add(ThemeCompiler.overlayPackage(e.pkg));
-                        toRemove.add(e.pkg);
-                        ThemePrefs.clearBuiltSignature(e.pkg);
+                        if (active) toDisable.add(e.overlay());
+                        toRemove.add(e.name);
+                        e.clearBuilt();
                         continue;
                     }
-                    if ("[ ]".equals(stateBefore.get(ThemeCompiler.overlayPackage(e.pkg)))) toEnable.add(ThemeCompiler.overlayPackage(e.pkg));
+                    if ("[ ]".equals(stateBefore.get(e.overlay()))) toEnable.add(e.overlay());
                     // gia' compilata e attiva con lo stesso accento/versione: si salta
-                    if (active && signature.equals(ThemePrefs.getBuiltSignature(e.pkg))) continue;
+                    if (active && signature.equals(e.builtSig())) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
-                        if (ThemeCompiler.buildInBatch(e.pkg)) {
+                        if (ThemeCompiler.buildNamedInBatch(e.pkg, e.dir, e.name)) {
                             failed++;
                         } else {
-                            ThemePrefs.setBuiltSignature(e.pkg, signature);
-                            if (active) refresh.add(ThemeCompiler.overlayPackage(e.pkg));
+                            e.setBuilt(signature);
+                            if (active) refresh.add(e.overlay());
                         }
                     } catch (Throwable t) {
                         failed++;
@@ -346,14 +383,14 @@ public class MainActivity extends AppCompatActivity {
             ThemeCompiler.disable(toDisable);
             if (!toEnable.isEmpty())
                 it.tugaia56.oxydiantheme.utils.overlay.OverlayUtil.enableOverlays(toEnable.toArray(new String[0]));
-            ThemeCompiler.removeApks(toRemove);
+            ThemeCompiler.removeNamedApks(toRemove);
 
             Set<String> after = enabledOverlays();
             int notYetActive = 0, selected = 0;
             for (AppEntry e : apps) {
                 if (!e.enabled) continue;
                 selected++;
-                if (!after.contains(ThemeCompiler.overlayPackage(e.pkg))) notYetActive++;
+                if (!after.contains(e.overlay())) notYetActive++;
             }
             final int f = failed, n = notYetActive, sel = selected;
             new Handler(Looper.getMainLooper()).post(() -> {

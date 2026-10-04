@@ -1,5 +1,5 @@
 <resources>
-    <string name="title_apps">App Google e utente</string>
+    <string name="title_apps">Temi</string>
     <string name="status_no_root">Serve l\'accesso root. Concedilo a Oxydian Theme nel gestore del root.</string>
     <string name="status_reboot">Modulo creato. Riavvia una volta per attivarlo, poi applica i temi.</string>
     <string name="status_ok">Modulo pronto.</string>
@@ -36,4 +36,8 @@
     <string name="styles_notice">Scegli uno stile per ogni icona e tocca Applica. Basta applicarne uno e riavviare una volta: poi puoi passare a qualsiasi altro stile quando vuoi, subito e senza riavviare.</string>
     <string name="styles_off_note">Stile tolto. Riavvia una volta per ripristinare del tutto l\'icona predefinita.</string>
     <string name="section_both">Wi-Fi + segnale insieme</string>
+    <string name="btn_darkshadow">Dark Shadow</string>
+    <string name="title_darkshadow">Tema Dark Shadow</string>
+    <string name="darkshadow_notice">Tema scuro per Impostazioni, SystemUI, Launcher e le app OnePlus. Attiva quello che vuoi e tocca Applica. La prima volta serve un riavvio; poi puoi accendere o spegnere ogni voce quando vuoi.</string>
+    <string name="btn_styles_full">Icone Wi-Fi e segnale</string>
 </resources>

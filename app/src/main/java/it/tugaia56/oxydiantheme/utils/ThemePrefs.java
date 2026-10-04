@@ -39,4 +39,12 @@ public final class ThemePrefs {
     public static String getStyleBuilt(String slot) { return sp().getString("style_built_" + slot, ""); }
 
     public static void setStyleBuilt(String slot, String sig) { sp().edit().putString("style_built_" + slot, sig).commit(); }
+
+    public static boolean isDarkShadowEnabled(String pkg) { return sp().getBoolean("ds_enabled_" + pkg, false); }
+
+    public static void setDarkShadowEnabled(String pkg, boolean on) { sp().edit().putBoolean("ds_enabled_" + pkg, on).commit(); }
+
+    public static String getDarkShadowBuilt(String pkg) { return sp().getString("ds_built_" + pkg, ""); }
+
+    public static void setDarkShadowBuilt(String pkg, String sig) { sp().edit().putString("ds_built_" + pkg, sig).commit(); }
 }
