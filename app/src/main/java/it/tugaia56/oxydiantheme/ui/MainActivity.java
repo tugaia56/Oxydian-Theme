@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
         mApply.setOnClickListener(v -> onApply());
         findViewById(R.id.btn_legend).setOnClickListener(v -> showLegend());
+        findViewById(R.id.btn_styles).setOnClickListener(v ->
+                startActivity(new android.content.Intent(this, StyleActivity.class)));
         ((Button) findViewById(R.id.btn_all)).setOnClickListener(v -> setAll(true));
         ((Button) findViewById(R.id.btn_none)).setOnClickListener(v -> setAll(false));
 

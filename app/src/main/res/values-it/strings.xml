@@ -28,4 +28,12 @@
     <string name="legend_close">Chiudi</string>
     <string name="off_title">Temi disattivati</string>
     <string name="off_message">Sono già spenti. Riavvia una volta per rimuoverli del tutto.</string>
+    <string name="btn_styles">Icone</string>
+    <string name="title_styles">Stili icone</string>
+    <string name="section_wifi">Icona Wi-Fi</string>
+    <string name="section_signal">Icona segnale mobile</string>
+    <string name="style_none">Predefinito (nessuno stile)</string>
+    <string name="styles_notice">Scegli uno stile per ogni icona, poi tocca Applica. La prima volta che aggiungi uno stile serve un riavvio.</string>
+    <string name="styles_off_note">Stile tolto. Riavvia una volta per ripristinare del tutto l\'icona predefinita.</string>
+    <string name="section_both">Wi-Fi + segnale insieme</string>
 </resources>

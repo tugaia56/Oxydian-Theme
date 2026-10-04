@@ -33,6 +33,20 @@ public final class ThemeCompiler {
         return PREFIX + overlayName(targetPackage) + ".overlay";
     }
 
+    /** Nome completo di un overlay con nome libero (es. WIFI1). */
+    public static String namedPackage(String name) {
+        return PREFIX + name + ".overlay";
+    }
+
+    /** Toglie dallo store gli overlay con nome libero indicati. */
+    public static void removeNamedApks(List<String> names) {
+        if (names == null || names.isEmpty()) return;
+        StringBuilder sb = new StringBuilder();
+        for (String n : names)
+            sb.append("rm -f ").append(ModuleConstants.STORE_DIR).append('/').append(PREFIX).append(n).append(".apk 2>/dev/null; ");
+        Shell.cmd(sb.toString().trim()).exec();
+    }
+
     // ── Giro completo ────────────────────────────────────────────────────────
 
     public static void beginBatch() {

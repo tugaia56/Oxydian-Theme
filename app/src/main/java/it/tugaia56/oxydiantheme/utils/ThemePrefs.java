@@ -30,4 +30,13 @@ public final class ThemePrefs {
     public static int accentColor() { return sp().getInt("accent", DEFAULT_ACCENT); }
 
     public static void setAccentColor(int color) { sp().edit().putInt("accent", color).commit(); }
+
+    /** Stile scelto per un'icona (slot WIFI1 / SIG1); stringa vuota = nessuno. */
+    public static String getStyle(String slot) { return sp().getString("style_" + slot, ""); }
+
+    public static void setStyle(String slot, String style) { sp().edit().putString("style_" + slot, style == null ? "" : style).commit(); }
+
+    public static String getStyleBuilt(String slot) { return sp().getString("style_built_" + slot, ""); }
+
+    public static void setStyleBuilt(String slot, String sig) { sp().edit().putString("style_built_" + slot, sig).commit(); }
 }
