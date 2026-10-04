@@ -1,0 +1,31 @@
+<resources>
+    <string name="title_apps">App Google e utente</string>
+    <string name="status_no_root">Serve l\'accesso root. Concedilo a Oxydian Theme nel gestore del root.</string>
+    <string name="status_reboot">Modulo creato. Riavvia una volta per attivarlo, poi applica i temi.</string>
+    <string name="status_ok">Modulo pronto.</string>
+    <string name="notice">Attiva le app da temare, poi tocca Applica. La prima volta che attivi una nuova app serve un riavvio; le modifiche successive sono immediate.</string>
+    <string name="many_warning">Attenzione: %1$d app selezionate. Più di circa 10 app con il tema rallentano l\'avvio del telefono a ogni riavvio.</string>
+    <string name="btn_apply">Applica</string>
+    <string name="btn_select_all">Tutte</string>
+    <string name="btn_clear_all">Nessuna</string>
+    <string name="working">In corso… servono alcuni secondi per ogni app</string>
+    <string name="applied">Applicato</string>
+    <string name="applied_reboot">Applicato — riavvia una volta per attivare le app appena aggiunte</string>
+    <string name="failed_n">%1$d temi non compilati</string>
+    <string name="none_installed">Nessuna app con tema è installata su questo telefono</string>
+    <string name="state_active">Attivo</string>
+    <string name="state_disabled">Installato, non abilitato</string>
+    <string name="state_reboot">Riavvia per abilitare</string>
+    <string name="state_invalid">Non valido</string>
+    <string name="state_none">Non installato</string>
+    <string name="btn_legend">Legenda</string>
+    <string name="legend_title">Legenda dei colori</string>
+    <string name="legend_active_desc">Il tema è in uso.</string>
+    <string name="legend_disabled_desc">Il tema è installato ma spento.</string>
+    <string name="legend_reboot_desc">Appena creato: il sistema non lo conosce ancora, riavvia per abilitarlo.</string>
+    <string name="legend_invalid_desc">Il sistema rifiuta questo tema (per esempio se l\'app è cambiata).</string>
+    <string name="legend_none_desc">Nessun tema è stato creato per questa app.</string>
+    <string name="legend_close">Chiudi</string>
+    <string name="off_title">Temi disattivati</string>
+    <string name="off_message">Sono già spenti. Riavvia una volta per rimuoverli del tutto.</string>
+</resources>
