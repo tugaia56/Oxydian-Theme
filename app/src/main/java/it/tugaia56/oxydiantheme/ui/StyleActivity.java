@@ -286,11 +286,10 @@ public class StyleActivity extends AppCompatActivity {
                 else msg = getString(R.string.applied);
                 Toast.makeText(StyleActivity.this, msg, Toast.LENGTH_LONG).show();
                 if (fRemoved) {
-                    new com.google.android.material.dialog.MaterialAlertDialogBuilder(StyleActivity.this)
+                    Dialogs.show(StyleActivity.this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(StyleActivity.this)
                             .setTitle(R.string.off_title)
                             .setMessage(R.string.styles_off_note)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
+                            .setPositiveButton(android.R.string.ok, null));
                 }
             });
         }).start();

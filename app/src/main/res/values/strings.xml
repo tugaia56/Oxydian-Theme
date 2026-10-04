@@ -41,4 +41,8 @@
     <string name="title_darkshadow">Dark Shadow theme</string>
     <string name="darkshadow_notice">Dark theme for Settings, System UI, Launcher and the OnePlus apps. Turn on what you want and tap Apply. The first time a reboot is needed; after that you can switch each one on or off at any time.</string>
     <string name="btn_styles_full">Wi-Fi and signal icons</string>
+    <string name="options">Options ›</string>
+    <string name="options_title">Options</string>
+    <string name="options_default">Default</string>
+    <string name="options_note">Tap Apply to use your choices.</string>
 </resources>

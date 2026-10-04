@@ -67,6 +67,13 @@ public final class ThemeCompiler {
 
     /** Sorgente in assets/CompileOnDemand/&lt;pacchetto&gt;/&lt;assetDir&gt;/res, nome overlay a scelta. */
     public static boolean buildNamedInBatch(String targetPackage, String assetDir, String name) throws IOException {
+        return buildNamedInBatch(targetPackage, assetDir, name, null);
+    }
+
+    /** Come sopra, con in piu' le scelte dell'utente: cartelle "res" sopra la base (i file con lo
+     *  stesso nome risorsa, anche con estensione diversa, vengono sostituiti). */
+    public static boolean buildNamedInBatch(String targetPackage, String assetDir, String name,
+                                            List<String> optionAssetPaths) throws IOException {
         String cacheRoot = ModuleConstants.TEMP_CACHE_DIR + "/" + targetPackage;
         String source = cacheRoot + "/" + name;
 
@@ -79,6 +86,17 @@ public final class ThemeCompiler {
                 "mv -f \"" + moved + "\" \"" + source + "\"",
                 "find \"" + source + "/res\" -type f -name '*.xml'"
                         + " -exec sed -i -E 's|(@\\*)+android:color/accent_material_dark|" + accent + "|g' {} +").exec();
+
+        if (optionAssetPaths != null) {
+            for (String opt : optionAssetPaths) {
+                copyAssets(opt);
+                String o = ModuleConstants.DATA_DIR + "/" + opt + "/res";
+                Shell.cmd("cd \"" + o + "\" && find . -type f | while read -r f; do"
+                        + " d=\"" + source + "/res/$(dirname \"$f\")\"; b=$(basename \"$f\"); n=${b%.*};"
+                        + " rm -f \"$d/$n\".*; done",
+                        "mkdir -p \"" + source + "/res\" && cp -rf \"" + o + "/.\" \"" + source + "/res/\"").exec();
+            }
+        }
 
         if (OverlayCompiler.createManifest(name, targetPackage, source)) return true;
         if (OverlayCompiler.runAapt(source, targetPackage)) return true;

@@ -177,11 +177,10 @@ public class MainActivity extends AppCompatActivity {
             box.addView(name);
             box.addView(desc);
         }
-        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.legend_title)
                 .setView(box)
-                .setPositiveButton(R.string.legend_close, null)
-                .show();
+                .setPositiveButton(R.string.legend_close, null));
     }
 
     private static int ThemePrefsAccent() {
@@ -261,9 +260,11 @@ public class MainActivity extends AppCompatActivity {
     private class Adapter extends RecyclerView.Adapter<Adapter.VH> {
         class VH extends RecyclerView.ViewHolder {
             final TextView name, pkg, stat;
+            final Button opt;
             final MaterialSwitch sw;
             VH(View v) {
                 super(v);
+                opt = v.findViewById(R.id.opt);
                 name = v.findViewById(R.id.name);
                 pkg = v.findViewById(R.id.pkg);
                 stat = v.findViewById(R.id.stat);
@@ -301,11 +302,122 @@ public class MainActivity extends AppCompatActivity {
                 e.saveEnabled();
                 updateNotice();
             });
+            boolean hasOpt = !e.ds && !optionGroups(e.pkg).isEmpty();
+            h.opt.setVisibility(hasOpt ? View.VISIBLE : View.GONE);
+            h.opt.setOnClickListener(v -> showOptions(e));
             h.itemView.setOnClickListener(v -> h.sw.toggle());
         }
 
         @Override
         public int getItemCount() { return mApps.size(); }
+    }
+
+    // ── Opzioni dei temi ─────────────────────────────────────────────────────
+
+    private static class OptGroup {
+        String id, title;
+        List<String> choices = new ArrayList<>();
+    }
+
+    private final Map<String, List<OptGroup>> mOptCache = new HashMap<>();
+
+    private List<OptGroup> optionGroups(String pkg) {
+        List<OptGroup> cached = mOptCache.get(pkg);
+        if (cached != null) return cached;
+        List<OptGroup> out = new ArrayList<>();
+        mOptCache.put(pkg, out);
+        try {
+            String base = "CompileOnDemand/" + pkg + "/OPT";
+            String[] groups = getAssets().list(base);
+            if (groups == null) return out;
+            Arrays.sort(groups);
+            for (String g : groups) {
+                String[] items = getAssets().list(base + "/" + g);
+                if (items == null) continue;
+                OptGroup og = new OptGroup();
+                og.id = g;
+                og.title = g;
+                Arrays.sort(items);
+                for (String item : items) {
+                    if (item.equals("title.txt")) {
+                        try (java.io.InputStream in = getAssets().open(base + "/" + g + "/title.txt")) {
+                            og.title = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).trim();
+                        }
+                    } else {
+                        og.choices.add(item);
+                    }
+                }
+                if (!og.choices.isEmpty()) out.add(og);
+            }
+        } catch (Exception ignored) {}
+        return out;
+    }
+
+    /** Scelte attuali sotto forma di testo (entra nella firma: se cambiano, il tema va rifatto). */
+    private String optsKey(AppEntry e) {
+        StringBuilder sb = new StringBuilder();
+        for (OptGroup g : optionGroups(e.pkg)) sb.append('|').append(g.id).append('=').append(ThemePrefs.getOption(e.pkg, g.id));
+        return sb.toString();
+    }
+
+    /** Percorsi negli asset delle scelte da sovrapporre alla base. */
+    private List<String> optionPaths(AppEntry e) {
+        List<String> out = new ArrayList<>();
+        for (OptGroup g : optionGroups(e.pkg)) {
+            String c = ThemePrefs.getOption(e.pkg, g.id);
+            if (!c.isEmpty() && g.choices.contains(c)) out.add("CompileOnDemand/" + e.pkg + "/OPT/" + g.id + "/" + c);
+        }
+        return out;
+    }
+
+    private void showOptions(AppEntry e) {
+        List<OptGroup> groups = optionGroups(e.pkg);
+        if (groups.isEmpty()) return;
+        android.widget.LinearLayout box = new android.widget.LinearLayout(this);
+        box.setOrientation(android.widget.LinearLayout.VERTICAL);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        box.setPadding(pad, pad / 2, pad, 0);
+        for (OptGroup g : groups) {
+            TextView t = new TextView(this);
+            t.setText(g.title);
+            t.setTextColor(ThemePrefs.accentColor());
+            t.setTextSize(15);
+            t.setPadding(0, pad / 2, 0, pad / 4);
+            box.addView(t);
+            android.widget.RadioGroup rg = new android.widget.RadioGroup(this);
+            String cur = ThemePrefs.getOption(e.pkg, g.id);
+            List<String> all = new ArrayList<>();
+            all.add("");
+            all.addAll(g.choices);
+            for (String c : all) {
+                android.widget.RadioButton rb = new android.widget.RadioButton(this);
+                rb.setText(c.isEmpty() ? getString(R.string.options_default) : c.replace('_', ' '));
+                rb.setId(View.generateViewId());
+                rb.setChecked(c.equals(cur));
+                rb.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+                final String choice = c;
+                rb.setOnClickListener(v -> {
+                    ThemePrefs.setOption(e.pkg, g.id, choice);
+                    for (int i = 0; i < rg.getChildCount(); i++) {
+                        android.widget.RadioButton o = (android.widget.RadioButton) rg.getChildAt(i);
+                        o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
+                    }
+                });
+                rg.addView(rb);
+            }
+            for (int i = 0; i < rg.getChildCount(); i++) {
+                android.widget.RadioButton o = (android.widget.RadioButton) rg.getChildAt(i);
+                o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
+            }
+            box.addView(rg);
+        }
+        android.widget.ScrollView sv = new android.widget.ScrollView(this);
+        sv.addView(box);
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.options_title) + " – " + e.label)
+                .setView(sv)
+                .setPositiveButton(android.R.string.ok, null));
+        Toast.makeText(this, R.string.options_note, Toast.LENGTH_SHORT).show();
     }
 
     // ── Applica ──────────────────────────────────────────────────────────────
@@ -362,13 +474,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if ("[ ]".equals(stateBefore.get(e.overlay()))) toEnable.add(e.overlay());
                     // gia' compilata e attiva con lo stesso accento/versione: si salta
-                    if (active && signature.equals(e.builtSig())) continue;
+                    if (active && (signature + optsKey(e)).equals(e.builtSig())) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
-                        if (ThemeCompiler.buildNamedInBatch(e.pkg, e.dir, e.name)) {
+                        if (ThemeCompiler.buildNamedInBatch(e.pkg, e.dir, e.name, optionPaths(e))) {
                             failed++;
                         } else {
-                            e.setBuilt(signature);
+                            e.setBuilt(signature + optsKey(e));
                             if (active) refresh.add(e.overlay());
                         }
                     } catch (Throwable t) {
@@ -403,11 +515,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
                 refreshStates();
                 if (turnedOff > 0) {
-                    new com.google.android.material.dialog.MaterialAlertDialogBuilder(MainActivity.this)
+                    Dialogs.show(MainActivity.this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(MainActivity.this)
                             .setTitle(R.string.off_title)
                             .setMessage(R.string.off_message)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
+                            .setPositiveButton(android.R.string.ok, null));
                 }
             });
         }).start();

@@ -47,4 +47,9 @@ public final class ThemePrefs {
     public static String getDarkShadowBuilt(String pkg) { return sp().getString("ds_built_" + pkg, ""); }
 
     public static void setDarkShadowBuilt(String pkg, String sig) { sp().edit().putString("ds_built_" + pkg, sig).commit(); }
+
+    /** Scelta dell'utente in un gruppo di opzioni di un tema; stringa vuota = predefinito. */
+    public static String getOption(String pkg, String group) { return sp().getString("opt_" + pkg + "_" + group, ""); }
+
+    public static void setOption(String pkg, String group, String choice) { sp().edit().putString("opt_" + pkg + "_" + group, choice == null ? "" : choice).commit(); }
 }

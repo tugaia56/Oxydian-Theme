@@ -40,4 +40,8 @@
     <string name="title_darkshadow">Tema Dark Shadow</string>
     <string name="darkshadow_notice">Tema scuro per Impostazioni, SystemUI, Launcher e le app OnePlus. Attiva quello che vuoi e tocca Applica. La prima volta serve un riavvio; poi puoi accendere o spegnere ogni voce quando vuoi.</string>
     <string name="btn_styles_full">Icone Wi-Fi e segnale</string>
+    <string name="options">Opzioni ›</string>
+    <string name="options_title">Opzioni</string>
+    <string name="options_default">Predefinito</string>
+    <string name="options_note">Tocca Applica per usare le scelte.</string>
 </resources>
