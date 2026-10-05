@@ -68,6 +68,14 @@
                     android:textStyle="bold" />
 
                 <ImageButton
+                    android:id="@+id/btn_restart_ui"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/restart_ui"
+                    android:src="@drawable/ic_restart_thin" />
+
+                <ImageButton
                     android:id="@+id/btn_warn"
                     android:layout_width="48dp"
                     android:layout_height="48dp"

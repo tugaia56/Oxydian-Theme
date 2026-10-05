@@ -105,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
         mApply.setOnClickListener(v -> onApply(null, false));
         findViewById(R.id.btn_remove_off).setOnClickListener(v -> onApply(null, true));
         findViewById(R.id.btn_info).setOnClickListener(v -> showLegend());
+        android.widget.ImageButton restart = findViewById(R.id.btn_restart_ui);
+        restart.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+        restart.setOnClickListener(v -> {
+            Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+            new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+        });
         ((android.widget.ImageButton) findViewById(R.id.btn_info)).setImageTintList(
                 android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         setupCards();
