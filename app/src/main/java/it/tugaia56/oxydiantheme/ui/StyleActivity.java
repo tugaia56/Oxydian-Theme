@@ -73,6 +73,9 @@ public class StyleActivity extends AppCompatActivity {
         Button optBtn = findViewById(R.id.btn_icon_options);
         optBtn.setVisibility("settings".equals(mMode) ? View.VISIBLE : View.GONE);
         optBtn.setOnClickListener(v -> showIconOptions());
+        Button sizeBtn = findViewById(R.id.btn_icon_size);
+        sizeBtn.setVisibility("wifi".equals(mMode) ? View.VISIBLE : View.GONE);
+        sizeBtn.setOnClickListener(v -> showIconSize());
         android.widget.ImageButton back = findViewById(R.id.btn_back);
         back.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         back.setOnClickListener(v -> finish());
@@ -384,6 +387,43 @@ public class StyleActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.ok, null));
     }
 
+    private void showIconSize() {
+        android.widget.LinearLayout box = new android.widget.LinearLayout(this);
+        box.setOrientation(android.widget.LinearLayout.VERTICAL);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        box.setPadding(pad, pad / 2, pad, 0);
+        android.widget.RadioGroup rg = new android.widget.RadioGroup(this);
+        int cur = ThemePrefs.getIconSize();
+        for (int dp = 12; dp <= 20; dp++) {
+            android.widget.RadioButton rb = new android.widget.RadioButton(this);
+            rb.setText(dp + " dp" + (dp == 15 ? " (" + getString(R.string.options_default).toLowerCase() + ")" : ""));
+            rb.setId(View.generateViewId());
+            rb.setChecked(dp == cur);
+            rb.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+            final int v = dp;
+            rb.setOnClickListener(x -> {
+                ThemePrefs.setIconSize(v);
+                for (int k = 0; k < rg.getChildCount(); k++) {
+                    android.widget.RadioButton o = (android.widget.RadioButton) rg.getChildAt(k);
+                    o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
+                }
+            });
+            rg.addView(rb);
+        }
+        for (int k = 0; k < rg.getChildCount(); k++) {
+            android.widget.RadioButton o = (android.widget.RadioButton) rg.getChildAt(k);
+            o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
+        }
+        box.addView(rg);
+        android.widget.ScrollView sv = new android.widget.ScrollView(this);
+        sv.addView(box);
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.icon_size_title)
+                .setView(sv)
+                .setPositiveButton(android.R.string.ok, null));
+        Toast.makeText(this, R.string.icon_size_hint, Toast.LENGTH_LONG).show();
+    }
+
     private void onApply() {
         if (mBusy) return;
         mBusy = true;
@@ -420,13 +460,14 @@ public class StyleActivity extends AppCompatActivity {
                         ThemePrefs.setStyleBuilt(slot, "");
                         continue;
                     }
-                    String sig = choice[i] + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey() : "");
+                    String sig = choice[i] + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey() : "") + ((i <= 1) ? ":s" + ThemePrefs.getIconSize() : "");
                     if ("[ ]".equals(st)) toEnable.add(ov);
                     if (active && sig.equals(ThemePrefs.getStyleBuilt(slot))) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
                         if (ThemeCompiler.buildNamedInBatch(TARGET_PKG[i], PREFIXES[i] + choice[i], slot, null,
-                                (i == 3 || i == 4) ? settingsValuesXml(choice[i]) : null)) {
+                                (i == 3 || i == 4) ? settingsValuesXml(choice[i]) : null,
+                                (i <= 1) ? ThemePrefs.getIconSize() : 0)) {
                             failed++;
                         } else {
                             ThemePrefs.setStyleBuilt(slot, sig);

@@ -84,4 +84,6 @@
     <string name="card_progress">Barra di progresso</string>
     <string name="card_pin">Tastierino PIN</string>
     <string name="card_activity">Icone attività di rete</string>
+    <string name="icon_size_title">Dimensione icone</string>
+    <string name="icon_size_hint">Tocca Applica per usare la nuova dimensione.</string>
 </resources>

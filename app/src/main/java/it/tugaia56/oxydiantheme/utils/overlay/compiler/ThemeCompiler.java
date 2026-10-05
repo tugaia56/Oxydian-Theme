@@ -89,6 +89,13 @@ public final class ThemeCompiler {
     /** @param extraValuesXml se non nullo, e' scritto come res/values/Obsidian.xml (colori/dimensioni scelti dall'utente) */
     public static boolean buildNamedInBatch(String targetPackage, String assetDir, String name,
                                             List<String> optionAssetPaths, String extraValuesXml) throws IOException {
+        return buildNamedInBatch(targetPackage, assetDir, name, optionAssetPaths, extraValuesXml, 0);
+    }
+
+    /** @param iconSizeDp se diverso da 0 e da 15 (misura stock), le icone (vettori da 15dp) vengono ridimensionate */
+    public static boolean buildNamedInBatch(String targetPackage, String assetDir, String name,
+                                            List<String> optionAssetPaths, String extraValuesXml,
+                                            int iconSizeDp) throws IOException {
         String cacheRoot = ModuleConstants.TEMP_CACHE_DIR + "/" + targetPackage;
         String source = cacheRoot + "/" + name;
 
@@ -116,6 +123,12 @@ public final class ThemeCompiler {
                         + "done; done",
                         "mkdir -p \"" + source + "/res\" && cp -rf \"" + o + "/.\" \"" + source + "/res/\"").exec();
             }
+        }
+
+        if (iconSizeDp > 0 && iconSizeDp != 15) {
+            // i vettori delle icone sono da 15dp: si riscrive larghezza e altezza della radice
+            String expr = "s/(android:(width|height)=\")15(\\.0+)?(dp|dip)\"/\\1" + iconSizeDp + ".0dp\"/g";
+            Shell.cmd("find \"" + source + "/res/drawable\" -type f -name '*.xml' -exec sed -i -E '" + expr + "' {} +").exec();
         }
 
         if (extraValuesXml != null) {

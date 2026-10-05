@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         ((android.widget.ImageButton) findViewById(R.id.btn_info)).setImageTintList(
                 android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         setupCards();
+        SystemColorsDialog.republish(this);
         ((Button) findViewById(R.id.btn_all)).setOnClickListener(v -> setAll(true));
         ((Button) findViewById(R.id.btn_none)).setOnClickListener(v -> setAll(false));
 

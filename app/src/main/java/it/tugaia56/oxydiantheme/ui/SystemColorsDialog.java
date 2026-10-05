@@ -115,6 +115,15 @@ final class SystemColorsDialog {
         refresh.run();
     }
 
+    /** Ripubblica le scelte attuali come proprieta' di sistema (all'avvio dell'app e dopo ogni cambio). */
+    static void republish(Context ctx) {
+        String a = ThemePrefs.getOption(PKG, "accent"), b = ThemePrefs.getOption(PKG, "background");
+        Integer accent = null, bgc = null;
+        for (Swatch sw : load(ctx, "accent", "type1a.xml", "accent_material_dark")) if (!a.isEmpty() && sw.name.equals(a)) accent = sw.color;
+        for (Swatch sw : load(ctx, "background", "type1b.xml", "background_dark")) if (!b.isEmpty() && sw.name.equals(b)) bgc = sw.color;
+        it.tugaia56.oxydiantheme.utils.ThemeProps.publish(accent, bgc);
+    }
+
     static void show(Context ctx, Listener listener) {
         float d = ctx.getResources().getDisplayMetrics().density;
         int pad = (int) (16 * d);
@@ -143,6 +152,9 @@ final class SystemColorsDialog {
                     if (sel[0].isEmpty()) c = ThemePrefs.DEFAULT_ACCENT;
                     ThemePrefs.setAccentColor(c);
                     ThemePrefs.setDarkShadowEnabled(PKG, !(sel[0].isEmpty() && sel[1].isEmpty() && ThemePrefs.getOption(PKG, "progress").isEmpty()));
+                    Integer bgColor = null;
+                    for (Swatch sw : bg) if (!sel[1].isEmpty() && sw.name.equals(sel[1])) bgColor = sw.color;
+                    it.tugaia56.oxydiantheme.utils.ThemeProps.publish(sel[0].isEmpty() ? null : c, bgColor);
                     listener.onSaved(c);
                 }));
     }

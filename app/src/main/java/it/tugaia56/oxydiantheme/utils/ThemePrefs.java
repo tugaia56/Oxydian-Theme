@@ -57,4 +57,9 @@ public final class ThemePrefs {
     public static int getIconOpt(String key, int def) { return sp().getInt("icopt_" + key, def); }
 
     public static void setIconOpt(String key, int value) { sp().edit().putInt("icopt_" + key, value).commit(); }
+
+    /** Dimensione delle icone Wi-Fi e segnale in dp (15 = stock). */
+    public static int getIconSize() { return sp().getInt("icon_size_dp", 15); }
+
+    public static void setIconSize(int dp) { sp().edit().putInt("icon_size_dp", dp).commit(); }
 }
