@@ -86,7 +86,7 @@
     <string name="card_activity">Icone attività di rete</string>
     <string name="icon_size_title">Dimensione icone</string>
     <string name="icon_size_hint">Tocca Applica per usare la nuova dimensione.</string>
-    <string name="card_sigcolor">Colore icone Wi-Fi e segnale</string>
+    <string name="card_sigcolor">Colore icone barra di stato</string>
     <string name="restart_ui">Riavvia interfaccia</string>
     <string name="restart_ui_toast">Riavvio dell\'interfaccia</string>
 </resources>

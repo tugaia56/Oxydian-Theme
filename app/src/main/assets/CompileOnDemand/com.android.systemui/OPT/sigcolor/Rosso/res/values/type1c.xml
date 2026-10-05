@@ -4,4 +4,6 @@
     <color name="light_mode_icon_color_dual_tone_background">#4DFF3B30</color>
     <color name="dark_mode_icon_color_dual_tone_fill">#FF3B30</color>
     <color name="dark_mode_icon_color_dual_tone_background">#4DFF3B30</color>
+    <color name="light_mode_icon_color_single_tone">#FF3B30</color>
+    <color name="dark_mode_icon_color_single_tone">#FF3B30</color>
 </resources>
