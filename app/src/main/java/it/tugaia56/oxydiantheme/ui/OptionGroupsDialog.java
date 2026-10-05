@@ -77,6 +77,23 @@ final class OptionGroupsDialog {
         LinearLayout box = new LinearLayout(ctx);
         box.setOrientation(LinearLayout.VERTICAL);
         box.setPadding(pad, pad / 2, pad, 0);
+        if (java.util.Arrays.asList(groups).contains("progress")) {
+            // anteprima: i tre cerchi di sistema (piccolo, medio, grande) col disegno in uso adesso
+            LinearLayout row = new LinearLayout(ctx);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            row.setPadding(0, pad / 2, 0, pad / 2);
+            int[] styles = {android.R.attr.progressBarStyleSmall, android.R.attr.progressBarStyle, android.R.attr.progressBarStyleLarge};
+            for (int st : styles) {
+                android.widget.ProgressBar pb = new android.widget.ProgressBar(ctx, null, st);
+                pb.setIndeterminate(true);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                lp.setMarginEnd(pad);
+                row.addView(pb, lp);
+            }
+            box.addView(row);
+        }
         final java.util.Map<String, String> initial = new java.util.HashMap<>();
         for (String g : groups) initial.put(g, ThemePrefs.getOption(pkg, g));
         for (String g : groups) {
