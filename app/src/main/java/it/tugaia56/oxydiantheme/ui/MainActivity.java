@@ -78,7 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<AppEntry> mApps = new ArrayList<>();
     private RecyclerView mList;
-    private TextView mStatus, mNotice;
+    private TextView mStatus;
+    private android.widget.ImageButton mWarn;
+    private int mWarnCount = 0;
     private Button mApply;
     private boolean mBusy = false;
 
@@ -92,27 +94,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mList = findViewById(R.id.list);
         mStatus = findViewById(R.id.status);
-        mNotice = findViewById(R.id.notice);
+        mWarn = findViewById(R.id.btn_warn);
+        mWarn.setImageTintList(android.content.res.ColorStateList.valueOf(0xFFFFC107));
+        mWarn.setOnClickListener(v -> showWarning());
         mApply = findViewById(R.id.btn_apply);
         mList.setLayoutManager(new LinearLayoutManager(this));
         mList.setAdapter(new Adapter());
 
         mApply.setOnClickListener(v -> onApply(null, false));
         findViewById(R.id.btn_remove_off).setOnClickListener(v -> onApply(null, true));
-        findViewById(R.id.btn_legend).setOnClickListener(v -> showLegend());
-        findViewById(R.id.btn_accent).setOnClickListener(v -> SystemColorsDialog.show(this, color -> {
-            for (AppEntry e : mApps) {
-                if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(e.pkg);
-            }
-            mStatus.setTextColor(color);
-            Tint.tree(findViewById(android.R.id.content));
-        mStatus.setTextColor(ThemePrefs.accentColor());
-            mList.getAdapter().notifyDataSetChanged();
-            Toast.makeText(this, R.string.accent_hint, Toast.LENGTH_LONG).show();
-            onApply(SystemColorsDialog.PKG, false);
-        }));
-        findViewById(R.id.btn_styles).setOnClickListener(v ->
-                startActivity(new android.content.Intent(this, StyleActivity.class)));
+        findViewById(R.id.btn_info).setOnClickListener(v -> showLegend());
+        ((android.widget.ImageButton) findViewById(R.id.btn_info)).setImageTintList(
+                android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+        setupCards();
         ((Button) findViewById(R.id.btn_all)).setOnClickListener(v -> setAll(true));
         ((Button) findViewById(R.id.btn_none)).setOnClickListener(v -> setAll(false));
 
@@ -121,9 +115,123 @@ public class MainActivity extends AppCompatActivity {
         Tint.tree(findViewById(android.R.id.content));
     }
 
+    // ── Schede dell'intestazione ─────────────────────────────────────────────
+
+    private final List<View> mCards = new ArrayList<>();
+    private TextView mSubColors, mSubWifi, mSubNav, mSubSettings;
+
+    private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
+        float d = getResources().getDisplayMetrics().density;
+        android.widget.LinearLayout card = new android.widget.LinearLayout(this);
+        card.setOrientation(android.widget.LinearLayout.VERTICAL);
+        int pad = (int) (14 * d);
+        card.setPadding(pad, pad, pad, pad);
+        android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+        int m = (int) (4 * d);
+        lp.setMargins(m, m, m, m);
+        card.setLayoutParams(lp);
+        card.setClickable(true);
+        card.setFocusable(true);
+        TextView t = new TextView(this);
+        t.setText(titleRes);
+        t.setTextColor(getColor(R.color.text));
+        t.setTextSize(15);
+        t.setTypeface(null, android.graphics.Typeface.BOLD);
+        TextView sub = new TextView(this);
+        sub.setTextColor(getColor(R.color.text_dim));
+        sub.setTextSize(12);
+        sub.setPadding(0, (int) (4 * d), 0, 0);
+        card.addView(t);
+        card.addView(sub);
+        card.setOnClickListener(v -> onClick.run());
+        subOut[0] = sub;
+        mCards.add(card);
+        return card;
+    }
+
+    private void setupCards() {
+        android.widget.LinearLayout r1 = findViewById(R.id.cards_row1);
+        android.widget.LinearLayout r2 = findViewById(R.id.cards_row2);
+        TextView[] s = new TextView[1];
+        r1.addView(makeCard(R.string.card_colors, s, this::openColors));
+        mSubColors = s[0];
+        r1.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
+        mSubWifi = s[0];
+        r2.addView(makeCard(R.string.card_nav, s, () -> openStyles("nav")));
+        mSubNav = s[0];
+        r2.addView(makeCard(R.string.card_settings, s,
+                () -> Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()));
+        mSubSettings = s[0];
+        mSubSettings.setText(R.string.coming_soon);
+        refreshCards();
+    }
+
+    private void openStyles(String mode) {
+        startActivity(new android.content.Intent(this, StyleActivity.class).putExtra("mode", mode));
+    }
+
+    private void openColors() {
+        SystemColorsDialog.show(this, color -> {
+            for (AppEntry e : mApps) {
+                if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(e.pkg);
+            }
+            mStatus.setTextColor(color);
+            Tint.tree(findViewById(android.R.id.content));
+            refreshCards();
+            mList.getAdapter().notifyDataSetChanged();
+            Toast.makeText(this, R.string.accent_hint, Toast.LENGTH_LONG).show();
+            onApply(SystemColorsDialog.PKG, false);
+        });
+    }
+
+    private static String pretty(String n) {
+        if (n == null || n.isEmpty()) return "";
+        if (n.equals("oneui")) return "One UI";
+        StringBuilder sb = new StringBuilder();
+        for (String p : n.split("_")) {
+            if (p.isEmpty()) continue;
+            if (sb.length() > 0) sb.append(' ');
+            sb.append(p.substring(0, 1).toUpperCase(Locale.ROOT)).append(p.substring(1));
+        }
+        return sb.toString();
+    }
+
+    /** Bordo accento e scelte attuali nelle schede. */
+    private void refreshCards() {
+        ((android.widget.ImageButton) findViewById(R.id.btn_info)).setImageTintList(
+                android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+        float d = getResources().getDisplayMetrics().density;
+        for (View c : mCards) {
+            android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable();
+            g.setColor(getColor(R.color.card));
+            g.setCornerRadius(14 * d);
+            g.setStroke((int) (1.5f * d), ThemePrefs.accentColor());
+            c.setBackground(g);
+        }
+        String def = getString(R.string.options_default);
+        String acc = ThemePrefs.getOption(SystemColorsDialog.PKG, "accent");
+        String bg = ThemePrefs.getOption(SystemColorsDialog.PKG, "background");
+        StringBuilder col = new StringBuilder();
+        if (!acc.isEmpty()) col.append(getString(R.string.sys_accent)).append(' ').append(pretty(acc));
+        if (!bg.isEmpty()) {
+            if (col.length() > 0) col.append(" · ");
+            col.append(getString(R.string.sys_background)).append(' ').append(pretty(bg));
+        }
+        mSubColors.setText(col.length() == 0 ? def : col.toString());
+        String w = ThemePrefs.getStyle("WIFI1"), sg = ThemePrefs.getStyle("SIG1");
+        if (w.isEmpty() && sg.isEmpty()) mSubWifi.setText(def);
+        else if (w.equals(sg)) mSubWifi.setText(pretty(w));
+        else mSubWifi.setText("Wi-Fi " + (w.isEmpty() ? "–" : pretty(w)) + " · " + getString(R.string.sys_signal)
+                + " " + (sg.isEmpty() ? "–" : pretty(sg)));
+        String nv = ThemePrefs.getStyle("NAV1");
+        mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        if (mSubColors != null) refreshCards();
         refreshStates();
     }
 
@@ -166,6 +274,12 @@ public class MainActivity extends AppCompatActivity {
 
     // ── Legenda dei colori ───────────────────────────────────────────────────
 
+    private android.widget.ScrollView scroll(View v) {
+        android.widget.ScrollView sv = new android.widget.ScrollView(this);
+        sv.addView(v);
+        return sv;
+    }
+
     private void showLegend() {
         int[][] rows = {
                 {ThemePrefsAccent(), R.string.state_active, R.string.legend_active_desc},
@@ -178,6 +292,17 @@ public class MainActivity extends AppCompatActivity {
         box.setOrientation(android.widget.LinearLayout.VERTICAL);
         int pad = (int) (20 * getResources().getDisplayMetrics().density);
         box.setPadding(pad, pad / 2, pad, 0);
+        TextView how = new TextView(this);
+        how.setText(R.string.notice);
+        how.setTextColor(getColor(R.color.text));
+        how.setTextSize(14);
+        box.addView(how);
+        TextView legendTitle = new TextView(this);
+        legendTitle.setText(R.string.legend_title);
+        legendTitle.setTextColor(ThemePrefs.accentColor());
+        legendTitle.setTextSize(15);
+        legendTitle.setPadding(0, pad, 0, 0);
+        box.addView(legendTitle);
         for (int[] r : rows) {
             TextView name = new TextView(this);
             name.setText(r[1]);
@@ -192,8 +317,8 @@ public class MainActivity extends AppCompatActivity {
             box.addView(desc);
         }
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.legend_title)
-                .setView(box)
+                .setTitle(R.string.info_title)
+                .setView(scroll(box))
                 .setPositiveButton(R.string.legend_close, null));
     }
 
@@ -259,9 +384,15 @@ public class MainActivity extends AppCompatActivity {
     private void updateNotice() {
         int selected = 0;
         for (AppEntry e : mApps) if (e.enabled) selected++;
-        String notice = getString(R.string.notice);
-        if (selected > 10) notice += "\n\n" + getString(R.string.many_warning, selected);
-        mNotice.setText(notice);
+        mWarnCount = selected;
+        if (mWarn != null) mWarn.setVisibility(selected > 10 ? View.VISIBLE : View.GONE);
+    }
+
+    private void showWarning() {
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.warn_title)
+                .setMessage(getString(R.string.many_warning, mWarnCount))
+                .setPositiveButton(android.R.string.ok, null));
     }
 
     private void setAll(boolean on) {

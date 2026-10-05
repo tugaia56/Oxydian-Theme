@@ -37,8 +37,10 @@ import it.tugaia56.oxydiantheme.utils.overlay.compiler.ThemeCompiler;
  */
 public class StyleActivity extends AppCompatActivity {
     private static final String SYSTEMUI = "com.android.systemui";
-    private static final String[] SLOTS = {"WIFI1", "SIG1"};
-    private static final String[] PREFIXES = {"WIFI_", "SIG_"};
+    private static final String[] SLOTS = {"WIFI1", "SIG1", "NAV1"};
+    /** indice "insieme" (Wi-Fi + segnale) nelle sezioni */
+    private static final int BOTH = 9;
+    private static final String[] PREFIXES = {"WIFI_", "SIG_", "NAV_"};
 
     /** Riga: titolo di sezione (slot>=0, style==null e header) oppure stile. */
     private static class Row {
@@ -53,9 +55,10 @@ public class StyleActivity extends AppCompatActivity {
 
     private final List<Row> mRows = new ArrayList<>();
     private final List<Row> mShown = new ArrayList<>();
-    private final boolean[] mOpen = new boolean[3]; // sezioni: Wi-Fi+segnale, Wi-Fi, segnale (indice = slot)
-    private final String[] mChoice = new String[2];
+    private final boolean[] mOpen = new boolean[10]; // sezioni: Wi-Fi+segnale, Wi-Fi, segnale (indice = slot)
+    private final String[] mChoice = new String[3];
     private boolean mBusy = false;
+    private boolean mNavMode = false;
     private Button mApply;
 
     @Override
@@ -63,9 +66,15 @@ public class StyleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_styles);
         mApply = findViewById(R.id.btn_apply);
+        mNavMode = "nav".equals(getIntent().getStringExtra("mode"));
+        android.widget.ImageButton back = findViewById(R.id.btn_back);
+        back.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+        back.setOnClickListener(v -> finish());
+        ((TextView) findViewById(R.id.title)).setText(mNavMode ? R.string.card_nav : R.string.card_wifi);
+        if (mNavMode) mOpen[2] = true;
         RecyclerView list = findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(this));
-        for (int i = 0; i < 2; i++) mChoice[i] = ThemePrefs.getStyle(SLOTS[i]);
+        for (int i = 0; i < SLOTS.length; i++) mChoice[i] = ThemePrefs.getStyle(SLOTS[i]);
         buildRows();
         refreshShown();
         list.setAdapter(new Adapter());
@@ -81,16 +90,17 @@ public class StyleActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
         Arrays.sort(dirs);
         // Sezione "insieme": gli stili presenti sia per Wi-Fi sia per segnale
-        mRows.add(new Row(true, 2, null, getString(R.string.section_both)));
-        mRows.add(new Row(false, 2, "", getString(R.string.style_none)));
+        if (!mNavMode) mRows.add(new Row(true, BOTH, null, getString(R.string.section_both)));
+        if (!mNavMode) mRows.add(new Row(false, BOTH, "", getString(R.string.style_none)));
         List<String> all = Arrays.asList(dirs);
         for (String d : dirs) {
             if (!d.startsWith(PREFIXES[0])) continue;
             String name = d.substring(PREFIXES[0].length());
-            if (all.contains(PREFIXES[1] + name)) mRows.add(new Row(false, 2, name, pretty(name)));
+            if (!mNavMode && all.contains(PREFIXES[1] + name)) mRows.add(new Row(false, BOTH, name, pretty(name)));
         }
-        int[] titles = {R.string.section_wifi, R.string.section_signal};
-        for (int s = 0; s < 2; s++) {
+        int[] titles = {R.string.section_wifi, R.string.section_signal, R.string.section_nav};
+        for (int s = 0; s < SLOTS.length; s++) {
+            if ((s == 2) != mNavMode) continue;
             mRows.add(new Row(true, s, null, getString(titles[s])));
             mRows.add(new Row(false, s, "", getString(R.string.style_none)));
             for (String d : dirs) {
@@ -108,13 +118,14 @@ public class StyleActivity extends AppCompatActivity {
     }
 
     private String currentLabel(int slot) {
-        if (slot == 2) {
+        if (slot == BOTH) {
             return mChoice[0].isEmpty() || !mChoice[0].equals(mChoice[1]) ? "" : pretty(mChoice[0]);
         }
         return mChoice[slot].isEmpty() ? "" : pretty(mChoice[slot]);
     }
 
     private static String pretty(String n) {
+        if (n.equals("oneui")) return "One UI";
         String[] parts = n.split("_");
         StringBuilder sb = new StringBuilder();
         for (String p : parts) {
@@ -157,7 +168,7 @@ public class StyleActivity extends AppCompatActivity {
                 });
                 return;
             }
-            boolean sel = r.slot == 2
+            boolean sel = r.slot == BOTH
                     ? (r.style.equals(mChoice[0]) && r.style.equals(mChoice[1]))
                     : r.style.equals(mChoice[r.slot]);
             TextView nameView = h.itemView.findViewById(R.id.name);
@@ -168,7 +179,7 @@ public class StyleActivity extends AppCompatActivity {
             rb.setChecked(sel);
             h.itemView.setOnClickListener(v -> {
                 if (mBusy) return;
-                if (r.slot == 2) { mChoice[0] = r.style; mChoice[1] = r.style; }
+                if (r.slot == BOTH) { mChoice[0] = r.style; mChoice[1] = r.style; }
                 else mChoice[r.slot] = r.style;
                 refreshShown();
                 notifyDataSetChanged();
@@ -184,11 +195,14 @@ public class StyleActivity extends AppCompatActivity {
         if (r.style.isEmpty()) { box.setVisibility(View.GONE); return; }
         box.setVisibility(View.VISIBLE);
         List<String> names = new ArrayList<>();
-        if (r.slot == 0 || r.slot == 2) {
+        if (r.slot == 0 || r.slot == BOTH) {
             for (int i : r.slot == 0 ? new int[]{1, 2, 3, 4} : new int[]{2, 4}) names.add("pv_wifi_" + r.style + "_" + i);
         }
-        if (r.slot == 1 || r.slot == 2) {
+        if (r.slot == 1 || r.slot == BOTH) {
             for (int i : r.slot == 1 ? new int[]{1, 2, 3, 4} : new int[]{2, 4}) names.add("pv_sig_" + r.style + "_" + i);
+        }
+        if (r.slot == 2) {
+            for (String part : new String[]{"back", "home", "recent"}) names.add("pv_nav_" + r.style + "_" + part);
         }
         float d = getResources().getDisplayMetrics().density;
         int size = (int) (22 * d), gap = (int) (10 * d);
@@ -238,7 +252,7 @@ public class StyleActivity extends AppCompatActivity {
             boolean batchOpen = false;
             try {
                 ModuleSetup.ensure();
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < SLOTS.length; i++) {
                     String slot = SLOTS[i], ov = ThemeCompiler.namedPackage(slot);
                     String st = before.get(ov);
                     boolean active = "[x]".equals(st);

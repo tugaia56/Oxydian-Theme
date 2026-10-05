@@ -55,4 +55,14 @@
     <string name="sys_background">Background</string>
     <string name="pending">to apply</string>
     <string name="btn_remove_off">Remove turned-off</string>
+    <string name="section_nav">Navigation bar icons</string>
+    <string name="card_colors">System colors</string>
+    <string name="card_wifi">Wi-Fi and signal icons</string>
+    <string name="card_nav">Navigation bar icons</string>
+    <string name="card_settings">Settings icons</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="sys_signal">Signal</string>
+    <string name="btn_back">Back</string>
+    <string name="info_title">How it works</string>
+    <string name="warn_title">Warning</string>
 </resources>

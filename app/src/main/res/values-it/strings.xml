@@ -54,4 +54,14 @@
     <string name="sys_background">Sfondo</string>
     <string name="pending">da applicare</string>
     <string name="btn_remove_off">Rimuovi spenti</string>
+    <string name="section_nav">Icone barra di navigazione</string>
+    <string name="card_colors">Colori di sistema</string>
+    <string name="card_wifi">Icone Wi-Fi e segnale</string>
+    <string name="card_nav">Icone barra di navigazione</string>
+    <string name="card_settings">Icone Impostazioni</string>
+    <string name="coming_soon">Prossimamente</string>
+    <string name="sys_signal">Segnale</string>
+    <string name="btn_back">Indietro</string>
+    <string name="info_title">Come funziona</string>
+    <string name="warn_title">Attenzione</string>
 </resources>
