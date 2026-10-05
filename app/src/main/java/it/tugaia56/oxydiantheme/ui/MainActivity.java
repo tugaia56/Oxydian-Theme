@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         return card;
     }
 
-    private TextView mSubProgress, mSubPin, mSubActivity;
+    private TextView mSubProgress, mSubPin, mSubActivity, mSubSigColor;
     private static final String SYSTEMUI_PKG = "com.android.systemui";
 
     private void setupCards() {
@@ -175,9 +175,8 @@ public class MainActivity extends AppCompatActivity {
         mSubNav = s[0];
         r4.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
         mSubSettings = s[0];
-        View spacer = new View(this);
-        spacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 1, 1f));
-        r4.addView(spacer);
+        r4.addView(makeCard(R.string.card_sigcolor, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"sigcolor"}, R.string.card_sigcolor)));
+        mSubSigColor = s[0];
         refreshCards();
     }
 
@@ -190,7 +189,8 @@ public class MainActivity extends AppCompatActivity {
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "icons").isEmpty();
+                    || !ThemePrefs.getOption(pkg, "icons").isEmpty()
+                    || !ThemePrefs.getOption(pkg, "sigcolor").isEmpty();
             if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
         }
         for (AppEntry e : mApps) if (e.ds && e.pkg.equals(pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(pkg);
@@ -279,6 +279,7 @@ public class MainActivity extends AppCompatActivity {
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
         mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum", "pinbg"));
         mSubActivity.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "icons"));
+        mSubSigColor.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "sigcolor"));
         String ic = ThemePrefs.getStyle("ICON1");
         mSubSettings.setText(ic.isEmpty() ? def : prettyPack(ic));
     }

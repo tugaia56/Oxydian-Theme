@@ -87,4 +87,5 @@
     <string name="card_activity">Network activity icons</string>
     <string name="icon_size_title">Icon size</string>
     <string name="icon_size_hint">Tap Apply to use the new size.</string>
+    <string name="card_sigcolor">Wi-Fi and signal icon color</string>
 </resources>
