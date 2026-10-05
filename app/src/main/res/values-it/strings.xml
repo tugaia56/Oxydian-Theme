@@ -31,15 +31,15 @@
     <string name="btn_styles">Icone</string>
     <string name="title_styles">Stili icone</string>
     <string name="section_wifi">Icona Wi-Fi</string>
-    <string name="section_signal">Icona segnale mobile</string>
+    <string name="section_signal">Icona Segnale mobile</string>
     <string name="style_none">Predefinito (nessuno stile)</string>
     <string name="styles_notice">Scegli uno stile per ogni icona e tocca Applica. Basta applicarne uno e riavviare una volta: poi puoi passare a qualsiasi altro stile quando vuoi, subito e senza riavviare.</string>
     <string name="styles_off_note">Stile tolto. Riavvia una volta per ripristinare del tutto l\'icona predefinita.</string>
-    <string name="section_both">Wi-Fi + segnale insieme</string>
+    <string name="section_both">Wi-Fi + Segnale insieme</string>
     <string name="btn_darkshadow">Dark Shadow</string>
     <string name="title_darkshadow">Tema Dark Shadow</string>
     <string name="darkshadow_notice">Tema scuro per Impostazioni, SystemUI, Launcher e le app OnePlus. Attiva quello che vuoi e tocca Applica. La prima volta serve un riavvio; poi puoi accendere o spegnere ogni voce quando vuoi.</string>
-    <string name="btn_styles_full">Icone Wi-Fi e segnale</string>
+    <string name="btn_styles_full">Icone Wi-Fi e Segnale</string>
     <string name="options">Opzioni ›</string>
     <string name="options_title">Opzioni</string>
     <string name="options_default">Predefinito</string>
@@ -56,7 +56,7 @@
     <string name="btn_remove_off">Rimuovi spenti</string>
     <string name="section_nav">Icone barra di navigazione</string>
     <string name="card_colors">Colori di sistema</string>
-    <string name="card_wifi">Icone Wi-Fi e segnale</string>
+    <string name="card_wifi">Icone Wi-Fi e Segnale</string>
     <string name="card_nav">Icone barra di navigazione</string>
     <string name="card_settings">Icone Impostazioni</string>
     <string name="coming_soon">Prossimamente</string>
@@ -86,7 +86,7 @@
     <string name="card_activity">Icone attività di rete</string>
     <string name="icon_size_title">Dimensione icone</string>
     <string name="icon_size_hint">Tocca Applica per usare la nuova dimensione.</string>
-    <string name="card_sigcolor">Colore icone Wi-Fi e segnale</string>
+    <string name="card_sigcolor">Colore icone Wi-Fi e Segnale</string>
     <string name="restart_ui">Riavvia interfaccia</string>
     <string name="restart_ui_toast">Riavvio dell\'interfaccia</string>
     <string name="color_wifi_title">Colore icona Wi-Fi</string>
