@@ -24,4 +24,10 @@ public final class ThemeProps {
     private static void put(StringBuilder sb, String key, String value) {
         sb.append("resetprop ").append(key).append(" \"").append(value).append("\"; ");
     }
+
+    /** Colore delle icone Wi-Fi e segnale (null = predefinito): lo applica Oxydian. */
+    public static void publishIconColor(Integer color) {
+        String v = color == null ? "" : String.format("%08x", color);
+        Shell.cmd("resetprop persist.oxytheme.wifi_icon_color \"" + v + "\"; resetprop persist.oxytheme.mobile_icon_color \"" + v + "\"").submit();
+    }
 }

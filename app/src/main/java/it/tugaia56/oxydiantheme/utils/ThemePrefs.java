@@ -62,4 +62,9 @@ public final class ThemePrefs {
     public static int getIconSize() { return sp().getInt("icon_size_dp", 15); }
 
     public static void setIconSize(int dp) { sp().edit().putInt("icon_size_dp", dp).commit(); }
+
+    /** Colore scelto per le icone Wi-Fi e segnale (nome, "" = predefinito). */
+    public static String getIconColor() { return sp().getString("icon_color_name", ""); }
+
+    public static void setIconColor(String name) { sp().edit().putString("icon_color_name", name == null ? "" : name).commit(); }
 }

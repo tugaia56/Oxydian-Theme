@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         setupCards();
         SystemColorsDialog.republish(this);
+        IconColorDialog.republish();
         ((Button) findViewById(R.id.btn_all)).setOnClickListener(v -> setAll(true));
         ((Button) findViewById(R.id.btn_none)).setOnClickListener(v -> setAll(false));
 
@@ -181,7 +182,11 @@ public class MainActivity extends AppCompatActivity {
         mSubNav = s[0];
         r4.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
         mSubSettings = s[0];
-        r4.addView(makeCard(R.string.card_sigcolor, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"sigcolor"}, R.string.card_sigcolor)));
+        r4.addView(makeCard(R.string.card_sigcolor, s, () -> IconColorDialog.show(this, () -> {
+            refreshCards();
+            Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+            new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+        })));
         mSubSigColor = s[0];
         refreshCards();
     }
@@ -195,8 +200,7 @@ public class MainActivity extends AppCompatActivity {
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "icons").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "sigcolor").isEmpty();
+                    || !ThemePrefs.getOption(pkg, "icons").isEmpty();
             if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
         }
         for (AppEntry e : mApps) if (e.ds && e.pkg.equals(pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(pkg);
@@ -285,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
         mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum", "pinbg"));
         mSubActivity.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "icons"));
-        mSubSigColor.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "sigcolor"));
+        mSubSigColor.setText(IconColorDialog.summary(this));
         String ic = ThemePrefs.getStyle("ICON1");
         mSubSettings.setText(ic.isEmpty() ? def : prettyPack(ic));
     }

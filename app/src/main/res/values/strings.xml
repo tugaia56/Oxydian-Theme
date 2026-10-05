@@ -87,7 +87,7 @@
     <string name="card_activity">Network activity icons</string>
     <string name="icon_size_title">Icon size</string>
     <string name="icon_size_hint">Tap Apply to use the new size.</string>
-    <string name="card_sigcolor">Status bar icons color</string>
+    <string name="card_sigcolor">Wi-Fi and signal icon color</string>
     <string name="restart_ui">Restart system UI</string>
     <string name="restart_ui_toast">Restarting the system UI</string>
 </resources>
