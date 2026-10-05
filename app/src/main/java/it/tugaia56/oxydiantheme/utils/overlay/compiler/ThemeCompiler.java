@@ -141,7 +141,7 @@ public final class ThemeCompiler {
             }
             if (dedupe.length() > 0) Shell.cmd(dedupe.toString()).exec();
             Shell.cmd("mkdir -p \"" + source + "/res/values\"",
-                    "printf '%s' '" + extraValuesXml + "' > \"" + source + "/res/values/Obsidian.xml\"").exec();
+                    "printf '%s' '" + extraValuesXml.replace("'", "'\''") + "' > \"" + source + "/res/values/Obsidian.xml\"").exec();
         }
 
         if (OverlayCompiler.createManifest(name, targetPackage, source)) return true;

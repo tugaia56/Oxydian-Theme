@@ -754,10 +754,12 @@ public class MainActivity extends AppCompatActivity {
                             if (active) refresh.add(e.overlay());
                         }
                     } catch (Throwable t) {
+                        android.util.Log.e("OxyTheme", "build " + e.name + " failed", t);
                         failed++;
                     }
                 }
-            } catch (Throwable ignored) {
+            } catch (Throwable t) {
+                android.util.Log.e("OxyTheme", "apply failed", t);
             } finally {
                 if (batchOpen) ThemeCompiler.endBatch(refresh);
             }

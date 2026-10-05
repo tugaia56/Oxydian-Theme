@@ -79,7 +79,8 @@ final class CustomPalette {
         int a = xml.indexOf("<resources>");
         int b = xml.lastIndexOf("</resources>");
         if (a < 0 || b < 0) return "";
-        return xml.substring(a + "<resources>".length(), b);
+        // senza commenti (contengono apostrofi e inutili nel risultato)
+        return xml.substring(a + "<resources>".length(), b).replaceAll("(?s)<!--.*?-->", "");
     }
 
     private static float clamp(float v) { return Math.max(0f, Math.min(1f, v)); }
