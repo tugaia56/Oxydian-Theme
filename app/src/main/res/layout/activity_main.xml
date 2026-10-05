@@ -98,6 +98,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingHorizontal="10dp" />
+            <LinearLayout
+                android:id="@+id/cards_row3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp" />
+            <LinearLayout
+                android:id="@+id/cards_row4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp" />
 
 
                 <LinearLayout

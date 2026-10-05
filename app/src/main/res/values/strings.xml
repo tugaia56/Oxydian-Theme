@@ -82,4 +82,7 @@
     <string name="icopt_rounded">Rounded square</string>
     <string name="icopt_teardrop">Teardrop</string>
     <string name="icopt_diamond">Diamond</string>
+    <string name="card_progress">Progress bar</string>
+    <string name="card_pin">PIN keypad</string>
+    <string name="card_activity">Network activity icons</string>
 </resources>

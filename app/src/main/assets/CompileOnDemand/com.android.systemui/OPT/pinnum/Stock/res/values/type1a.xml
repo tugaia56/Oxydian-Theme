@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="coui_numeric_keyboard_number_color">#e6ffffff</color>									<!-- colore numero tasti -->
-    <color name="coui_simple_lock_transparent_filled_rectangle_icon_color">#ffffffff</color>			<!-- pallini attivi -->
-    <color name="coui_simple_lock_transparent_outlined_rectangle_icon_color">#26ffffff</color>			<!-- pallini disattivi -->
-</resources>

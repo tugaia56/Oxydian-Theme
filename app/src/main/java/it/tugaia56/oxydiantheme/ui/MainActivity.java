@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private final List<AppEntry> mApps = new ArrayList<>();
+    private final List<AppEntry> mVisible = new ArrayList<>(); // senza "Colori di sistema" (ha la sua scheda)
     private RecyclerView mList;
     private TextView mStatus;
     private android.widget.ImageButton mWarn;
@@ -150,19 +151,57 @@ public class MainActivity extends AppCompatActivity {
         return card;
     }
 
+    private TextView mSubProgress, mSubPin, mSubActivity;
+    private static final String SYSTEMUI_PKG = "com.android.systemui";
+
     private void setupCards() {
         android.widget.LinearLayout r1 = findViewById(R.id.cards_row1);
         android.widget.LinearLayout r2 = findViewById(R.id.cards_row2);
+        android.widget.LinearLayout r3 = findViewById(R.id.cards_row3);
+        android.widget.LinearLayout r4 = findViewById(R.id.cards_row4);
         TextView[] s = new TextView[1];
         r1.addView(makeCard(R.string.card_colors, s, this::openColors));
         mSubColors = s[0];
-        r1.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
+        r1.addView(makeCard(R.string.card_progress, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"progress"}, R.string.card_progress)));
+        mSubProgress = s[0];
+        r2.addView(makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinnum", "pinbg"}, R.string.card_pin)));
+        mSubPin = s[0];
+        r2.addView(makeCard(R.string.card_activity, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"icons"}, R.string.card_activity)));
+        mSubActivity = s[0];
+        r3.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
-        r2.addView(makeCard(R.string.card_nav, s, () -> openStyles("nav")));
+        r3.addView(makeCard(R.string.card_nav, s, () -> openStyles("nav")));
         mSubNav = s[0];
-        r2.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
+        r4.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
         mSubSettings = s[0];
+        View spacer = new View(this);
+        spacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 1, 1f));
+        r4.addView(spacer);
         refreshCards();
+    }
+
+    /** Il tema di un bersaglio (colori di sistema / SystemUI) si accende da solo se si sceglie qualcosa. */
+    private void syncEnabled(String pkg) {
+        boolean any;
+        if (SystemColorsDialog.PKG.equals(pkg)) {
+            any = !ThemePrefs.getOption(pkg, "accent").isEmpty() || !ThemePrefs.getOption(pkg, "background").isEmpty()
+                    || !ThemePrefs.getOption(pkg, "progress").isEmpty();
+            ThemePrefs.setDarkShadowEnabled(pkg, any);
+        } else {
+            any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
+                    || !ThemePrefs.getOption(pkg, "icons").isEmpty();
+            if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
+        }
+        for (AppEntry e : mApps) if (e.ds && e.pkg.equals(pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(pkg);
+    }
+
+    private void openGroups(String pkg, String[] groups, int titleRes) {
+        OptionGroupsDialog.show(this, pkg, groups, titleRes, () -> {
+            syncEnabled(pkg);
+            refreshCards();
+            mList.getAdapter().notifyDataSetChanged();
+            onApply(pkg, false);
+        });
     }
 
     private void openStyles(String mode) {
@@ -236,6 +275,9 @@ public class MainActivity extends AppCompatActivity {
                 + " " + (sg.isEmpty() ? "–" : pretty(sg)));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
+        mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
+        mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum", "pinbg"));
+        mSubActivity.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "icons"));
         String ic = ThemePrefs.getStyle("ICON1");
         mSubSettings.setText(ic.isEmpty() ? def : prettyPack(ic));
     }
@@ -389,6 +431,8 @@ public class MainActivity extends AppCompatActivity {
         }
         mApps.addAll(dsList);
         mApps.sort(Comparator.comparing(e -> e.label.toLowerCase(Locale.ROOT)));
+        mVisible.clear();
+        for (AppEntry e : mApps) if (!(e.ds && SystemColorsDialog.PKG.equals(e.pkg))) mVisible.add(e);
         mList.getAdapter().notifyDataSetChanged();
         updateNotice();
     }
@@ -409,7 +453,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void setAll(boolean on) {
         if (mBusy) return;
-        for (AppEntry e : mApps) { e.enabled = on; e.saveEnabled(); }
+        for (AppEntry e : mApps) {
+            if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) continue; // si gestisce dalla scheda Colori di sistema
+            e.enabled = on;
+            e.saveEnabled();
+        }
         mList.getAdapter().notifyDataSetChanged();
         updateNotice();
     }
@@ -436,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull VH h, int pos) {
-            AppEntry e = mApps.get(pos);
+            AppEntry e = mVisible.get(pos);
             h.name.setText(e.label);
             h.pkg.setText(e.pkg);
             Integer stObj = mState.get(e.name);
@@ -462,7 +510,7 @@ public class MainActivity extends AppCompatActivity {
                 e.saveEnabled();
                 updateNotice();
             });
-            boolean hasOpt = !optionGroups(e.pkg).isEmpty();
+            boolean hasOpt = !e.ds && !optionGroups(e.pkg).isEmpty();
             h.opt.setVisibility(hasOpt ? View.VISIBLE : View.GONE);
             Tint.button((com.google.android.material.button.MaterialButton) h.opt);
             h.opt.setOnClickListener(v -> showOptions(e));
@@ -471,7 +519,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public int getItemCount() { return mApps.size(); }
+        public int getItemCount() { return mVisible.size(); }
     }
 
     // ── Opzioni dei temi ─────────────────────────────────────────────────────

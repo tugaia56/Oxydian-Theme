@@ -142,7 +142,7 @@ final class SystemColorsDialog {
                     for (Swatch s : acc) if (s.name.equals(sel[0])) c = s.color;
                     if (sel[0].isEmpty()) c = ThemePrefs.DEFAULT_ACCENT;
                     ThemePrefs.setAccentColor(c);
-                    ThemePrefs.setDarkShadowEnabled(PKG, !(sel[0].isEmpty() && sel[1].isEmpty()));
+                    ThemePrefs.setDarkShadowEnabled(PKG, !(sel[0].isEmpty() && sel[1].isEmpty() && ThemePrefs.getOption(PKG, "progress").isEmpty()));
                     listener.onSaved(c);
                 }));
     }

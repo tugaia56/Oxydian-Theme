@@ -81,4 +81,7 @@
     <string name="icopt_rounded">Quadrato arrotondato</string>
     <string name="icopt_teardrop">Goccia</string>
     <string name="icopt_diamond">Rombo</string>
+    <string name="card_progress">Barra di progresso</string>
+    <string name="card_pin">Tastierino PIN</string>
+    <string name="card_activity">Icone attività di rete</string>
 </resources>
