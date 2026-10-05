@@ -307,7 +307,9 @@ public class MainActivity extends AppCompatActivity {
             }
             h.name.setTextColor(color);
             h.stat.setTextColor(color);
-            h.stat.setText(label);
+            boolean pending = (e.enabled && (stv == ST_NONE || stv == ST_DISABLED || stv == ST_INVALID))
+                    || (!e.enabled && stv == ST_ACTIVE);
+            h.stat.setText(pending ? getString(label) + "  •  " + getString(R.string.pending) : getString(label));
             Tint.sw(h.sw);
             h.sw.setOnCheckedChangeListener(null);
             h.sw.setChecked(e.enabled);
@@ -320,7 +322,8 @@ public class MainActivity extends AppCompatActivity {
             h.opt.setVisibility(hasOpt ? View.VISIBLE : View.GONE);
             Tint.button((com.google.android.material.button.MaterialButton) h.opt);
             h.opt.setOnClickListener(v -> showOptions(e));
-            h.itemView.setOnClickListener(v -> h.sw.toggle());
+            h.itemView.setOnClickListener(null);
+            h.itemView.setClickable(false);
         }
 
         @Override

@@ -53,4 +53,5 @@
     <string name="btn_system_colors">System colors</string>
     <string name="sys_accent">Accent</string>
     <string name="sys_background">Background</string>
+    <string name="pending">to apply</string>
 </resources>
