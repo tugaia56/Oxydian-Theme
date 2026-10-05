@@ -18,6 +18,15 @@ for f in "$SRC"/OxydianThemeComponent*.apk; do
   if echo "$LIST" | grep -q "^\[x\] $n\$"; then
     continue
   elif echo "$LIST" | grep -q "^\[ \] $n\$"; then
+    # i temi di app/Dark Shadow si accendono solo se sono nell'elenco scelto dall'utente
+    # (un tema spento resta installato ma non va riacceso ad ogni avvio)
+    case "$n" in
+      OxydianThemeComponentApp_*|OxydianThemeComponentDS_*)
+        if [ -f "$MODDIR/enabled.list" ] && ! grep -qx "$n" "$MODDIR/enabled.list"; then
+          echo "lasciato spento $n"
+          continue
+        fi;;
+    esac
     cmd overlay enable --user current "$n" 2>&1 && cmd overlay set-priority "$n" highest 2>&1
     echo "abilitato $n"
   else

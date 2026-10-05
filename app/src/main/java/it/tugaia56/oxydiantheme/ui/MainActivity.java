@@ -97,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
         mList.setLayoutManager(new LinearLayoutManager(this));
         mList.setAdapter(new Adapter());
 
-        mApply.setOnClickListener(v -> onApply(null));
+        mApply.setOnClickListener(v -> onApply(null, false));
+        findViewById(R.id.btn_remove_off).setOnClickListener(v -> onApply(null, true));
         findViewById(R.id.btn_legend).setOnClickListener(v -> showLegend());
         findViewById(R.id.btn_accent).setOnClickListener(v -> SystemColorsDialog.show(this, color -> {
             for (AppEntry e : mApps) {
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         mStatus.setTextColor(ThemePrefs.accentColor());
             mList.getAdapter().notifyDataSetChanged();
             Toast.makeText(this, R.string.accent_hint, Toast.LENGTH_LONG).show();
-            onApply(SystemColorsDialog.PKG);
+            onApply(SystemColorsDialog.PKG, false);
         }));
         findViewById(R.id.btn_styles).setOnClickListener(v ->
                 startActivity(new android.content.Intent(this, StyleActivity.class)));
@@ -465,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** @param onlyName se non nullo, applica solo la voce con questo pacchetto bersaglio (le altre restano come sono) */
-    private void onApply(String onlyPkg) {
+    private void onApply(String onlyPkg, boolean removeOff) {
         if (mBusy) return;
         mBusy = true;
         mApply.setEnabled(false);
@@ -512,6 +513,7 @@ public class MainActivity extends AppCompatActivity {
                 if (batchOpen) ThemeCompiler.endBatch(refresh);
             }
             final int turnedOff = toDisable.size();
+            final int removedCount = toRemove.size();
             ThemeCompiler.disable(toDisable);
             if (!toEnable.isEmpty())
                 it.tugaia56.oxydiantheme.utils.overlay.OverlayUtil.enableOverlays(toEnable.toArray(new String[0]));

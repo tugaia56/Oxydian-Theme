@@ -38,6 +38,15 @@ public final class ThemeCompiler {
         return PREFIX + name + ".overlay";
     }
 
+    /** Elenco dei temi (app e Dark Shadow) da accendere ad ogni avvio: il modulo accende solo questi. */
+    public static void writeEnabledList(List<String> overlayNames) {
+        StringBuilder sb = new StringBuilder("printf '%s\n'");
+        for (String n : overlayNames) sb.append(" '").append(n).append("'");
+        sb.append(" > ").append(ModuleConstants.MODULE_DIR).append("/enabled.list");
+        if (overlayNames.isEmpty()) sb = new StringBuilder(": > " + ModuleConstants.MODULE_DIR + "/enabled.list");
+        Shell.cmd(sb.toString(), "chmod 644 " + ModuleConstants.MODULE_DIR + "/enabled.list").exec();
+    }
+
     /** Toglie dallo store gli overlay con nome libero indicati. */
     public static void removeNamedApks(List<String> names) {
         if (names == null || names.isEmpty()) return;
