@@ -1,6 +1,13 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
+
+// Credenziali della firma: keystore.properties nella radice del progetto (non versionato)
+val keystoreProps = Properties()
+val keystoreFile = rootProject.file("keystore.properties")
+if (keystoreFile.exists()) keystoreProps.load(keystoreFile.inputStream())
 
 android {
     namespace   = "it.tugaia56.oxydiantheme"
@@ -10,7 +17,7 @@ android {
         minSdk         = 31
         targetSdk      = 34
         versionCode    = 1
-        versionName    = "0.1.0"
+        versionName    = "1.0.0"
         buildConfigField("int", "MIN_SDK_VERSION", "$minSdk")
     }
     compileOptions {
@@ -18,6 +25,24 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures { buildConfig = true }
+
+    signingConfigs {
+        create("release") {
+            if (keystoreFile.exists()) {
+                storeFile     = file(keystoreProps["storeFile"]     as String)
+                storePassword = keystoreProps["storePassword"]      as String
+                keyAlias      = keystoreProps["keyAlias"]           as String
+                keyPassword   = keystoreProps["keyPassword"]        as String
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig   = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+        }
+    }
 
     // aapt2 e zipalign sono .so estratti su disco: servono come binari eseguibili
     packaging {
