@@ -270,10 +270,14 @@ public class MainActivity extends AppCompatActivity {
         String acc = ThemePrefs.getOption(SystemColorsDialog.PKG, "accent");
         String bg = ThemePrefs.getOption(SystemColorsDialog.PKG, "background");
         StringBuilder col = new StringBuilder();
-        if (!acc.isEmpty()) col.append(getString(R.string.sys_accent)).append(' ').append(pretty(acc));
+        if (!acc.isEmpty()) col.append(getString(R.string.sys_accent)).append(' ')
+                .append(OptionGroupsDialog.CUSTOM.equals(acc)
+                        ? String.format("#%06X", ThemePrefs.getCustomColor(SystemColorsDialog.PKG + "_accent") & 0xFFFFFF) : pretty(acc));
         if (!bg.isEmpty()) {
             if (col.length() > 0) col.append(" · ");
-            col.append(getString(R.string.sys_background)).append(' ').append(pretty(bg));
+            col.append(getString(R.string.sys_background)).append(' ')
+                    .append(OptionGroupsDialog.CUSTOM.equals(bg)
+                            ? String.format("#%06X", ThemePrefs.getCustomColor(SystemColorsDialog.PKG + "_background") & 0xFFFFFF) : pretty(bg));
         }
         mSubColors.setText(col.length() == 0 ? def : col.toString());
         String w = ThemePrefs.getStyle("WIFI1"), sg = ThemePrefs.getStyle("SIG1");
@@ -574,8 +578,53 @@ public class MainActivity extends AppCompatActivity {
     /** Scelte attuali sotto forma di testo (entra nella firma: se cambiano, il tema va rifatto). */
     private String optsKey(AppEntry e) {
         StringBuilder sb = new StringBuilder();
-        for (OptGroup g : optionGroups(e.pkg)) sb.append('|').append(g.id).append('=').append(ThemePrefs.getOption(e.pkg, g.id));
+        for (OptGroup g : optionGroups(e.pkg)) {
+            String c = ThemePrefs.getOption(e.pkg, g.id);
+            sb.append('|').append(g.id).append('=').append(c);
+            if (OptionGroupsDialog.CUSTOM.equals(c)) sb.append(String.format("#%08X", ThemePrefs.getCustomColor(e.pkg + "_" + g.id)));
+        }
         return sb.toString();
+    }
+
+    private static String hex8(int c) { return String.format("#%08X", c); }
+
+    /** Colori a scelta libera del PIN (stesse risorse che creava Oxydian), o null se non servono. */
+    private String customValuesXml(AppEntry e) {
+        if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) {
+            StringBuilder body = new StringBuilder();
+            if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(e.pkg, "accent")))
+                body.append(CustomPalette.accentBody(this, ThemePrefs.getCustomColor(e.pkg + "_accent")));
+            if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(e.pkg, "background")))
+                body.append(CustomPalette.backgroundBody(this, ThemePrefs.getCustomColor(e.pkg + "_background")));
+            return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
+        }
+        if (!e.ds || !"com.android.systemui".equals(e.pkg)) return null;
+        StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n");
+        boolean any = false;
+        if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(e.pkg, "pinbg"))) {
+            int rgb = ThemePrefs.getCustomColor(e.pkg + "_pinbg") & 0xFFFFFF;
+            String[][] m = {
+                    {"coui_numeric_keyboard_border_color", hex8(0xFF000000 | rgb)},
+                    {"coui_numeric_keyboard_inner_gradient_color_1", hex8(0x80000000 | rgb)},
+                    {"coui_numeric_keyboard_inner_gradient_color_2", hex8(0x80000000 | rgb)},
+                    {"coui_numeric_keyboard_upper_inner_shadow_color", hex8(0xFF000000 | rgb)},
+                    {"coui_numeric_keyboard_outer_gradient_color_1", hex8(0xCC000000 | rgb)},
+                    {"coui_numeric_keyboard_outer_gradient_color_2", hex8(0x40000000 | rgb)},
+                    {"coui_numeric_keyboard_outer_gradient_color_3", hex8(0x21000000 | rgb)},
+                    {"coui_simple_lock_transparent_filled_rectangle_icon_color", hex8(0xFF000000 | rgb)},
+                    {"coui_simple_lock_transparent_outlined_rectangle_icon_color", "#33FFFFFF"},
+                    {"coui_numeric_keyboard_dark_word_text_normal_color", hex8(0xFF000000 | rgb)},
+                    {"coui_numeric_keyboard_dark_word_text_normal_light_color", hex8(0xFF000000 | rgb)},
+            };
+            for (String[] c : m) sb.append("    <color name=\"").append(c[0]).append("\">").append(c[1]).append("</color>\n");
+            any = true;
+        }
+        if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(e.pkg, "pinnum"))) {
+            int rgb = ThemePrefs.getCustomColor(e.pkg + "_pinnum") & 0xFFFFFF;
+            sb.append("    <color name=\"coui_numeric_keyboard_number_color\">").append(hex8(0xFF000000 | rgb)).append("</color>\n");
+            any = true;
+        }
+        return any ? sb.append("</resources>").toString() : null;
     }
 
     /** Percorsi negli asset delle scelte da sovrapporre alla base. */
@@ -697,7 +746,7 @@ public class MainActivity extends AppCompatActivity {
                     if (active && (signature + optsKey(e)).equals(e.builtSig())) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
-                        if (ThemeCompiler.buildNamedInBatch(e.pkg, e.dir, e.name, optionPaths(e))) {
+                        if (ThemeCompiler.buildNamedInBatch(e.pkg, e.dir, e.name, optionPaths(e), customValuesXml(e))) {
                             failed++;
                         } else {
                             e.setBuilt(signature + optsKey(e));

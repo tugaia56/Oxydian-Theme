@@ -91,4 +91,5 @@
     <string name="restart_ui_toast">Riavvio dell\'interfaccia</string>
     <string name="color_wifi_title">Colore icona Wi-Fi</string>
     <string name="color_mobile_title">Colore icona Segnale</string>
+    <string name="opt_custom">Personalizzato</string>
 </resources>

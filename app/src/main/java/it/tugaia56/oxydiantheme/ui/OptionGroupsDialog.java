@@ -60,10 +60,23 @@ final class OptionGroupsDialog {
     }
 
     /** Testo riassuntivo delle scelte attuali (per la scheda). */
+    static final String CUSTOM = "@custom";
+
+    /** Gruppi che accettano anche un colore a scelta libera. */
+    static boolean allowsCustom(String pkg, String group) {
+        return "com.android.systemui".equals(pkg) && ("pinbg".equals(group) || "pinnum".equals(group));
+    }
+
     static String summary(Context ctx, String pkg, String... groups) {
         StringBuilder sb = new StringBuilder();
         for (String g : groups) {
             String c = ThemePrefs.getOption(pkg, g);
+            if (CUSTOM.equals(c) && allowsCustom(pkg, g)) {
+                if (sb.length() > 0) sb.append(" · ");
+                sb.append(ctx.getString(R.string.opt_custom)).append(' ')
+                        .append(String.format("#%06X", ThemePrefs.getCustomColor(pkg + "_" + g) & 0xFFFFFF));
+                continue;
+            }
             if (c.isEmpty() || !choices(ctx, pkg, g).contains(c)) continue;
             if (sb.length() > 0) sb.append(" · ");
             sb.append(pretty(c));
@@ -95,7 +108,11 @@ final class OptionGroupsDialog {
             box.addView(row);
         }
         final java.util.Map<String, String> initial = new java.util.HashMap<>();
-        for (String g : groups) initial.put(g, ThemePrefs.getOption(pkg, g));
+        final java.util.Map<String, Integer> initialColor = new java.util.HashMap<>();
+        for (String g : groups) {
+            initial.put(g, ThemePrefs.getOption(pkg, g));
+            initialColor.put(g, ThemePrefs.getCustomColor(pkg + "_" + g));
+        }
         for (String g : groups) {
             List<String> ch = choices(ctx, pkg, g);
             if (ch.isEmpty()) continue;
@@ -112,13 +129,19 @@ final class OptionGroupsDialog {
             List<String> all = new ArrayList<>();
             all.add("");
             all.addAll(ch);
+            if (allowsCustom(pkg, g)) all.add(CUSTOM);
             for (String c : all) {
                 RadioButton rb = new RadioButton(ctx);
-                rb.setText(c.isEmpty() ? ctx.getString(R.string.options_default) : pretty(c));
+                rb.setText(c.isEmpty() ? ctx.getString(R.string.options_default)
+                        : CUSTOM.equals(c) ? ctx.getString(R.string.opt_custom) : pretty(c));
                 rb.setId(View.generateViewId());
                 rb.setChecked(c.equals(cur));
                 rb.setButtonTintList(ColorStateList.valueOf(ThemePrefs.accentColor()));
                 rb.setOnClickListener(v -> {
+                    if (CUSTOM.equals(c)) {
+                        ColorPickDialog.show(ctx, ThemePrefs.getCustomColor(pkg + "_" + g), R.string.opt_custom,
+                                color -> ThemePrefs.setCustomColor(pkg + "_" + g, color));
+                    }
                     ThemePrefs.setOption(pkg, g, c);
                     for (int i = 0; i < rg.getChildCount(); i++) {
                         RadioButton o = (RadioButton) rg.getChildAt(i);
@@ -139,7 +162,10 @@ final class OptionGroupsDialog {
                 .setTitle(titleRes)
                 .setView(sv)
                 .setNegativeButton(android.R.string.cancel, (dlg, w) -> {
-                    for (String g : groups) ThemePrefs.setOption(pkg, g, initial.get(g));
+                    for (String g : groups) {
+                        ThemePrefs.setOption(pkg, g, initial.get(g));
+                        ThemePrefs.setCustomColor(pkg + "_" + g, initialColor.get(g));
+                    }
                 })
                 .setPositiveButton(android.R.string.ok, (dlg, w) -> listener.onSaved()));
     }

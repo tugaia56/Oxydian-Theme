@@ -93,12 +93,17 @@ final class SystemColorsDialog {
         List<Swatch> all = new ArrayList<>();
         all.add(new Swatch("", 0xFF2A2A30));
         all.addAll(items);
+        all.add(new Swatch(OptionGroupsDialog.CUSTOM, ThemePrefs.getCustomColor(PKG + "_" + (idx == 0 ? "accent" : "background"))));
         Runnable refresh = () -> {
             for (int i = 0; i < grid.getChildCount(); i++) {
                 Swatch s = all.get(i);
                 grid.getChildAt(i).setBackground(circle(s.color, s.name.equals(selection[idx]), s.name.isEmpty(), ThemePrefs.accentColor()));
             }
-            name.setText(selection[idx].isEmpty() ? ctx.getString(R.string.options_default) : selection[idx].replace('_', ' '));
+            name.setText(selection[idx].isEmpty() ? ctx.getString(R.string.options_default)
+                    : selection[idx].equals(OptionGroupsDialog.CUSTOM)
+                    ? ctx.getString(R.string.opt_custom) + String.format(" #%06X",
+                            ThemePrefs.getCustomColor(PKG + "_" + (idx == 0 ? "accent" : "background")) & 0xFFFFFF)
+                    : selection[idx].replace('_', ' '));
         };
         for (Swatch s : all) {
             View v = new View(ctx);
@@ -107,7 +112,19 @@ final class SystemColorsDialog {
             lp.height = cell;
             lp.setMargins(m, m, m, m);
             v.setLayoutParams(lp);
-            v.setOnClickListener(x -> { selection[idx] = s.name; refresh.run(); });
+            v.setOnClickListener(x -> {
+                if (s.name.equals(OptionGroupsDialog.CUSTOM)) {
+                    String key = PKG + "_" + (idx == 0 ? "accent" : "background");
+                    ColorPickDialog.show(ctx, ThemePrefs.getCustomColor(key), R.string.opt_custom, color -> {
+                        ThemePrefs.setCustomColor(key, color);
+                        selection[idx] = OptionGroupsDialog.CUSTOM;
+                        refresh.run();
+                    });
+                    return;
+                }
+                selection[idx] = s.name;
+                refresh.run();
+            });
             grid.addView(v);
         }
         box.addView(grid);
@@ -121,6 +138,8 @@ final class SystemColorsDialog {
         Integer accent = null, bgc = null;
         for (Swatch sw : load(ctx, "accent", "type1a.xml", "accent_material_dark")) if (!a.isEmpty() && sw.name.equals(a)) accent = sw.color;
         for (Swatch sw : load(ctx, "background", "type1b.xml", "background_dark")) if (!b.isEmpty() && sw.name.equals(b)) bgc = sw.color;
+        if (OptionGroupsDialog.CUSTOM.equals(a)) accent = ThemePrefs.getCustomColor(PKG + "_accent");
+        if (OptionGroupsDialog.CUSTOM.equals(b)) bgc = ThemePrefs.getCustomColor(PKG + "_background");
         it.tugaia56.oxydiantheme.utils.ThemeProps.publish(accent, bgc);
     }
 
@@ -149,11 +168,13 @@ final class SystemColorsDialog {
                     ThemePrefs.setOption(PKG, "background", sel[1]);
                     int c = ThemePrefs.accentColor();
                     for (Swatch s : acc) if (s.name.equals(sel[0])) c = s.color;
+                    if (OptionGroupsDialog.CUSTOM.equals(sel[0])) c = ThemePrefs.getCustomColor(PKG + "_accent");
                     if (sel[0].isEmpty()) c = ThemePrefs.DEFAULT_ACCENT;
                     ThemePrefs.setAccentColor(c);
                     ThemePrefs.setDarkShadowEnabled(PKG, !(sel[0].isEmpty() && sel[1].isEmpty() && ThemePrefs.getOption(PKG, "progress").isEmpty()));
                     Integer bgColor = null;
                     for (Swatch sw : bg) if (!sel[1].isEmpty() && sw.name.equals(sel[1])) bgColor = sw.color;
+                    if (OptionGroupsDialog.CUSTOM.equals(sel[1])) bgColor = ThemePrefs.getCustomColor(PKG + "_background");
                     it.tugaia56.oxydiantheme.utils.ThemeProps.publish(sel[0].isEmpty() ? null : c, bgColor);
                     listener.onSaved(c);
                 }));

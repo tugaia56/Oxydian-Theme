@@ -67,4 +67,9 @@ public final class ThemePrefs {
     public static String getIconColor(String kind) { return sp().getString("icon_color_" + kind, ""); }
 
     public static void setIconColor(String kind, String name) { sp().edit().putString("icon_color_" + kind, name == null ? "" : name).commit(); }
+
+    /** Colore a scelta libera di un gruppo di opzioni (es. "pinbg", "pinnum"). */
+    public static int getCustomColor(String key) { return sp().getInt("custom_" + key, 0xFFFFFFFF); }
+
+    public static void setCustomColor(String key, int color) { sp().edit().putInt("custom_" + key, color).commit(); }
 }

@@ -132,6 +132,14 @@ public final class ThemeCompiler {
         }
 
         if (extraValuesXml != null) {
+            // colori gia' presenti nei sorgenti (base o opzioni) e ridefiniti qui: si tolgono da la' (doppioni)
+            java.util.regex.Matcher mm = java.util.regex.Pattern.compile("<color name=\"([^\"]+)\"").matcher(extraValuesXml);
+            StringBuilder dedupe = new StringBuilder();
+            while (mm.find()) {
+                dedupe.append("find \"").append(source).append("/res\" -type f -name '*.xml' -path '*values*' ")
+                        .append("-exec sed -i \"/<color name=\\\"").append(mm.group(1)).append("\\\"/d\" {} + ; ");
+            }
+            if (dedupe.length() > 0) Shell.cmd(dedupe.toString()).exec();
             Shell.cmd("mkdir -p \"" + source + "/res/values\"",
                     "printf '%s' '" + extraValuesXml + "' > \"" + source + "/res/values/Obsidian.xml\"").exec();
         }

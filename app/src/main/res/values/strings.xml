@@ -92,4 +92,5 @@
     <string name="restart_ui_toast">Restarting the system UI</string>
     <string name="color_wifi_title">Wi-Fi icon color</string>
     <string name="color_mobile_title">Signal icon color</string>
+    <string name="opt_custom">Custom</string>
 </resources>
