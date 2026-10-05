@@ -90,4 +90,6 @@
     <string name="card_sigcolor">Wi-Fi and signal icon color</string>
     <string name="restart_ui">Restart system UI</string>
     <string name="restart_ui_toast">Restarting the system UI</string>
+    <string name="color_wifi_title">Wi-Fi icon color</string>
+    <string name="color_mobile_title">Signal icon color</string>
 </resources>

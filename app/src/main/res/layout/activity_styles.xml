@@ -52,6 +52,26 @@
         android:visibility="gone" />
 
     <Button
+        android:id="@+id/btn_color_wifi"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/color_wifi_title"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_color_mobile"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/color_mobile_title"
+        android:visibility="gone" />
+
+    <Button
         android:id="@+id/btn_icon_options"
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="match_parent"

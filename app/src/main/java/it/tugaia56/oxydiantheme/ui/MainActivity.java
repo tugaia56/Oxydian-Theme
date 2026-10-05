@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         return card;
     }
 
-    private TextView mSubProgress, mSubPin, mSubActivity, mSubSigColor;
+    private TextView mSubProgress, mSubPin, mSubActivity;
     private static final String SYSTEMUI_PKG = "com.android.systemui";
 
     private void setupCards() {
@@ -182,12 +182,9 @@ public class MainActivity extends AppCompatActivity {
         mSubNav = s[0];
         r4.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
         mSubSettings = s[0];
-        r4.addView(makeCard(R.string.card_sigcolor, s, () -> IconColorDialog.show(this, () -> {
-            refreshCards();
-            Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-            new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
-        })));
-        mSubSigColor = s[0];
+        View spacer = new View(this);
+        spacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 1, 1f));
+        r4.addView(spacer);
         refreshCards();
     }
 
@@ -289,7 +286,6 @@ public class MainActivity extends AppCompatActivity {
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
         mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum", "pinbg"));
         mSubActivity.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "icons"));
-        mSubSigColor.setText(IconColorDialog.summary(this));
         String ic = ThemePrefs.getStyle("ICON1");
         mSubSettings.setText(ic.isEmpty() ? def : prettyPack(ic));
     }

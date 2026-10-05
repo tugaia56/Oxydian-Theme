@@ -25,9 +25,10 @@ public final class ThemeProps {
         sb.append("resetprop ").append(key).append(" \"").append(value).append("\"; ");
     }
 
-    /** Colore delle icone Wi-Fi e segnale (null = predefinito): lo applica Oxydian. */
-    public static void publishIconColor(Integer color) {
-        String v = color == null ? "" : String.format("%08x", color);
-        Shell.cmd("resetprop persist.oxytheme.wifi_icon_color \"" + v + "\"; resetprop persist.oxytheme.mobile_icon_color \"" + v + "\"").submit();
+    /** Colore dell'icona Wi-Fi e di quella del segnale mobile (null = predefinito): li applica Oxydian. */
+    public static void publishIconColors(Integer wifi, Integer mobile) {
+        String w = wifi == null ? "" : String.format("%08x", wifi);
+        String m = mobile == null ? "" : String.format("%08x", mobile);
+        Shell.cmd("resetprop persist.oxytheme.wifi_icon_color \"" + w + "\"; resetprop persist.oxytheme.mobile_icon_color \"" + m + "\"").submit();
     }
 }

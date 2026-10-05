@@ -76,6 +76,20 @@ public class StyleActivity extends AppCompatActivity {
         Button sizeBtn = findViewById(R.id.btn_icon_size);
         sizeBtn.setVisibility("wifi".equals(mMode) ? View.VISIBLE : View.GONE);
         sizeBtn.setOnClickListener(v -> showIconSize());
+        Button wifiColorBtn = findViewById(R.id.btn_color_wifi);
+        Button mobileColorBtn = findViewById(R.id.btn_color_mobile);
+        wifiColorBtn.setVisibility("wifi".equals(mMode) ? View.VISIBLE : View.GONE);
+        mobileColorBtn.setVisibility("wifi".equals(mMode) ? View.VISIBLE : View.GONE);
+        wifiColorBtn.setText(getString(R.string.color_wifi_title) + "  ·  " + IconColorDialog.summary(this, "wifi"));
+        mobileColorBtn.setText(getString(R.string.color_mobile_title) + "  ·  " + IconColorDialog.summary(this, "mobile"));
+        wifiColorBtn.setOnClickListener(v -> IconColorDialog.show(this, "wifi", R.string.color_wifi_title, () -> {
+            wifiColorBtn.setText(getString(R.string.color_wifi_title) + "  ·  " + IconColorDialog.summary(this, "wifi"));
+            restartUi();
+        }));
+        mobileColorBtn.setOnClickListener(v -> IconColorDialog.show(this, "mobile", R.string.color_mobile_title, () -> {
+            mobileColorBtn.setText(getString(R.string.color_mobile_title) + "  ·  " + IconColorDialog.summary(this, "mobile"));
+            restartUi();
+        }));
         android.widget.ImageButton back = findViewById(R.id.btn_back);
         back.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         back.setOnClickListener(v -> finish());
@@ -385,6 +399,11 @@ public class StyleActivity extends AppCompatActivity {
                 .setTitle(R.string.icopt_title)
                 .setView(sv)
                 .setPositiveButton(android.R.string.ok, null));
+    }
+
+    private void restartUi() {
+        Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+        new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
     }
 
     private void showIconSize() {

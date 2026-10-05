@@ -50,15 +50,15 @@ final class IconColorDialog {
         return 0;
     }
 
-    static String summary(Context ctx) {
-        String n = ThemePrefs.getIconColor();
+    static String summary(Context ctx, String kind) {
+        String n = ThemePrefs.getIconColor(kind);
         return n.isEmpty() ? ctx.getString(R.string.options_default) : n;
     }
 
     /** Pubblica la scelta attuale come proprieta' di sistema (all'avvio dell'app e dopo ogni cambio). */
     static void republish() {
-        String n = ThemePrefs.getIconColor();
-        ThemeProps.publishIconColor(n.isEmpty() ? null : colorOf(n));
+        String w = ThemePrefs.getIconColor("wifi"), m = ThemePrefs.getIconColor("mobile");
+        ThemeProps.publishIconColors(w.isEmpty() ? null : colorOf(w), m.isEmpty() ? null : colorOf(m));
     }
 
     private static GradientDrawable circle(int fill, boolean selected, int accent) {
@@ -69,14 +69,14 @@ final class IconColorDialog {
         return g;
     }
 
-    static void show(Context ctx, Listener listener) {
+    static void show(Context ctx, String kind, int titleRes, Listener listener) {
         float d = ctx.getResources().getDisplayMetrics().density;
         int pad = (int) (16 * d);
         LinearLayout box = new LinearLayout(ctx);
         box.setOrientation(LinearLayout.VERTICAL);
         box.setPadding(pad, pad / 2, pad, 0);
 
-        final String[] sel = {ThemePrefs.getIconColor()};
+        final String[] sel = {ThemePrefs.getIconColor(kind)};
         GridLayout grid = new GridLayout(ctx);
         grid.setColumnCount(6);
         int cell = (int) (44 * d), m = (int) (4 * d);
@@ -118,11 +118,11 @@ final class IconColorDialog {
         ScrollView sv = new ScrollView(ctx);
         sv.addView(box);
         Dialogs.show(ctx, new MaterialAlertDialogBuilder(ctx)
-                .setTitle(R.string.card_sigcolor)
+                .setTitle(titleRes)
                 .setView(sv)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(android.R.string.ok, (dlg, w) -> {
-                    ThemePrefs.setIconColor(sel[0]);
+                    ThemePrefs.setIconColor(kind, sel[0]);
                     republish();
                     listener.onSaved();
                 }));

@@ -89,4 +89,6 @@
     <string name="card_sigcolor">Colore icone Wi-Fi e segnale</string>
     <string name="restart_ui">Riavvia interfaccia</string>
     <string name="restart_ui_toast">Riavvio dell\'interfaccia</string>
+    <string name="color_wifi_title">Colore icona Wi-Fi</string>
+    <string name="color_mobile_title">Colore icona segnale</string>
 </resources>
