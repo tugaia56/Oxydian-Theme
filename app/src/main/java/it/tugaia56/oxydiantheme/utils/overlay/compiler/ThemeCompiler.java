@@ -109,6 +109,11 @@ public final class ThemeCompiler {
                 Shell.cmd("cd \"" + o + "\" && find . -type f | while read -r f; do"
                         + " d=\"" + source + "/res/$(dirname \"$f\")\"; b=$(basename \"$f\"); n=${b%.*};"
                         + " rm -f \"$d/$n\".*; done",
+                        // colori gia' definiti dalla base e ridefiniti dall'opzione: si tolgono dalla base (sarebbe un doppione)
+                        "for f in \"" + o + "\"/values/*.xml; do [ -f \"$f\" ] || continue; "
+                        + "for n in $(grep -o '<color name=\"[^\"]*\"' \"$f\" | sed 's/<color name=\"//;s/\"//'); do "
+                        + "find \"" + source + "/res\" -type f -name '*.xml' -path '*values*' -exec sed -i \"/<color name=\\\"$n\\\"/d\" {} + ; "
+                        + "done; done",
                         "mkdir -p \"" + source + "/res\" && cp -rf \"" + o + "/.\" \"" + source + "/res/\"").exec();
             }
         }

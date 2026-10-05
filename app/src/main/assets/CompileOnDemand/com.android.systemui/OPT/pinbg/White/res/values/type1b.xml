@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="coui_numeric_keyboard_border_color">#ffffffff</color>								<!-- bordo tasti tastiera -->
+    <color name="coui_numeric_keyboard_inner_gradient_color_1">#ffffffff</color>
+    <color name="coui_numeric_keyboard_inner_gradient_color_2">#ffffffff</color>
+    <color name="coui_numeric_keyboard_upper_inner_shadow_color">#ffffffff</color>					<!-- bordo visibile tasti -->
+    <color name="coui_numeric_keyboard_outer_gradient_color_1">#ffffffff</color>					<!-- ombra interno tasti -->
+    <color name="coui_numeric_keyboard_outer_gradient_color_2">#ffffffff</color>					<!-- ombra di mezzo tasti -->
+    <color name="coui_numeric_keyboard_outer_gradient_color_3">#ffffffff</color>					<!-- ombra esterno tasti -->
+	
+</resources>
