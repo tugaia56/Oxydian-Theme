@@ -256,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
 
     /** Bordo accento e scelte attuali nelle schede. */
     private void refreshCards() {
+        if (mStatus != null) mStatus.setTextColor(ThemePrefs.accentColor());
         ((android.widget.ImageButton) findViewById(R.id.btn_info)).setImageTintList(
                 android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         float d = getResources().getDisplayMetrics().density;
