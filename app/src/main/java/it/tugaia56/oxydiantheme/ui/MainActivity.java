@@ -160,10 +160,8 @@ public class MainActivity extends AppCompatActivity {
         mSubWifi = s[0];
         r2.addView(makeCard(R.string.card_nav, s, () -> openStyles("nav")));
         mSubNav = s[0];
-        r2.addView(makeCard(R.string.card_settings, s,
-                () -> Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()));
+        r2.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
         mSubSettings = s[0];
-        mSubSettings.setText(R.string.coming_soon);
         refreshCards();
     }
 
@@ -183,6 +181,18 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.accent_hint, Toast.LENGTH_LONG).show();
             onApply(SystemColorsDialog.PKG, false);
         });
+    }
+
+    private static String prettyPack(String n) {
+        switch (n) {
+            case "pui_v1": return "PUI v1";
+            case "pui_v2": return "PUI v2";
+            case "pui_v3": return "PUI v3";
+            case "hos": return "HOS";
+            case "oos": return "OOS";
+            case "oos_stock": return "OOS Stock";
+            default: return pretty(n);
+        }
     }
 
     private static String pretty(String n) {
@@ -226,6 +236,8 @@ public class MainActivity extends AppCompatActivity {
                 + " " + (sg.isEmpty() ? "–" : pretty(sg)));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
+        String ic = ThemePrefs.getStyle("ICON1");
+        mSubSettings.setText(ic.isEmpty() ? def : prettyPack(ic));
     }
 
     @Override

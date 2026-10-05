@@ -37,10 +37,12 @@ import it.tugaia56.oxydiantheme.utils.overlay.compiler.ThemeCompiler;
  */
 public class StyleActivity extends AppCompatActivity {
     private static final String SYSTEMUI = "com.android.systemui";
-    private static final String[] SLOTS = {"WIFI1", "SIG1", "NAV1"};
+    private static final String SETTINGS = "com.android.settings";
+    private static final String[] TARGET_PKG = {SYSTEMUI, SYSTEMUI, SYSTEMUI, SETTINGS, "it.tugaia56.oxydian"};
+    private static final String[] SLOTS = {"WIFI1", "SIG1", "NAV1", "ICON1", "ICON2"};
     /** indice "insieme" (Wi-Fi + segnale) nelle sezioni */
     private static final int BOTH = 9;
-    private static final String[] PREFIXES = {"WIFI_", "SIG_", "NAV_"};
+    private static final String[] PREFIXES = {"WIFI_", "SIG_", "NAV_", "ICP_", "ICP_"};
 
     /** Riga: titolo di sezione (slot>=0, style==null e header) oppure stile. */
     private static class Row {
@@ -56,9 +58,9 @@ public class StyleActivity extends AppCompatActivity {
     private final List<Row> mRows = new ArrayList<>();
     private final List<Row> mShown = new ArrayList<>();
     private final boolean[] mOpen = new boolean[10]; // sezioni: Wi-Fi+segnale, Wi-Fi, segnale (indice = slot)
-    private final String[] mChoice = new String[3];
+    private final String[] mChoice = new String[5];
     private boolean mBusy = false;
-    private boolean mNavMode = false;
+    private String mMode = "wifi";
     private Button mApply;
 
     @Override
@@ -66,12 +68,17 @@ public class StyleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_styles);
         mApply = findViewById(R.id.btn_apply);
-        mNavMode = "nav".equals(getIntent().getStringExtra("mode"));
+        String m = getIntent().getStringExtra("mode");
+        if (m != null) mMode = m;
+        Button optBtn = findViewById(R.id.btn_icon_options);
+        optBtn.setVisibility("settings".equals(mMode) ? View.VISIBLE : View.GONE);
+        optBtn.setOnClickListener(v -> showIconOptions());
         android.widget.ImageButton back = findViewById(R.id.btn_back);
         back.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         back.setOnClickListener(v -> finish());
-        ((TextView) findViewById(R.id.title)).setText(mNavMode ? R.string.card_nav : R.string.card_wifi);
-        if (mNavMode) mOpen[2] = true;
+        ((TextView) findViewById(R.id.title)).setText("nav".equals(mMode) ? R.string.card_nav : "settings".equals(mMode) ? R.string.card_settings : R.string.card_wifi);
+        if ("nav".equals(mMode)) mOpen[2] = true;
+        if ("settings".equals(mMode)) mOpen[3] = true;
         RecyclerView list = findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(this));
         for (int i = 0; i < SLOTS.length; i++) mChoice[i] = ThemePrefs.getStyle(SLOTS[i]);
@@ -86,21 +93,27 @@ public class StyleActivity extends AppCompatActivity {
         String[] dirs = new String[0];
         try {
             String[] l = getAssets().list("CompileOnDemand/" + SYSTEMUI);
-            if (l != null) dirs = l;
+            String[] l2 = getAssets().list("CompileOnDemand/" + SETTINGS);
+            List<String> both = new ArrayList<>();
+            if (l != null) both.addAll(Arrays.asList(l));
+            if (l2 != null) both.addAll(Arrays.asList(l2));
+            dirs = both.toArray(new String[0]);
         } catch (Exception ignored) {}
         Arrays.sort(dirs);
         // Sezione "insieme": gli stili presenti sia per Wi-Fi sia per segnale
-        if (!mNavMode) mRows.add(new Row(true, BOTH, null, getString(R.string.section_both)));
-        if (!mNavMode) mRows.add(new Row(false, BOTH, "", getString(R.string.style_none)));
+        if ("wifi".equals(mMode)) mRows.add(new Row(true, BOTH, null, getString(R.string.section_both)));
+        if ("wifi".equals(mMode)) mRows.add(new Row(false, BOTH, "", getString(R.string.style_none)));
         List<String> all = Arrays.asList(dirs);
         for (String d : dirs) {
             if (!d.startsWith(PREFIXES[0])) continue;
             String name = d.substring(PREFIXES[0].length());
-            if (!mNavMode && all.contains(PREFIXES[1] + name)) mRows.add(new Row(false, BOTH, name, pretty(name)));
+            if ("wifi".equals(mMode) && all.contains(PREFIXES[1] + name)) mRows.add(new Row(false, BOTH, name, pretty(name)));
         }
-        int[] titles = {R.string.section_wifi, R.string.section_signal, R.string.section_nav};
+        int[] titles = {R.string.section_wifi, R.string.section_signal, R.string.section_nav, R.string.card_settings};
         for (int s = 0; s < SLOTS.length; s++) {
-            if ((s == 2) != mNavMode) continue;
+            if (s == 4) continue; // ICON2 (icona di Oxydian in Impostazioni) segue ICON1
+            boolean inMode = s <= 1 ? "wifi".equals(mMode) : s == 2 ? "nav".equals(mMode) : "settings".equals(mMode);
+            if (!inMode) continue;
             mRows.add(new Row(true, s, null, getString(titles[s])));
             mRows.add(new Row(false, s, "", getString(R.string.style_none)));
             for (String d : dirs) {
@@ -126,6 +139,15 @@ public class StyleActivity extends AppCompatActivity {
 
     private static String pretty(String n) {
         if (n.equals("oneui")) return "One UI";
+        switch (n) {
+            case "pui_v1": return "PUI v1";
+            case "pui_v2": return "PUI v2";
+            case "pui_v3": return "PUI v3";
+            case "hos": return "HOS";
+            case "oos": return "OOS";
+            case "oos_stock": return "OOS Stock";
+            default: break;
+        }
         String[] parts = n.split("_");
         StringBuilder sb = new StringBuilder();
         for (String p : parts) {
@@ -204,6 +226,9 @@ public class StyleActivity extends AppCompatActivity {
         if (r.slot == 2) {
             for (String part : new String[]{"back", "home", "recent"}) names.add("pv_nav_" + r.style + "_" + part);
         }
+        if (r.slot == 3) {
+            for (String part : new String[]{"wifi", "wallpaper", "battery", "about"}) names.add("pv_set_" + r.style + "_" + part);
+        }
         float d = getResources().getDisplayMetrics().density;
         int size = (int) (22 * d), gap = (int) (10 * d);
         int tint = selected ? ThemePrefs.accentColor() : getColor(R.color.text);
@@ -212,7 +237,22 @@ public class StyleActivity extends AppCompatActivity {
             if (id == 0) continue;
             android.widget.ImageView iv = new android.widget.ImageView(this);
             iv.setImageResource(id);
-            iv.setImageTintList(android.content.res.ColorStateList.valueOf(tint));
+            if (r.slot != 3) {
+                iv.setImageTintList(android.content.res.ColorStateList.valueOf(tint));
+            } else if ("oos".equals(r.style)) {
+                // OOS: icone bianche dentro un cerchio con l'accento
+                iv.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));
+                android.graphics.drawable.GradientDrawable circle = new android.graphics.drawable.GradientDrawable();
+                circle.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+                circle.setColor(0x00000000);
+                circle.setStroke((int) (1.5f * d), ThemePrefs.accentColor());
+                iv.setBackground(circle);
+                int pp = (int) (4 * d);
+                iv.setPadding(pp, pp, pp, pp);
+            } else if (!"oos_stock".equals(r.style)) {
+                // PUI e HOS: tinta con l'accento. OOS Stock: colori originali
+                iv.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+            }
             android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(size, size);
             lp.setMarginEnd(gap);
             box.addView(iv, lp);
@@ -234,12 +274,123 @@ public class StyleActivity extends AppCompatActivity {
         return !a.isEmpty() || !b.isEmpty() || !c.isEmpty();
     }
 
+    // ── Pack icone Impostazioni: risorse dinamiche e opzioni ─────────────────
+
+    private static final int OPT_BG_COLOR = 0, OPT_SOLID = 1, OPT_SHAPE = 2, OPT_ICON_COLOR = 3;
+
+    private String iconOptsKey() {
+        return ThemePrefs.getIconOpt("bgcolor", 0) + "," + ThemePrefs.getIconOpt("solid", 0) + ","
+                + ThemePrefs.getIconOpt("shape", 0) + "," + ThemePrefs.getIconOpt("iconcolor", 0);
+    }
+
+    private static String colorHex(int choice) {
+        switch (choice) {
+            case 0: return String.format("#%08X", ThemePrefs.accentColor());
+            case 1: return "#FFFFFF";
+            default: return "#000000";
+        }
+    }
+
+    /** Stesse risorse (res/values/Obsidian.xml) che costruiva Oxydian per ogni pack. */
+    private String settingsValuesXml(String pack) {
+        int bgColor = ThemePrefs.getIconOpt("bgcolor", 0);
+        boolean solid = ThemePrefs.getIconOpt("solid", 0) == 1;
+        int shape = ThemePrefs.getIconOpt("shape", 0);
+        int iconColor = ThemePrefs.getIconOpt("iconcolor", 0);
+        String head = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n";
+        if ("oos_stock".equals(pack)) {
+            return head + "    <color name=\"bg_color\">#00000000</color>\n"
+                    + "    <color name=\"solid_bg_color\">#00000000</color>\n"
+                    + "    <dimen name=\"top_left\">0dp</dimen>\n    <dimen name=\"top_right\">0dp</dimen>\n"
+                    + "    <dimen name=\"bottom_left\">0dp</dimen>\n    <dimen name=\"bottom_right\">0dp</dimen>\n</resources>";
+        }
+        if (pack.startsWith("pui_")) {
+            return head + "    <color name=\"monet_color\">" + colorHex(iconColor) + "</color>\n</resources>";
+        }
+        StringBuilder sb = new StringBuilder(head);
+        sb.append("    <color name=\"bg_color\">").append(colorHex(bgColor)).append("</color>\n");
+        sb.append("    <color name=\"solid_bg_color\">").append(solid ? colorHex(bgColor) : "#00000000").append("</color>\n");
+        sb.append("    <color name=\"icon_color\">").append(colorHex(iconColor)).append("</color>\n");
+        String[] c;
+        switch (shape) {
+            case 1: c = new String[]{"15dp", "15dp", "15dp", "15dp"}; break;
+            case 2: c = new String[]{"4.0dp", "4.0dp", "4.0dp", "4.0dp"}; break;
+            case 3: c = new String[]{"90.0dp", "90.0dp", "90.0dp", "24.0dp"}; break;
+            case 4: c = new String[]{"2.0dp", "14.0dp", "14.0dp", "2.0dp"}; break;
+            default: c = new String[]{"18dp", "18dp", "18dp", "18dp"}; break;
+        }
+        sb.append("    <dimen name=\"top_left\">").append(c[0]).append("</dimen>\n");
+        sb.append("    <dimen name=\"top_right\">").append(c[1]).append("</dimen>\n");
+        sb.append("    <dimen name=\"bottom_left\">").append(c[2]).append("</dimen>\n");
+        sb.append("    <dimen name=\"bottom_right\">").append(c[3]).append("</dimen>\n");
+        return sb.append("</resources>").toString();
+    }
+
+    private void addGroup(android.widget.LinearLayout box, int titleRes, String optKey, int[] entryRes, int pad) {
+        TextView t = new TextView(this);
+        t.setText(titleRes);
+        t.setTextColor(ThemePrefs.accentColor());
+        t.setTextSize(15);
+        t.setPadding(0, pad / 2, 0, pad / 4);
+        box.addView(t);
+        android.widget.RadioGroup rg = new android.widget.RadioGroup(this);
+        int cur = ThemePrefs.getIconOpt(optKey, 0);
+        for (int i = 0; i < entryRes.length; i++) {
+            android.widget.RadioButton rb = new android.widget.RadioButton(this);
+            rb.setText(entryRes[i]);
+            rb.setId(View.generateViewId());
+            rb.setChecked(i == cur);
+            rb.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+            final int idx = i;
+            rb.setOnClickListener(v -> {
+                ThemePrefs.setIconOpt(optKey, idx);
+                for (int k = 0; k < rg.getChildCount(); k++) {
+                    android.widget.RadioButton o = (android.widget.RadioButton) rg.getChildAt(k);
+                    o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
+                }
+            });
+            rg.addView(rb);
+        }
+        for (int k = 0; k < rg.getChildCount(); k++) {
+            android.widget.RadioButton o = (android.widget.RadioButton) rg.getChildAt(k);
+            o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
+        }
+        box.addView(rg);
+    }
+
+    private void showIconOptions() {
+        String pack = mChoice[3];
+        if (pack.isEmpty() || "oos_stock".equals(pack)) {
+            Toast.makeText(this, pack.isEmpty() ? R.string.icopt_pick_first : R.string.icopt_none, Toast.LENGTH_LONG).show();
+            return;
+        }
+        android.widget.LinearLayout box = new android.widget.LinearLayout(this);
+        box.setOrientation(android.widget.LinearLayout.VERTICAL);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        box.setPadding(pad, pad / 2, pad, 0);
+        int[] colors = {R.string.icopt_accent, R.string.icopt_white, R.string.icopt_black};
+        if (!pack.startsWith("pui_")) {
+            addGroup(box, R.string.icopt_bg_color, "bgcolor", colors, pad);
+            addGroup(box, R.string.icopt_solid, "solid", new int[]{R.string.icopt_no, R.string.icopt_yes}, pad);
+            addGroup(box, R.string.icopt_shape, "shape", new int[]{R.string.icopt_circle, R.string.icopt_squircle,
+                    R.string.icopt_rounded, R.string.icopt_teardrop, R.string.icopt_diamond}, pad);
+        }
+        addGroup(box, R.string.icopt_icon_color, "iconcolor", colors, pad);
+        android.widget.ScrollView sv = new android.widget.ScrollView(this);
+        sv.addView(box);
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.icopt_title)
+                .setView(sv)
+                .setPositiveButton(android.R.string.ok, null));
+    }
+
     private void onApply() {
         if (mBusy) return;
         mBusy = true;
         mApply.setEnabled(false);
         Toast.makeText(this, R.string.working, Toast.LENGTH_SHORT).show();
         final String[] choice = mChoice.clone();
+        choice[4] = choice[3];
         new Thread(() -> {
             int failed = 0;
             boolean removed = false, notActive = false;
@@ -253,6 +404,11 @@ public class StyleActivity extends AppCompatActivity {
             try {
                 ModuleSetup.ensure();
                 for (int i = 0; i < SLOTS.length; i++) {
+                    if (i == 4) {
+                        // l'icona di Oxydian dentro Impostazioni: solo se Oxydian e' installato
+                        try { getPackageManager().getPackageInfo(TARGET_PKG[4], 0); }
+                        catch (Exception notInstalled) { continue; }
+                    }
                     String slot = SLOTS[i], ov = ThemeCompiler.namedPackage(slot);
                     String st = before.get(ov);
                     boolean active = "[x]".equals(st);
@@ -264,12 +420,13 @@ public class StyleActivity extends AppCompatActivity {
                         ThemePrefs.setStyleBuilt(slot, "");
                         continue;
                     }
-                    String sig = choice[i] + ":" + accent;
+                    String sig = choice[i] + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey() : "");
                     if ("[ ]".equals(st)) toEnable.add(ov);
                     if (active && sig.equals(ThemePrefs.getStyleBuilt(slot))) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
-                        if (ThemeCompiler.buildNamedInBatch(SYSTEMUI, PREFIXES[i] + choice[i], slot)) {
+                        if (ThemeCompiler.buildNamedInBatch(TARGET_PKG[i], PREFIXES[i] + choice[i], slot, null,
+                                (i == 3 || i == 4) ? settingsValuesXml(choice[i]) : null)) {
                             failed++;
                         } else {
                             ThemePrefs.setStyleBuilt(slot, sig);

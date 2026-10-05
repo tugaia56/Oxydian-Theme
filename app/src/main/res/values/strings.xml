@@ -65,4 +65,21 @@
     <string name="btn_back">Back</string>
     <string name="info_title">How it works</string>
     <string name="warn_title">Warning</string>
+    <string name="icopt_title">Icon options</string>
+    <string name="icopt_pick_first">Select a pack first.</string>
+    <string name="icopt_none">This pack has no options.</string>
+    <string name="icopt_bg_color">Background color</string>
+    <string name="icopt_solid">Solid background</string>
+    <string name="icopt_shape">Background shape</string>
+    <string name="icopt_icon_color">Icon color</string>
+    <string name="icopt_accent">Accent color</string>
+    <string name="icopt_white">White</string>
+    <string name="icopt_black">Black</string>
+    <string name="icopt_yes">Yes</string>
+    <string name="icopt_no">No (outline only)</string>
+    <string name="icopt_circle">Circle</string>
+    <string name="icopt_squircle">Squircle</string>
+    <string name="icopt_rounded">Rounded square</string>
+    <string name="icopt_teardrop">Teardrop</string>
+    <string name="icopt_diamond">Diamond</string>
 </resources>

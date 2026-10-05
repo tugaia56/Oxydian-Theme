@@ -64,4 +64,21 @@
     <string name="btn_back">Indietro</string>
     <string name="info_title">Come funziona</string>
     <string name="warn_title">Attenzione</string>
+    <string name="icopt_title">Opzioni icone</string>
+    <string name="icopt_pick_first">Scegli prima un pack.</string>
+    <string name="icopt_none">Questo pack non ha opzioni.</string>
+    <string name="icopt_bg_color">Colore sfondo</string>
+    <string name="icopt_solid">Sfondo pieno</string>
+    <string name="icopt_shape">Forma sfondo</string>
+    <string name="icopt_icon_color">Colore icona</string>
+    <string name="icopt_accent">Colore accento</string>
+    <string name="icopt_white">Bianco</string>
+    <string name="icopt_black">Nero</string>
+    <string name="icopt_yes">Sì</string>
+    <string name="icopt_no">No (solo bordo)</string>
+    <string name="icopt_circle">Cerchio</string>
+    <string name="icopt_squircle">Squircle</string>
+    <string name="icopt_rounded">Quadrato arrotondato</string>
+    <string name="icopt_teardrop">Goccia</string>
+    <string name="icopt_diamond">Rombo</string>
 </resources>

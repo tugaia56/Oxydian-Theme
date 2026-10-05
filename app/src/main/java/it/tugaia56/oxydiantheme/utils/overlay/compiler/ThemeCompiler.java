@@ -83,6 +83,12 @@ public final class ThemeCompiler {
      *  stesso nome risorsa, anche con estensione diversa, vengono sostituiti). */
     public static boolean buildNamedInBatch(String targetPackage, String assetDir, String name,
                                             List<String> optionAssetPaths) throws IOException {
+        return buildNamedInBatch(targetPackage, assetDir, name, optionAssetPaths, null);
+    }
+
+    /** @param extraValuesXml se non nullo, e' scritto come res/values/Obsidian.xml (colori/dimensioni scelti dall'utente) */
+    public static boolean buildNamedInBatch(String targetPackage, String assetDir, String name,
+                                            List<String> optionAssetPaths, String extraValuesXml) throws IOException {
         String cacheRoot = ModuleConstants.TEMP_CACHE_DIR + "/" + targetPackage;
         String source = cacheRoot + "/" + name;
 
@@ -105,6 +111,11 @@ public final class ThemeCompiler {
                         + " rm -f \"$d/$n\".*; done",
                         "mkdir -p \"" + source + "/res\" && cp -rf \"" + o + "/.\" \"" + source + "/res/\"").exec();
             }
+        }
+
+        if (extraValuesXml != null) {
+            Shell.cmd("mkdir -p \"" + source + "/res/values\"",
+                    "printf '%s' '" + extraValuesXml + "' > \"" + source + "/res/values/Obsidian.xml\"").exec();
         }
 
         if (OverlayCompiler.createManifest(name, targetPackage, source)) return true;

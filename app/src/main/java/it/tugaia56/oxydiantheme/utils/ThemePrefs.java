@@ -52,4 +52,9 @@ public final class ThemePrefs {
     public static String getOption(String pkg, String group) { return sp().getString("opt_" + pkg + "_" + group, ""); }
 
     public static void setOption(String pkg, String group, String choice) { sp().edit().putString("opt_" + pkg + "_" + group, choice == null ? "" : choice).commit(); }
+
+    /** Opzioni dei pack icone Impostazioni (colore/forma sfondo, colore icona). */
+    public static int getIconOpt(String key, int def) { return sp().getInt("icopt_" + key, def); }
+
+    public static void setIconOpt(String key, int value) { sp().edit().putInt("icopt_" + key, value).commit(); }
 }
