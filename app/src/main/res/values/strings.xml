@@ -140,4 +140,5 @@
     <string name="same_only_one">This style exists only for this icon: only this one changes.</string>
     <string name="only_wifi">Wi-Fi only</string>
     <string name="only_signal">Signal only</string>
+    <string name="state_on_full">On · Hide In/Out</string>
 </resources>

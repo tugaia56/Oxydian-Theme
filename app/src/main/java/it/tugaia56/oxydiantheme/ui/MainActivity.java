@@ -428,8 +428,10 @@ public class MainActivity extends AppCompatActivity {
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
         mSubPinNum.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum"));
         mSubPinBg.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg"));
-        mSubActivity.setText(ThemePrefs.getOption(SYSTEMUI_PKG, "icons").isEmpty()
-                ? getString(R.string.options_default) : getString(R.string.state_on));
+        boolean hideOn = !ThemePrefs.getOption(SYSTEMUI_PKG, "icons").isEmpty();
+        mSubActivity.setText(hideOn ? getString(R.string.state_on_full) : getString(R.string.state_off));
+        mSubActivity.setTextColor(hideOn ? ThemePrefs.accentColor() : getColor(R.color.text_dim));
+        setDot(mSubActivity, hideOn ? ThemePrefs.accentColor() : 0xFF555A66);
         String ic = ThemePrefs.getStyle("ICON1");
         mSubSettings.setText(ic.isEmpty() ? def : prettyPack(ic));
     }
