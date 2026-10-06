@@ -36,7 +36,7 @@
     <string name="style_none">Default (no style)</string>
     <string name="styles_notice">Pick one style for each icon and tap Apply. Applying just one and rebooting once is enough: after that you can switch to any other style whenever you like, instantly and with no reboot.</string>
     <string name="styles_off_note">Style removed. Reboot once to restore the default icon completely.</string>
-    <string name="section_both">Wi-Fi + signal together</string>
+    <string name="section_both">Same icon for Wi-Fi and Signal</string>
     <string name="btn_darkshadow">Dark Shadow</string>
     <string name="title_darkshadow">Dark Shadow theme</string>
     <string name="darkshadow_notice">Dark theme for Settings, System UI, Launcher and the OnePlus apps. Turn on what you want and tap Apply. The first time a reboot is needed; after that you can switch each one on or off at any time.</string>

@@ -124,7 +124,6 @@ public class StyleActivity extends AppCompatActivity {
         Arrays.sort(dirs);
         // Sezione "insieme": gli stili presenti sia per Wi-Fi sia per segnale
         if (isWifiOrSignal()) mRows.add(new Row(true, BOTH, null, getString(R.string.section_both)));
-        if (isWifiOrSignal()) mRows.add(new Row(false, BOTH, "", getString(R.string.style_none)));
         List<String> all = Arrays.asList(dirs);
         for (String d : dirs) {
             if (!d.startsWith(PREFIXES[0])) continue;
