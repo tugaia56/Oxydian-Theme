@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -74,50 +75,66 @@ final class SystemColorsDialog {
 
     private static void section(Context ctx, LinearLayout box, int titleRes, List<Swatch> items,
                                 String[] selection, int idx, int pad) {
-        TextView t = new TextView(ctx);
-        t.setText(titleRes);
-        t.setTextColor(ThemePrefs.accentColor());
-        t.setTextSize(15);
-        t.setPadding(0, pad, 0, pad / 3);
-        box.addView(t);
-
-        TextView name = new TextView(ctx);
-        name.setTextColor(ctx.getColor(R.color.text_dim));
-        name.setTextSize(13);
-
-        GridLayout grid = new GridLayout(ctx);
-        grid.setColumnCount(6);
-        float d = ctx.getResources().getDisplayMetrics().density;
-        int cell = (int) (44 * d), m = (int) (4 * d);
-        // la prima casella e' "predefinito" (nessun overlay per quel colore)
-        List<Swatch> all = new ArrayList<>();
-        all.add(new Swatch("", 0xFF2A2A30));
+        final float d = ctx.getResources().getDisplayMetrics().density;
+        final String key = PKG + "_" + (idx == 0 ? "accent" : "background");
+        // elenco completo: Predefinito, tutti i preset (pallino + nome), Personalizzato
+        final List<Swatch> all = new ArrayList<>();
+        all.add(new Swatch("", idx == 0 ? ThemePrefs.DEFAULT_ACCENT : 0xFF1B2029));
         all.addAll(items);
-        all.add(new Swatch(OptionGroupsDialog.CUSTOM, ThemePrefs.getCustomColor(PKG + "_" + (idx == 0 ? "accent" : "background"))));
+        all.add(new Swatch(OptionGroupsDialog.CUSTOM, ThemePrefs.getCustomColor(key)));
+
+        final List<TextView> labels = new ArrayList<>();
+        final List<View> dots = new ArrayList<>();
+        final List<View> radios = new ArrayList<>();
         Runnable refresh = () -> {
-            for (int i = 0; i < grid.getChildCount(); i++) {
+            int acc = ThemePrefs.accentColor();
+            for (int i = 0; i < all.size(); i++) {
                 Swatch s = all.get(i);
-                grid.getChildAt(i).setBackground(circle(s.color, s.name.equals(selection[idx]), s.name.isEmpty(), ThemePrefs.accentColor()));
+                boolean sel = s.name.equals(selection[idx]);
+                labels.get(i).setTextColor(sel ? acc : ctx.getColor(R.color.text));
+                int fill = s.name.equals(OptionGroupsDialog.CUSTOM) ? ThemePrefs.getCustomColor(key) : s.color;
+                dots.get(i).setBackground(circle(fill, sel, s.name.isEmpty(), acc));
+                ((android.widget.RadioButton) radios.get(i)).setChecked(sel);
             }
-            name.setText(selection[idx].isEmpty() ? ctx.getString(R.string.options_default)
-                    : selection[idx].equals(OptionGroupsDialog.CUSTOM)
-                    ? ctx.getString(R.string.opt_custom) + String.format(" #%06X",
-                            ThemePrefs.getCustomColor(PKG + "_" + (idx == 0 ? "accent" : "background")) & 0xFFFFFF)
-                    : selection[idx].replace('_', ' '));
         };
-        for (Swatch s : all) {
-            View v = new View(ctx);
-            GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
-            lp.width = cell;
-            lp.height = cell;
-            lp.setMargins(m, m, m, m);
-            v.setLayoutParams(lp);
-            v.setOnClickListener(x -> {
+        for (int i = 0; i < all.size(); i++) {
+            final Swatch s = all.get(i);
+            LinearLayout row = new LinearLayout(ctx);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            row.setPadding(0, (int) (8 * d), 0, (int) (8 * d));
+            row.setClickable(true);
+
+            View dot = new View(ctx);
+            LinearLayout.LayoutParams dlp = new LinearLayout.LayoutParams((int) (26 * d), (int) (26 * d));
+            dlp.setMarginEnd((int) (14 * d));
+            row.addView(dot, dlp);
+
+            TextView label = new TextView(ctx);
+            label.setTextSize(16);
+            String text;
+            if (s.name.isEmpty()) text = ctx.getString(R.string.options_default);
+            else if (s.name.equals(OptionGroupsDialog.CUSTOM)) {
+                text = ctx.getString(R.string.opt_custom) + String.format(" #%06X", ThemePrefs.getCustomColor(key) & 0xFFFFFF);
+            } else text = s.name.replace('_', ' ');
+            label.setText(text);
+            row.addView(label, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+            android.widget.RadioButton rb = new android.widget.RadioButton(ctx);
+            rb.setClickable(false);
+            rb.setFocusable(false);
+            rb.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+            row.addView(rb);
+
+            labels.add(label);
+            dots.add(dot);
+            radios.add(rb);
+            row.setOnClickListener(x -> {
                 if (s.name.equals(OptionGroupsDialog.CUSTOM)) {
-                    String key = PKG + "_" + (idx == 0 ? "accent" : "background");
                     ColorPickDialog.show(ctx, ThemePrefs.getCustomColor(key), R.string.opt_custom, color -> {
                         ThemePrefs.setCustomColor(key, color);
                         selection[idx] = OptionGroupsDialog.CUSTOM;
+                        label.setText(ctx.getString(R.string.opt_custom) + String.format(" #%06X", color & 0xFFFFFF));
                         refresh.run();
                     });
                     return;
@@ -125,14 +142,11 @@ final class SystemColorsDialog {
                 selection[idx] = s.name;
                 refresh.run();
             });
-            grid.addView(v);
+            box.addView(row);
         }
-        box.addView(grid);
-        box.addView(name);
         refresh.run();
     }
 
-    /** Ripubblica le scelte attuali come proprieta' di sistema (all'avvio dell'app e dopo ogni cambio). */
     /** Accento scelto (null = predefinito). */
     static Integer currentAccent(Context ctx) {
         String a = ThemePrefs.getOption(PKG, "accent");
