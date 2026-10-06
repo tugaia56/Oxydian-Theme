@@ -2,7 +2,7 @@ Aggiunto:
 - Prima versione di Oxydian Theme: app separata per i temi overlay di Oxydian (senza Xposed)
 - Temi per le app Google e per le app installate, con interruttori e stato (attivo, spento, da riavviare)
 - Tema Dark Shadow: Impostazioni, SystemUI, Launcher e app OnePlus/OPPO
-- Colori di sistema: accento e sfondo (preset di OOS Theme o colore a scelta), barra di progresso circolare
+- Colori di sistema: accento e sfondo (preset Dark Shadow Theme o colore a scelta), barra di progresso circolare
 - Tastierino PIN (colori preset o personalizzati), icone attività di rete
 - Icone Wi-Fi e Segnale (stile, dimensione, colore), icone barra di navigazione, icone Impostazioni con opzioni
 - Opzioni per alcune app (per esempio sfondo della sveglia)
