@@ -56,7 +56,7 @@
     <string name="btn_remove_off">Rimuovi spenti</string>
     <string name="section_nav">Icone barra di navigazione</string>
     <string name="card_colors">Colori di sistema</string>
-    <string name="card_wifi">Icone Wi-Fi e Segnale</string>
+    <string name="card_wifi">Icone Wi-Fi</string>
     <string name="card_nav">Icone barra di navigazione</string>
     <string name="card_settings">Icone Impostazioni</string>
     <string name="coming_soon">Prossimamente</string>
@@ -83,7 +83,7 @@
     <string name="icopt_diamond">Rombo</string>
     <string name="card_progress">Barra di progresso</string>
     <string name="card_pin">Tastierino PIN</string>
-    <string name="card_activity">Icone attività di rete</string>
+    <string name="card_activity">Nascondi In/Out</string>
     <string name="icon_size_title">Dimensione icone</string>
     <string name="icon_size_hint">Tocca Applica per usare la nuova dimensione.</string>
     <string name="card_sigcolor">Colore icone Wi-Fi e Segnale</string>
@@ -131,4 +131,9 @@
     <string name="credits_substratum_summary">Il formato dei temi overlay da cui nasce tutto</string>
     <string name="credits_claude_summary">Assistente IA (Anthropic) — senza non sarebbe mai esistita questa app</string>
     <string name="credits_oxydian_summary">L\'app compagna con le mod che richiedono Xposed</string>
+    <string name="card_pin_num">Tastierino PIN: numeri e pallini</string>
+    <string name="card_pin_bg">Tastierino PIN: sfondo tasti</string>
+    <string name="card_signal">Icone Segnale</string>
+    <string name="state_on">Acceso</string>
+    <string name="state_off">Spento</string>
 </resources>

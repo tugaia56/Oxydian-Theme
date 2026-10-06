@@ -61,6 +61,8 @@ public class StyleActivity extends AppCompatActivity {
     private final String[] mChoice = new String[5];
     private boolean mBusy = false;
     private String mMode = "wifi";
+
+    private boolean isWifiOrSignal() { return "wifi".equals(mMode) || "signal".equals(mMode); }
     private Button mApply;
 
     @Override
@@ -74,12 +76,12 @@ public class StyleActivity extends AppCompatActivity {
         optBtn.setVisibility("settings".equals(mMode) ? View.VISIBLE : View.GONE);
         optBtn.setOnClickListener(v -> showIconOptions());
         Button sizeBtn = findViewById(R.id.btn_icon_size);
-        sizeBtn.setVisibility("wifi".equals(mMode) ? View.VISIBLE : View.GONE);
+        sizeBtn.setVisibility("wifi".equals(mMode) || "signal".equals(mMode) ? View.VISIBLE : View.GONE);
         sizeBtn.setOnClickListener(v -> showIconSize());
         Button wifiColorBtn = findViewById(R.id.btn_color_wifi);
         Button mobileColorBtn = findViewById(R.id.btn_color_mobile);
         wifiColorBtn.setVisibility("wifi".equals(mMode) ? View.VISIBLE : View.GONE);
-        mobileColorBtn.setVisibility("wifi".equals(mMode) ? View.VISIBLE : View.GONE);
+        mobileColorBtn.setVisibility("signal".equals(mMode) ? View.VISIBLE : View.GONE);
         wifiColorBtn.setText(getString(R.string.color_wifi_title) + "  ·  " + IconColorDialog.summary(this, "wifi"));
         mobileColorBtn.setText(getString(R.string.color_mobile_title) + "  ·  " + IconColorDialog.summary(this, "mobile"));
         wifiColorBtn.setOnClickListener(v -> IconColorDialog.show(this, "wifi", R.string.color_wifi_title, () -> {
@@ -93,7 +95,10 @@ public class StyleActivity extends AppCompatActivity {
         android.widget.ImageButton back = findViewById(R.id.btn_back);
         back.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         back.setOnClickListener(v -> finish());
-        ((TextView) findViewById(R.id.title)).setText("nav".equals(mMode) ? R.string.card_nav : "settings".equals(mMode) ? R.string.card_settings : R.string.card_wifi);
+        ((TextView) findViewById(R.id.title)).setText("nav".equals(mMode) ? R.string.card_nav : "settings".equals(mMode) ? R.string.card_settings
+                : "signal".equals(mMode) ? R.string.card_signal : R.string.card_wifi);
+        if ("wifi".equals(mMode)) { mOpen[0] = true; mOpen[BOTH] = true; }
+        if ("signal".equals(mMode)) { mOpen[1] = true; mOpen[BOTH] = true; }
         if ("nav".equals(mMode)) mOpen[2] = true;
         if ("settings".equals(mMode)) mOpen[3] = true;
         RecyclerView list = findViewById(R.id.list);
@@ -118,18 +123,18 @@ public class StyleActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
         Arrays.sort(dirs);
         // Sezione "insieme": gli stili presenti sia per Wi-Fi sia per segnale
-        if ("wifi".equals(mMode)) mRows.add(new Row(true, BOTH, null, getString(R.string.section_both)));
-        if ("wifi".equals(mMode)) mRows.add(new Row(false, BOTH, "", getString(R.string.style_none)));
+        if (isWifiOrSignal()) mRows.add(new Row(true, BOTH, null, getString(R.string.section_both)));
+        if (isWifiOrSignal()) mRows.add(new Row(false, BOTH, "", getString(R.string.style_none)));
         List<String> all = Arrays.asList(dirs);
         for (String d : dirs) {
             if (!d.startsWith(PREFIXES[0])) continue;
             String name = d.substring(PREFIXES[0].length());
-            if ("wifi".equals(mMode) && all.contains(PREFIXES[1] + name)) mRows.add(new Row(false, BOTH, name, pretty(name)));
+            if (isWifiOrSignal() && all.contains(PREFIXES[1] + name)) mRows.add(new Row(false, BOTH, name, pretty(name)));
         }
         int[] titles = {R.string.section_wifi, R.string.section_signal, R.string.section_nav, R.string.card_settings};
         for (int s = 0; s < SLOTS.length; s++) {
             if (s == 4) continue; // ICON2 (icona di Oxydian in Impostazioni) segue ICON1
-            boolean inMode = s <= 1 ? "wifi".equals(mMode) : s == 2 ? "nav".equals(mMode) : "settings".equals(mMode);
+            boolean inMode = s == 0 ? "wifi".equals(mMode) : s == 1 ? "signal".equals(mMode) : s == 2 ? "nav".equals(mMode) : "settings".equals(mMode);
             if (!inMode) continue;
             mRows.add(new Row(true, s, null, getString(titles[s])));
             mRows.add(new Row(false, s, "", getString(R.string.style_none)));

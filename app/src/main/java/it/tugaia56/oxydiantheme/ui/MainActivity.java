@@ -162,7 +162,8 @@ public class MainActivity extends AppCompatActivity {
     // ── Schede dell'intestazione ─────────────────────────────────────────────
 
     private final List<View> mCards = new ArrayList<>();
-    private TextView mSubAccent, mSubBg, mSubWifi, mSubNav, mSubSettings;
+    private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
+    private TextView mSubPinNum, mSubPinBg;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
         float d = getResources().getDisplayMetrics().density;
@@ -194,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         return card;
     }
 
-    private TextView mSubProgress, mSubPin, mSubActivity;
+    private TextView mSubProgress, mSubActivity;
     private static final String SYSTEMUI_PKG = "com.android.systemui";
 
     private void setupCards() {
@@ -208,19 +209,24 @@ public class MainActivity extends AppCompatActivity {
         mSubAccent = s[0];
         r1.addView(makeCard(R.string.card_background, s, () -> openColors(1)));
         mSubBg = s[0];
+        // Pagina Mods
+        android.widget.LinearLayout r5 = findViewById(R.id.cards_row5);
         r2.addView(makeCard(R.string.card_progress, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"progress"}, R.string.card_progress)));
         mSubProgress = s[0];
-        r2.addView(makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinnum", "pinbg"}, R.string.card_pin)));
-        mSubPin = s[0];
-        // Pagina Icone
-        r3.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
-        mSubWifi = s[0];
-        r3.addView(makeCard(R.string.card_nav, s, () -> openStyles("nav")));
-        mSubNav = s[0];
-        r4.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
-        mSubSettings = s[0];
-        r4.addView(makeCard(R.string.card_activity, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"icons"}, R.string.card_activity)));
+        r2.addView(makeCard(R.string.card_activity, s, this::toggleHideActivity));
         mSubActivity = s[0];
+        r3.addView(makeCard(R.string.card_pin_num, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinnum"}, R.string.card_pin_num)));
+        mSubPinNum = s[0];
+        r3.addView(makeCard(R.string.card_pin_bg, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinbg"}, R.string.card_pin_bg)));
+        mSubPinBg = s[0];
+        r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
+        mSubWifi = s[0];
+        r4.addView(makeCard(R.string.card_signal, s, () -> openStyles("signal")));
+        mSubSignal = s[0];
+        r5.addView(makeCard(R.string.card_nav, s, () -> openStyles("nav")));
+        mSubNav = s[0];
+        r5.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
+        mSubSettings = s[0];
         refreshCards();
     }
 
@@ -301,6 +307,16 @@ public class MainActivity extends AppCompatActivity {
         ver.setPadding(0, (int) (24 * getResources().getDisplayMetrics().density), 0, 0);
         box.addView(ver);
         refreshCards();
+    }
+
+    /** Nasconde / mostra le frecce di entrata e uscita dell'attivita' di rete: un tocco e si applica. */
+    private void toggleHideActivity() {
+        boolean on = ThemePrefs.getOption(SYSTEMUI_PKG, "icons").isEmpty();
+        ThemePrefs.setOption(SYSTEMUI_PKG, "icons", on ? "Nascondi_entrata_uscita" : "");
+        syncEnabled(SYSTEMUI_PKG);
+        refreshCards();
+        mList.getAdapter().notifyDataSetChanged();
+        onApply(SYSTEMUI_PKG, false);
     }
 
     /** Il tema di un bersaglio (colori di sistema / SystemUI) si accende da solo se si sceglie qualcosa. */
@@ -405,15 +421,15 @@ public class MainActivity extends AppCompatActivity {
         setDot(mSubAccent, ca != null ? ca : ThemePrefs.DEFAULT_ACCENT);
         setDot(mSubBg, cb != null ? cb : 0xFF1B2029);
         String w = ThemePrefs.getStyle("WIFI1"), sg = ThemePrefs.getStyle("SIG1");
-        if (w.isEmpty() && sg.isEmpty()) mSubWifi.setText(def);
-        else if (w.equals(sg)) mSubWifi.setText(pretty(w));
-        else mSubWifi.setText("Wi-Fi " + (w.isEmpty() ? "–" : pretty(w)) + " · " + getString(R.string.sys_signal)
-                + " " + (sg.isEmpty() ? "–" : pretty(sg)));
+        mSubWifi.setText(w.isEmpty() ? def : pretty(w));
+        mSubSignal.setText(sg.isEmpty() ? def : pretty(sg));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
-        mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum", "pinbg"));
-        mSubActivity.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "icons"));
+        mSubPinNum.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum"));
+        mSubPinBg.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg"));
+        mSubActivity.setText(ThemePrefs.getOption(SYSTEMUI_PKG, "icons").isEmpty()
+                ? getString(R.string.state_off) : getString(R.string.state_on));
         String ic = ThemePrefs.getStyle("ICON1");
         mSubSettings.setText(ic.isEmpty() ? def : prettyPack(ic));
     }
