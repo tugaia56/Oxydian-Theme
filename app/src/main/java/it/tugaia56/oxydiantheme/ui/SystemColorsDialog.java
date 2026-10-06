@@ -81,6 +81,7 @@ final class SystemColorsDialog {
         final List<Swatch> all = new ArrayList<>();
         all.add(new Swatch(OptionGroupsDialog.CUSTOM, ThemePrefs.getCustomColor(key)));
         all.addAll(items);
+        all.add(new Swatch("", idx == 0 ? ThemePrefs.DEFAULT_ACCENT : 0xFF1B2029)); // Predefinito, in fondo
 
         final List<TextView> labels = new ArrayList<>();
         final List<View> dots = new ArrayList<>();
