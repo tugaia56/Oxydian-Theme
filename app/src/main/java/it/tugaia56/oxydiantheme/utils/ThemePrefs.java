@@ -2,6 +2,7 @@ package it.tugaia56.oxydiantheme.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import org.json.JSONObject;
 
 import it.tugaia56.oxydiantheme.ThemeApp;
 
@@ -72,4 +73,60 @@ public final class ThemePrefs {
     public static int getCustomColor(String key) { return sp().getInt("custom_" + key, 0xFFFFFFFF); }
 
     public static void setCustomColor(String key, int color) { sp().edit().putInt("custom_" + key, color).commit(); }
+
+    // ── Backup e ripristino ──────────────────────────────────────────────────
+
+    /** Tutte le scelte (overlay accesi, colori, opzioni) in un testo JSON. */
+    public static String exportJson() {
+        try {
+            JSONObject all = new JSONObject();
+            for (java.util.Map.Entry<String, ?> e : sp().getAll().entrySet()) {
+                Object v = e.getValue();
+                JSONObject o = new JSONObject();
+                if (v instanceof Boolean) o.put("t", "b");
+                else if (v instanceof Integer) o.put("t", "i");
+                else if (v instanceof Long) o.put("t", "l");
+                else if (v instanceof Float) o.put("t", "f");
+                else o.put("t", "s");
+                o.put("v", v);
+                all.put(e.getKey(), o);
+            }
+            JSONObject root = new JSONObject();
+            root.put("app", "oxydian-theme");
+            root.put("version", 1);
+            root.put("prefs", all);
+            return root.toString(2);
+        } catch (Exception ex) {
+            return "";
+        }
+    }
+
+    /** @return true se il file era un backup valido e le scelte sono state ripristinate */
+    public static boolean importJson(String text) {
+        try {
+            JSONObject root = new JSONObject(text);
+            if (!"oxydian-theme".equals(root.optString("app"))) return false;
+            JSONObject all = root.getJSONObject("prefs");
+            SharedPreferences.Editor ed = sp().edit();
+            ed.clear();
+            java.util.Iterator<String> it = all.keys();
+            while (it.hasNext()) {
+                String k = it.next();
+                // le firme delle ultime build non valgono su un altro telefono/stato: si rifanno
+                if (k.startsWith("ds_built_") || k.startsWith("app_built_") || k.startsWith("style_built_")) continue;
+                JSONObject o = all.getJSONObject(k);
+                switch (o.getString("t")) {
+                    case "b": ed.putBoolean(k, o.getBoolean("v")); break;
+                    case "i": ed.putInt(k, o.getInt("v")); break;
+                    case "l": ed.putLong(k, o.getLong("v")); break;
+                    case "f": ed.putFloat(k, (float) o.getDouble("v")); break;
+                    default: ed.putString(k, o.getString("v")); break;
+                }
+            }
+            ed.commit();
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
 }

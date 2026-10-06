@@ -89,6 +89,42 @@ public class MainActivity extends AppCompatActivity {
     private static final int ST_NONE = 0, ST_ACTIVE = 1, ST_DISABLED = 2, ST_REBOOT = 3, ST_INVALID = 4;
     private final Map<String, Integer> mState = new HashMap<>();
 
+    private final androidx.activity.result.ActivityResultLauncher<String> mBackupSave =
+            registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json"), uri -> {
+                if (uri == null) return;
+                try (java.io.OutputStream out = getContentResolver().openOutputStream(uri)) {
+                    out.write(ThemePrefs.exportJson().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                    Toast.makeText(this, R.string.backup_saved, Toast.LENGTH_LONG).show();
+                } catch (Throwable t) {
+                    Toast.makeText(this, R.string.backup_error, Toast.LENGTH_LONG).show();
+                }
+            });
+
+    private final androidx.activity.result.ActivityResultLauncher<String[]> mBackupLoad =
+            registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.OpenDocument(), uri -> {
+                if (uri == null) return;
+                try (java.io.InputStream in = getContentResolver().openInputStream(uri)) {
+                    String text = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                    if (ThemePrefs.importJson(text)) {
+                        Toast.makeText(this, R.string.backup_restored, Toast.LENGTH_LONG).show();
+                        recreate();
+                    } else {
+                        Toast.makeText(this, R.string.backup_error, Toast.LENGTH_LONG).show();
+                    }
+                } catch (Throwable t) {
+                    Toast.makeText(this, R.string.backup_error, Toast.LENGTH_LONG).show();
+                }
+            });
+
+    private void backupDialog() {
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.card_backup)
+                .setMessage(R.string.backup_message)
+                .setPositiveButton(R.string.backup_save, (d, w) -> mBackupSave.launch("OxydianTheme-backup.json"))
+                .setNeutralButton(R.string.backup_restore, (d, w) -> mBackupLoad.launch(new String[]{"application/json", "text/plain", "*/*"}))
+                .setNegativeButton(R.string.legend_close, null));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -242,6 +278,20 @@ public class MainActivity extends AppCompatActivity {
         }));
         sub[0].setText(R.string.card_restart_sub);
         box.addView(row);
+        android.widget.LinearLayout row2 = new android.widget.LinearLayout(this);
+        row2.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        row2.addView(makeCard(R.string.card_update, sub, () -> SettingsPage.checkUpdates(this)));
+        sub[0].setText(R.string.card_update_sub);
+        row2.addView(makeCard(R.string.card_backup, sub, this::backupDialog));
+        sub[0].setText(R.string.card_backup_sub);
+        box.addView(row2);
+        android.widget.LinearLayout row3 = new android.widget.LinearLayout(this);
+        row3.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        row3.addView(makeCard(R.string.card_about, sub, () -> SettingsPage.about(this)));
+        sub[0].setText(R.string.card_about_sub);
+        row3.addView(makeCard(R.string.card_credits, sub, () -> SettingsPage.credits(this)));
+        sub[0].setText(R.string.card_credits_sub);
+        box.addView(row3);
         TextView ver = new TextView(this);
         String v = "";
         try { v = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; } catch (Exception ignored) {}
