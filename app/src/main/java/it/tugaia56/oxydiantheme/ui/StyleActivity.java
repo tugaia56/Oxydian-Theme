@@ -129,6 +129,8 @@ public class StyleActivity extends AppCompatActivity {
         list.setLayoutManager(new LinearLayoutManager(this));
         for (int i = 0; i < SLOTS.length; i++) mChoice[i] = ThemePrefs.getStyle(SLOTS[i]);
         buildRows();
+        // scelte salvate per uno stile che non esiste per quell'icona (versioni precedenti): tornano a predefinito
+        for (int k = 0; k <= 1; k++) if (!styleExists(k, mChoice[k])) mChoice[k] = "";
         refreshShown();
         list.setAdapter(new Adapter());
         mApply.setOnClickListener(v -> onApply());
@@ -479,7 +481,7 @@ public class StyleActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.working, Toast.LENGTH_SHORT).show();
         final String[] choice = mChoice.clone();
         // uno stile inesistente per quell'icona (non dovrebbe succedere) si ignora: resta quello di prima
-        for (int k = 0; k <= 1; k++) if (!styleExists(k, choice[k])) choice[k] = ThemePrefs.getStyle(SLOTS[k]);
+        for (int k = 0; k <= 1; k++) if (!styleExists(k, choice[k])) choice[k] = "";
         choice[4] = choice[3];
         new Thread(() -> {
             int failed = 0;
