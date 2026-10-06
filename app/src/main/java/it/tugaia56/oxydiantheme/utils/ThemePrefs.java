@@ -129,4 +129,9 @@ public final class ThemePrefs {
             return false;
         }
     }
+
+    /** Wi-Fi e Segnale usano sempre lo stesso stile (interruttore nella pagina delle icone). */
+    public static boolean isSameIcon() { return sp().getBoolean("same_icon", false); }
+
+    public static void setSameIcon(boolean on) { sp().edit().putBoolean("same_icon", on).commit(); }
 }

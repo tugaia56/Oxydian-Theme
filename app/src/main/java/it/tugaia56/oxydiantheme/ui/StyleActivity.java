@@ -75,6 +75,22 @@ public class StyleActivity extends AppCompatActivity {
         Button optBtn = findViewById(R.id.btn_icon_options);
         optBtn.setVisibility("settings".equals(mMode) ? View.VISIBLE : View.GONE);
         optBtn.setOnClickListener(v -> showIconOptions());
+        View sameRow = findViewById(R.id.row_same);
+        com.google.android.material.materialswitch.MaterialSwitch sameSw = findViewById(R.id.sw_same);
+        sameRow.setVisibility(isWifiOrSignal() ? View.VISIBLE : View.GONE);
+        sameSw.setChecked(ThemePrefs.isSameIcon());
+        sameSw.setOnCheckedChangeListener((b, on) -> {
+            ThemePrefs.setSameIcon(on);
+            if (on) {
+                // si parte dall'icona della pagina in cui ci si trova
+                int src = "signal".equals(mMode) ? 1 : 0;
+                mChoice[0] = mChoice[src];
+                mChoice[1] = mChoice[src];
+                refreshShown();
+                RecyclerView rv = findViewById(R.id.list);
+                if (rv.getAdapter() != null) rv.getAdapter().notifyDataSetChanged();
+            }
+        });
         Button sizeBtn = findViewById(R.id.btn_icon_size);
         sizeBtn.setVisibility("wifi".equals(mMode) || "signal".equals(mMode) ? View.VISIBLE : View.GONE);
         sizeBtn.setOnClickListener(v -> showIconSize());
@@ -134,15 +150,6 @@ public class StyleActivity extends AppCompatActivity {
                 String name = d.substring(PREFIXES[s].length());
                 mRows.add(new Row(false, s, name, pretty(name)));
             }
-        }
-
-        // Sezione "insieme": gli stili presenti sia per Wi-Fi sia per segnale
-        if (isWifiOrSignal()) mRows.add(new Row(true, BOTH, null, getString(R.string.section_both)));
-        List<String> all = Arrays.asList(dirs);
-        for (String d : dirs) {
-            if (!d.startsWith(PREFIXES[0])) continue;
-            String name = d.substring(PREFIXES[0].length());
-            if (isWifiOrSignal() && all.contains(PREFIXES[1] + name)) mRows.add(new Row(false, BOTH, name, pretty(name)));
         }
     }
 
@@ -223,7 +230,7 @@ public class StyleActivity extends AppCompatActivity {
             rb.setChecked(sel);
             h.itemView.setOnClickListener(v -> {
                 if (mBusy) return;
-                if (r.slot == BOTH) { mChoice[0] = r.style; mChoice[1] = r.style; }
+                if (r.slot == BOTH || (ThemePrefs.isSameIcon() && (r.slot == 0 || r.slot == 1))) { mChoice[0] = r.style; mChoice[1] = r.style; }
                 else mChoice[r.slot] = r.style;
                 refreshShown();
                 notifyDataSetChanged();
