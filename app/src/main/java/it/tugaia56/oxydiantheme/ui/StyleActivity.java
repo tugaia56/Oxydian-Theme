@@ -159,7 +159,11 @@ public class StyleActivity extends AppCompatActivity {
             for (String d : dirs) {
                 if (!d.startsWith(PREFIXES[s])) continue;
                 String name = d.substring(PREFIXES[s].length());
-                mRows.add(new Row(false, s, name, pretty(name)));
+                String label = pretty(name);
+                // stile che esiste solo per questa icona (non per l'altra)
+                if (s <= 1 && !mAllDirs.contains(PREFIXES[1 - s] + name))
+                    label += "  ·  " + getString(s == 0 ? R.string.only_wifi : R.string.only_signal);
+                mRows.add(new Row(false, s, name, label));
             }
         }
     }
