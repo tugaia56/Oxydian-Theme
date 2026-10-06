@@ -84,7 +84,7 @@
     <string name="icopt_diamond">Diamond</string>
     <string name="card_progress">Progress bar</string>
     <string name="card_pin">PIN keypad</string>
-    <string name="card_activity">Hide In/Out</string>
+    <string name="card_activity">Network activity icons</string>
     <string name="icon_size_title">Icon size</string>
     <string name="icon_size_hint">Tap Apply to use the new size.</string>
     <string name="card_sigcolor">Wi-Fi and signal icon color</string>
@@ -135,6 +135,6 @@
     <string name="card_pin_num">PIN keypad: numbers and dots</string>
     <string name="card_pin_bg">PIN keypad: key background</string>
     <string name="card_signal">Signal icons</string>
-    <string name="state_on">On</string>
+    <string name="state_on">Hide In/Out</string>
     <string name="state_off">Off</string>
 </resources>

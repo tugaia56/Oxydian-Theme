@@ -83,7 +83,7 @@
     <string name="icopt_diamond">Rombo</string>
     <string name="card_progress">Barra di progresso</string>
     <string name="card_pin">Tastierino PIN</string>
-    <string name="card_activity">Nascondi In/Out</string>
+    <string name="card_activity">Icone attività di rete</string>
     <string name="icon_size_title">Dimensione icone</string>
     <string name="icon_size_hint">Tocca Applica per usare la nuova dimensione.</string>
     <string name="card_sigcolor">Colore icone Wi-Fi e Segnale</string>
@@ -134,6 +134,6 @@
     <string name="card_pin_num">Tastierino PIN: numeri e pallini</string>
     <string name="card_pin_bg">Tastierino PIN: sfondo tasti</string>
     <string name="card_signal">Icone Segnale</string>
-    <string name="state_on">Acceso</string>
+    <string name="state_on">Nascondi In/Out</string>
     <string name="state_off">Spento</string>
 </resources>

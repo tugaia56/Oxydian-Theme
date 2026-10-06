@@ -429,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
         mSubPinNum.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum"));
         mSubPinBg.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg"));
         mSubActivity.setText(ThemePrefs.getOption(SYSTEMUI_PKG, "icons").isEmpty()
-                ? getString(R.string.state_off) : getString(R.string.state_on));
+                ? getString(R.string.options_default) : getString(R.string.state_on));
         String ic = ThemePrefs.getStyle("ICON1");
         mSubSettings.setText(ic.isEmpty() ? def : prettyPack(ic));
     }
