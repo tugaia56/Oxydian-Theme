@@ -97,8 +97,8 @@ public class StyleActivity extends AppCompatActivity {
         back.setOnClickListener(v -> finish());
         ((TextView) findViewById(R.id.title)).setText("nav".equals(mMode) ? R.string.card_nav : "settings".equals(mMode) ? R.string.card_settings
                 : "signal".equals(mMode) ? R.string.card_signal : R.string.card_wifi);
-        if ("wifi".equals(mMode)) { mOpen[0] = true; mOpen[BOTH] = true; }
-        if ("signal".equals(mMode)) { mOpen[1] = true; mOpen[BOTH] = true; }
+        if ("wifi".equals(mMode)) mOpen[0] = true;
+        if ("signal".equals(mMode)) mOpen[1] = true;
         if ("nav".equals(mMode)) mOpen[2] = true;
         if ("settings".equals(mMode)) mOpen[3] = true;
         RecyclerView list = findViewById(R.id.list);
@@ -122,14 +122,6 @@ public class StyleActivity extends AppCompatActivity {
             dirs = both.toArray(new String[0]);
         } catch (Exception ignored) {}
         Arrays.sort(dirs);
-        // Sezione "insieme": gli stili presenti sia per Wi-Fi sia per segnale
-        if (isWifiOrSignal()) mRows.add(new Row(true, BOTH, null, getString(R.string.section_both)));
-        List<String> all = Arrays.asList(dirs);
-        for (String d : dirs) {
-            if (!d.startsWith(PREFIXES[0])) continue;
-            String name = d.substring(PREFIXES[0].length());
-            if (isWifiOrSignal() && all.contains(PREFIXES[1] + name)) mRows.add(new Row(false, BOTH, name, pretty(name)));
-        }
         int[] titles = {R.string.section_wifi, R.string.section_signal, R.string.section_nav, R.string.card_settings};
         for (int s = 0; s < SLOTS.length; s++) {
             if (s == 4) continue; // ICON2 (icona di Oxydian in Impostazioni) segue ICON1
@@ -142,6 +134,15 @@ public class StyleActivity extends AppCompatActivity {
                 String name = d.substring(PREFIXES[s].length());
                 mRows.add(new Row(false, s, name, pretty(name)));
             }
+        }
+
+        // Sezione "insieme": gli stili presenti sia per Wi-Fi sia per segnale
+        if (isWifiOrSignal()) mRows.add(new Row(true, BOTH, null, getString(R.string.section_both)));
+        List<String> all = Arrays.asList(dirs);
+        for (String d : dirs) {
+            if (!d.startsWith(PREFIXES[0])) continue;
+            String name = d.substring(PREFIXES[0].length());
+            if (isWifiOrSignal() && all.contains(PREFIXES[1] + name)) mRows.add(new Row(false, BOTH, name, pretty(name)));
         }
     }
 
