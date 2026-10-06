@@ -143,4 +143,5 @@
     <string name="state_on_full">On · Hide In/Out</string>
     <string name="card_ripple">Touch opacity</string>
     <string name="ripple_hint">The colored wave that appears when you press a button or a list item. The higher the opacity, the stronger it looks.</string>
+    <string name="card_default_tab">Start page</string>
 </resources>

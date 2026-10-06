@@ -142,4 +142,5 @@
     <string name="state_on_full">Attivo · Nascondi In/Out</string>
     <string name="card_ripple">Opacità tocco</string>
     <string name="ripple_hint">L\'onda colorata che compare quando premi un pulsante o una voce della lista. Più alta è l\'opacità, più si vede.</string>
+    <string name="card_default_tab">Pagina iniziale</string>
 </resources>

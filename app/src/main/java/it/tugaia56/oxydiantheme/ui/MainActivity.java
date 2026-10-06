@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
             new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
         });
         setupCards();
+        if (savedInstanceState == null) mTab = TAB_IDS[Math.max(0, Math.min(3, ThemePrefs.getDefaultTab()))];
         setupBottomNav();
         buildInfoPage();
         SystemColorsDialog.republish(this);
@@ -163,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private TextView mSubPinNum, mSubPinBg, mSubRipple;
+    private TextView mSubPinNum, mSubPinBg, mSubRipple, mSubDefaultTab;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
         float d = getResources().getDisplayMetrics().density;
@@ -245,6 +246,21 @@ public class MainActivity extends AppCompatActivity {
 
     private int mTab = R.id.nav_themes;
 
+    private static final int[] TAB_IDS = {R.id.nav_themes, R.id.nav_colors, R.id.nav_icons, R.id.nav_info};
+
+    private void defaultTabDialog() {
+        String[] names = {getString(R.string.tab_themes), getString(R.string.tab_colors), getString(R.string.tab_icons), getString(R.string.tab_info)};
+        final int[] sel = {ThemePrefs.getDefaultTab()};
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.card_default_tab)
+                .setSingleChoiceItems(names, sel[0], (d, w) -> sel[0] = w)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, (d, w) -> {
+                    ThemePrefs.setDefaultTab(sel[0]);
+                    refreshCards();
+                }));
+    }
+
     private void setupBottomNav() {
         com.google.android.material.bottomnavigation.BottomNavigationView nav = findViewById(R.id.bottom_nav);
         nav.setOnItemSelectedListener(item -> {
@@ -309,6 +325,14 @@ public class MainActivity extends AppCompatActivity {
         row3.addView(makeCard(R.string.card_credits, sub, () -> SettingsPage.credits(this)));
         sub[0].setText(R.string.card_credits_sub);
         box.addView(row3);
+        android.widget.LinearLayout row4 = new android.widget.LinearLayout(this);
+        row4.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        row4.addView(makeCard(R.string.card_default_tab, sub, this::defaultTabDialog));
+        mSubDefaultTab = sub[0];
+        View sp4 = new View(this);
+        sp4.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+        row4.addView(sp4);
+        box.addView(row4);
         TextView ver = new TextView(this);
         String v = "";
         try { v = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; } catch (Exception ignored) {}
@@ -437,6 +461,10 @@ public class MainActivity extends AppCompatActivity {
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
+        if (mSubDefaultTab != null) {
+            String[] names = {getString(R.string.tab_themes), getString(R.string.tab_colors), getString(R.string.tab_icons), getString(R.string.tab_info)};
+            mSubDefaultTab.setText(names[Math.max(0, Math.min(3, ThemePrefs.getDefaultTab()))]);
+        }
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
         mSubPinNum.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum"));
         mSubPinBg.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg"));
