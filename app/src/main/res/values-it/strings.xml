@@ -127,7 +127,7 @@
     <string name="credits_thanks">Ringraziamenti</string>
     <string name="credits_libraries">Librerie</string>
     <string name="credits_oc_summary">Luigi (@LC9889) — il compilatore degli overlay (aapt2, allineamento, firma) e le utility per root e file vengono dal suo Oxygen Customizer</string>
-    <string name="credits_oostheme_summary">Preset di accento, sfondo, tastierino PIN, barra di progresso e icone</string>
+    <string name="credits_oostheme_summary">Gli overlay (temi per app e sistema, Dark Shadow) e i preset di accento, sfondo, tastierino PIN, barra di progresso e icone vengono da qui</string>
     <string name="credits_substratum_summary">Il formato dei temi overlay da cui nasce tutto</string>
     <string name="credits_claude_summary">Assistente IA (Anthropic) — senza non sarebbe mai esistita questa app</string>
     <string name="credits_oxydian_summary">L\'app compagna con le mod che richiedono Xposed</string>

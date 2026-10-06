@@ -120,7 +120,7 @@ final class SettingsPage {
         box.setPadding(pad, pad / 2, pad, 0);
         heading(a, box, R.string.credits_thanks);
         row(a, box, "Oxygen Customizer", a.getString(R.string.credits_oc_summary), "https://github.com/DHD2280/Oxygen-Customizer");
-        row(a, box, "OOS Theme", a.getString(R.string.credits_oostheme_summary), null);
+        row(a, box, "Dark Shadow Theme", a.getString(R.string.credits_oostheme_summary), null);
         row(a, box, "Substratum", a.getString(R.string.credits_substratum_summary), "https://github.com/substratum/substratum");
         row(a, box, "Claude", a.getString(R.string.credits_claude_summary), "https://claude.ai");
         row(a, box, "Oxydian", a.getString(R.string.credits_oxydian_summary), "https://github.com/tugaia56/Oxydian-xposed");
