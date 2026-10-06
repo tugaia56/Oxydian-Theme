@@ -134,4 +134,9 @@ public final class ThemePrefs {
     public static boolean isSameIcon() { return sp().getBoolean("same_icon", false); }
 
     public static void setSameIcon(boolean on) { sp().edit().putBoolean("same_icon", on).commit(); }
+
+    /** Opacita' dell'effetto tocco (ripple) in percentuale; 0 = quella del preset. */
+    public static int getRippleAlpha() { return sp().getInt("ripple_alpha", 0); }
+
+    public static void setRippleAlpha(int pct) { sp().edit().putInt("ripple_alpha", pct).commit(); }
 }

@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private TextView mSubPinNum, mSubPinBg;
+    private TextView mSubPinNum, mSubPinBg, mSubRipple;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
         float d = getResources().getDisplayMetrics().density;
@@ -209,6 +209,17 @@ public class MainActivity extends AppCompatActivity {
         mSubAccent = s[0];
         r1.addView(makeCard(R.string.card_background, s, () -> openColors(1)));
         mSubBg = s[0];
+        android.widget.LinearLayout r6 = findViewById(R.id.cards_row6);
+        r6.addView(makeCard(R.string.card_ripple, s, () -> RippleDialog.show(this, () -> {
+            syncEnabled(SystemColorsDialog.PKG);
+            refreshCards();
+            mList.getAdapter().notifyDataSetChanged();
+            onApply(SystemColorsDialog.PKG, false);
+        })));
+        mSubRipple = s[0];
+        View sp6 = new View(this);
+        sp6.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 1, 1f));
+        r6.addView(sp6);
         // Pagina Mods
         android.widget.LinearLayout r5 = findViewById(R.id.cards_row5);
         r2.addView(makeCard(R.string.card_progress, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"progress"}, R.string.card_progress)));
@@ -324,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
         boolean any;
         if (SystemColorsDialog.PKG.equals(pkg)) {
             any = !ThemePrefs.getOption(pkg, "accent").isEmpty() || !ThemePrefs.getOption(pkg, "background").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "progress").isEmpty();
+                    || !ThemePrefs.getOption(pkg, "progress").isEmpty() || ThemePrefs.getRippleAlpha() > 0;
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
@@ -425,6 +436,7 @@ public class MainActivity extends AppCompatActivity {
         mSubSignal.setText(sg.isEmpty() ? def : pretty(sg));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
+        mSubRipple.setText(RippleDialog.summary(this));
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
         mSubPinNum.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum"));
         mSubPinBg.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg"));
@@ -720,6 +732,7 @@ public class MainActivity extends AppCompatActivity {
     /** Scelte attuali sotto forma di testo (entra nella firma: se cambiano, il tema va rifatto). */
     private String optsKey(AppEntry e) {
         StringBuilder sb = new StringBuilder();
+        if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) sb.append("|ripple=").append(ThemePrefs.getRippleAlpha());
         for (OptGroup g : optionGroups(e.pkg)) {
             String c = ThemePrefs.getOption(e.pkg, g.id);
             sb.append('|').append(g.id).append('=').append(c);
@@ -738,6 +751,18 @@ public class MainActivity extends AppCompatActivity {
                 body.append(CustomPalette.accentBody(this, ThemePrefs.getCustomColor(e.pkg + "_accent")));
             if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(e.pkg, "background")))
                 body.append(CustomPalette.backgroundBody(this, ThemePrefs.getCustomColor(e.pkg + "_background")));
+            int rp = ThemePrefs.getRippleAlpha();
+            if (rp > 0) {
+                // onda del tocco: colore dell'accento con l'opacita' scelta
+                Integer acc = SystemColorsDialog.currentAccent(this);
+                int base = (acc != null ? acc : ThemePrefs.accentColor()) & 0xFFFFFF;
+                String hex = String.format("#%02X%06X", Math.round(rp * 2.55f), base);
+                String cleaned = body.toString().replaceAll("<color name=\"ripple_material_(dark|light)\">[^<]*</color>", "");
+                body.setLength(0);
+                body.append(cleaned);
+                body.append("<color name=\"ripple_material_dark\">").append(hex).append("</color>")
+                    .append("<color name=\"ripple_material_light\">").append(hex).append("</color>");
+            }
             return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
         }
         if (!e.ds || !"com.android.systemui".equals(e.pkg)) return null;
