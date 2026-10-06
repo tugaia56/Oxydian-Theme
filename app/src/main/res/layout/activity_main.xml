@@ -150,11 +150,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" />
-                <LinearLayout
-                    android:id="@+id/cards_row2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" />
             </LinearLayout>
         </ScrollView>
 
@@ -171,6 +166,11 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="6dp"
                 android:paddingVertical="8dp">
+                <LinearLayout
+                    android:id="@+id/cards_row2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
                 <LinearLayout
                     android:id="@+id/cards_row3"
                     android:layout_width="match_parent"

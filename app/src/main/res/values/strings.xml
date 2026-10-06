@@ -95,8 +95,11 @@
     <string name="opt_custom">Custom</string>
     <string name="tab_themes">Overlays</string>
     <string name="tab_colors">Colors</string>
-    <string name="tab_icons">Icons</string>
-    <string name="tab_info">Info</string>
+    <string name="tab_icons">Mods</string>
+    <string name="tab_info">Settings</string>
     <string name="card_accent">Accent</string>
     <string name="card_background">Background</string>
+    <string name="card_info">Info</string>
+    <string name="card_info_sub">How it works and color legend</string>
+    <string name="card_restart_sub">Reloads the status bar and system UI</string>
 </resources>

@@ -94,8 +94,11 @@
     <string name="opt_custom">Personalizzato</string>
     <string name="tab_themes">Overlay</string>
     <string name="tab_colors">Colori</string>
-    <string name="tab_icons">Icone</string>
-    <string name="tab_info">Info</string>
+    <string name="tab_icons">Mods</string>
+    <string name="tab_info">Impostazioni</string>
     <string name="card_accent">Accento</string>
     <string name="card_background">Sfondo</string>
+    <string name="card_info">Info</string>
+    <string name="card_info_sub">Come funziona e legenda dei colori</string>
+    <string name="card_restart_sub">Ricarica la barra di stato e l\'interfaccia</string>
 </resources>

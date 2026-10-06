@@ -231,46 +231,26 @@ public class MainActivity extends AppCompatActivity {
     private void buildInfoPage() {
         android.widget.LinearLayout box = findViewById(R.id.info_box);
         box.removeAllViews();
-        int pad = (int) (12 * getResources().getDisplayMetrics().density);
-        TextView how = new TextView(this);
-        how.setText(R.string.notice);
-        how.setTextColor(getColor(R.color.text));
-        how.setTextSize(14);
-        box.addView(how);
-        TextView legendTitle = new TextView(this);
-        legendTitle.setText(R.string.legend_title);
-        legendTitle.setTextColor(ThemePrefs.accentColor());
-        legendTitle.setTextSize(16);
-        legendTitle.setPadding(0, pad * 2, 0, 0);
-        box.addView(legendTitle);
-        int[][] rows = {
-                {ThemePrefs.accentColor(), R.string.state_active, R.string.legend_active_desc},
-                {getColor(R.color.state_disabled), R.string.state_disabled, R.string.legend_disabled_desc},
-                {getColor(R.color.state_not_active), R.string.state_reboot, R.string.legend_reboot_desc},
-                {getColor(R.color.state_invalid), R.string.state_invalid, R.string.legend_invalid_desc},
-                {getColor(R.color.state_not_installed), R.string.state_none, R.string.legend_none_desc},
-        };
-        for (int[] r : rows) {
-            TextView name = new TextView(this);
-            name.setText(r[1]);
-            name.setTextColor(r[0]);
-            name.setTextSize(16);
-            name.setPadding(0, pad, 0, 0);
-            TextView desc = new TextView(this);
-            desc.setText(r[2]);
-            desc.setTextColor(getColor(R.color.text_dim));
-            desc.setTextSize(13);
-            box.addView(name);
-            box.addView(desc);
-        }
+        android.widget.LinearLayout row = new android.widget.LinearLayout(this);
+        row.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        TextView[] sub = new TextView[1];
+        row.addView(makeCard(R.string.card_info, sub, this::showLegend));
+        sub[0].setText(R.string.card_info_sub);
+        row.addView(makeCard(R.string.restart_ui, sub, () -> {
+            Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+            new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+        }));
+        sub[0].setText(R.string.card_restart_sub);
+        box.addView(row);
         TextView ver = new TextView(this);
         String v = "";
         try { v = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; } catch (Exception ignored) {}
         ver.setText("Oxydian Theme " + v);
         ver.setTextColor(getColor(R.color.text_dim));
         ver.setTextSize(12);
-        ver.setPadding(0, pad * 3, 0, 0);
+        ver.setPadding(0, (int) (24 * getResources().getDisplayMetrics().density), 0, 0);
         box.addView(ver);
+        refreshCards();
     }
 
     /** Il tema di un bersaglio (colori di sistema / SystemUI) si accende da solo se si sceglie qualcosa. */
