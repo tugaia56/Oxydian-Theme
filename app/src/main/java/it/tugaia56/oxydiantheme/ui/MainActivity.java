@@ -764,7 +764,11 @@ public class MainActivity extends AppCompatActivity {
     /** Scelte attuali sotto forma di testo (entra nella firma: se cambiano, il tema va rifatto). */
     private String optsKey(AppEntry e) {
         StringBuilder sb = new StringBuilder();
-        if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) sb.append("|ripple=").append(ThemePrefs.getRippleAlpha());
+        if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) {
+            sb.append("|ripple=").append(ThemePrefs.getRippleAlpha());
+            sb.append("|tw=").append(ThemePrefs.getAccSat()).append(',').append(ThemePrefs.getBgSat())
+                    .append(',').append(ThemePrefs.getBgLight()).append(',').append(ThemePrefs.isBgPitch());
+        }
         if (e.ds && SYSTEMUI_PKG.equals(e.pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav"));
         for (OptGroup g : optionGroups(e.pkg)) {
             String c = ThemePrefs.getOption(e.pkg, g.id);
@@ -780,14 +784,26 @@ public class MainActivity extends AppCompatActivity {
     private String customValuesXml(AppEntry e) {
         if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) {
             StringBuilder body = new StringBuilder();
-            if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(e.pkg, "accent")))
-                body.append(CustomPalette.accentBody(this, ThemePrefs.getCustomColor(e.pkg + "_accent")));
-            if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(e.pkg, "background")))
-                body.append(CustomPalette.backgroundBody(this, ThemePrefs.getCustomColor(e.pkg + "_background")));
+            String accSel = ThemePrefs.getOption(e.pkg, "accent"), bgSel = ThemePrefs.getOption(e.pkg, "background");
+            boolean accTw = !accSel.isEmpty() && ThemePrefs.getAccSat() != 100;
+            boolean bgTw = !bgSel.isEmpty() && (ThemePrefs.isBgPitch() || ThemePrefs.getBgSat() != 100 || ThemePrefs.getBgLight() != 0);
+            if (OptionGroupsDialog.CUSTOM.equals(accSel) || accTw) {
+                String b = CustomPalette.baseBody(this, "accent", accSel, ThemePrefs.getCustomColor(e.pkg + "_accent"));
+                if (accTw) b = CustomPalette.tweakBody(b, ThemePrefs.getAccSat(), 0, false, 0f);
+                body.append(b);
+            }
+            if (OptionGroupsDialog.CUSTOM.equals(bgSel) || bgTw) {
+                String b = CustomPalette.baseBody(this, "background", bgSel, ThemePrefs.getCustomColor(e.pkg + "_background"));
+                if (bgTw) {
+                    float l0 = Math.max(CustomPalette.bgDarkLightness(b), 0f);
+                    b = CustomPalette.tweakBody(b, ThemePrefs.getBgSat(), ThemePrefs.getBgLight(), ThemePrefs.isBgPitch(), l0);
+                }
+                body.append(b);
+            }
             int rp = ThemePrefs.getRippleAlpha();
             if (rp > 0) {
                 // onda del tocco: colore dell'accento con l'opacita' scelta
-                Integer acc = SystemColorsDialog.currentAccent(this);
+                Integer acc = SystemColorsDialog.effAccent(this);
                 int base = (acc != null ? acc : ThemePrefs.accentColor()) & 0xFFFFFF;
                 String hex = String.format("#%02X%06X", Math.round(rp * 2.55f), base);
                 String cleaned = body.toString().replaceAll("<color name=\"ripple_material_(dark|light)\">[^<]*</color>", "");

@@ -149,4 +149,14 @@ public final class ThemePrefs {
     public static boolean isNavPending() { return sp().getBoolean("nav_pending", false); }
 
     public static void setNavPending(boolean on) { sp().edit().putBoolean("nav_pending", on).commit(); }
+
+    /** Ritocchi ai colori di sistema: saturazione accento/sfondo (%), luminosita' sfondo (punti %), nero puro. */
+    public static int getAccSat() { return sp().getInt("tweak_acc_sat", 100); }
+    public static void setAccSat(int v) { sp().edit().putInt("tweak_acc_sat", v).commit(); }
+    public static int getBgSat() { return sp().getInt("tweak_bg_sat", 100); }
+    public static void setBgSat(int v) { sp().edit().putInt("tweak_bg_sat", v).commit(); }
+    public static int getBgLight() { return sp().getInt("tweak_bg_light", 0); }
+    public static void setBgLight(int v) { sp().edit().putInt("tweak_bg_light", v).commit(); }
+    public static boolean isBgPitch() { return sp().getBoolean("tweak_bg_pitch", false); }
+    public static void setBgPitch(boolean on) { sp().edit().putBoolean("tweak_bg_pitch", on).commit(); }
 }

@@ -149,4 +149,10 @@
     <string name="btn_activate">Attiva</string>
     <string name="color_nav_title">Colore icone navigazione</string>
     <string name="nav_color_hint">Colore salvato: torna alla pagina Overlay, verr\u00e0 applicato da solo.</string>
+    <string name="tweak_sat_accent">Saturazione accento</string>
+    <string name="tweak_sat_bg">Saturazione sfondo</string>
+    <string name="tweak_light_bg">Luminosità sfondo</string>
+    <string name="tweak_pitch">Nero puro</string>
+    <string name="tweak_note">I ritocchi valgono con un colore scelto (non con Predefinito). Nero puro rende nero il fondo e tiene la tinta nelle parti più chiare.</string>
+    <string name="tweak_reset">Azzera</string>
 </resources>

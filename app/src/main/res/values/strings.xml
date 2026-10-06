@@ -150,4 +150,10 @@
     <string name="btn_activate">Enable</string>
     <string name="color_nav_title">Navigation icon colour</string>
     <string name="nav_color_hint">Colour saved: go back to the Overlay page, it will be applied automatically.</string>
+    <string name="tweak_sat_accent">Accent saturation</string>
+    <string name="tweak_sat_bg">Background saturation</string>
+    <string name="tweak_light_bg">Background lightness</string>
+    <string name="tweak_pitch">Pure black</string>
+    <string name="tweak_note">Tweaks apply with a chosen colour (not Default). Pure black makes the base black and keeps the tint in the lighter parts.</string>
+    <string name="tweak_reset">Reset</string>
 </resources>

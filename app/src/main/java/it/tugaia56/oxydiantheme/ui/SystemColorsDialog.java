@@ -147,6 +147,27 @@ final class SystemColorsDialog {
         refresh.run();
     }
 
+    /** Accento effettivo: quello scelto con la saturazione impostata (null = predefinito). */
+    static Integer effAccent(Context ctx) {
+        Integer a = currentAccent(ctx);
+        if (a == null) return null;
+        int sat = ThemePrefs.getAccSat();
+        if (sat == 100) return a;
+        return 0xFF000000 | CustomPalette.tweakColor(a & 0xFFFFFF, sat, 0, false, 0f);
+    }
+
+    /** Sfondo effettivo: quello scelto con saturazione, luminosita' e nero puro (null = predefinito). */
+    static Integer effBg(Context ctx) {
+        Integer b = currentBg(ctx);
+        if (b == null) return null;
+        int sat = ThemePrefs.getBgSat(), light = ThemePrefs.getBgLight();
+        boolean pitch = ThemePrefs.isBgPitch();
+        if (sat == 100 && light == 0 && !pitch) return b;
+        float l0 = CustomPalette.bgDarkLightness(CustomPalette.baseBody(ctx, "background",
+                ThemePrefs.getOption(PKG, "background"), ThemePrefs.getCustomColor(PKG + "_background")));
+        return 0xFF000000 | CustomPalette.tweakColor(b & 0xFFFFFF, sat, light, pitch, Math.max(l0, 0f));
+    }
+
     /** Accento scelto (null = predefinito). */
     static Integer currentAccent(Context ctx) {
         String a = ThemePrefs.getOption(PKG, "accent");
@@ -172,7 +193,57 @@ final class SystemColorsDialog {
         for (Swatch sw : load(ctx, "background", "type1b.xml", "background_dark")) if (!b.isEmpty() && sw.name.equals(b)) bgc = sw.color;
         if (OptionGroupsDialog.CUSTOM.equals(a)) accent = ThemePrefs.getCustomColor(PKG + "_accent");
         if (OptionGroupsDialog.CUSTOM.equals(b)) bgc = ThemePrefs.getCustomColor(PKG + "_background");
-        it.tugaia56.oxydiantheme.utils.ThemeProps.publish(accent, bgc);
+        Integer ea = effAccent(ctx), eb = effBg(ctx);
+        it.tugaia56.oxydiantheme.utils.ThemeProps.publish(ea != null ? ea : accent, eb != null ? eb : bgc);
+    }
+
+    private static TextView note(Context ctx, int textRes) {
+        TextView t = new TextView(ctx);
+        t.setText(textRes);
+        t.setTextColor(ctx.getColor(R.color.text_dim));
+        t.setTextSize(12);
+        t.setPadding(0, (int) (10 * ctx.getResources().getDisplayMetrics().density), 0, 0);
+        return t;
+    }
+
+    /** Cursore con titolo e valore: min..max a passi di step; il valore scelto torna in value[0]. */
+    private static void slider(Context ctx, LinearLayout box, int titleRes, int min, int max, int step,
+                               int[] value, boolean signed, int def) {
+        float d = ctx.getResources().getDisplayMetrics().density;
+        LinearLayout head = new LinearLayout(ctx);
+        head.setOrientation(LinearLayout.HORIZONTAL);
+        head.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        head.setPadding(0, (int) (14 * d), 0, 0);
+        TextView label = new TextView(ctx);
+        label.setTextColor(ctx.getColor(R.color.text));
+        label.setTextSize(15);
+        head.addView(label, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        TextView reset = new TextView(ctx);
+        reset.setText(R.string.tweak_reset);
+        reset.setTextColor(ThemePrefs.accentColor());
+        reset.setTextSize(14);
+        reset.setPadding((int) (12 * d), (int) (6 * d), (int) (4 * d), (int) (6 * d));
+        head.addView(reset);
+        box.addView(head);
+        android.widget.SeekBar bar = new android.widget.SeekBar(ctx);
+        bar.setMax((max - min) / step);
+        bar.setProgress((value[0] - min) / step);
+        int acc = ThemePrefs.accentColor();
+        bar.setProgressTintList(android.content.res.ColorStateList.valueOf(acc));
+        bar.setThumbTintList(android.content.res.ColorStateList.valueOf(acc));
+        Runnable show = () -> label.setText(ctx.getString(titleRes) + ": "
+                + (signed && value[0] > 0 ? "+" : "") + value[0] + (signed ? "" : "%"));
+        show.run();
+        bar.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(android.widget.SeekBar s, int p, boolean user) {
+                value[0] = min + p * step;
+                show.run();
+            }
+            @Override public void onStartTrackingTouch(android.widget.SeekBar s) {}
+            @Override public void onStopTrackingTouch(android.widget.SeekBar s) {}
+        });
+        reset.setOnClickListener(v -> bar.setProgress((def - min) / step));
+        box.addView(bar);
     }
 
     /** @param which 0 = solo accento, 1 = solo sfondo */
@@ -190,6 +261,28 @@ final class SystemColorsDialog {
         if (which == 0) section(ctx, box, R.string.sys_accent, acc, sel, 0, pad);
         else section(ctx, box, R.string.sys_background, bg, sel, 1, pad);
 
+        // ritocchi (valgono con un colore scelto, non con Predefinito)
+        final int[] accSat = {ThemePrefs.getAccSat()};
+        final int[] bgSat = {ThemePrefs.getBgSat()};
+        final int[] bgLight = {ThemePrefs.getBgLight()};
+        final boolean[] pitch = {ThemePrefs.isBgPitch()};
+        if (which == 0) {
+            slider(ctx, box, R.string.tweak_sat_accent, 0, 200, 5, accSat, false, 100);
+        } else {
+            com.google.android.material.materialswitch.MaterialSwitch sw =
+                    new com.google.android.material.materialswitch.MaterialSwitch(ctx);
+            sw.setText(R.string.tweak_pitch);
+            sw.setTextColor(ctx.getColor(R.color.text));
+            sw.setChecked(pitch[0]);
+            Tint.sw(sw);
+            sw.setPadding(0, (int) (14 * d), 0, 0);
+            sw.setOnCheckedChangeListener((b, on) -> pitch[0] = on);
+            box.addView(sw);
+            slider(ctx, box, R.string.tweak_sat_bg, 0, 200, 5, bgSat, false, 100);
+            slider(ctx, box, R.string.tweak_light_bg, -10, 10, 1, bgLight, true, 0);
+        }
+        box.addView(note(ctx, R.string.tweak_note));
+
         ScrollView sv = new ScrollView(ctx);
         sv.addView(box);
         Dialogs.show(ctx, new MaterialAlertDialogBuilder(ctx)
@@ -199,15 +292,26 @@ final class SystemColorsDialog {
                 .setPositiveButton(android.R.string.ok, (dlg, w) -> {
                     ThemePrefs.setOption(PKG, "accent", sel[0]);
                     ThemePrefs.setOption(PKG, "background", sel[1]);
+                    if (which == 0) {
+                        ThemePrefs.setAccSat(accSat[0]);
+                    } else {
+                        ThemePrefs.setBgSat(bgSat[0]);
+                        ThemePrefs.setBgLight(bgLight[0]);
+                        ThemePrefs.setBgPitch(pitch[0]);
+                    }
                     int c = ThemePrefs.accentColor();
                     for (Swatch s : acc) if (s.name.equals(sel[0])) c = s.color;
                     if (OptionGroupsDialog.CUSTOM.equals(sel[0])) c = ThemePrefs.getCustomColor(PKG + "_accent");
                     if (sel[0].isEmpty()) c = ThemePrefs.DEFAULT_ACCENT;
+                    Integer tweakedAccent = effAccent(ctx);
+                    if (tweakedAccent != null && !sel[0].isEmpty()) c = tweakedAccent;
                     ThemePrefs.setAccentColor(c);
                     ThemePrefs.setDarkShadowEnabled(PKG, !(sel[0].isEmpty() && sel[1].isEmpty() && ThemePrefs.getOption(PKG, "progress").isEmpty()));
                     Integer bgColor = null;
                     for (Swatch sw : bg) if (!sel[1].isEmpty() && sw.name.equals(sel[1])) bgColor = sw.color;
                     if (OptionGroupsDialog.CUSTOM.equals(sel[1])) bgColor = ThemePrefs.getCustomColor(PKG + "_background");
+                    Integer tweakedBg = effBg(ctx);
+                    if (tweakedBg != null && !sel[1].isEmpty()) bgColor = tweakedBg;
                     it.tugaia56.oxydiantheme.utils.ThemeProps.publish(sel[0].isEmpty() ? null : c, bgColor);
                     listener.onSaved(c);
                 }));
