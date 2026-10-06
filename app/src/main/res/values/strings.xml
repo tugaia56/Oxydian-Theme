@@ -97,4 +97,6 @@
     <string name="tab_colors">Colors</string>
     <string name="tab_icons">Icons</string>
     <string name="tab_info">Info</string>
+    <string name="card_accent">Accent</string>
+    <string name="card_background">Background</string>
 </resources>

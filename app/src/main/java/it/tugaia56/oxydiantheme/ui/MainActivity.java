@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     // ── Schede dell'intestazione ─────────────────────────────────────────────
 
     private final List<View> mCards = new ArrayList<>();
-    private TextView mSubColors, mSubWifi, mSubNav, mSubSettings;
+    private TextView mSubAccent, mSubBg, mSubWifi, mSubNav, mSubSettings;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
         float d = getResources().getDisplayMetrics().density;
@@ -168,15 +168,14 @@ public class MainActivity extends AppCompatActivity {
         android.widget.LinearLayout r4 = findViewById(R.id.cards_row4);
         TextView[] s = new TextView[1];
         // Pagina Colori
-        r1.addView(makeCard(R.string.card_colors, s, this::openColors));
-        mSubColors = s[0];
-        r1.addView(makeCard(R.string.card_progress, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"progress"}, R.string.card_progress)));
+        r1.addView(makeCard(R.string.card_accent, s, () -> openColors(0)));
+        mSubAccent = s[0];
+        r1.addView(makeCard(R.string.card_background, s, () -> openColors(1)));
+        mSubBg = s[0];
+        r2.addView(makeCard(R.string.card_progress, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"progress"}, R.string.card_progress)));
         mSubProgress = s[0];
         r2.addView(makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinnum", "pinbg"}, R.string.card_pin)));
         mSubPin = s[0];
-        View spacer = new View(this);
-        spacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 1, 1f));
-        r2.addView(spacer);
         // Pagina Icone
         r3.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
@@ -298,12 +297,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /** Pallino del colore a sinistra del testo. */
+    private void setDot(TextView t, int color) {
+        float d = getResources().getDisplayMetrics().density;
+        android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable();
+        g.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+        g.setColor(color | 0xFF000000);
+        g.setStroke((int) (1.5f * d), 0x88FFFFFF);
+        int size = (int) (16 * d);
+        g.setSize(size, size);
+        g.setBounds(0, 0, size, size);
+        t.setCompoundDrawablesRelative(g, null, null, null);
+        t.setCompoundDrawablePadding((int) (8 * d));
+        t.setGravity(android.view.Gravity.CENTER_VERTICAL);
+    }
+
     private void openStyles(String mode) {
         startActivity(new android.content.Intent(this, StyleActivity.class).putExtra("mode", mode));
     }
 
-    private void openColors() {
-        SystemColorsDialog.show(this, color -> {
+    private void openColors(int which) {
+        SystemColorsDialog.show(this, which, color -> {
             for (AppEntry e : mApps) {
                 if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(e.pkg);
             }
@@ -355,17 +369,11 @@ public class MainActivity extends AppCompatActivity {
         String def = getString(R.string.options_default);
         String acc = ThemePrefs.getOption(SystemColorsDialog.PKG, "accent");
         String bg = ThemePrefs.getOption(SystemColorsDialog.PKG, "background");
-        StringBuilder col = new StringBuilder();
-        if (!acc.isEmpty()) col.append(getString(R.string.sys_accent)).append(' ')
-                .append(OptionGroupsDialog.CUSTOM.equals(acc)
-                        ? String.format("#%06X", ThemePrefs.getCustomColor(SystemColorsDialog.PKG + "_accent") & 0xFFFFFF) : pretty(acc));
-        if (!bg.isEmpty()) {
-            if (col.length() > 0) col.append(" · ");
-            col.append(getString(R.string.sys_background)).append(' ')
-                    .append(OptionGroupsDialog.CUSTOM.equals(bg)
-                            ? String.format("#%06X", ThemePrefs.getCustomColor(SystemColorsDialog.PKG + "_background") & 0xFFFFFF) : pretty(bg));
-        }
-        mSubColors.setText(col.length() == 0 ? def : col.toString());
+        mSubAccent.setText(acc.isEmpty() ? def : OptionGroupsDialog.CUSTOM.equals(acc) ? getString(R.string.opt_custom) : pretty(acc));
+        mSubBg.setText(bg.isEmpty() ? def : OptionGroupsDialog.CUSTOM.equals(bg) ? getString(R.string.opt_custom) : pretty(bg));
+        Integer ca = SystemColorsDialog.currentAccent(this), cb = SystemColorsDialog.currentBg(this);
+        setDot(mSubAccent, ca != null ? ca : ThemePrefs.DEFAULT_ACCENT);
+        setDot(mSubBg, cb != null ? cb : 0xFF1B2029);
         String w = ThemePrefs.getStyle("WIFI1"), sg = ThemePrefs.getStyle("SIG1");
         if (w.isEmpty() && sg.isEmpty()) mSubWifi.setText(def);
         else if (w.equals(sg)) mSubWifi.setText(pretty(w));
@@ -383,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (mSubColors != null) refreshCards();
+        if (mSubAccent != null) refreshCards();
         refreshStates();
     }
 

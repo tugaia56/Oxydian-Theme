@@ -133,6 +133,24 @@ final class SystemColorsDialog {
     }
 
     /** Ripubblica le scelte attuali come proprieta' di sistema (all'avvio dell'app e dopo ogni cambio). */
+    /** Accento scelto (null = predefinito). */
+    static Integer currentAccent(Context ctx) {
+        String a = ThemePrefs.getOption(PKG, "accent");
+        if (a.isEmpty()) return null;
+        if (OptionGroupsDialog.CUSTOM.equals(a)) return ThemePrefs.getCustomColor(PKG + "_accent");
+        for (Swatch sw : load(ctx, "accent", "type1a.xml", "accent_material_dark")) if (sw.name.equals(a)) return sw.color;
+        return null;
+    }
+
+    /** Sfondo di sistema scelto (null = predefinito). */
+    static Integer currentBg(Context ctx) {
+        String b = ThemePrefs.getOption(PKG, "background");
+        if (b.isEmpty()) return null;
+        if (OptionGroupsDialog.CUSTOM.equals(b)) return ThemePrefs.getCustomColor(PKG + "_background");
+        for (Swatch sw : load(ctx, "background", "type1b.xml", "background_dark")) if (sw.name.equals(b)) return sw.color;
+        return null;
+    }
+
     static void republish(Context ctx) {
         String a = ThemePrefs.getOption(PKG, "accent"), b = ThemePrefs.getOption(PKG, "background");
         Integer accent = null, bgc = null;
@@ -143,7 +161,8 @@ final class SystemColorsDialog {
         it.tugaia56.oxydiantheme.utils.ThemeProps.publish(accent, bgc);
     }
 
-    static void show(Context ctx, Listener listener) {
+    /** @param which 0 = solo accento, 1 = solo sfondo */
+    static void show(Context ctx, int which, Listener listener) {
         float d = ctx.getResources().getDisplayMetrics().density;
         int pad = (int) (16 * d);
         LinearLayout box = new LinearLayout(ctx);
@@ -154,13 +173,13 @@ final class SystemColorsDialog {
         List<Swatch> bg = load(ctx, "background", "type1b.xml", "background_dark");
         final String[] sel = {ThemePrefs.getOption(PKG, "accent"), ThemePrefs.getOption(PKG, "background")};
 
-        section(ctx, box, R.string.sys_accent, acc, sel, 0, pad);
-        section(ctx, box, R.string.sys_background, bg, sel, 1, pad);
+        if (which == 0) section(ctx, box, R.string.sys_accent, acc, sel, 0, pad);
+        else section(ctx, box, R.string.sys_background, bg, sel, 1, pad);
 
         ScrollView sv = new ScrollView(ctx);
         sv.addView(box);
         Dialogs.show(ctx, new MaterialAlertDialogBuilder(ctx)
-                .setTitle(R.string.btn_system_colors)
+                .setTitle(which == 0 ? R.string.card_accent : R.string.card_background)
                 .setView(sv)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(android.R.string.ok, (dlg, w) -> {
