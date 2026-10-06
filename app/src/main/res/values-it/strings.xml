@@ -3,7 +3,7 @@
     <string name="status_no_root">Serve l\'accesso root. Concedilo a Oxydian Theme nel gestore del root.</string>
     <string name="status_reboot">Modulo creato. Riavvia una volta per attivarlo, poi applica i temi.</string>
     <string name="status_ok">Modulo pronto.</string>
-    <string name="notice">Attiva le app da temare, poi tocca Applica. La prima volta che attivi una nuova app serve un riavvio; le modifiche successive sono immediate.</string>
+    <string name="notice">Spunta le voci che vuoi, poi tocca Attiva (compila e accende), Disattiva (spegne ma resta installato, si riaccende senza riavvio) o Rimuovi (toglie del tutto, serve un riavvio). Le caselle si svuotano dopo ogni azione; lo stato vero si legge dal colore. La prima volta che attivi una nuova voce serve un riavvio.</string>
     <string name="many_warning">Attenzione: %1$d app selezionate. Più di circa 10 app con il tema rallentano l\'avvio del telefono a ogni riavvio.</string>
     <string name="btn_apply">Applica</string>
     <string name="btn_select_all">Tutte</string>
@@ -143,4 +143,8 @@
     <string name="card_ripple">Opacità tocco</string>
     <string name="ripple_hint">L\'onda colorata che compare quando premi un pulsante o una voce della lista. Più alta è l\'opacità, più si vede.</string>
     <string name="card_default_tab">Pagina iniziale</string>
+    <string name="btn_disable">Disattiva</string>
+    <string name="btn_remove">Rimuovi</string>
+    <string name="select_first">Spunta almeno una voce</string>
+    <string name="btn_activate">Attiva</string>
 </resources>

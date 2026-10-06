@@ -138,8 +138,9 @@ public class MainActivity extends AppCompatActivity {
         mList.setLayoutManager(new LinearLayoutManager(this));
         mList.setAdapter(new Adapter());
 
-        mApply.setOnClickListener(v -> onApply(null, false));
-        findViewById(R.id.btn_remove_off).setOnClickListener(v -> onApply(null, true));
+        mApply.setOnClickListener(v -> runSelected(ACT_ACTIVATE));
+        findViewById(R.id.btn_disable).setOnClickListener(v -> runSelected(ACT_DISABLE));
+        findViewById(R.id.btn_remove).setOnClickListener(v -> runSelected(ACT_REMOVE));
         android.widget.ImageButton restart = findViewById(R.id.btn_restart_ui);
         restart.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         restart.setOnClickListener(v -> {
@@ -645,22 +646,21 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.ok, null));
     }
 
+    /** Voci spuntate (solo per la prossima azione: si svuotano dopo Attiva / Disattiva / Rimuovi). */
+    private final Set<String> mSelected = new HashSet<>();
+
     private void setAll(boolean on) {
         if (mBusy) return;
-        for (AppEntry e : mApps) {
-            if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) continue; // si gestisce dalla scheda Colori di sistema
-            e.enabled = on;
-            e.saveEnabled();
-        }
+        mSelected.clear();
+        if (on) for (AppEntry e : mVisible) mSelected.add(e.name);
         mList.getAdapter().notifyDataSetChanged();
-        updateNotice();
     }
 
     private class Adapter extends RecyclerView.Adapter<Adapter.VH> {
         class VH extends RecyclerView.ViewHolder {
             final TextView name, pkg, stat;
             final Button opt;
-            final MaterialSwitch sw;
+            final android.widget.CheckBox sw;
             VH(View v) {
                 super(v);
                 opt = v.findViewById(R.id.opt);
@@ -693,23 +693,19 @@ public class MainActivity extends AppCompatActivity {
             }
             h.name.setTextColor(color);
             h.stat.setTextColor(color);
-            boolean pending = (e.enabled && (stv == ST_NONE || stv == ST_DISABLED || stv == ST_INVALID))
-                    || (!e.enabled && stv == ST_ACTIVE);
-            h.stat.setText(pending ? getString(label) + "  •  " + getString(R.string.pending) : getString(label));
-            Tint.sw(h.sw);
+            h.stat.setText(getString(label));
+            h.sw.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
             h.sw.setOnCheckedChangeListener(null);
-            h.sw.setChecked(e.enabled);
+            h.sw.setChecked(mSelected.contains(e.name));
             h.sw.setOnCheckedChangeListener((b, checked) -> {
-                e.enabled = checked;
-                e.saveEnabled();
-                updateNotice();
+                if (checked) mSelected.add(e.name); else mSelected.remove(e.name);
             });
             boolean hasOpt = !e.ds && !optionGroups(e.pkg).isEmpty();
             h.opt.setVisibility(hasOpt ? View.VISIBLE : View.GONE);
             Tint.button((com.google.android.material.button.MaterialButton) h.opt);
             h.opt.setOnClickListener(v -> showOptions(e));
-            h.itemView.setOnClickListener(null);
-            h.itemView.setClickable(false);
+            // tocco sulla riga = spunta (come in Substratum)
+            h.itemView.setOnClickListener(v -> h.sw.toggle());
         }
 
         @Override
@@ -908,37 +904,68 @@ public class MainActivity extends AppCompatActivity {
         return out;
     }
 
-    /** @param onlyName se non nullo, applica solo la voce con questo pacchetto bersaglio (le altre restano come sono) */
-    private void onApply(String onlyPkg, boolean removeOff) {
+    private static final int ACT_ACTIVATE = 0, ACT_DISABLE = 1, ACT_REMOVE = 2;
+
+    /** Azione sulle voci spuntate nella lista. */
+    private void runSelected(int action) {
+        if (mBusy) return;
+        List<AppEntry> targets = new ArrayList<>();
+        for (AppEntry e : mVisible) if (mSelected.contains(e.name)) targets.add(e);
+        if (targets.isEmpty()) {
+            Toast.makeText(this, R.string.select_first, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        runAction(targets, action);
+    }
+
+    /** Per le schede (colori, PIN, icone...): applica solo la voce Dark Shadow indicata secondo il suo stato. */
+    private void onApply(String onlyPkg, boolean ignored) {
+        List<AppEntry> t = new ArrayList<>();
+        for (AppEntry e : mApps) if (e.ds && onlyPkg.equals(e.pkg)) t.add(e);
+        if (t.isEmpty()) return;
+        runAction(t, t.get(0).enabled ? ACT_ACTIVATE : ACT_DISABLE);
+    }
+
+    private void setButtonsEnabled(boolean on) {
+        mApply.setEnabled(on);
+        findViewById(R.id.btn_disable).setEnabled(on);
+        findViewById(R.id.btn_remove).setEnabled(on);
+    }
+
+    private void runAction(final List<AppEntry> targets, final int action) {
         if (mBusy) return;
         mBusy = true;
-        mApply.setEnabled(false);
+        setButtonsEnabled(false);
         Toast.makeText(this, R.string.working, Toast.LENGTH_SHORT).show();
-        final List<AppEntry> apps = new ArrayList<>(mApps);
+        for (AppEntry e : targets) {
+            e.enabled = action == ACT_ACTIVATE;   // stato voluto: acceso solo dopo Attiva
+            e.saveEnabled();
+        }
+        final List<AppEntry> all = new ArrayList<>(mApps);
         new Thread(() -> {
             int failed = 0;
             Set<String> before = enabledOverlays();
             Map<String, String> stateBefore = overlayStates();
-            List<String> toEnable = new ArrayList<>(); // conosciuti dal sistema ma spenti
+            List<String> toEnable = new ArrayList<>();
             String signature = signature();
-            List<String> refresh = new ArrayList<>();
-            List<String> toDisable = new ArrayList<>();
-            List<String> toRemove = new ArrayList<>();
+            List<String> refresh = new ArrayList<>(), toDisable = new ArrayList<>(), toRemove = new ArrayList<>();
             boolean batchOpen = false;
             try {
                 ModuleSetup.ensure();
-                for (AppEntry e : apps) {
-                    if (onlyPkg != null && !(e.ds && onlyPkg.equals(e.pkg))) continue;
+                for (AppEntry e : targets) {
                     boolean active = before.contains(e.overlay());
-                    if (!e.enabled) {
+                    if (action != ACT_ACTIVATE) {
                         if (active) toDisable.add(e.overlay());
-                        toRemove.add(e.name);
-                        e.clearBuilt();
+                        if (action == ACT_REMOVE) {
+                            toRemove.add(e.name);
+                            e.clearBuilt();
+                        }
                         continue;
                     }
-                    if ("[ ]".equals(stateBefore.get(e.overlay()))) toEnable.add(e.overlay());
-                    // gia' compilata e attiva con lo stesso accento/versione: si salta
-                    if (active && (signature + optsKey(e)).equals(e.builtSig())) continue;
+                    boolean known = "[ ]".equals(stateBefore.get(e.overlay()));
+                    if (known) toEnable.add(e.overlay());
+                    // gia' compilata (attiva o solo spenta) con lo stesso accento/versione: si salta
+                    if ((active || known) && (signature + optsKey(e)).equals(e.builtSig())) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
                         if (ThemeCompiler.buildNamedInBatch(e.pkg, e.dir, e.name, optionPaths(e), customValuesXml(e))) {
@@ -953,35 +980,35 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             } catch (Throwable t) {
-                android.util.Log.e("OxyTheme", "apply failed", t);
+                android.util.Log.e("OxyTheme", "action failed", t);
             } finally {
                 if (batchOpen) ThemeCompiler.endBatch(refresh);
             }
-            final int turnedOff = toDisable.size();
-            final int removedCount = toRemove.size();
             ThemeCompiler.disable(toDisable);
             if (!toEnable.isEmpty())
                 it.tugaia56.oxydiantheme.utils.overlay.OverlayUtil.enableOverlays(toEnable.toArray(new String[0]));
             ThemeCompiler.removeNamedApks(toRemove);
+            // elenco dei temi da accendere ad ogni avvio (lo legge il modulo)
+            List<String> wanted = new ArrayList<>();
+            for (AppEntry e : all) if (e.enabled) wanted.add(e.overlay());
+            ThemeCompiler.writeEnabledList(wanted);
 
             Set<String> after = enabledOverlays();
-            int notYetActive = 0, selected = 0;
-            for (AppEntry e : apps) {
-                if (!e.enabled) continue;
-                selected++;
-                if (!after.contains(e.overlay())) notYetActive++;
-            }
-            final int f = failed, n = notYetActive, sel = selected;
+            int notYetActive = 0;
+            if (action == ACT_ACTIVATE) for (AppEntry e : targets) if (!after.contains(e.overlay())) notYetActive++;
+            final int f = failed, n = notYetActive, removedCount = toRemove.size();
             new Handler(Looper.getMainLooper()).post(() -> {
                 mBusy = false;
-                mApply.setEnabled(true);
+                setButtonsEnabled(true);
+                mSelected.clear();
                 String msg;
                 if (f > 0) msg = getString(R.string.failed_n, f);
                 else if (n > 0) msg = getString(R.string.applied_reboot);
                 else msg = getString(R.string.applied);
                 Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
                 refreshStates();
-                if (turnedOff > 0) {
+                updateNotice();
+                if (removedCount > 0) {
                     Dialogs.show(MainActivity.this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(MainActivity.this)
                             .setTitle(R.string.off_title)
                             .setMessage(R.string.off_message)

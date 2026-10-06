@@ -4,7 +4,7 @@
     <string name="status_no_root">Root access is required. Grant root to Oxydian Theme in your root manager.</string>
     <string name="status_reboot">Module created. Reboot once to activate it, then apply your themes.</string>
     <string name="status_ok">Module ready.</string>
-    <string name="notice">Turn on the apps you want themed, then tap Apply. The first time you enable an app a reboot is needed; later changes apply right away.</string>
+    <string name="notice">Tick the items you want, then tap Enable (builds and turns on), Disable (turns off but stays installed, turn it back on without a reboot) or Remove (deletes it, needs a reboot). The boxes clear after every action; the real state is shown by the color. The first time you enable a new item a reboot is needed.</string>
     <string name="many_warning">Warning: %1$d apps selected. More than about 10 themed apps slow down the phone at every boot.</string>
     <string name="btn_apply">Apply</string>
     <string name="btn_select_all">All</string>
@@ -144,4 +144,8 @@
     <string name="card_ripple">Touch opacity</string>
     <string name="ripple_hint">The colored wave that appears when you press a button or a list item. The higher the opacity, the stronger it looks.</string>
     <string name="card_default_tab">Start page</string>
+    <string name="btn_disable">Disable</string>
+    <string name="btn_remove">Remove</string>
+    <string name="select_first">Tick at least one item</string>
+    <string name="btn_activate">Enable</string>
 </resources>
