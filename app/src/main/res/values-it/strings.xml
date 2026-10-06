@@ -92,4 +92,8 @@
     <string name="color_wifi_title">Colore icona Wi-Fi</string>
     <string name="color_mobile_title">Colore icona Segnale</string>
     <string name="opt_custom">Personalizzato</string>
+    <string name="tab_themes">Temi</string>
+    <string name="tab_colors">Colori</string>
+    <string name="tab_icons">Icone</string>
+    <string name="tab_info">Info</string>
 </resources>

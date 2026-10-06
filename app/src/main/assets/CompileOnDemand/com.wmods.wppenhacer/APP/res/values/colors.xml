@@ -143,7 +143,7 @@
     <color name="m3_ref_palette_error50">#ffdc362e</color>
     <color name="m3_ref_palette_error60">#ffe46962</color>
     <color name="m3_ref_palette_error70">#ffec928e</color>
-    <color name="m3_ref_palette_error80">#fff2b8b5</color>
+    <color name="m3_ref_palette_error80">@*android:color/accent_material_dark</color>
     <color name="m3_ref_palette_error90">#fff9dedc</color>
     <color name="m3_ref_palette_error95">#fffceeee</color>
     <color name="m3_ref_palette_error98">#fffff8f7</color>
@@ -818,7 +818,7 @@
     <color name="text_tertiary">#9e9e9e</color>
     <color name="tooltip_background_dark">#e6616161</color>
     <color name="tooltip_background_light">#e6ffffff</color>
-    <color name="whatsapp_dark_green">#128c7e</color>
-    <color name="whatsapp_green">#25d366</color>
-    <color name="whatsapp_teal">#075e54</color>
+    <color name="whatsapp_dark_green">@*android:color/accent_material_dark</color>
+    <color name="whatsapp_green">@*android:color/accent_material_dark</color>
+    <color name="whatsapp_teal">@*android:color/accent_material_dark</color>
 </resources>

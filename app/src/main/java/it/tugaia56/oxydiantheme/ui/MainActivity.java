@@ -104,16 +104,15 @@ public class MainActivity extends AppCompatActivity {
 
         mApply.setOnClickListener(v -> onApply(null, false));
         findViewById(R.id.btn_remove_off).setOnClickListener(v -> onApply(null, true));
-        findViewById(R.id.btn_info).setOnClickListener(v -> showLegend());
         android.widget.ImageButton restart = findViewById(R.id.btn_restart_ui);
         restart.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         restart.setOnClickListener(v -> {
             Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
             new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
         });
-        ((android.widget.ImageButton) findViewById(R.id.btn_info)).setImageTintList(
-                android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         setupCards();
+        setupBottomNav();
+        buildInfoPage();
         SystemColorsDialog.republish(this);
         IconColorDialog.republish();
         ((Button) findViewById(R.id.btn_all)).setOnClickListener(v -> setAll(true));
@@ -168,24 +167,111 @@ public class MainActivity extends AppCompatActivity {
         android.widget.LinearLayout r3 = findViewById(R.id.cards_row3);
         android.widget.LinearLayout r4 = findViewById(R.id.cards_row4);
         TextView[] s = new TextView[1];
+        // Pagina Colori
         r1.addView(makeCard(R.string.card_colors, s, this::openColors));
         mSubColors = s[0];
         r1.addView(makeCard(R.string.card_progress, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"progress"}, R.string.card_progress)));
         mSubProgress = s[0];
         r2.addView(makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinnum", "pinbg"}, R.string.card_pin)));
         mSubPin = s[0];
-        r2.addView(makeCard(R.string.card_activity, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"icons"}, R.string.card_activity)));
-        mSubActivity = s[0];
+        View spacer = new View(this);
+        spacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 1, 1f));
+        r2.addView(spacer);
+        // Pagina Icone
         r3.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
         r3.addView(makeCard(R.string.card_nav, s, () -> openStyles("nav")));
         mSubNav = s[0];
         r4.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
         mSubSettings = s[0];
-        View spacer = new View(this);
-        spacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 1, 1f));
-        r4.addView(spacer);
+        r4.addView(makeCard(R.string.card_activity, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"icons"}, R.string.card_activity)));
+        mSubActivity = s[0];
         refreshCards();
+    }
+
+    // ── Barra di navigazione in basso ────────────────────────────────────────
+
+    private int mTab = R.id.nav_themes;
+
+    private void setupBottomNav() {
+        com.google.android.material.bottomnavigation.BottomNavigationView nav = findViewById(R.id.bottom_nav);
+        nav.setOnItemSelectedListener(item -> {
+            showTab(item.getItemId());
+            return true;
+        });
+        nav.setSelectedItemId(mTab);
+        showTab(mTab);
+        tintBottomNav();
+    }
+
+    private void showTab(int id) {
+        mTab = id;
+        findViewById(R.id.page_themes).setVisibility(id == R.id.nav_themes ? View.VISIBLE : View.GONE);
+        findViewById(R.id.page_colors).setVisibility(id == R.id.nav_colors ? View.VISIBLE : View.GONE);
+        findViewById(R.id.page_icons).setVisibility(id == R.id.nav_icons ? View.VISIBLE : View.GONE);
+        findViewById(R.id.page_info).setVisibility(id == R.id.nav_info ? View.VISIBLE : View.GONE);
+        int title = id == R.id.nav_colors ? R.string.tab_colors : id == R.id.nav_icons ? R.string.tab_icons
+                : id == R.id.nav_info ? R.string.tab_info : R.string.title_apps;
+        ((TextView) findViewById(R.id.title)).setText(title);
+        updateNotice();
+    }
+
+    private void tintBottomNav() {
+        com.google.android.material.bottomnavigation.BottomNavigationView nav = findViewById(R.id.bottom_nav);
+        if (nav == null) return;
+        int acc = ThemePrefs.accentColor();
+        int[][] st = {{android.R.attr.state_checked}, {}};
+        android.content.res.ColorStateList c = new android.content.res.ColorStateList(st, new int[]{acc, 0xFF9E9E9E});
+        nav.setItemIconTintList(c);
+        nav.setItemTextColor(c);
+        nav.setItemActiveIndicatorColor(android.content.res.ColorStateList.valueOf((acc & 0xFFFFFF) | 0x33000000));
+    }
+
+    // ── Pagina Info: come funziona + legenda dei colori ──────────────────────
+
+    private void buildInfoPage() {
+        android.widget.LinearLayout box = findViewById(R.id.info_box);
+        box.removeAllViews();
+        int pad = (int) (12 * getResources().getDisplayMetrics().density);
+        TextView how = new TextView(this);
+        how.setText(R.string.notice);
+        how.setTextColor(getColor(R.color.text));
+        how.setTextSize(14);
+        box.addView(how);
+        TextView legendTitle = new TextView(this);
+        legendTitle.setText(R.string.legend_title);
+        legendTitle.setTextColor(ThemePrefs.accentColor());
+        legendTitle.setTextSize(16);
+        legendTitle.setPadding(0, pad * 2, 0, 0);
+        box.addView(legendTitle);
+        int[][] rows = {
+                {ThemePrefs.accentColor(), R.string.state_active, R.string.legend_active_desc},
+                {getColor(R.color.state_disabled), R.string.state_disabled, R.string.legend_disabled_desc},
+                {getColor(R.color.state_not_active), R.string.state_reboot, R.string.legend_reboot_desc},
+                {getColor(R.color.state_invalid), R.string.state_invalid, R.string.legend_invalid_desc},
+                {getColor(R.color.state_not_installed), R.string.state_none, R.string.legend_none_desc},
+        };
+        for (int[] r : rows) {
+            TextView name = new TextView(this);
+            name.setText(r[1]);
+            name.setTextColor(r[0]);
+            name.setTextSize(16);
+            name.setPadding(0, pad, 0, 0);
+            TextView desc = new TextView(this);
+            desc.setText(r[2]);
+            desc.setTextColor(getColor(R.color.text_dim));
+            desc.setTextSize(13);
+            box.addView(name);
+            box.addView(desc);
+        }
+        TextView ver = new TextView(this);
+        String v = "";
+        try { v = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; } catch (Exception ignored) {}
+        ver.setText("Oxydian Theme " + v);
+        ver.setTextColor(getColor(R.color.text_dim));
+        ver.setTextSize(12);
+        ver.setPadding(0, pad * 3, 0, 0);
+        box.addView(ver);
     }
 
     /** Il tema di un bersaglio (colori di sistema / SystemUI) si accende da solo se si sceglie qualcosa. */
@@ -257,8 +343,7 @@ public class MainActivity extends AppCompatActivity {
     /** Bordo accento e scelte attuali nelle schede. */
     private void refreshCards() {
         if (mStatus != null) mStatus.setTextColor(ThemePrefs.accentColor());
-        ((android.widget.ImageButton) findViewById(R.id.btn_info)).setImageTintList(
-                android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+        tintBottomNav();
         float d = getResources().getDisplayMetrics().density;
         for (View c : mCards) {
             android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable();
@@ -454,7 +539,7 @@ public class MainActivity extends AppCompatActivity {
         int selected = 0;
         for (AppEntry e : mApps) if (e.enabled) selected++;
         mWarnCount = selected;
-        if (mWarn != null) mWarn.setVisibility(selected > 10 ? View.VISIBLE : View.GONE);
+        if (mWarn != null) mWarn.setVisibility(selected > 10 && mTab == R.id.nav_themes ? View.VISIBLE : View.GONE);
     }
 
     private void showWarning() {
