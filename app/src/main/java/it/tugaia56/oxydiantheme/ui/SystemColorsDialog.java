@@ -79,9 +79,8 @@ final class SystemColorsDialog {
         final String key = PKG + "_" + (idx == 0 ? "accent" : "background");
         // elenco completo: Predefinito, tutti i preset (pallino + nome), Personalizzato
         final List<Swatch> all = new ArrayList<>();
-        all.add(new Swatch("", idx == 0 ? ThemePrefs.DEFAULT_ACCENT : 0xFF1B2029));
-        all.addAll(items);
         all.add(new Swatch(OptionGroupsDialog.CUSTOM, ThemePrefs.getCustomColor(key)));
+        all.addAll(items);
 
         final List<TextView> labels = new ArrayList<>();
         final List<View> dots = new ArrayList<>();
