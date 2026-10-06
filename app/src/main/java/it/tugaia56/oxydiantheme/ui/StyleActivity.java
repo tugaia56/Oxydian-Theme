@@ -61,6 +61,12 @@ public class StyleActivity extends AppCompatActivity {
     private final String[] mChoice = new String[5];
     private boolean mBusy = false;
     private String mMode = "wifi";
+    private List<String> mAllDirs = new ArrayList<>();
+
+    /** Esiste lo stile per quell'icona (slot 0 = Wi-Fi, 1 = Segnale)? */
+    private boolean styleExists(int slot, String style) {
+        return style.isEmpty() || mAllDirs.contains(PREFIXES[slot] + style);
+    }
 
     private boolean isWifiOrSignal() { return "wifi".equals(mMode) || "signal".equals(mMode); }
     private Button mApply;
@@ -84,8 +90,10 @@ public class StyleActivity extends AppCompatActivity {
             if (on) {
                 // si parte dall'icona della pagina in cui ci si trova
                 int src = "signal".equals(mMode) ? 1 : 0;
-                mChoice[0] = mChoice[src];
-                mChoice[1] = mChoice[src];
+                if (styleExists(0, mChoice[src]) && styleExists(1, mChoice[src])) {
+                    mChoice[0] = mChoice[src];
+                    mChoice[1] = mChoice[src];
+                }
                 refreshShown();
                 RecyclerView rv = findViewById(R.id.list);
                 if (rv.getAdapter() != null) rv.getAdapter().notifyDataSetChanged();
@@ -138,6 +146,7 @@ public class StyleActivity extends AppCompatActivity {
             dirs = both.toArray(new String[0]);
         } catch (Exception ignored) {}
         Arrays.sort(dirs);
+        mAllDirs = Arrays.asList(dirs);
         int[] titles = {R.string.section_wifi, R.string.section_signal, R.string.section_nav, R.string.card_settings};
         for (int s = 0; s < SLOTS.length; s++) {
             if (s == 4) continue; // ICON2 (icona di Oxydian in Impostazioni) segue ICON1
@@ -230,8 +239,16 @@ public class StyleActivity extends AppCompatActivity {
             rb.setChecked(sel);
             h.itemView.setOnClickListener(v -> {
                 if (mBusy) return;
-                if (r.slot == BOTH || (ThemePrefs.isSameIcon() && (r.slot == 0 || r.slot == 1))) { mChoice[0] = r.style; mChoice[1] = r.style; }
-                else mChoice[r.slot] = r.style;
+                if (ThemePrefs.isSameIcon() && (r.slot == 0 || r.slot == 1)) {
+                    if (styleExists(0, r.style) && styleExists(1, r.style)) {
+                        mChoice[0] = r.style;
+                        mChoice[1] = r.style;
+                    } else {
+                        // stile presente solo per una delle due icone: cambia solo quella
+                        mChoice[r.slot] = r.style;
+                        Toast.makeText(StyleActivity.this, R.string.same_only_one, Toast.LENGTH_LONG).show();
+                    }
+                } else mChoice[r.slot] = r.style;
                 refreshShown();
                 notifyDataSetChanged();
             });
@@ -461,6 +478,8 @@ public class StyleActivity extends AppCompatActivity {
         mApply.setEnabled(false);
         Toast.makeText(this, R.string.working, Toast.LENGTH_SHORT).show();
         final String[] choice = mChoice.clone();
+        // uno stile inesistente per quell'icona (non dovrebbe succedere) si ignora: resta quello di prima
+        for (int k = 0; k <= 1; k++) if (!styleExists(k, choice[k])) choice[k] = ThemePrefs.getStyle(SLOTS[k]);
         choice[4] = choice[3];
         new Thread(() -> {
             int failed = 0;

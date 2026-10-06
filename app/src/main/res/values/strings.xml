@@ -137,4 +137,5 @@
     <string name="card_signal">Signal icons</string>
     <string name="state_on">Hide In/Out</string>
     <string name="state_off">Off</string>
+    <string name="same_only_one">This style exists only for this icon: only this one changes.</string>
 </resources>
