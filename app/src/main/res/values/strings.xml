@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Oxydian Theme</string>
-    <string name="title_apps">Themes</string>
+    <string name="title_apps">Overlays</string>
     <string name="status_no_root">Root access is required. Grant root to Oxydian Theme in your root manager.</string>
     <string name="status_reboot">Module created. Reboot once to activate it, then apply your themes.</string>
     <string name="status_ok">Module ready.</string>
@@ -93,7 +93,7 @@
     <string name="color_wifi_title">Wi-Fi icon color</string>
     <string name="color_mobile_title">Signal icon color</string>
     <string name="opt_custom">Custom</string>
-    <string name="tab_themes">Themes</string>
+    <string name="tab_themes">Overlays</string>
     <string name="tab_colors">Colors</string>
     <string name="tab_icons">Icons</string>
     <string name="tab_info">Info</string>

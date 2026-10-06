@@ -1,5 +1,5 @@
 <resources>
-    <string name="title_apps">Temi</string>
+    <string name="title_apps">Overlay</string>
     <string name="status_no_root">Serve l\'accesso root. Concedilo a Oxydian Theme nel gestore del root.</string>
     <string name="status_reboot">Modulo creato. Riavvia una volta per attivarlo, poi applica i temi.</string>
     <string name="status_ok">Modulo pronto.</string>
@@ -92,7 +92,7 @@
     <string name="color_wifi_title">Colore icona Wi-Fi</string>
     <string name="color_mobile_title">Colore icona Segnale</string>
     <string name="opt_custom">Personalizzato</string>
-    <string name="tab_themes">Temi</string>
+    <string name="tab_themes">Overlay</string>
     <string name="tab_colors">Colori</string>
     <string name="tab_icons">Icone</string>
     <string name="tab_info">Info</string>
