@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
         })));
         mSubRipple = s[0];
         View sp6 = new View(this);
-        sp6.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 1, 1f));
+        sp6.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
         r6.addView(sp6);
         // Pagina Mods
         android.widget.LinearLayout r5 = findViewById(R.id.cards_row5);
