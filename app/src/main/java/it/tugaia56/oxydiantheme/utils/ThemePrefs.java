@@ -144,4 +144,9 @@ public final class ThemePrefs {
     public static int getDefaultTab() { return sp().getInt("default_tab", 0); }
 
     public static void setDefaultTab(int tab) { sp().edit().putInt("default_tab", tab).commit(); }
+
+    /** Colore icone navigazione cambiato: la pagina principale rifa l'overlay di SystemUI al ritorno. */
+    public static boolean isNavPending() { return sp().getBoolean("nav_pending", false); }
+
+    public static void setNavPending(boolean on) { sp().edit().putBoolean("nav_pending", on).commit(); }
 }

@@ -116,6 +116,15 @@ public class StyleActivity extends AppCompatActivity {
             mobileColorBtn.setText(getString(R.string.color_mobile_title) + "  ·  " + IconColorDialog.summary(this, "mobile"));
             restartUi();
         }));
+        Button navColorBtn = findViewById(R.id.btn_color_nav);
+        navColorBtn.setVisibility("nav".equals(mMode) ? View.VISIBLE : View.GONE);
+        navColorBtn.setText(getString(R.string.color_nav_title) + "  \u00b7  " + IconColorDialog.summary(this, "nav"));
+        navColorBtn.setOnClickListener(v -> IconColorDialog.show(this, "nav", R.string.color_nav_title, () -> {
+            navColorBtn.setText(getString(R.string.color_nav_title) + "  \u00b7  " + IconColorDialog.summary(this, "nav"));
+            // maniglia/pillola: overlay di SystemUI rifatto dalla pagina principale; tasti: Oxydian dopo il riavvio dell'interfaccia
+            ThemePrefs.setNavPending(true);
+            finish();   // la pagina principale rifa l'overlay e riavvia l'interfaccia
+        }));
         android.widget.ImageButton back = findViewById(R.id.btn_back);
         back.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         back.setOnClickListener(v -> finish());

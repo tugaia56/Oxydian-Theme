@@ -147,4 +147,6 @@
     <string name="btn_remove">Rimuovi</string>
     <string name="select_first">Spunta almeno una voce</string>
     <string name="btn_activate">Attiva</string>
+    <string name="color_nav_title">Colore icone navigazione</string>
+    <string name="nav_color_hint">Colore salvato: torna alla pagina Overlay, verr\u00e0 applicato da solo.</string>
 </resources>

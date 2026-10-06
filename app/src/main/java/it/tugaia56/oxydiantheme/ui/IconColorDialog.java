@@ -50,6 +50,12 @@ final class IconColorDialog {
         return 0;
     }
 
+    /** Colore scelto per quel tipo (null = predefinito). */
+    static Integer value(String kind) {
+        String n = ThemePrefs.getIconColor(kind);
+        return n.isEmpty() ? null : colorOf(n);
+    }
+
     static String summary(Context ctx, String kind) {
         String n = ThemePrefs.getIconColor(kind);
         return n.isEmpty() ? ctx.getString(R.string.options_default) : n;
@@ -59,6 +65,7 @@ final class IconColorDialog {
     static void republish() {
         String w = ThemePrefs.getIconColor("wifi"), m = ThemePrefs.getIconColor("mobile");
         ThemeProps.publishIconColors(w.isEmpty() ? null : colorOf(w), m.isEmpty() ? null : colorOf(m));
+        ThemeProps.publishNavColor(value("nav"));
     }
 
     private static GradientDrawable circle(int fill, boolean selected, int accent) {

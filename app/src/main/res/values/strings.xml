@@ -148,4 +148,6 @@
     <string name="btn_remove">Remove</string>
     <string name="select_first">Tick at least one item</string>
     <string name="btn_activate">Enable</string>
+    <string name="color_nav_title">Navigation icon colour</string>
+    <string name="nav_color_hint">Colour saved: go back to the Overlay page, it will be applied automatically.</string>
 </resources>

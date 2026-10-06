@@ -31,4 +31,10 @@ public final class ThemeProps {
         String m = mobile == null ? "" : String.format("%08x", mobile);
         Shell.cmd("resetprop persist.oxytheme.wifi_icon_color \"" + w + "\"; resetprop persist.oxytheme.mobile_icon_color \"" + m + "\"").submit();
     }
+
+    /** Colore delle icone della barra di navigazione (null = predefinito): lo applica Oxydian. */
+    public static void publishNavColor(Integer nav) {
+        String n = nav == null ? "" : String.format("%08x", nav);
+        Shell.cmd("resetprop persist.oxytheme.nav_icon_color \"" + n + "\"").submit();
+    }
 }

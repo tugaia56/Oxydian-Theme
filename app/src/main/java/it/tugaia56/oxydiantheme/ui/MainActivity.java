@@ -364,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "icons").isEmpty();
+                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty();
             if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
         }
         for (AppEntry e : mApps) if (e.ds && e.pkg.equals(pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(pkg);
@@ -482,6 +482,14 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (mSubAccent != null) refreshCards();
         refreshStates();
+        if (ThemePrefs.isNavPending() && !mBusy) {
+            // colore icone navigazione cambiato nella pagina Icone: rifa SystemUI e riavvia l'interfaccia
+            ThemePrefs.setNavPending(false);
+            mRestartUiAfter = true;
+            syncEnabled(SYSTEMUI_PKG);
+            mList.getAdapter().notifyDataSetChanged();
+            onApply(SYSTEMUI_PKG, false);
+        }
     }
 
     /** Legge lo stato reale di ogni overlay (attivo, solo installato, da riavviare, non valido). */
@@ -757,6 +765,7 @@ public class MainActivity extends AppCompatActivity {
     private String optsKey(AppEntry e) {
         StringBuilder sb = new StringBuilder();
         if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) sb.append("|ripple=").append(ThemePrefs.getRippleAlpha());
+        if (e.ds && SYSTEMUI_PKG.equals(e.pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav"));
         for (OptGroup g : optionGroups(e.pkg)) {
             String c = ThemePrefs.getOption(e.pkg, g.id);
             sb.append('|').append(g.id).append('=').append(c);
@@ -813,6 +822,14 @@ public class MainActivity extends AppCompatActivity {
         if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(e.pkg, "pinnum"))) {
             int rgb = ThemePrefs.getCustomColor(e.pkg + "_pinnum") & 0xFFFFFF;
             sb.append("    <color name=\"coui_numeric_keyboard_number_color\">").append(hex8(0xFF000000 | rgb)).append("</color>\n");
+            any = true;
+        }
+        Integer nav = IconColorDialog.value("nav");
+        if (nav != null) {
+            // pillola dei gesti e icona della barra; i tre tasti li colora Oxydian
+            String h = hex8(0xFF000000 | (nav & 0xFFFFFF));
+            for (String n : new String[]{"navigation_bar_home_handle_dark_color", "navigation_bar_home_handle_light_color", "navigation_bar_icon_color"})
+                sb.append("    <color name=\"").append(n).append("\">").append(h).append("</color>\n");
             any = true;
         }
         return any ? sb.append("</resources>").toString() : null;
@@ -905,6 +922,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static final int ACT_ACTIVATE = 0, ACT_DISABLE = 1, ACT_REMOVE = 2;
+    private boolean mRestartUiAfter;
 
     /** Azione sulle voci spuntate nella lista. */
     private void runSelected(int action) {
@@ -1008,6 +1026,11 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
                 refreshStates();
                 updateNotice();
+                if (mRestartUiAfter) {
+                    mRestartUiAfter = false;
+                    Toast.makeText(MainActivity.this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+                    new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+                }
                 if (removedCount > 0) {
                     Dialogs.show(MainActivity.this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(MainActivity.this)
                             .setTitle(R.string.off_title)

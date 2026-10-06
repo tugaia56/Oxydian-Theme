@@ -72,6 +72,16 @@
         android:visibility="gone" />
 
     <Button
+        android:id="@+id/btn_color_nav"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/color_nav_title"
+        android:visibility="gone" />
+
+    <Button
         android:id="@+id/btn_icon_options"
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="match_parent"

@@ -4,6 +4,6 @@ Aggiunto:
 - Tema Dark Shadow: Impostazioni, SystemUI, Launcher e app OnePlus/OPPO
 - Colori di sistema: accento e sfondo (preset Dark Shadow Theme o colore a scelta), barra di progresso circolare
 - Tastierino PIN (colori preset o personalizzati), icone attività di rete
-- Icone Wi-Fi e Segnale (stile, dimensione, colore), icone barra di navigazione, icone Impostazioni con opzioni
+- Icone Wi-Fi e Segnale (stile, dimensione, colore), icone barra di navigazione (stile e colore), icone Impostazioni con opzioni
 - Opzioni per alcune app (per esempio sfondo della sveglia)
 - Modulo root creato dall'app (KernelSU e Magisk): i temi restano dopo il riavvio
