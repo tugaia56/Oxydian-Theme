@@ -127,7 +127,7 @@
     <string name="backup_error">Operation failed</string>
     <string name="credits_thanks">Special thanks</string>
     <string name="credits_libraries">Libraries</string>
-    <string name="credits_oc_summary">Luigi (@LC9889) — the overlay compiler starts from his work, and the inspiration for this project</string>
+    <string name="credits_oc_summary">Luigi (@LC9889) — the overlay compiler (aapt2, alignment, signing) and the root and file utilities come from his Oxygen Customizer</string>
     <string name="credits_oostheme_summary">Accent, background, PIN keypad, progress bar and icon presets</string>
     <string name="credits_substratum_summary">The overlay theme format everything comes from</string>
     <string name="credits_claude_summary">AI assistant (Anthropic) — this app simply wouldn\'t exist without it</string>
