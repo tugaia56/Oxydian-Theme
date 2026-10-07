@@ -210,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
         });
         setupCards();
         if (savedInstanceState == null) mTab = TAB_IDS[Math.max(0, Math.min(3, ThemePrefs.getDefaultTab()))];
+        else mTab = savedInstanceState.getInt("tab", mTab);
         setupBottomNav();
         buildInfoPage();
         SystemColorsDialog.republish(this);
@@ -301,7 +302,19 @@ public class MainActivity extends AppCompatActivity {
         mSubNav = s[0];
         r5.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
         mSubSettings = s[0];
+        android.widget.LinearLayout r7 = findViewById(R.id.cards_row7);
+        r7.addView(makeCard(R.string.card_tasker, s, this::taskerDialog));
+        mSubTasker = s[0];
+        View sp7 = new View(this);
+        sp7.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+        r7.addView(sp7);
         refreshCards();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putInt("tab", mTab);
     }
 
     // ── Barra di navigazione in basso ────────────────────────────────────────
@@ -391,8 +404,9 @@ public class MainActivity extends AppCompatActivity {
         row4.setOrientation(android.widget.LinearLayout.HORIZONTAL);
         row4.addView(makeCard(R.string.card_default_tab, sub, this::defaultTabDialog));
         mSubDefaultTab = sub[0];
-        row4.addView(makeCard(R.string.card_tasker, sub, this::taskerDialog));
-        mSubTasker = sub[0];
+        View sp4 = new View(this);
+        sp4.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+        row4.addView(sp4);
         box.addView(row4);
         TextView ver = new TextView(this);
         String v = "";

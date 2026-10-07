@@ -303,7 +303,7 @@ final class SystemColorsDialog {
             slider(ctx, box, R.string.tweak_sat_bg, 0, 200, 5, bgSat, false, 100);
             slider(ctx, box, R.string.tweak_light_bg, -10, 10, 1, bgLight, true, 0);
         }
-        box.addView(note(ctx, R.string.tweak_note));
+        box.addView(note(ctx, which == 0 ? R.string.tweak_note_accent : R.string.tweak_note));
 
         ScrollView sv = new ScrollView(ctx);
         sv.addView(box);
