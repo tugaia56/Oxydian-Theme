@@ -136,7 +136,28 @@ public class MainActivity extends AppCompatActivity {
     /** Guida passo passo per Tasker / MacroDroid. */
     private void taskerGuide() {
         TextView t = new TextView(this);
-        t.setText(R.string.tasker_guide_text);
+        // titoli dei capitoli (righe in maiuscolo o "1. ...") in grassetto e nel colore accento, con riga vuota prima
+        android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder();
+        boolean first = true;
+        for (String line : getString(R.string.tasker_guide_text).split("
+", -1)) {
+            if (line.trim().isEmpty()) continue;   // le righe vuote le decido io
+            boolean heading = line.matches("^[0-9]\. .*") || (line.equals(line.toUpperCase(java.util.Locale.ROOT)) && !line.startsWith("•"));
+            if (!first) sb.append(heading ? "
+
+" : "
+");
+            int start = sb.length();
+            sb.append(line);
+            if (heading) {
+                sb.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), start, sb.length(), 0);
+                sb.setSpan(new android.text.style.ForegroundColorSpan(ThemePrefs.accentColor()), start, sb.length(), 0);
+                sb.setSpan(new android.text.style.RelativeSizeSpan(1.1f), start, sb.length(), 0);
+            }
+            first = false;
+        }
+        t.setText(sb);
+        t.setLineSpacing(0f, 1.15f);
         t.setTextColor(getColor(R.color.text));
         t.setTextSize(14);
         int pad = (int) (20 * getResources().getDisplayMetrics().density);
