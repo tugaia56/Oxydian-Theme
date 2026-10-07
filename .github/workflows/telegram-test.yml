@@ -15,5 +15,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TELEGRAM_TK }}
           TG_CHAT: ${{ secrets.OBSIDIAN_GROUP }}
         run: |
+          TG_TOKEN=$(printf %s "$TG_TOKEN" | tr -d '[:space:]')
+          TG_CHAT=$(printf %s "$TG_CHAT" | tr -d '[:space:]')
           resp=$(curl -s -X POST -F "chat_id=$TG_CHAT" -F "text=Prova di collegamento: Oxydian Theme" "https://api.telegram.org/bot$TG_TOKEN/sendMessage")
           echo "$resp" | python3 -c "import sys,json; d=json.load(sys.stdin); print('OK' if d.get('ok') else 'ERRORE: ' + str(d.get('description')))"
