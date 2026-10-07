@@ -147,6 +147,28 @@ final class SystemColorsDialog {
         refresh.run();
     }
 
+    /** Nome della cartella del preset corrispondente a un nome qualsiasi (maiuscole e spazi ignorati), o null. */
+    static String matchPreset(Context ctx, String group, String name) {
+        if (name == null) return null;
+        String want = name.trim().replace(' ', '_');
+        try {
+            String[] names = ctx.getAssets().list(BASE + group);
+            if (names == null) return null;
+            for (String n : names) if (!n.equals("title.txt") && n.equalsIgnoreCase(want)) return n;
+        } catch (Exception ignored) {}
+        return null;
+    }
+
+    /** Riporta le scelte salvate (come se si fosse premuto OK nella finestra): accento dell'app, tema acceso, proprieta' di sistema. */
+    static void commitFromPrefs(Context ctx) {
+        String a = ThemePrefs.getOption(PKG, "accent"), b = ThemePrefs.getOption(PKG, "background");
+        Integer ea = effAccent(ctx);
+        int c = a.isEmpty() ? ThemePrefs.DEFAULT_ACCENT : (ea != null ? ea : ThemePrefs.accentColor());
+        ThemePrefs.setAccentColor(c);
+        ThemePrefs.setDarkShadowEnabled(PKG, !(a.isEmpty() && b.isEmpty() && ThemePrefs.getOption(PKG, "progress").isEmpty()));
+        republish(ctx);
+    }
+
     /** Accento effettivo: quello scelto con la saturazione impostata (null = predefinito). */
     static Integer effAccent(Context ctx) {
         Integer a = currentAccent(ctx);

@@ -1,5 +1,6 @@
 package it.tugaia56.oxydiantheme.ui;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -115,6 +116,21 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.backup_error, Toast.LENGTH_LONG).show();
                 }
             });
+
+    private TextView mSubTasker;
+
+    /** Integrazione Tasker: interruttore e istruzioni d'uso. */
+    private void taskerDialog() {
+        final boolean on = ThemePrefs.isTaskerEnabled();
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.card_tasker)
+                .setMessage(R.string.tasker_help)
+                .setPositiveButton(on ? R.string.tasker_turn_off : R.string.tasker_turn_on, (d, w) -> {
+                    ThemePrefs.setTaskerEnabled(!on);
+                    refreshCards();
+                })
+                .setNegativeButton(R.string.legend_close, null));
+    }
 
     private void backupDialog() {
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
@@ -330,9 +346,8 @@ public class MainActivity extends AppCompatActivity {
         row4.setOrientation(android.widget.LinearLayout.HORIZONTAL);
         row4.addView(makeCard(R.string.card_default_tab, sub, this::defaultTabDialog));
         mSubDefaultTab = sub[0];
-        View sp4 = new View(this);
-        sp4.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-        row4.addView(sp4);
+        row4.addView(makeCard(R.string.card_tasker, sub, this::taskerDialog));
+        mSubTasker = sub[0];
         box.addView(row4);
         TextView ver = new TextView(this);
         String v = "";
@@ -462,6 +477,8 @@ public class MainActivity extends AppCompatActivity {
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
+        if (mSubTasker != null)
+            mSubTasker.setText(ThemePrefs.isTaskerEnabled() ? R.string.state_on_simple : R.string.state_off);
         if (mSubDefaultTab != null) {
             String[] names = {getString(R.string.tab_themes), getString(R.string.tab_colors), getString(R.string.tab_icons), getString(R.string.tab_info)};
             mSubDefaultTab.setText(names[Math.max(0, Math.min(3, ThemePrefs.getDefaultTab()))]);
@@ -708,7 +725,7 @@ public class MainActivity extends AppCompatActivity {
             h.sw.setOnCheckedChangeListener((b, checked) -> {
                 if (checked) mSelected.add(e.name); else mSelected.remove(e.name);
             });
-            boolean hasOpt = !e.ds && !optionGroups(e.pkg).isEmpty();
+            boolean hasOpt = !e.ds && !optionGroups(MainActivity.this, e.pkg).isEmpty();
             h.opt.setVisibility(hasOpt ? View.VISIBLE : View.GONE);
             Tint.button((com.google.android.material.button.MaterialButton) h.opt);
             h.opt.setOnClickListener(v -> showOptions(e));
@@ -722,25 +739,25 @@ public class MainActivity extends AppCompatActivity {
 
     // ── Opzioni dei temi ─────────────────────────────────────────────────────
 
-    private static class OptGroup {
+    static class OptGroup {
         String id, title;
         List<String> choices = new ArrayList<>();
     }
 
-    private final Map<String, List<OptGroup>> mOptCache = new HashMap<>();
+    private static final Map<String, List<OptGroup>> mOptCache = new HashMap<>();
 
-    private List<OptGroup> optionGroups(String pkg) {
+    static List<OptGroup> optionGroups(Context ctx, String pkg) {
         List<OptGroup> cached = mOptCache.get(pkg);
         if (cached != null) return cached;
         List<OptGroup> out = new ArrayList<>();
         mOptCache.put(pkg, out);
         try {
             String base = "CompileOnDemand/" + pkg + "/OPT";
-            String[] groups = getAssets().list(base);
+            String[] groups = ctx.getAssets().list(base);
             if (groups == null) return out;
             Arrays.sort(groups);
             for (String g : groups) {
-                String[] items = getAssets().list(base + "/" + g);
+                String[] items = ctx.getAssets().list(base + "/" + g);
                 if (items == null) continue;
                 OptGroup og = new OptGroup();
                 og.id = g;
@@ -748,7 +765,7 @@ public class MainActivity extends AppCompatActivity {
                 Arrays.sort(items);
                 for (String item : items) {
                     if (item.equals("title.txt")) {
-                        try (java.io.InputStream in = getAssets().open(base + "/" + g + "/title.txt")) {
+                        try (java.io.InputStream in = ctx.getAssets().open(base + "/" + g + "/title.txt")) {
                             og.title = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).trim();
                         }
                     } else {
@@ -762,18 +779,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Scelte attuali sotto forma di testo (entra nella firma: se cambiano, il tema va rifatto). */
-    private String optsKey(AppEntry e) {
+    static String optsKey(Context ctx, String pkg, boolean ds) {
         StringBuilder sb = new StringBuilder();
-        if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) {
+        if (ds && SystemColorsDialog.PKG.equals(pkg)) {
             sb.append("|ripple=").append(ThemePrefs.getRippleAlpha());
             sb.append("|tw=").append(ThemePrefs.getAccSat()).append(',').append(ThemePrefs.getBgSat())
                     .append(',').append(ThemePrefs.getBgLight()).append(',').append(ThemePrefs.isBgPitch());
         }
-        if (e.ds && SYSTEMUI_PKG.equals(e.pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav"));
-        for (OptGroup g : optionGroups(e.pkg)) {
-            String c = ThemePrefs.getOption(e.pkg, g.id);
+        if (ds && SYSTEMUI_PKG.equals(pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav"));
+        for (OptGroup g : optionGroups(ctx, pkg)) {
+            String c = ThemePrefs.getOption(pkg, g.id);
             sb.append('|').append(g.id).append('=').append(c);
-            if (OptionGroupsDialog.CUSTOM.equals(c)) sb.append(String.format("#%08X", ThemePrefs.getCustomColor(e.pkg + "_" + g.id)));
+            if (OptionGroupsDialog.CUSTOM.equals(c)) sb.append(String.format("#%08X", ThemePrefs.getCustomColor(pkg + "_" + g.id)));
         }
         return sb.toString();
     }
@@ -781,19 +798,19 @@ public class MainActivity extends AppCompatActivity {
     private static String hex8(int c) { return String.format("#%08X", c); }
 
     /** Colori a scelta libera del PIN (stesse risorse che creava Oxydian), o null se non servono. */
-    private String customValuesXml(AppEntry e) {
-        if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) {
+    static String customValuesXml(Context ctx, String pkg, boolean ds) {
+        if (ds && SystemColorsDialog.PKG.equals(pkg)) {
             StringBuilder body = new StringBuilder();
-            String accSel = ThemePrefs.getOption(e.pkg, "accent"), bgSel = ThemePrefs.getOption(e.pkg, "background");
+            String accSel = ThemePrefs.getOption(pkg, "accent"), bgSel = ThemePrefs.getOption(pkg, "background");
             boolean accTw = !accSel.isEmpty() && ThemePrefs.getAccSat() != 100;
             boolean bgTw = !bgSel.isEmpty() && (ThemePrefs.isBgPitch() || ThemePrefs.getBgSat() != 100 || ThemePrefs.getBgLight() != 0);
             if (OptionGroupsDialog.CUSTOM.equals(accSel) || accTw) {
-                String b = CustomPalette.baseBody(this, "accent", accSel, ThemePrefs.getCustomColor(e.pkg + "_accent"));
+                String b = CustomPalette.baseBody(ctx, "accent", accSel, ThemePrefs.getCustomColor(pkg + "_accent"));
                 if (accTw) b = CustomPalette.tweakBody(b, ThemePrefs.getAccSat(), 0, false, 0f);
                 body.append(b);
             }
             if (OptionGroupsDialog.CUSTOM.equals(bgSel) || bgTw) {
-                String b = CustomPalette.baseBody(this, "background", bgSel, ThemePrefs.getCustomColor(e.pkg + "_background"));
+                String b = CustomPalette.baseBody(ctx, "background", bgSel, ThemePrefs.getCustomColor(pkg + "_background"));
                 if (bgTw) {
                     float l0 = Math.max(CustomPalette.bgDarkLightness(b), 0f);
                     b = CustomPalette.tweakBody(b, ThemePrefs.getBgSat(), ThemePrefs.getBgLight(), ThemePrefs.isBgPitch(), l0);
@@ -803,7 +820,7 @@ public class MainActivity extends AppCompatActivity {
             int rp = ThemePrefs.getRippleAlpha();
             if (rp > 0) {
                 // onda del tocco: colore dell'accento con l'opacita' scelta
-                Integer acc = SystemColorsDialog.effAccent(this);
+                Integer acc = SystemColorsDialog.effAccent(ctx);
                 int base = (acc != null ? acc : ThemePrefs.accentColor()) & 0xFFFFFF;
                 String hex = String.format("#%02X%06X", Math.round(rp * 2.55f), base);
                 String cleaned = body.toString().replaceAll("<color name=\"ripple_material_(dark|light)\">[^<]*</color>", "");
@@ -814,11 +831,11 @@ public class MainActivity extends AppCompatActivity {
             }
             return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
         }
-        if (!e.ds || !"com.android.systemui".equals(e.pkg)) return null;
+        if (!ds || !"com.android.systemui".equals(pkg)) return null;
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n");
         boolean any = false;
-        if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(e.pkg, "pinbg"))) {
-            int rgb = ThemePrefs.getCustomColor(e.pkg + "_pinbg") & 0xFFFFFF;
+        if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(pkg, "pinbg"))) {
+            int rgb = ThemePrefs.getCustomColor(pkg + "_pinbg") & 0xFFFFFF;
             String[][] m = {
                     {"coui_numeric_keyboard_border_color", hex8(0xFF000000 | rgb)},
                     {"coui_numeric_keyboard_inner_gradient_color_1", hex8(0x80000000 | rgb)},
@@ -835,8 +852,8 @@ public class MainActivity extends AppCompatActivity {
             for (String[] c : m) sb.append("    <color name=\"").append(c[0]).append("\">").append(c[1]).append("</color>\n");
             any = true;
         }
-        if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(e.pkg, "pinnum"))) {
-            int rgb = ThemePrefs.getCustomColor(e.pkg + "_pinnum") & 0xFFFFFF;
+        if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(pkg, "pinnum"))) {
+            int rgb = ThemePrefs.getCustomColor(pkg + "_pinnum") & 0xFFFFFF;
             sb.append("    <color name=\"coui_numeric_keyboard_number_color\">").append(hex8(0xFF000000 | rgb)).append("</color>\n");
             any = true;
         }
@@ -852,17 +869,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Percorsi negli asset delle scelte da sovrapporre alla base. */
-    private List<String> optionPaths(AppEntry e) {
+    static List<String> optionPaths(Context ctx, String pkg) {
         List<String> out = new ArrayList<>();
-        for (OptGroup g : optionGroups(e.pkg)) {
-            String c = ThemePrefs.getOption(e.pkg, g.id);
-            if (!c.isEmpty() && g.choices.contains(c)) out.add("CompileOnDemand/" + e.pkg + "/OPT/" + g.id + "/" + c);
+        for (OptGroup g : optionGroups(ctx, pkg)) {
+            String c = ThemePrefs.getOption(pkg, g.id);
+            if (!c.isEmpty() && g.choices.contains(c)) out.add("CompileOnDemand/" + pkg + "/OPT/" + g.id + "/" + c);
         }
         return out;
     }
 
     private void showOptions(AppEntry e) {
-        List<OptGroup> groups = optionGroups(e.pkg);
+        List<OptGroup> groups = optionGroups(this, e.pkg);
         if (groups.isEmpty()) return;
         android.widget.LinearLayout box = new android.widget.LinearLayout(this);
         box.setOrientation(android.widget.LinearLayout.VERTICAL);
@@ -914,7 +931,7 @@ public class MainActivity extends AppCompatActivity {
     // ── Applica ──────────────────────────────────────────────────────────────
 
     /** Stato di ogni overlay di tema nel sistema: nome completo -> "[x]", "[ ]" oppure "---". */
-    private static Map<String, String> overlayStates() {
+    static Map<String, String> overlayStates() {
         Map<String, String> out = new HashMap<>();
         try {
             for (String line : Shell.cmd("cmd overlay list | grep " + ThemeCompiler.PREFIX).exec().getOut()) {
@@ -926,7 +943,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Overlay di tema attualmente abilitati nel sistema (nomi completi). */
-    private static Set<String> enabledOverlays() {
+    static Set<String> enabledOverlays() {
         Set<String> out = new HashSet<>();
         try {
             for (String line : Shell.cmd("cmd overlay list | grep " + ThemeCompiler.PREFIX).exec().getOut()) {
@@ -999,13 +1016,13 @@ public class MainActivity extends AppCompatActivity {
                     boolean known = "[ ]".equals(stateBefore.get(e.overlay()));
                     if (known) toEnable.add(e.overlay());
                     // gia' compilata (attiva o solo spenta) con lo stesso accento/versione: si salta
-                    if ((active || known) && (signature + optsKey(e)).equals(e.builtSig())) continue;
+                    if ((active || known) && (signature + optsKey(this, e.pkg, e.ds)).equals(e.builtSig())) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
-                        if (ThemeCompiler.buildNamedInBatch(e.pkg, e.dir, e.name, optionPaths(e), customValuesXml(e))) {
+                        if (ThemeCompiler.buildNamedInBatch(e.pkg, e.dir, e.name, optionPaths(this, e.pkg), customValuesXml(this, e.pkg, e.ds))) {
                             failed++;
                         } else {
-                            e.setBuilt(signature + optsKey(e));
+                            e.setBuilt(signature + optsKey(this, e.pkg, e.ds));
                             if (active) refresh.add(e.overlay());
                         }
                     } catch (Throwable t) {
@@ -1059,9 +1076,13 @@ public class MainActivity extends AppCompatActivity {
 
     /** Cambia se si reinstalla l'app o si cambia accento: allora gli overlay vanno rifatti. */
     private String signature() {
+        return signature(this);
+    }
+
+    static String signature(Context ctx) {
         long updated = 0;
         try {
-            updated = getPackageManager().getPackageInfo(getPackageName(), 0).lastUpdateTime;
+            updated = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).lastUpdateTime;
         } catch (Exception ignored) {}
         return updated + ":" + String.format("%08X", ThemePrefs.accentColor());
     }

@@ -156,4 +156,9 @@
     <string name="tweak_pitch">Pure black</string>
     <string name="tweak_note">Tweaks apply with a chosen colour (not Default). Pure black makes the base black and keeps the tint in the lighter parts.</string>
     <string name="tweak_reset">Reset</string>
+    <string name="card_tasker">Tasker integration</string>
+    <string name="state_on_simple">On</string>
+    <string name="tasker_turn_on">Turn on</string>
+    <string name="tasker_turn_off">Turn off</string>
+    <string name="tasker_help">Lets Tasker, MacroDroid and similar apps change the system colours without opening the app.\n\nAction: it.tugaia56.oxydian.theme.action.APPLY_CONFIG\nPackage: it.tugaia56.oxydian.theme\nTarget: Broadcast Receiver\n\nExtras (send only the ones to change):\n• accent / background: a preset name (for example Violet), or #RRGGBB, or default\n• randomColor: true for a random accent\n• pitchBlack: true or false\n• accentSaturation / backgroundSaturation: 0 to 200\n• backgroundLightness: -10 to 10\n\nOnly works after the system colours have been applied from the app at least once.</string>
 </resources>

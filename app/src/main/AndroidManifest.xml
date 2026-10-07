@@ -24,5 +24,13 @@
         <activity
             android:name=".ui.StyleActivity"
             android:exported="false" />
+
+        <receiver
+            android:name=".ui.TaskerReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="it.tugaia56.oxydian.theme.action.APPLY_CONFIG" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
