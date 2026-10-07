@@ -129,7 +129,24 @@ public class MainActivity extends AppCompatActivity {
                     ThemePrefs.setTaskerEnabled(!on);
                     refreshCards();
                 })
+                .setNeutralButton(R.string.tasker_guide, (d, w) -> taskerGuide())
                 .setNegativeButton(R.string.legend_close, null));
+    }
+
+    /** Guida passo passo per Tasker / MacroDroid. */
+    private void taskerGuide() {
+        TextView t = new TextView(this);
+        t.setText(R.string.tasker_guide_text);
+        t.setTextColor(getColor(R.color.text));
+        t.setTextSize(14);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        t.setPadding(pad, pad / 2, pad, 0);
+        android.widget.ScrollView sv = new android.widget.ScrollView(this);
+        sv.addView(t);
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.tasker_guide)
+                .setView(sv)
+                .setPositiveButton(R.string.legend_close, null));
     }
 
     private void backupDialog() {
