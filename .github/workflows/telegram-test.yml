@@ -18,4 +18,4 @@ jobs:
           TG_TOKEN=$(printf %s "$TG_TOKEN" | grep -oE '[0-9]+:[A-Za-z0-9_-]{30,}' | head -1)
           TG_CHAT=$(printf %s "$TG_CHAT" | grep -oE '[-]?[0-9]+' | head -1)
           resp=$(curl -s -X POST -F "chat_id=$TG_CHAT" -F "text=Prova di collegamento: Oxydian Theme" "https://api.telegram.org/bot$TG_TOKEN/sendMessage")
-          echo "$resp" | python3 -c "import sys,json; d=json.load(sys.stdin); print('OK' if d.get('ok') else 'ERRORE: ' + str(d.get('description')))"
+          echo "$resp" | python3 -c "import sys,json; d=json.load(sys.stdin); print('::notice::Telegram OK' if d.get('ok') else '::error::Telegram: ' + str(d.get('description')))"
