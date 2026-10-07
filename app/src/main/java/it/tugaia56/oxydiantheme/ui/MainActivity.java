@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.card_backup)
                 .setMessage(R.string.backup_message)
-                .setPositiveButton(R.string.backup_save, (d, w) -> mBackupSave.launch("OxydianTheme-backup.json"))
+                .setPositiveButton(R.string.backup_save, (d, w) -> mBackupSave.launch("OxydianTheme-backup-" + new java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm", java.util.Locale.ROOT).format(new java.util.Date()) + ".json"))
                 .setNeutralButton(R.string.backup_restore, (d, w) -> mBackupLoad.launch(new String[]{"application/json", "text/plain", "*/*"}))
                 .setNegativeButton(R.string.legend_close, null));
     }
