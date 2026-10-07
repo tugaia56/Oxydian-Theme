@@ -139,14 +139,10 @@ public class MainActivity extends AppCompatActivity {
         // titoli dei capitoli (righe in maiuscolo o "1. ...") in grassetto e nel colore accento, con riga vuota prima
         android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder();
         boolean first = true;
-        for (String line : getString(R.string.tasker_guide_text).split("
-", -1)) {
+        for (String line : getString(R.string.tasker_guide_text).split("\n", -1)) {
             if (line.trim().isEmpty()) continue;   // le righe vuote le decido io
-            boolean heading = line.matches("^[0-9]\. .*") || (line.equals(line.toUpperCase(java.util.Locale.ROOT)) && !line.startsWith("•"));
-            if (!first) sb.append(heading ? "
-
-" : "
-");
+            boolean heading = line.matches("^[0-9]\\. .*") || (line.equals(line.toUpperCase(java.util.Locale.ROOT)) && !line.startsWith("\u2022"));
+            if (!first) sb.append(heading ? "\n\n" : "\n");
             int start = sb.length();
             sb.append(line);
             if (heading) {
