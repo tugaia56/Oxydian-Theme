@@ -156,7 +156,7 @@
     <string name="tweak_pitch">Pure black</string>
     <string name="tweak_note">Tweaks apply with a chosen colour (not Default). Pure black makes the base black and keeps the tint in the lighter parts.</string>
     <string name="tweak_reset">Reset</string>
-    <string name="card_tasker">Tasker integration</string>
+    <string name="card_tasker">Colour automation</string>
     <string name="state_on_simple">On</string>
     <string name="tasker_turn_on">Turn on</string>
     <string name="tasker_turn_off">Turn off</string>

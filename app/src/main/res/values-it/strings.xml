@@ -155,7 +155,7 @@
     <string name="tweak_pitch">Nero puro</string>
     <string name="tweak_note">I ritocchi valgono con un colore scelto (non con Predefinito). Nero puro rende nero il fondo e tiene la tinta nelle parti più chiare.</string>
     <string name="tweak_reset">Azzera</string>
-    <string name="card_tasker">Integrazione Tasker</string>
+    <string name="card_tasker">Automazione colori</string>
     <string name="state_on_simple">Attiva</string>
     <string name="tasker_turn_on">Attiva</string>
     <string name="tasker_turn_off">Disattiva</string>

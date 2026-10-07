@@ -20,7 +20,7 @@ import it.tugaia56.oxydiantheme.utils.overlay.compiler.ThemeCompiler;
 
 /**
  * Cambio dei colori di sistema da Tasker / MacroDroid, senza aprire l'app. Va acceso in
- * Impostazioni > Integrazione Tasker. Azione: it.tugaia56.oxydian.theme.action.APPLY_CONFIG
+ * Impostazioni > Automazione colori. Azione: it.tugaia56.oxydian.theme.action.APPLY_CONFIG
  * (con il pacchetto it.tugaia56.oxydian.theme). Extra (si mandano solo quelli da cambiare):
  *   accent, background        nome di un preset (es. Violet), "#RRGGBB" oppure "default"
  *   randomColor               true = accento a caso

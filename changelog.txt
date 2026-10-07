@@ -1,7 +1,7 @@
 Aggiunto:
 - Colori: "Nero puro" per lo sfondo e cursori di saturazione (accento e sfondo) e luminosità (sfondo), con pulsante Azzera
 - Colore delle icone della barra di navigazione
-- Integrazione Tasker / MacroDroid: cambio dei colori di sistema (accento, sfondo, nero puro, cursori) con un broadcast, senza aprire l'app (Impostazioni > Integrazione Tasker)
+- Integrazione Tasker / MacroDroid: cambio dei colori di sistema (accento, sfondo, nero puro, cursori) con un broadcast, senza aprire l'app (Impostazioni > Automazione colori)
 - Prima versione di Oxydian Theme: app separata per i temi overlay di Oxydian (senza Xposed)
 - Temi per le app Google e per le app installate, con interruttori e stato (attivo, spento, da riavviare)
 - Tema Dark Shadow: Impostazioni, SystemUI, Launcher e app OnePlus/OPPO
