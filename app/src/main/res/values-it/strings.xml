@@ -161,13 +161,13 @@
     <string name="tasker_turn_off">Disattiva</string>
     <string name="tasker_help">Permette a Tasker, MacroDroid o simili di cambiare i colori di sistema senza aprire l\'app.\n\nAzione: it.tugaia56.oxydian.theme.action.APPLY_CONFIG\nPacchetto: it.tugaia56.oxydian.theme\nDestinazione: Broadcast Receiver\n\nExtra (manda solo quelli da cambiare):\n• accent / background: nome di un preset (per esempio Violet), oppure #RRGGBB, oppure default\n• randomColor: true per un accento a caso\n• pitchBlack: true o false\n• accentSaturation / backgroundSaturation: da 0 a 200\n• backgroundLightness: da -10 a 10\n\nFunziona solo dopo che i colori di sistema sono stati applicati almeno una volta dall\'app.</string>
     <string name="tasker_guide">Guida</string>
-    <string name="tasker_guide_text">COSA SERVE FARE
+    <string name="tasker_guide_text">COSA SERVE FARE:
 
-1. In Oxydian Theme
+1. In Oxydian Theme:
 • Attiva questa funzione (tasto Attiva).
 • Applica almeno una volta i colori di sistema dalla scheda Colori: scegli un accento e premi OK.
 
-2. In Tasker
+2. In Tasker:
 • Crea un\'Attività, per esempio “Accento arancione”.
 • Aggiungi l\'azione Sistema > Invia intent.
 • Azione: it.tugaia56.oxydian.theme.action.APPLY_CONFIG
@@ -175,10 +175,10 @@
 • Destinazione: Broadcast Receiver
 • Extra, una riga per ogni cosa da cambiare. Esempio: accent:#FF8800
 
-3. Quando farla partire
+3. Quando farla partire:
 • Crea un Profilo (un orario, ogni ora, un luogo...) che avvia quell\'Attività.
 
-EXTRA DISPONIBILI
+EXTRA DISPONIBILI:
 • accent:Violet oppure accent:#FF8800 - accento
 • background:Blue_Gray_Dark - sfondo
 • randomColor:true - accento a caso
@@ -188,7 +188,7 @@ EXTRA DISPONIBILI
 • backgroundLightness:3 - luminosità sfondo (da -10 a 10)
 • default - per tornare al colore predefinito (accent:default)
 
-COSE DA SAPERE
+COSE DA SAPERE:
 • Il cambio impiega circa 40 secondi.
 • Se non hai mai applicato i colori dall\'app, non succede nulla.
 • Con MacroDroid è uguale: azione “Invia intent” con gli stessi dati.</string>

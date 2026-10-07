@@ -145,6 +145,11 @@ public class MainActivity extends AppCompatActivity {
             if (!first) sb.append(heading ? "\n\n" : "\n");
             int start = sb.length();
             sb.append(line);
+            if (!heading) {
+                // punto elenco: le righe lunghe vanno a capo allineate al testo, non sotto il puntino
+                int ind = (int) (14 * getResources().getDisplayMetrics().density);
+                sb.setSpan(new android.text.style.LeadingMarginSpan.Standard(0, ind), start, sb.length(), 0);
+            }
             if (heading) {
                 sb.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), start, sb.length(), 0);
                 sb.setSpan(new android.text.style.ForegroundColorSpan(ThemePrefs.accentColor()), start, sb.length(), 0);
@@ -153,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
             first = false;
         }
         t.setText(sb);
-        t.setLineSpacing(0f, 1.15f);
+        t.setLineSpacing(0f, 1.2f);
         t.setTextColor(getColor(R.color.text));
         t.setTextSize(14);
         int pad = (int) (20 * getResources().getDisplayMetrics().density);
