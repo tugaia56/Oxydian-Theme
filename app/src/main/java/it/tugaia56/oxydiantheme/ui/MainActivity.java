@@ -138,25 +138,17 @@ public class MainActivity extends AppCompatActivity {
         TextView t = new TextView(this);
         // titoli dei capitoli (righe in maiuscolo o "1. ...") in grassetto e nel colore accento, con riga vuota prima
         android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder();
-        boolean first = true, prevHeading = false;
+        boolean first = true;
         for (String line : getString(R.string.tasker_guide_text).split("\n", -1)) {
             if (line.trim().isEmpty()) continue;   // le righe vuote le decido io
             boolean heading = line.matches("^[0-9]\\. .*") || (line.equals(line.toUpperCase(java.util.Locale.ROOT)) && !line.startsWith("\u2022"));
             if (!first) {
                 if (heading) {
                     sb.append("\n\n");
-                } else if (!prevHeading) {
-                    // mezza riga vuota tra una voce e la successiva
-                    sb.append("\n");
-                    int g = sb.length();
-                    sb.append(" ");
-                    sb.setSpan(new android.text.style.RelativeSizeSpan(0.5f), g, sb.length(), 0);
-                    sb.append("\n");
                 } else {
                     sb.append("\n");
                 }
             }
-            prevHeading = heading;
             int start = sb.length();
             sb.append(line);
             if (!heading) {
