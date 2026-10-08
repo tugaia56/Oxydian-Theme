@@ -9,3 +9,6 @@ Changed:
 - Colours: the Accent and Background texts explain pure black, saturation and lightness better
 - After "Restart interface" the app stays on the tab you are in (before it went back to Overlay)
 - Colour automation moved to Mods
+
+Removed:
+- "Touch opacity" (Colours): removed, it can come back if needed

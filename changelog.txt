@@ -9,3 +9,6 @@ Aggiornato:
 - Colori: i testi di Accento e Sfondo spiegano meglio nero puro, saturazione e luminosità
 - Dopo "Riavvia interfaccia" l'app resta nella scheda in cui ti trovi (prima tornava a Overlay)
 - Automazione colori spostata in Mods
+
+Rimosso:
+- "Opacità tocco" (Colori): tolta, si può rimettere se serve
