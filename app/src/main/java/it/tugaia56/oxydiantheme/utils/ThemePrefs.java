@@ -163,4 +163,8 @@ public final class ThemePrefs {
     /** Integrazione con Tasker/MacroDroid (broadcast per cambiare i colori): spenta di default. */
     public static boolean isTaskerEnabled() { return sp().getBoolean("tasker_enabled", false); }
     public static void setTaskerEnabled(boolean on) { sp().edit().putBoolean("tasker_enabled", on).commit(); }
+
+    /** Versione del sistema scelta per SystemUI ("" = automatica). */
+    public static String getSystemVariant() { return sp().getString("system_variant", ""); }
+    public static void setSystemVariant(String v) { sp().edit().putString("system_variant", v == null ? "" : v).commit(); }
 }

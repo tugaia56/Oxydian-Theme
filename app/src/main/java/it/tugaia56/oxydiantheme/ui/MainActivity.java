@@ -33,6 +33,7 @@ import java.util.Set;
 
 import it.tugaia56.oxydiantheme.R;
 import it.tugaia56.oxydiantheme.utils.ModuleSetup;
+import it.tugaia56.oxydiantheme.utils.SystemVariant;
 import it.tugaia56.oxydiantheme.utils.ThemePrefs;
 import it.tugaia56.oxydiantheme.utils.overlay.compiler.ThemeCompiler;
 
@@ -323,6 +324,31 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int[] TAB_IDS = {R.id.nav_themes, R.id.nav_colors, R.id.nav_icons, R.id.nav_info};
 
+    private TextView mSubVariant;
+
+    /** Versione del sistema per cui compilare SystemUI. */
+    private void variantDialog() {
+        final String[] values = {"", SystemVariant.OOS16, SystemVariant.OOS15, SystemVariant.A16, SystemVariant.A15};
+        String[] names = new String[values.length];
+        for (int i = 0; i < values.length; i++) names[i] = SystemVariant.label(this, values[i]);
+        int cur = Arrays.asList(values).indexOf(ThemePrefs.getSystemVariant());
+        final int[] sel = {Math.max(0, cur)};
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.card_variant)
+                .setMessage(R.string.variant_help)
+                .setSingleChoiceItems(names, sel[0], (d, w) -> sel[0] = w)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, (d, w) -> {
+                    ThemePrefs.setSystemVariant(values[sel[0]]);
+                    refreshCards();
+                    // SystemUI va rifatto con la nuova versione
+                    for (AppEntry e : mApps) if (e.ds && SYSTEMUI_PKG.equals(e.pkg) && e.enabled) {
+                        onApply(SYSTEMUI_PKG, false);
+                        break;
+                    }
+                }));
+    }
+
     private void defaultTabDialog() {
         String[] names = {getString(R.string.tab_themes), getString(R.string.tab_colors), getString(R.string.tab_icons), getString(R.string.tab_info)};
         final int[] sel = {ThemePrefs.getDefaultTab()};
@@ -404,9 +430,8 @@ public class MainActivity extends AppCompatActivity {
         row4.setOrientation(android.widget.LinearLayout.HORIZONTAL);
         row4.addView(makeCard(R.string.card_default_tab, sub, this::defaultTabDialog));
         mSubDefaultTab = sub[0];
-        View sp4 = new View(this);
-        sp4.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-        row4.addView(sp4);
+        row4.addView(makeCard(R.string.card_variant, sub, this::variantDialog));
+        mSubVariant = sub[0];
         box.addView(row4);
         TextView ver = new TextView(this);
         String v = "";
@@ -536,6 +561,9 @@ public class MainActivity extends AppCompatActivity {
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
+        if (mSubVariant != null) {
+            mSubVariant.setText(SystemVariant.label(this, ThemePrefs.getSystemVariant()));
+        }
         if (mSubTasker != null)
             mSubTasker.setText(ThemePrefs.isTaskerEnabled() ? R.string.state_on_simple : R.string.state_off);
         if (mSubDefaultTab != null) {
@@ -1075,13 +1103,22 @@ public class MainActivity extends AppCompatActivity {
                     boolean known = "[ ]".equals(stateBefore.get(e.overlay()));
                     if (known) toEnable.add(e.overlay());
                     // gia' compilata (attiva o solo spenta) con lo stesso accento/versione: si salta
-                    if ((active || known) && (signature + optsKey(this, e.pkg, e.ds)).equals(e.builtSig())) continue;
+                    String variantTag = SYSTEMUI_PKG.equals(e.pkg) && e.ds ? SystemVariant.effective() : "";
+                    String assetDir = e.dir;
+                    if (!variantTag.isEmpty() && "SUT".equals(e.dir)) {
+                        String cand = e.dir + SystemVariant.dirSuffix(variantTag);
+                        try {
+                            String[] have = getAssets().list("CompileOnDemand/" + e.pkg);
+                            if (have != null && Arrays.asList(have).contains(cand)) assetDir = cand;
+                        } catch (Exception ignored) {}
+                    }
+                    if ((active || known) && (signature + optsKey(this, e.pkg, e.ds) + "|var=" + variantTag).equals(e.builtSig())) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
-                        if (ThemeCompiler.buildNamedInBatch(e.pkg, e.dir, e.name, optionPaths(this, e.pkg), customValuesXml(this, e.pkg, e.ds))) {
+                        if (ThemeCompiler.buildNamedInBatch(e.pkg, assetDir, e.name, optionPaths(this, e.pkg), customValuesXml(this, e.pkg, e.ds))) {
                             failed++;
                         } else {
-                            e.setBuilt(signature + optsKey(this, e.pkg, e.ds));
+                            e.setBuilt(signature + optsKey(this, e.pkg, e.ds) + "|var=" + variantTag);
                             if (active) refresh.add(e.overlay());
                         }
                     } catch (Throwable t) {

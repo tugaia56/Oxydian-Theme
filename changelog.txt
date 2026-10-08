@@ -1,4 +1,5 @@
 Aggiunto:
+- Versione del sistema (Impostazioni): il tema di SystemUI può essere compilato per OxygenOS 16, OxygenOS 15, Android 16 o Android 15, con scelta automatica (versioni diverse da OxygenOS 16 non ancora provate)
 - Colori: "Nero puro" per lo sfondo e cursori di saturazione (accento e sfondo) e luminosità (sfondo), con pulsante Azzera
 - Colore delle icone della barra di navigazione
 - Integrazione Tasker / MacroDroid: cambio dei colori di sistema (accento, sfondo, nero puro, cursori) con un broadcast, senza aprire l'app (Mods > Automazione colori)

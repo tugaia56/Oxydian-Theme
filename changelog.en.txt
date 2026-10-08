@@ -1,4 +1,5 @@
 Added:
+- System version (Settings): the SystemUI theme can be built for OxygenOS 16, OxygenOS 15, Android 16 or Android 15, with automatic detection (versions other than OxygenOS 16 not tested yet)
 - Colours: "Pure black" for the background and saturation sliders (accent and background) and lightness (background), with a Reset button
 - Navigation bar icon colour
 - Tasker / MacroDroid integration: change the system colours (accent, background, pure black, sliders) with a broadcast, without opening the app (Mods > Colour automation)
