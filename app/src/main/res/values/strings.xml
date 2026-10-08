@@ -166,5 +166,6 @@
     <string name="tweak_note_accent" formatted="false">Accent saturation: below 100% the colour becomes duller and greyer, above 100% more vivid (applies to buttons, switches and the coloured elements of the system). Only applies with a chosen colour (not Default).</string>
     <string name="card_variant">System version</string>
     <string name="variant_auto">Automatic</string>
-    <string name="variant_help">Which version to build the SystemUI theme for. With Automatic the app detects the one on the phone. Versions other than OxygenOS 16 have not been tested: if something goes wrong, pick OxygenOS 16 again or tell us in the group.</string>
+    <string name="variant_help">Which system version to build the SystemUI theme for. With Automatic the app uses the one on the phone. OxygenOS 16 is the most tested; the other versions are new: if something goes wrong, pick another version or tell us in the group.</string>
+    <string name="variant_detected">Detected on this phone: %1$s</string>
 </resources>

@@ -333,10 +333,39 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < values.length; i++) names[i] = SystemVariant.label(this, values[i]);
         int cur = Arrays.asList(values).indexOf(ThemePrefs.getSystemVariant());
         final int[] sel = {Math.max(0, cur)};
+        // spiegazione + scelte nello stesso contenuto (con setMessage Android nasconde l'elenco)
+        android.widget.LinearLayout box = new android.widget.LinearLayout(this);
+        box.setOrientation(android.widget.LinearLayout.VERTICAL);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        box.setPadding(pad, pad / 2, pad, 0);
+        TextView help = new TextView(this);
+        help.setText(R.string.variant_help);
+        help.setTextColor(getColor(R.color.text_dim));
+        help.setTextSize(13);
+        help.setPadding(0, 0, 0, pad / 2);
+        box.addView(help);
+        // versione riconosciuta dal telefono (serve la shell root: fuori dal thread principale)
+        new Thread(() -> {
+            String det = SystemVariant.label(this, SystemVariant.detect());
+            runOnUiThread(() -> help.setText(getString(R.string.variant_help) + "\n\n" + getString(R.string.variant_detected, det)));
+        }).start();
+        android.widget.RadioGroup rg = new android.widget.RadioGroup(this);
+        for (int i = 0; i < values.length; i++) {
+            android.widget.RadioButton rb = new android.widget.RadioButton(this);
+            rb.setText(names[i]);
+            rb.setId(View.generateViewId());
+            rb.setChecked(i == sel[0]);
+            rb.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+            final int idx = i;
+            rb.setOnClickListener(v -> sel[0] = idx);
+            rg.addView(rb);
+        }
+        box.addView(rg);
+        android.widget.ScrollView sv = new android.widget.ScrollView(this);
+        sv.addView(box);
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.card_variant)
-                .setMessage(R.string.variant_help)
-                .setSingleChoiceItems(names, sel[0], (d, w) -> sel[0] = w)
+                .setView(sv)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(android.R.string.ok, (d, w) -> {
                     ThemePrefs.setSystemVariant(values[sel[0]]);

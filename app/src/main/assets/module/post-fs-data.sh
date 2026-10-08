@@ -22,6 +22,10 @@ mount 2>/dev/null | grep -q " $T " && umount "$T" 2>/dev/null
 mkdir -p "$T"
 mount -t tmpfs -o mode=0755,size=64m tmpfs "$T" || { echo "tmpfs fallito"; exit 1; }
 mkdir -p "$T/upper" "$T/work"
+# La radice del montaggio prende l'etichetta SELinux della cartella "upper": con "tmpfs" system_server non puo' leggerla
+# (ROM come crDroid) e non vede gli overlay. system_file e' quella delle cartelle overlay di sistema.
+chmod 0755 "$T/upper"
+chcon u:object_r:system_file:s0 "$T/upper" 2>/dev/null
 for f in "$SRC"/OxydianThemeComponent*.apk; do
   b=${f##*/}
   cp -f "$f" "$T/upper/$b" && chown 0:0 "$T/upper/$b" && chmod 0644 "$T/upper/$b"
@@ -35,5 +39,7 @@ for f in "$OLD"/ObsidianComponent*.apk; do
 done
 O="lowerdir=$TGT,upperdir=$T/upper,workdir=$T/work"
 mount -t overlay oxytheme_ovl -o "$O" "$TGT" 2>&1 || "$BB" mount -t overlay oxytheme_ovl -o "$O" "$TGT" 2>&1 || { echo "overlay fallito"; umount "$T"; exit 1; }
+# anche la radice del montaggio, per sicurezza (system_server deve poterla leggere)
+chcon u:object_r:system_file:s0 "$TGT" 2>/dev/null
 echo "montato:"; ls "$TGT" | grep -c OxydianThemeComponent
 } >> "$LOG" 2>&1

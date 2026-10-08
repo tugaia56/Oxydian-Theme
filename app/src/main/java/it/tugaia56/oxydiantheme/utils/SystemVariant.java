@@ -40,8 +40,12 @@ public final class SystemVariant {
             oplus = !v.isEmpty();
         } catch (Throwable ignored) {}
         if (!oplus) {
-            String m = android.os.Build.MANUFACTURER == null ? "" : android.os.Build.MANUFACTURER.toLowerCase(java.util.Locale.ROOT);
-            oplus = m.contains("oneplus") || m.contains("oppo") || m.contains("realme");
+            // ROM di terze parti su telefoni OnePlus (es. crDroid): il produttore e' lo stesso, ma mancano le app di sistema OnePlus
+            for (String pkg : new String[]{"com.oplus.wirelesssettings", "com.oneplus.calculator", "com.oplus.camera", "com.oplus.games"}) {
+                try {
+                    if (Shell.cmd("pm path " + pkg).exec().isSuccess()) { oplus = true; break; }
+                } catch (Throwable ignored) {}
+            }
         }
         if (sdk >= 36) sAuto = oplus ? OOS16 : A16;
         else sAuto = oplus ? OOS15 : A15;

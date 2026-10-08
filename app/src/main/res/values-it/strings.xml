@@ -165,5 +165,6 @@
     <string name="tweak_note_accent" formatted="false">Saturazione accento: sotto 100% il colore diventa più spento e grigio, sopra 100% più vivo e acceso (vale per i pulsanti, gli interruttori e gli elementi colorati del sistema). Vale solo con un colore scelto (non con Predefinito).</string>
     <string name="card_variant">Versione del sistema</string>
     <string name="variant_auto">Automatica</string>
-    <string name="variant_help">Per quale versione compilare il tema di SystemUI. Con Automatica l\'app riconosce quella del telefono. Le versioni diverse da OxygenOS 16 non sono state provate: se qualcosa non va, riscegli OxygenOS 16 o scrivici nel gruppo.</string>
+    <string name="variant_help">Per quale versione del sistema compilare il tema di SystemUI. Con Automatica l\'app usa quella del telefono. OxygenOS 16 &#232; la pi&#249; provata; le altre versioni sono nuove: se qualcosa non va, scegli un\'altra versione o scrivici nel gruppo.</string>
+    <string name="variant_detected">Riconosciuta dal telefono: %1$s</string>
 </resources>
