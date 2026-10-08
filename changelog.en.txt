@@ -12,3 +12,6 @@ Changed:
 
 Removed:
 - "Touch opacity" (Colours): removed, it can come back if needed
+
+Changed:
+- Backup: the file name now starts with the date and time, so backups sort by date

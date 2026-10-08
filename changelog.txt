@@ -12,3 +12,6 @@ Aggiornato:
 
 Rimosso:
 - "Opacità tocco" (Colori): tolta, si può rimettere se serve
+
+Cambiato:
+- Backup: il nome del file inizia con data e ora, così i backup sono in ordine di data
