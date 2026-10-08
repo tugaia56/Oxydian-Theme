@@ -145,6 +145,7 @@ public class TaskerReceiver extends BroadcastReceiver {
             return;
         }
         ThemePrefs.setDarkShadowBuilt(pkg, MainActivity.signature(ctx) + MainActivity.optsKey(ctx, pkg, true));
+        AospTheme.apply(ctx, true);
         if (!active) OverlayUtil.enableOverlays(new String[]{overlay});
     }
 }

@@ -167,4 +167,8 @@ public final class ThemePrefs {
     /** Versione del sistema scelta per SystemUI ("" = automatica). */
     public static String getSystemVariant() { return sp().getString("system_variant", ""); }
     public static void setSystemVariant(String v) { sp().edit().putString("system_variant", v == null ? "" : v).commit(); }
+
+    /** Impostazione colori di Android puro com'era prima del nostro intervento. */
+    public static String getAospBackup() { return sp().getString("aosp_backup", ""); }
+    public static void setAospBackup(String v) { sp().edit().putString("aosp_backup", v == null ? "" : v).commit(); }
 }

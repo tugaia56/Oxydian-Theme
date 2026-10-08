@@ -1168,6 +1168,13 @@ public class MainActivity extends AppCompatActivity {
             List<String> wanted = new ArrayList<>();
             for (AppEntry e : all) if (e.enabled) wanted.add(e.overlay());
             ThemeCompiler.writeEnabledList(wanted);
+            // Android puro: l'accento va dato anche al sistema (colore di partenza)
+            for (AppEntry e : targets) {
+                if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) {
+                    AospTheme.apply(MainActivity.this, action == ACT_ACTIVATE);
+                    break;
+                }
+            }
 
             Set<String> after = enabledOverlays();
             int notYetActive = 0;

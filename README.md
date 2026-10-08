@@ -25,6 +25,10 @@ Born from a suggestion by Luigi (@LC9889): an app without Xposed, where **all th
 
 The app creates the `oxydian_theme` module: the first launch needs one reboot, then changes are immediate. The Wi-Fi and signal icon colours, and the colours read by other parts of Oxydian, use Oxydian (hooks).
 
+## Other ROMs
+
+Oxydian Theme is made for OnePlus / OxygenOS. On plain Android 15/16 ROMs (tested on crDroid) it gives you the accent colour (also in the quick panel); the background takes the tint of the accent, and the OnePlus-specific themes do not apply. For those ROMs, **Iconify** and **ColorBlendr** are better suited.
+
 ## Colour automation (Tasker / MacroDroid / Automate)
 
 Turn it on in **Mods → Colour automation**, apply the system colours at least once from the app, then send a broadcast:
