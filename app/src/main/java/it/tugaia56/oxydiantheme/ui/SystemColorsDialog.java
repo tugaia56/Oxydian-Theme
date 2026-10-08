@@ -24,7 +24,7 @@ import it.tugaia56.oxydiantheme.R;
 import it.tugaia56.oxydiantheme.utils.ThemePrefs;
 
 /**
- * Colori di sistema: accento e sfondo scelti tra i preset di OOS Theme (overlay su "android").
+ * Colori di sistema: accento e sfondo scelti tra i preset di Dark Shadow Theme (overlay su "android").
  * Salva le scelte come opzioni dell'overlay e usa l'accento anche per i temi delle app.
  */
 final class SystemColorsDialog {

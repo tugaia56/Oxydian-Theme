@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Accento e sfondo di sistema a scelta libera: si parte da un preset di OOS Theme (modello) e se ne
+ * Accento e sfondo di sistema a scelta libera: si parte da un preset di Dark Shadow Theme (modello) e se ne
  * ricavano tutte le sfumature dal colore scelto, come facevano i preset.
  */
 final class CustomPalette {

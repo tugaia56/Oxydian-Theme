@@ -46,6 +46,6 @@ Per la release serve `keystore.properties` (non versionato) e un tag `vX.Y.Z`: i
 ## Crediti
 
 - **Luigi (@LC9889)** — il compilatore degli overlay (aapt2, allineamento, firma) e le utility per root e file vengono dal suo Oxygen Customizer
-- **OOS Theme** — gli overlay e i preset di accento, sfondo, tastierino PIN, barra di progresso e icone vengono da questo lavoro
+- **Dark Shadow Theme** — gli overlay e i preset di accento, sfondo, tastierino PIN, barra di progresso e icone vengono da questo lavoro
 - **Substratum** — il formato dei temi overlay da cui nasce tutto
 - **Claude** (Anthropic) — assistente IA usato durante tutto lo sviluppo

@@ -1,0 +1,12 @@
+Added:
+- Colours: "Pure black" for the background and saturation sliders (accent and background) and lightness (background), with a Reset button
+- Navigation bar icon colour
+- Tasker / MacroDroid integration: change the system colours (accent, background, pure black, sliders) with a broadcast, without opening the app (Mods > Colour automation)
+- First version of Oxydian Theme: separate app for Oxydian's overlay themes (no Xposed)
+- Themes for Google apps and installed apps, with switches and status (active, off, reboot needed)
+- Dark Shadow theme: Settings, SystemUI, Launcher and OnePlus/OPPO apps
+- System colours: accent and background (Dark Shadow Theme presets or any colour), circular progress bar
+- PIN keypad (preset or custom colours), network activity icons
+- Wi-Fi and signal icons (style, size, colour), navigation bar icons (style and colour), Settings icons with options
+- Options for some apps (for example the alarm clock background)
+- Root module created by the app (KernelSU and Magisk): themes persist after reboot

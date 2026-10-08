@@ -46,6 +46,6 @@ A release needs `keystore.properties` (not versioned) and a tag `vX.Y.Z`: the Gi
 ## Credits
 
 - **Luigi (@LC9889)** — the overlay compiler (aapt2, alignment, signing) and the root/file utilities come from his Oxygen Customizer
-- **OOS Theme** — the overlays and the accent, background, PIN keypad, progress bar and icon presets come from this work
+- **Dark Shadow Theme** — the overlays and the accent, background, PIN keypad, progress bar and icon presets come from this work
 - **Substratum** — the overlay theme format everything started from
 - **Claude** (Anthropic) — AI assistant used throughout development
