@@ -1,15 +1,11 @@
 Added:
+- System version (Settings): the SystemUI theme can be built for OxygenOS 16, OxygenOS 15, Android 16 or Android 15, with automatic detection (versions other than OxygenOS 16 not fully tested yet)
 - Android 15/16 (plain Android, e.g. crDroid): the chosen accent is also given to the system, so the quick panel and SystemUI follow it (the background takes the accent's tint)
+- Colour automation: Guide button with step-by-step instructions for Tasker, MacroDroid and Automate
+- Backup and restore: the file name now contains the date and time
+
+Changed:
 - ROMs other than OxygenOS (tested on crDroid, Android 16): overlays are now seen by the system (fixed the module's SELinux security label)
-- System version (Settings): the SystemUI theme can be built for OxygenOS 16, OxygenOS 15, Android 16 or Android 15, with automatic detection (versions other than OxygenOS 16 not tested yet)
-- Colours: "Pure black" for the background and saturation sliders (accent and background) and lightness (background), with a Reset button
-- Navigation bar icon colour
-- Tasker / MacroDroid integration: change the system colours (accent, background, pure black, sliders) with a broadcast, without opening the app (Mods > Colour automation)
-- First version of Oxydian Theme: separate app for Oxydian's overlay themes (no Xposed)
-- Themes for Google apps and installed apps, with switches and status (active, off, reboot needed)
-- Dark Shadow theme: Settings, SystemUI, Launcher and OnePlus/OPPO apps
-- System colours: accent and background (Dark Shadow Theme presets or any colour), circular progress bar
-- PIN keypad (preset or custom colours), network activity icons
-- Wi-Fi and signal icons (style, size, colour), navigation bar icons (style and colour), Settings icons with options
-- Options for some apps (for example the alarm clock background)
-- Root module created by the app (KernelSU and Magisk): themes persist after reboot
+- Colours: the Accent and Background texts explain pure black, saturation and lightness better
+- After "Restart interface" the app stays on the tab you are in (before it went back to Overlay)
+- Colour automation moved to Mods
