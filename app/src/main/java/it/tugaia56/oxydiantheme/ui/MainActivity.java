@@ -902,7 +902,7 @@ public class MainActivity extends AppCompatActivity {
             sb.append("|tw=").append(ThemePrefs.getAccSat()).append(',').append(ThemePrefs.getBgSat())
                     .append(',').append(ThemePrefs.getBgLight()).append(',').append(ThemePrefs.isBgPitch());
         }
-        if (ds && !SystemColorsDialog.PKG.equals(pkg)) sb.append("|rpl=").append(ThemePrefs.getRippleAlpha());
+        if ((ds && !SystemColorsDialog.PKG.equals(pkg)) || RIPPLE_APP_PKGS.contains(pkg)) sb.append("|rpl=").append(ThemePrefs.getRippleAlpha());
         if (ds && SYSTEMUI_PKG.equals(pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav"));
         for (OptGroup g : optionGroups(ctx, pkg)) {
             String c = ThemePrefs.getOption(pkg, g.id);
@@ -948,7 +948,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
         }
-        String rpl = ds ? rippleColors(ctx) : "";
+        String rpl = (ds || RIPPLE_APP_PKGS.contains(pkg)) ? rippleColors(ctx) : "";
         if (!ds || !"com.android.systemui".equals(pkg))
             return rpl.isEmpty() ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n" + rpl + "</resources>";
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n");
@@ -992,6 +992,9 @@ public class MainActivity extends AppCompatActivity {
      * Onda del tocco nelle app OnePlus: le liste usano colori propri (coui_color_press...), non quello del
      * sistema, e un riferimento al colore di sistema non basta: serve il colore vero, scritto qui.
      */
+    private static final java.util.Set<String> RIPPLE_APP_PKGS = new java.util.HashSet<>(java.util.Arrays.asList(
+            "com.android.phone", "com.android.server.telecom", "com.android.printspooler", "com.oppo.quicksearchbox"));
+
     private static String rippleColors(Context ctx) {
         int rp = ThemePrefs.getRippleAlpha();
         if (rp <= 0) return "";
