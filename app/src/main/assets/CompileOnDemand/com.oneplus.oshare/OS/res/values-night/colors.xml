@@ -325,7 +325,7 @@
     <color name="coui_color_mint_variant">@*android:color/accent_material_dark</color>
     <color name="coui_color_orange">@*android:color/accent_material_dark</color>
     <color name="coui_color_orange_variant">@*android:color/accent_material_dark</color>
-    <color name="coui_color_press">#33ffffff</color>
+    <color name="coui_color_press">@*android:color/ripple_material_dark</color>
     <color name="coui_color_press_background">#26ffffff</color>
     <color name="coui_color_primary_blue">@*android:color/accent_material_dark</color>
     <color name="coui_color_primary_green">@*android:color/accent_material_dark</color>

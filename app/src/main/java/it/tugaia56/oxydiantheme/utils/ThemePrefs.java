@@ -135,6 +135,10 @@ public final class ThemePrefs {
 
     public static void setSameIcon(boolean on) { sp().edit().putBoolean("same_icon", on).commit(); }
 
+    /** Opacita' dell'effetto tocco (ripple) in percentuale; 0 = quella del preset. */
+    public static int getRippleAlpha() { return sp().getInt("ripple_alpha", 0); }
+
+    public static void setRippleAlpha(int pct) { sp().edit().putInt("ripple_alpha", pct).commit(); }
 
     /** Pagina che si apre all'avvio: 0 Overlay, 1 Colori, 2 Mods, 3 Impostazioni. */
     public static int getDefaultTab() { return sp().getInt("default_tab", 0); }

@@ -1,5 +1,2 @@
-Cambiato:
-- Backup: il nome del file inizia con data e ora, così i backup sono in ordine di data
-
-Rimosso:
-- "Opacità tocco" (Colori): tolta, si può rimettere se serve
+Aggiunto:
+- "Opacità tocco" (Colori) è tornata e ora funziona anche nelle app OnePlus (Impostazioni e altre): la voce premuta della lista prende il colore di accento con l'opacità scelta

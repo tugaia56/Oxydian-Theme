@@ -142,8 +142,13 @@ public final class ThemeCompiler {
             if (dedupe.length() > 0) Shell.cmd(dedupe.toString()).exec();
             Shell.cmd("mkdir -p \"" + source + "/res/values\"",
                     "printf '%s' '" + extraValuesXml.replace("'", "'\\''") + "' > \"" + source + "/res/values/Obsidian.xml\"").exec();
+            // Stessi valori anche per la modalita' notte: se il bersaglio ha una variante notte e qui c'e'
+            // solo quella base, il sistema usa la sua e il colore scelto non si vede.
+            Shell.cmd("mkdir -p \"" + source + "/res/values-night\"",
+                    "cp -f \"" + source + "/res/values/Obsidian.xml\" \"" + source + "/res/values-night/Obsidian.xml\"").exec();
         }
 
+        OverlayCompiler.keepNightDuplicates = extraValuesXml != null;
         if (OverlayCompiler.createManifest(name, targetPackage, source)) return true;
         if (OverlayCompiler.runAapt(source, targetPackage)) return true;
         if (OverlayCompiler.zipAlign(ModuleConstants.UNSIGNED_UNALIGNED_DIR + "/" + name + "-unsigned-unaligned.apk")) return true;

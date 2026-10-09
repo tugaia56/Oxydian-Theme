@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private TextView mSubPinNum, mSubPinBg, mSubDefaultTab;
+    private TextView mSubPinNum, mSubPinBg, mSubRipple, mSubDefaultTab;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
         float d = getResources().getDisplayMetrics().density;
@@ -274,6 +274,17 @@ public class MainActivity extends AppCompatActivity {
         mSubAccent = s[0];
         r1.addView(makeCard(R.string.card_background, s, () -> openColors(1)));
         mSubBg = s[0];
+        android.widget.LinearLayout r6 = findViewById(R.id.cards_row6);
+        r6.addView(makeCard(R.string.card_ripple, s, () -> RippleDialog.show(this, () -> {
+            syncEnabled(SystemColorsDialog.PKG);
+            refreshCards();
+            mList.getAdapter().notifyDataSetChanged();
+            onApply(SystemColorsDialog.PKG, false);
+        })));
+        mSubRipple = s[0];
+        View sp6 = new View(this);
+        sp6.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+        r6.addView(sp6);
         // Pagina Mods
         android.widget.LinearLayout r5 = findViewById(R.id.cards_row5);
         r2.addView(makeCard(R.string.card_progress, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"progress"}, R.string.card_progress)));
@@ -477,7 +488,7 @@ public class MainActivity extends AppCompatActivity {
         boolean any;
         if (SystemColorsDialog.PKG.equals(pkg)) {
             any = !ThemePrefs.getOption(pkg, "accent").isEmpty() || !ThemePrefs.getOption(pkg, "background").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "progress").isEmpty();
+                    || !ThemePrefs.getOption(pkg, "progress").isEmpty() || ThemePrefs.getRippleAlpha() > 0;
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
@@ -578,6 +589,7 @@ public class MainActivity extends AppCompatActivity {
         mSubSignal.setText(sg.isEmpty() ? def : pretty(sg));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
+        mSubRipple.setText(RippleDialog.summary(this));
         if (mSubVariant != null) {
             mSubVariant.setText(SystemVariant.label(this, ThemePrefs.getSystemVariant()));
         }
@@ -886,9 +898,11 @@ public class MainActivity extends AppCompatActivity {
     static String optsKey(Context ctx, String pkg, boolean ds) {
         StringBuilder sb = new StringBuilder();
         if (ds && SystemColorsDialog.PKG.equals(pkg)) {
+            sb.append("|ripple=").append(ThemePrefs.getRippleAlpha());
             sb.append("|tw=").append(ThemePrefs.getAccSat()).append(',').append(ThemePrefs.getBgSat())
                     .append(',').append(ThemePrefs.getBgLight()).append(',').append(ThemePrefs.isBgPitch());
         }
+        if (ds && !SystemColorsDialog.PKG.equals(pkg)) sb.append("|rpl=").append(ThemePrefs.getRippleAlpha());
         if (ds && SYSTEMUI_PKG.equals(pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav"));
         for (OptGroup g : optionGroups(ctx, pkg)) {
             String c = ThemePrefs.getOption(pkg, g.id);
@@ -920,11 +934,26 @@ public class MainActivity extends AppCompatActivity {
                 }
                 body.append(b);
             }
+            int rp = ThemePrefs.getRippleAlpha();
+            if (rp > 0) {
+                // onda del tocco: colore dell'accento con l'opacita' scelta
+                Integer acc = SystemColorsDialog.effAccent(ctx);
+                int base = (acc != null ? acc : ThemePrefs.accentColor()) & 0xFFFFFF;
+                String hex = String.format("#%02X%06X", Math.round(rp * 2.55f), base);
+                String cleaned = body.toString().replaceAll("<color name=\"ripple_material_(dark|light)\">[^<]*</color>", "");
+                body.setLength(0);
+                body.append(cleaned);
+                body.append("<color name=\"ripple_material_dark\">").append(hex).append("</color>")
+                    .append("<color name=\"ripple_material_light\">").append(hex).append("</color>");
+            }
             return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
         }
-        if (!ds || !"com.android.systemui".equals(pkg)) return null;
+        String rpl = ds ? rippleColors(ctx) : "";
+        if (!ds || !"com.android.systemui".equals(pkg))
+            return rpl.isEmpty() ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n" + rpl + "</resources>";
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n");
-        boolean any = false;
+        boolean any = !rpl.isEmpty();
+        sb.append(rpl);
         if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(pkg, "pinbg"))) {
             int rgb = ThemePrefs.getCustomColor(pkg + "_pinbg") & 0xFFFFFF;
             String[][] m = {
@@ -957,6 +986,23 @@ public class MainActivity extends AppCompatActivity {
             any = true;
         }
         return any ? sb.append("</resources>").toString() : null;
+    }
+
+    /**
+     * Onda del tocco nelle app OnePlus: le liste usano colori propri (coui_color_press...), non quello del
+     * sistema, e un riferimento al colore di sistema non basta: serve il colore vero, scritto qui.
+     */
+    private static String rippleColors(Context ctx) {
+        int rp = ThemePrefs.getRippleAlpha();
+        if (rp <= 0) return "";
+        Integer acc = SystemColorsDialog.effAccent(ctx);
+        int base = (acc != null ? acc : ThemePrefs.accentColor()) & 0xFFFFFF;
+        String hex = String.format("#%02X%06X", Math.round(rp * 2.55f), base);
+        StringBuilder sb = new StringBuilder();
+        for (String n : new String[]{"coui_color_press", "coui_color_press_dark", "coui_color_press_light",
+                "coui_color_card_pressed", "coui_color_card_pressed_dark", "coui_color_card_pressed_light"})
+            sb.append("    <color name=\"").append(n).append("\">").append(hex).append("</color>\n");
+        return sb.toString();
     }
 
     /** Percorsi negli asset delle scelte da sovrapporre alla base. */

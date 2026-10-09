@@ -1,5 +1,2 @@
-Changed:
-- Backup: the file name now starts with the date and time, so backups sort by date
-
-Removed:
-- "Touch opacity" (Colours): removed, it can come back if needed
+Added:
+- "Touch opacity" (Colours) is back and now works in OnePlus apps too (Settings and others): the pressed list item takes the accent colour with the chosen opacity

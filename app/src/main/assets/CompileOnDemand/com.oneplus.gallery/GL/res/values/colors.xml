@@ -1875,12 +1875,12 @@
     <color name="coui_color_orange_variant">#ffe58f45</color>
     <color name="coui_color_orange_variant_dark">#ffcc7f3d</color>
     <color name="coui_color_orange_variant_light">#ffe58f45</color>
-    <color name="coui_color_press">#1f000000</color>
+    <color name="coui_color_press">@*android:color/ripple_material_dark</color>
     <color name="coui_color_press_background">@*android:color/background_dark</color>
     <color name="coui_color_press_background_dark">@*android:color/background_dark</color>
     <color name="coui_color_press_background_light">#14000000</color>
-    <color name="coui_color_press_dark">#33ffffff</color>
-    <color name="coui_color_press_light">#1f000000</color>
+    <color name="coui_color_press_dark">@*android:color/ripple_material_dark</color>
+    <color name="coui_color_press_light">@*android:color/ripple_material_dark</color>
     <color name="coui_color_primary_blue">@*android:color/accent_material_dark</color>
     <color name="coui_color_primary_blue_dark">@*android:color/accent_material_dark</color>
     <color name="coui_color_primary_blue_light">@*android:color/accent_material_dark</color>

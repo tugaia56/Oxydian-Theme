@@ -80,11 +80,14 @@ public class OverlayCompiler {
         return !result.isSuccess();
     }
 
+    /** True per le build con colori scelti dall'utente: tiene le varianti "notte" anche se uguali alla base. */
+    public static volatile boolean keepNightDuplicates = false;
+
     @NonNull
     private static String getAAPT2Command(String source, String name, String outputDir) {
         String folderCommand = "rm -rf " + source + "/compiled; mkdir " + source + "/compiled; [ -d " + source + "/compiled ] && ";
         String compileCommand = aapt2 + " compile --dir " + source + "/res -o " + source + "/compiled && ";
-        String linkCommand = aapt2 + " link -o " + outputDir + '/' + name + " -I " + FRAMEWORK_DIR + " --manifest " + source + "/AndroidManifest.xml " + source + "/compiled/* --auto-add-overlay";
+        String linkCommand = aapt2 + " link -o " + outputDir + '/' + name + " -I " + FRAMEWORK_DIR + " --manifest " + source + "/AndroidManifest.xml " + source + "/compiled/* --auto-add-overlay" + (keepNightDuplicates ? " --no-resource-deduping" : "");
         return folderCommand + compileCommand + linkCommand;
     }
 

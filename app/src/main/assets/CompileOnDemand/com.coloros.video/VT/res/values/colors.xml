@@ -566,7 +566,7 @@
     <color name="coui_color_on_primary">#ffffffff</color>
     <color name="coui_color_orange">#ffff7700</color>
     <color name="coui_color_orange_variant">#ffe58f45</color>
-    <color name="coui_color_press">#1f000000</color>
+    <color name="coui_color_press">@*android:color/ripple_material_dark</color>
     <color name="coui_color_press_background">#14000000</color>
     <color name="coui_color_primary_blue">@*android:color/accent_material_dark</color>
     <color name="coui_color_primary_neutral">#e6000000</color>
