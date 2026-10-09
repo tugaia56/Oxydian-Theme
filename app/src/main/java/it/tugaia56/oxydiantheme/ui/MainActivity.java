@@ -1106,7 +1106,14 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.select_first, Toast.LENGTH_SHORT).show();
             return;
         }
-        runAction(targets, action);
+        final int n = targets.size();
+        final int title = action == ACT_ACTIVATE ? R.string.btn_activate : action == ACT_DISABLE ? R.string.btn_disable : R.string.btn_remove;
+        final int msg = action == ACT_ACTIVATE ? R.plurals.confirm_install : action == ACT_DISABLE ? R.plurals.confirm_disable : R.plurals.confirm_remove;
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(title)
+                .setMessage(getResources().getQuantityString(msg, n, n))
+                .setPositiveButton(title, (d, w) -> runAction(targets, action))
+                .setNegativeButton(R.string.btn_cancel, null));
     }
 
     /** Per le schede (colori, PIN, icone...): applica solo la voce Dark Shadow indicata secondo il suo stato. */

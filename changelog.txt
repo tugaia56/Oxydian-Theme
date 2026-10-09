@@ -1,2 +1,8 @@
 Aggiunto:
 - "Opacità tocco" (Colori) è tornata e ora funziona anche nelle app OnePlus (Impostazioni e altre): la voce premuta della lista prende il colore di accento con l'opacità scelta
+
+Cambiato:
+- Pagina Overlay: il pulsante "Attiva" ora si chiama "Installa" (costruisce e accende i temi)
+
+Aggiunto:
+- Un popup mostra quante app sono selezionate e chiede conferma prima di Installa, Disattiva o Rimuovi

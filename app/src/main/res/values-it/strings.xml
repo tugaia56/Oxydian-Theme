@@ -3,7 +3,7 @@
     <string name="status_no_root">Serve l\'accesso root. Concedilo a Oxydian Theme nel gestore del root.</string>
     <string name="status_reboot">Modulo creato. Riavvia una volta per attivarlo, poi applica i temi.</string>
     <string name="status_ok">Modulo pronto.</string>
-    <string name="notice">Spunta le voci che vuoi, poi tocca Attiva (compila e accende), Disattiva (spegne ma resta installato, si riaccende senza riavvio) o Rimuovi (toglie del tutto, serve un riavvio). Le caselle si svuotano dopo ogni azione; lo stato vero si legge dal colore. La prima volta che attivi una nuova voce serve un riavvio.</string>
+    <string name="notice">Spunta le voci che vuoi, poi tocca Installa (compila e accende), Disattiva (spegne ma resta installato, si riaccende senza riavvio) o Rimuovi (toglie del tutto, serve un riavvio). Le caselle si svuotano dopo ogni azione; lo stato vero si legge dal colore. La prima volta che attivi una nuova voce serve un riavvio.</string>
     <string name="many_warning">Attenzione: %1$d app selezionate. Più di circa 10 app con il tema rallentano l\'avvio del telefono a ogni riavvio.</string>
     <string name="btn_apply">Applica</string>
     <string name="btn_select_all">Tutte</string>
@@ -146,7 +146,7 @@
     <string name="btn_disable">Disattiva</string>
     <string name="btn_remove">Rimuovi</string>
     <string name="select_first">Spunta almeno una voce</string>
-    <string name="btn_activate">Attiva</string>
+    <string name="btn_activate">Installa</string>
     <string name="color_nav_title">Colore icone navigazione</string>
     <string name="nav_color_hint">Colore salvato: torna alla pagina Overlay, verr\u00e0 applicato da solo.</string>
     <string name="tweak_sat_accent">Saturazione accento</string>
@@ -167,4 +167,23 @@
     <string name="variant_auto">Automatica</string>
     <string name="variant_help">Per quale versione del sistema compilare il tema di SystemUI. Con Automatica l\'app usa quella del telefono. OxygenOS 16 &#232; la pi&#249; provata; le altre versioni sono nuove: se qualcosa non va, scegli un\'altra versione o scrivici nel gruppo.</string>
     <string name="variant_detected">Riconosciuta dal telefono: %1$s</string>
+    <string name="btn_cancel">Annulla</string>
+    <plurals name="confirm_install">
+        <item quantity="one">%d app selezionata.
+Costruire e attivare il suo tema?</item>
+        <item quantity="other">%d app selezionate.
+Costruire e attivare i loro temi?</item>
+    </plurals>
+    <plurals name="confirm_disable">
+        <item quantity="one">%d app selezionata.
+Disattivare il suo tema?</item>
+        <item quantity="other">%d app selezionate.
+Disattivare i loro temi?</item>
+    </plurals>
+    <plurals name="confirm_remove">
+        <item quantity="one">%d app selezionata.
+Rimuovere il suo tema? Serve un riavvio.</item>
+        <item quantity="other">%d app selezionate.
+Rimuovere i loro temi? Serve un riavvio.</item>
+    </plurals>
 </resources>

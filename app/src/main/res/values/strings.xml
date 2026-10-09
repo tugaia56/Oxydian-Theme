@@ -4,7 +4,7 @@
     <string name="status_no_root">Root access is required. Grant root to Oxydian Theme in your root manager.</string>
     <string name="status_reboot">Module created. Reboot once to activate it, then apply your themes.</string>
     <string name="status_ok">Module ready.</string>
-    <string name="notice">Tick the items you want, then tap Enable (builds and turns on), Disable (turns off but stays installed, turn it back on without a reboot) or Remove (deletes it, needs a reboot). The boxes clear after every action; the real state is shown by the color. The first time you enable a new item a reboot is needed.</string>
+    <string name="notice">Tick the items you want, then tap Install (builds and turns on), Disable (turns off but stays installed, turn it back on without a reboot) or Remove (deletes it, needs a reboot). The boxes clear after every action; the real state is shown by the color. The first time you enable a new item a reboot is needed.</string>
     <string name="many_warning">Warning: %1$d apps selected. More than about 10 themed apps slow down the phone at every boot.</string>
     <string name="btn_apply">Apply</string>
     <string name="btn_select_all">All</string>
@@ -147,7 +147,7 @@
     <string name="btn_disable">Disable</string>
     <string name="btn_remove">Remove</string>
     <string name="select_first">Tick at least one item</string>
-    <string name="btn_activate">Enable</string>
+    <string name="btn_activate">Install</string>
     <string name="color_nav_title">Navigation icon colour</string>
     <string name="nav_color_hint">Colour saved: go back to the Overlay page, it will be applied automatically.</string>
     <string name="tweak_sat_accent">Accent saturation</string>
@@ -168,4 +168,23 @@
     <string name="variant_auto">Automatic</string>
     <string name="variant_help">Which system version to build the SystemUI theme for. With Automatic the app uses the one on the phone. OxygenOS 16 is the most tested; the other versions are new: if something goes wrong, pick another version or tell us in the group.</string>
     <string name="variant_detected">Detected on this phone: %1$s</string>
+    <string name="btn_cancel">Cancel</string>
+    <plurals name="confirm_install">
+        <item quantity="one">%d app selected.
+Build and turn on its theme?</item>
+        <item quantity="other">%d apps selected.
+Build and turn on their themes?</item>
+    </plurals>
+    <plurals name="confirm_disable">
+        <item quantity="one">%d app selected.
+Turn off its theme?</item>
+        <item quantity="other">%d apps selected.
+Turn off their themes?</item>
+    </plurals>
+    <plurals name="confirm_remove">
+        <item quantity="one">%d app selected.
+Remove its theme? A reboot is needed.</item>
+        <item quantity="other">%d apps selected.
+Remove their themes? A reboot is needed.</item>
+    </plurals>
 </resources>
