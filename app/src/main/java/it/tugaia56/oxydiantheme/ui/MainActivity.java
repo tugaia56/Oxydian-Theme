@@ -902,7 +902,7 @@ public class MainActivity extends AppCompatActivity {
             sb.append("|tw=").append(ThemePrefs.getAccSat()).append(',').append(ThemePrefs.getBgSat())
                     .append(',').append(ThemePrefs.getBgLight()).append(',').append(ThemePrefs.isBgPitch());
         }
-        if ((ds && !SystemColorsDialog.PKG.equals(pkg)) || RIPPLE_APP_PKGS.contains(pkg)) sb.append("|rpl=").append(ThemePrefs.getRippleAlpha());
+        if ((ds && !SystemColorsDialog.PKG.equals(pkg)) || usesRipple(pkg)) sb.append("|rpl=").append(ThemePrefs.getRippleAlpha());
         if (ds && SYSTEMUI_PKG.equals(pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav"));
         for (OptGroup g : optionGroups(ctx, pkg)) {
             String c = ThemePrefs.getOption(pkg, g.id);
@@ -948,7 +948,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
         }
-        String rpl = (ds || RIPPLE_APP_PKGS.contains(pkg)) ? rippleColors(ctx) : "";
+        String rpl = (ds || usesRipple(pkg)) ? rippleColors(ctx, pkg) : "";
         if (!ds || !"com.android.systemui".equals(pkg))
             return rpl.isEmpty() ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n" + rpl + "</resources>";
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n");
@@ -995,13 +995,44 @@ public class MainActivity extends AppCompatActivity {
     private static final java.util.Set<String> RIPPLE_APP_PKGS = new java.util.HashSet<>(java.util.Arrays.asList(
             "com.android.phone", "com.android.server.telecom", "com.android.printspooler", "com.oppo.quicksearchbox"));
 
-    private static String rippleColors(Context ctx) {
+    /** Colori dell'onda nelle app Google (Material): stessi nomi in quasi tutte, quelli assenti non fanno danni. */
+    private static final String[] GOOGLE_RIPPLE_NAMES = {
+            "dialpad_key_ripple_color", "dialpad_key_button_ripple_color", "dialer_ripple_color",
+            "ripple_material_dark", "ripple_material_light",
+            "m3_button_ripple_color_selector", "m3_card_ripple_color", "m3_chip_ripple_color",
+            "m3_control_ripple_color_selector", "m3_efab_ripple_color_selector", "m3_fab_ripple_color_selector",
+            "m3_list_item_ripple_color_selector", "m3_navigation_bar_ripple_color_selector",
+            "m3_navigation_item_ripple_color", "m3_navigation_rail_ripple_color_selector",
+            "m3_selection_control_ripple_color_selector", "m3_simple_item_ripple_color",
+            "m3_tabs_ripple_color", "m3_tabs_ripple_color_secondary", "m3_text_button_ripple_color_selector",
+            "m3_tonal_button_ripple_color_selector",
+            "mtrl_btn_ripple_color", "mtrl_btn_text_btn_ripple_color", "mtrl_card_view_ripple",
+            "mtrl_choice_chip_ripple_color", "mtrl_fab_ripple_color", "mtrl_navigation_bar_ripple_color",
+            "mtrl_on_surface_ripple_color", "mtrl_tabs_ripple_color",
+            "google_bottom_nav_ripple_color_selector", "google_btn_filled_btn_ripple_color", "google_btn_ripple_color",
+            "google_card_ripple", "google_chip_ripple_color", "google_fab_ripple_color",
+            "google_tabs_ripple_color_selector", "google_navigation_rail_item_ripple_color"};
+
+    private static boolean isGoogleApp(String pkg) {
+        return pkg != null && (pkg.startsWith("com.google.") || "app.revanced.android.gms".equals(pkg));
+    }
+
+    private static boolean usesRipple(String pkg) {
+        return RIPPLE_APP_PKGS.contains(pkg) || isGoogleApp(pkg);
+    }
+
+    private static String rippleColors(Context ctx, String pkg) {
         int rp = ThemePrefs.getRippleAlpha();
         if (rp <= 0) return "";
         Integer acc = SystemColorsDialog.effAccent(ctx);
         int base = (acc != null ? acc : ThemePrefs.accentColor()) & 0xFFFFFF;
         String hex = String.format("#%02X%06X", Math.round(rp * 2.55f), base);
         StringBuilder sb = new StringBuilder();
+        if (isGoogleApp(pkg)) {
+            for (String n : GOOGLE_RIPPLE_NAMES)
+                sb.append("    <color name=\"").append(n).append("\">").append(hex).append("</color>\n");
+            return sb.toString();
+        }
         for (String n : new String[]{"coui_color_press", "coui_color_press_dark", "coui_color_press_light",
                 "coui_color_card_pressed", "coui_color_card_pressed_dark", "coui_color_card_pressed_light"})
             sb.append("    <color name=\"").append(n).append("\">").append(hex).append("</color>\n");
