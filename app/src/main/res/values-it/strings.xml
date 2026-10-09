@@ -33,7 +33,7 @@
     <string name="section_wifi">Icona Wi-Fi</string>
     <string name="section_signal">Icona Segnale mobile</string>
     <string name="style_none">Predefinito (nessuno stile)</string>
-    <string name="styles_notice">Scegli uno stile per ogni icona e tocca Applica. Basta applicarne uno e riavviare una volta: poi puoi passare a qualsiasi altro stile quando vuoi, subito e senza riavviare.</string>
+    <string name="styles_notice">Scegli uno stile per ogni icona e tocca Applica. Basta applicarne uno e riavviare una volta: poi puoi passare a qualsiasi altro stile quando vuoi, subito e senza riavviare. Se dopo Applica un\'icona non cambia (per esempio quella della riga Oxydian in Impostazioni), riavvia il telefono.</string>
     <string name="styles_off_note">Stile tolto. Riavvia una volta per ripristinare del tutto l\'icona predefinita.</string>
     <string name="section_both">Stessa icona per Wi-Fi e Segnale</string>
     <string name="btn_darkshadow">Dark Shadow</string>

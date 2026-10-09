@@ -34,7 +34,7 @@
     <string name="section_wifi">Wi-Fi icon</string>
     <string name="section_signal">Mobile signal icon</string>
     <string name="style_none">Default (no style)</string>
-    <string name="styles_notice">Pick one style for each icon and tap Apply. Applying just one and rebooting once is enough: after that you can switch to any other style whenever you like, instantly and with no reboot.</string>
+    <string name="styles_notice">Pick one style for each icon and tap Apply. Applying just one and rebooting once is enough: after that you can switch to any other style whenever you like, instantly and with no reboot. If an icon does not change after Apply (for example the Oxydian row in Settings), reboot the phone.</string>
     <string name="styles_off_note">Style removed. Reboot once to restore the default icon completely.</string>
     <string name="section_both">Same icon for Wi-Fi and Signal</string>
     <string name="btn_darkshadow">Dark Shadow</string>
