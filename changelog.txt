@@ -1,17 +1,5 @@
-Aggiunto:
-- Versione del sistema (Impostazioni): il tema di SystemUI può essere compilato per OxygenOS 16, OxygenOS 15, Android 16 o Android 15, con scelta automatica (versioni diverse da OxygenOS 16 non ancora provate a fondo)
-- Android 15/16 (Android puro, es. crDroid): l'accento scelto viene dato anche al sistema, quindi pannello rapido e SystemUI lo seguono (lo sfondo prende la tinta dell'accento)
-- Automazione colori: pulsante Guida con le istruzioni passo passo per Tasker, MacroDroid e Automate
-- Backup e ripristino: il nome del file contiene data e ora
-
-Aggiornato:
-- ROM diverse da OxygenOS (provato su crDroid, Android 16): gli overlay ora vengono visti dal sistema (corretta l'etichetta di sicurezza SELinux del modulo)
-- Colori: i testi di Accento e Sfondo spiegano meglio nero puro, saturazione e luminosità
-- Dopo "Riavvia interfaccia" l'app resta nella scheda in cui ti trovi (prima tornava a Overlay)
-- Automazione colori spostata in Mods
+Cambiato:
+- Backup: il nome del file inizia con data e ora, così i backup sono in ordine di data
 
 Rimosso:
 - "Opacità tocco" (Colori): tolta, si può rimettere se serve
-
-Cambiato:
-- Backup: il nome del file inizia con data e ora, così i backup sono in ordine di data
