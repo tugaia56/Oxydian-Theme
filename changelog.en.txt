@@ -1,6 +1,2 @@
-Added:
-- "Touch opacity" (Colours) is back and now works in OnePlus apps (Settings and others) and in Google apps (Phone keypad, buttons, lists): the pressed item takes the accent colour with the chosen opacity
-- A popup shows how many apps are selected and asks for confirmation before Install, Disable or Remove
-
 Changed:
-- Overlay page: the "Enable" button is now "Install" (it builds and turns on the themes)
+- Oxydian row icon in Settings (all icon styles): the palette is now a hammer and a wrench, like the new Oxydian app icon
