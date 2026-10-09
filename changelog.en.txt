@@ -1,2 +1,3 @@
 Changed:
 - Oxydian row icon in Settings (all icon styles): the palette is now a hammer and a wrench, like the new Oxydian app icon
+- Icon options (background, shape, icon colour) are now separate for the three PUI styles and for OOS / HOS / OOS Stock, so you can use white on one family and the accent on the other

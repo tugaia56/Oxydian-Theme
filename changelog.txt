@@ -1,2 +1,3 @@
 Cambiato:
 - Icona della riga Oxydian in Impostazioni (tutti gli stili): la tavolozza ora è un martello con una chiave inglese, come la nuova icona dell'app Oxydian
+- Opzioni delle icone (sfondo, forma, colore icona) ora separate per i tre stili PUI e per OOS / HOS / OOS Stock: si può usare il bianco in una famiglia e l'accento nell'altra

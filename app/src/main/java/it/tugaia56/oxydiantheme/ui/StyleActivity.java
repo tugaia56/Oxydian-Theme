@@ -339,9 +339,18 @@ public class StyleActivity extends AppCompatActivity {
 
     private static final int OPT_BG_COLOR = 0, OPT_SOLID = 1, OPT_SHAPE = 2, OPT_ICON_COLOR = 3;
 
-    private String iconOptsKey() {
-        return ThemePrefs.getIconOpt("bgcolor", 0) + "," + ThemePrefs.getIconOpt("solid", 0) + ","
-                + ThemePrefs.getIconOpt("shape", 0) + "," + ThemePrefs.getIconOpt("iconcolor", 0);
+    /**
+     * Le opzioni dei pack icone sono separate per famiglia: i tre stili PUI hanno le loro (prefisso "pui_"),
+     * gli altri (OOS, HOS, OOS Stock) usano quelle di sempre, cosi' si puo' avere bianco negli uni e accento negli altri.
+     */
+    private static String optFamily(String pack) {
+        return pack != null && pack.startsWith("pui_") ? "pui_" : "";
+    }
+
+    private String iconOptsKey(String pack) {
+        String f = optFamily(pack);
+        return ThemePrefs.getIconOpt(f + "bgcolor", 0) + "," + ThemePrefs.getIconOpt(f + "solid", 0) + ","
+                + ThemePrefs.getIconOpt(f + "shape", 0) + "," + ThemePrefs.getIconOpt(f + "iconcolor", 0);
     }
 
     private static String colorHex(int choice) {
@@ -354,10 +363,11 @@ public class StyleActivity extends AppCompatActivity {
 
     /** Stesse risorse (res/values/Obsidian.xml) che costruiva Oxydian per ogni pack. */
     private String settingsValuesXml(String pack) {
-        int bgColor = ThemePrefs.getIconOpt("bgcolor", 0);
-        boolean solid = ThemePrefs.getIconOpt("solid", 0) == 1;
-        int shape = ThemePrefs.getIconOpt("shape", 0);
-        int iconColor = ThemePrefs.getIconOpt("iconcolor", 0);
+        String f = optFamily(pack);
+        int bgColor = ThemePrefs.getIconOpt(f + "bgcolor", 0);
+        boolean solid = ThemePrefs.getIconOpt(f + "solid", 0) == 1;
+        int shape = ThemePrefs.getIconOpt(f + "shape", 0);
+        int iconColor = ThemePrefs.getIconOpt(f + "iconcolor", 0);
         String head = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n";
         if ("oos_stock".equals(pack)) {
             return head + "    <color name=\"bg_color\">#00000000</color>\n"
@@ -431,12 +441,12 @@ public class StyleActivity extends AppCompatActivity {
         box.setPadding(pad, pad / 2, pad, 0);
         int[] colors = {R.string.icopt_accent, R.string.icopt_white, R.string.icopt_black};
         if (!pack.startsWith("pui_")) {
-            addGroup(box, R.string.icopt_bg_color, "bgcolor", colors, pad);
-            addGroup(box, R.string.icopt_solid, "solid", new int[]{R.string.icopt_no, R.string.icopt_yes}, pad);
-            addGroup(box, R.string.icopt_shape, "shape", new int[]{R.string.icopt_circle, R.string.icopt_squircle,
+            addGroup(box, R.string.icopt_bg_color, optFamily(pack) + "bgcolor", colors, pad);
+            addGroup(box, R.string.icopt_solid, optFamily(pack) + "solid", new int[]{R.string.icopt_no, R.string.icopt_yes}, pad);
+            addGroup(box, R.string.icopt_shape, optFamily(pack) + "shape", new int[]{R.string.icopt_circle, R.string.icopt_squircle,
                     R.string.icopt_rounded, R.string.icopt_teardrop, R.string.icopt_diamond}, pad);
         }
-        addGroup(box, R.string.icopt_icon_color, "iconcolor", colors, pad);
+        addGroup(box, R.string.icopt_icon_color, optFamily(pack) + "iconcolor", colors, pad);
         android.widget.ScrollView sv = new android.widget.ScrollView(this);
         sv.addView(box);
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
@@ -525,7 +535,7 @@ public class StyleActivity extends AppCompatActivity {
                         ThemePrefs.setStyleBuilt(slot, "");
                         continue;
                     }
-                    String sig = choice[i] + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey() : "") + ((i <= 1) ? ":s" + ThemePrefs.getIconSize() : "");
+                    String sig = choice[i] + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey(choice[i]) : "") + ((i <= 1) ? ":s" + ThemePrefs.getIconSize() : "");
                     if ("[ ]".equals(st)) toEnable.add(ov);
                     if (active && sig.equals(ThemePrefs.getStyleBuilt(slot))) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
