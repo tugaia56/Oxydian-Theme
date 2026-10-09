@@ -1,5 +1,5 @@
 Aggiunto:
-- "Opacità tocco" (Colori) è tornata e ora funziona anche nelle app OnePlus (Impostazioni e altre): la voce premuta della lista prende il colore di accento con l'opacità scelta
+- "Opacità tocco" (Colori) è tornata e ora funziona nelle app OnePlus (Impostazioni e altre) e nelle app Google (tastierino del Telefono, pulsanti, liste): la voce premuta prende il colore di accento con l'opacità scelta
 - Un popup mostra quante app sono selezionate e chiede conferma prima di Installa, Disattiva o Rimuovi
 
 Cambiato:

@@ -1,5 +1,5 @@
 Added:
-- "Touch opacity" (Colours) is back and now works in OnePlus apps too (Settings and others): the pressed list item takes the accent colour with the chosen opacity
+- "Touch opacity" (Colours) is back and now works in OnePlus apps (Settings and others) and in Google apps (Phone keypad, buttons, lists): the pressed item takes the accent colour with the chosen opacity
 - A popup shows how many apps are selected and asks for confirmation before Install, Disable or Remove
 
 Changed:
