@@ -18,6 +18,10 @@ Born from a suggestion by Luigi (@LC9889): an app without Xposed, where **all th
 - Substratum-style selection: tick the items and press **Enable / Disable / Remove**
 - **Backup and restore** of your choices, built-in **update check**
 
+## Nothing changes by itself
+
+Installing Oxydian Theme changes nothing. The app only prepares its root module the first time you open it; colours, icons and app themes are applied only when you tap **Install** (or apply a colour/icon choice). Until then your phone looks exactly as it did.
+
 ## Requirements
 
 - OxygenOS 16 (tested on OnePlus 12), Android 12+ (minSdk 31)

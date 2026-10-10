@@ -18,6 +18,10 @@ Nata su suggerimento di Luigi (@LC9889): un'app senza Xposed, con **tutti gli ov
 - Selezione stile Substratum: spunti le voci e premi **Attiva / Disattiva / Rimuovi**
 - **Backup e ripristino** delle scelte, **controllo aggiornamenti** integrato
 
+## Non cambia niente da solo
+
+Installare Oxydian Theme non cambia niente. L'app prepara solo il suo modulo root la prima volta che la apri; colori, icone e temi per le app si applicano soltanto quando tocchi **Installa** (o applichi una scelta di colore/icona). Fino ad allora il telefono resta identico.
+
 ## Requisiti
 
 - OxygenOS 16 (testato su OnePlus 12), Android 12+ (minSdk 31)
