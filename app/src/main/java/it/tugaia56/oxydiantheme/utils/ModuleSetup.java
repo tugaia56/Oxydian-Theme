@@ -24,6 +24,7 @@ public final class ModuleSetup {
                 "cp -f " + src + "/module.prop " + ModuleConstants.MODULE_DIR + "/module.prop",
                 "cp -f " + src + "/post-fs-data.sh " + ModuleConstants.MODULE_DIR + "/post-fs-data.sh",
                 "cp -f " + src + "/service.sh " + ModuleConstants.MODULE_DIR + "/service.sh",
+                "cp -f " + src + "/banner.png " + ModuleConstants.MODULE_DIR + "/banner.png",
                 "chmod 755 " + ModuleConstants.MODULE_DIR + "/post-fs-data.sh " + ModuleConstants.MODULE_DIR + "/service.sh",
                 "chown -R 0:0 " + ModuleConstants.MODULE_DIR
         ).exec();
