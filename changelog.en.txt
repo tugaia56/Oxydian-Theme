@@ -1,5 +1,7 @@
 Added:
 - New app: GitHub (theme + Italian translation)
+- Android 16 / 17 (e.g. crDroid): the chosen background and accent now reach the quick panel, notifications and Settings too
 
 Fixed:
 - On plain Android the ROM could be mis-detected when apps were copied from a OnePlus phone: only the real ROM counts now
+- The chosen system colours are re-applied on every Install

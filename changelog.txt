@@ -1,5 +1,7 @@
 Aggiunto:
 - Nuova app: GitHub (tema + traduzione in italiano)
+- Android 16 / 17 (es. crDroid): lo sfondo e l'accento scelti ora arrivano anche a pannello rapido, notifiche e Impostazioni
 
 Corretto:
 - Su Android puro la ROM veniva riconosciuta male se si erano copiate app da un telefono OnePlus: ora conta solo la ROM vera
+- I colori di sistema scelti si riapplicano a ogni Installa

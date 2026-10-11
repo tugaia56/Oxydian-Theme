@@ -1231,12 +1231,11 @@ public class MainActivity extends AppCompatActivity {
             for (AppEntry e : all) if (e.enabled) wanted.add(e.overlay());
             ThemeCompiler.writeEnabledList(wanted);
             // Android puro: l'accento va dato anche al sistema (colore di partenza)
-            for (AppEntry e : targets) {
-                if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) {
-                    AospTheme.apply(MainActivity.this, action == ACT_ACTIVATE);
-                    break;
-                }
-            }
+            boolean sysTarget = false;
+            for (AppEntry e : targets) if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) { sysTarget = true; break; }
+            if (sysTarget) AospTheme.apply(MainActivity.this, action == ACT_ACTIVATE);
+            // colori di sistema gia' scelti: si riapplicano anche quando si installa un'altra app
+            else if (action == ACT_ACTIVATE && ThemePrefs.isDarkShadowEnabled(SystemColorsDialog.PKG)) AospTheme.apply(MainActivity.this, true);
 
             Set<String> after = enabledOverlays();
             int notYetActive = 0;
