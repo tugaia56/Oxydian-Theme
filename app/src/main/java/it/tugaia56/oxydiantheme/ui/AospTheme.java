@@ -85,6 +85,16 @@ public final class AospTheme {
         }
         for (; i < COUNT; i++) cmds.add("cmd overlay disable --user 0 com.android.shell:oxyfix" + i);
         Shell.cmd(cmds.toArray(new String[0])).exec();
+        // dopo un riavvio gli overlay creati al volo spariscono: il modulo rilancia questo elenco ad ogni avvio
+        String file = it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/fixedcolors.sh";
+        if (m.isEmpty()) {
+            Shell.cmd("rm -f " + file).exec();
+        } else {
+            StringBuilder sb = new StringBuilder("printf '%s\n'");
+            for (String c : cmds) sb.append(" '").append(c).append("'");
+            sb.append(" > ").append(file);
+            Shell.cmd(sb.toString(), "chmod 755 " + file).exec();
+        }
     }
 
     /** True se la variante in uso e' Android puro (non OxygenOS). */

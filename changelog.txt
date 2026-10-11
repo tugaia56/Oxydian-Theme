@@ -5,3 +5,4 @@ Aggiunto:
 Corretto:
 - Su Android puro la ROM veniva riconosciuta male se si erano copiate app da un telefono OnePlus: ora conta solo la ROM vera
 - I colori di sistema scelti si riapplicano a ogni Installa
+- Android 16 / 17: i colori scelti tornano da soli dopo ogni riavvio

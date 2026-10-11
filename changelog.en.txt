@@ -5,3 +5,4 @@ Added:
 Fixed:
 - On plain Android the ROM could be mis-detected when apps were copied from a OnePlus phone: only the real ROM counts now
 - The chosen system colours are re-applied on every Install
+- Android 16 / 17: the chosen colours come back by themselves after every reboot

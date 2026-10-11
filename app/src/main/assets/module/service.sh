@@ -36,6 +36,17 @@ done
 echo "=== fine ==="
 } >> "$LOG" 2>&1
 
+# Android 16/17: i colori scelti (creati al volo) spariscono ad ogni riavvio e il sistema rifa' i suoi
+# poco dopo l'avvio: si rimettono, in parallelo al resto, dopo un po' e di nuovo piu' tardi.
+if [ -f "$MODDIR/fixedcolors.sh" ]; then
+  (
+    for t in 15 30 60; do
+      sleep $t
+      sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
+    done
+  ) &
+fi
+
 # I colori di sistema (overlay su "android") devono restare sopra gli overlay di altre app/moduli
 # (es. i vecchi accento/sfondo di Oxydian, ColorBlendr), che si riapplicano dopo l'avvio:
 # si riporta in cima, adesso e di nuovo dopo un po'.
