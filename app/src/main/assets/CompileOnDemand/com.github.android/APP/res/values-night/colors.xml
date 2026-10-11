@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="appBackground">@*android:color/background_dark</color>
-    <color name="backgroundElevatedPrimary">#ff1f1f24</color>
+    <color name="backgroundElevatedPrimary">@*android:color/background_dark</color>
     <color name="backgroundElevatedSecondary">#ff2e2f37</color>
     <color name="backgroundElevatedTertiary">#ff383a42</color>
     <color name="backgroundInset">@*android:color/background_dark</color>
     <color name="backgroundInverted">#ffffff</color>
     <color name="backgroundPrimary">@*android:color/background_dark</color>
     <color name="backgroundSecondary">@*android:color/background_dark</color>
-    <color name="backgroundTertiary">#ff1f1f24</color>
+    <color name="backgroundTertiary">@*android:color/background_dark</color>
     <color name="badge_blue_background">#292e8fff</color>
     <color name="badge_blue_label">@*android:color/accent_material_dark</color>
     <color name="badge_blue_stroke">#522e8fff</color>
@@ -56,8 +56,8 @@
     <color name="diffLineNumberDeletionText">#ffff808d</color>
     <color name="diffLineNumberHunkBackground">#ff092442</color>
     <color name="diffLineNumberHunkText">@*android:color/accent_material_dark</color>
-    <color name="diffLineNumberNeutralBackground">#ff1f1f24</color>
-    <color name="diffLineNumberNeutralText">@*android:color/ripple_material_dark</color>
+    <color name="diffLineNumberNeutralBackground">@*android:color/background_dark</color>
+    <color name="diffLineNumberNeutralText">@*android:color/accent_material_dark</color>
     <color name="glance_colorBackground">#ff1c1b1f</color>
     <color name="glance_colorError">#fff2b8b5</color>
     <color name="glance_colorErrorContainer">#ff8c1d18</color>
@@ -106,12 +106,12 @@
     <color name="lineBackgroundRed">#ff300406</color>
     <color name="lineBackgroundYellow">#ff423e31</color>
     <color name="lineNumberBackgroundBlue">#ff092442</color>
-    <color name="lineNumberBackgroundGray">#ff1f1f24</color>
+    <color name="lineNumberBackgroundGray">@*android:color/background_dark</color>
     <color name="lineNumberBackgroundGreen">#ff08260f</color>
     <color name="lineNumberBackgroundRed">#ff3b0507</color>
     <color name="lineNumberBackgroundYellow">#ff4a4536</color>
     <color name="lineNumberForegroundBlue">@*android:color/accent_material_dark</color>
-    <color name="lineNumberForegroundGray">@*android:color/ripple_material_dark</color>
+    <color name="lineNumberForegroundGray">@*android:color/accent_material_dark</color>
     <color name="lineNumberForegroundGreen">#ff95f0ab</color>
     <color name="lineNumberForegroundRed">#ffff808d</color>
     <color name="link">@*android:color/accent_material_dark</color>
@@ -160,7 +160,7 @@
     <color name="textPlaceholder">#809194a1</color>
     <color name="textPrimary">#fffbfbfc</color>
     <color name="textSecondary">#ffbfc1c9</color>
-    <color name="textTertiary">@*android:color/ripple_material_dark</color>
+    <color name="textTertiary">@*android:color/accent_material_dark</color>
     <color name="yellow_000">#fffffef5</color>
     <color name="yellow_100">#fffffce5</color>
     <color name="yellow_200">#fffff6b8</color>
