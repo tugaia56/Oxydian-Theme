@@ -1,2 +1,5 @@
 Aggiunto:
-- Il modulo root di Oxydian Theme ha ora un banner nel gestore dei moduli (KernelSU / Magisk)
+- Nuova app: GitHub (tema + traduzione in italiano)
+
+Corretto:
+- Su Android puro la ROM veniva riconosciuta male se si erano copiate app da un telefono OnePlus: ora conta solo la ROM vera

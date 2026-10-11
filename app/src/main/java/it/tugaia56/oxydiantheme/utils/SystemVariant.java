@@ -39,14 +39,8 @@ public final class SystemVariant {
             String v = String.join("", Shell.cmd("getprop ro.build.version.oplusrom").exec().getOut()).trim();
             oplus = !v.isEmpty();
         } catch (Throwable ignored) {}
-        if (!oplus) {
-            // ROM di terze parti su telefoni OnePlus (es. crDroid): il produttore e' lo stesso, ma mancano le app di sistema OnePlus
-            for (String pkg : new String[]{"com.oplus.wirelesssettings", "com.oneplus.calculator", "com.oplus.camera", "com.oplus.games"}) {
-                try {
-                    if (Shell.cmd("pm path " + pkg).exec().isSuccess()) { oplus = true; break; }
-                } catch (Throwable ignored) {}
-            }
-        }
+        // Solo la proprieta' di sistema decide: la presenza di app OnePlus installate a mano (per esempio
+        // Giochi) NON vuol dire che il sistema sia OxygenOS (es. crDroid sul OnePlus 7T Pro).
         if (sdk >= 36) sAuto = oplus ? OOS16 : A16;
         else sAuto = oplus ? OOS15 : A15;
         return sAuto;
