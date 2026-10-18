@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stili con colori fissi nel codice dell'app (aCalendar+): riscritti con i colori scuri. Versione 36: il sistema toglie le versioni vecchie. -->
+<resources>
+    <style name="AppTheme" parent="@*org.withouthat.acalendarplus:style/MaterialDrawerTheme.Light.DarkToolbar.ActionBar">
+        <item name="*android:windowBackground">@*org.withouthat.acalendarplus:color/md_grey_50</item>
+        <item name="*android:windowContentTransitions">true</item>
+        <item name="*android:statusBarColor">@*org.withouthat.acalendarplus:color/acalendarBlue</item>
+        <item name="*android:toolbarStyle">@*org.withouthat.acalendarplus:style/ToolbarStyle</item>
+        <item name="*android:windowSharedElementsUseOverlay">true</item>
+        <item name="*android:enforceStatusBarContrast">false</item>
+        <item name="*android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <item name="*org.withouthat.acalendarplus:actionModeBackground">@*org.withouthat.acalendarplus:color/accent</item>
+        <item name="*org.withouthat.acalendarplus:appBarStyle">@*org.withouthat.acalendarplus:style/AppBarOverlay</item>
+        <item name="*org.withouthat.acalendarplus:buttonColor">#ff808080</item>
+        <item name="*org.withouthat.acalendarplus:buttonColorDisabled">#ffc0c0c0</item>
+        <item name="*org.withouthat.acalendarplus:buttonColorPressed">#ffc0c0c0</item>
+        <item name="*org.withouthat.acalendarplus:colorAccent">@*org.withouthat.acalendarplus:color/colorAccent</item>
+        <item name="*org.withouthat.acalendarplus:colorAccountHeader1">@*org.withouthat.acalendarplus:color/acalendarBlue</item>
+        <item name="*org.withouthat.acalendarplus:colorAccountHeader2">@*org.withouthat.acalendarplus:color/acalendarBlueDark</item>
+        <item name="*org.withouthat.acalendarplus:colorAgendaLine">@*org.withouthat.acalendarplus:color/md_grey_300</item>
+        <item name="*org.withouthat.acalendarplus:colorAgendaMonth">#ffffffff</item>
+        <item name="*org.withouthat.acalendarplus:colorAgendaWeek">@*org.withouthat.acalendarplus:color/md_grey_600</item>
+        <item name="*org.withouthat.acalendarplus:colorBgAgenda">@*android:color/background_dark</item>
+        <item name="*org.withouthat.acalendarplus:colorBgAgendaPast">@*android:color/button_material_dark</item>
+        <item name="*org.withouthat.acalendarplus:colorGrid">#ff777777</item>
+        <item name="*org.withouthat.acalendarplus:colorMonth">@*android:color/background_dark</item>
+        <item name="*org.withouthat.acalendarplus:colorOffMonth">@*android:color/background_floating_material_dark</item>
+        <item name="*org.withouthat.acalendarplus:colorPrimary">@*org.withouthat.acalendarplus:color/acalendarBlue</item>
+        <item name="*org.withouthat.acalendarplus:colorPrimaryDark">@*org.withouthat.acalendarplus:color/acalendarBlueDark</item>
+        <item name="*org.withouthat.acalendarplus:colorSaturday">#ff2020f0</item>
+        <item name="*org.withouthat.acalendarplus:colorSaturdayOff">#ff6060e0</item>
+        <item name="*org.withouthat.acalendarplus:colorSelection">@*org.withouthat.acalendarplus:color/md_green_500</item>
+        <item name="*org.withouthat.acalendarplus:colorSubtitle">@*org.withouthat.acalendarplus:color/subtitle</item>
+        <item name="*org.withouthat.acalendarplus:colorSunday">#ffff0000</item>
+        <item name="*org.withouthat.acalendarplus:colorSundayOff">#ffff5564</item>
+        <item name="*org.withouthat.acalendarplus:colorTextOnAccent">@*org.withouthat.acalendarplus:color/md_white_1000</item>
+        <item name="*org.withouthat.acalendarplus:colorTitle">@*org.withouthat.acalendarplus:color/md_white_1000</item>
+        <item name="*org.withouthat.acalendarplus:dialogCornerRadius">16dp</item>
+        <item name="*org.withouthat.acalendarplus:dividerDay">#ff799eb5</item>
+        <item name="*org.withouthat.acalendarplus:googleAttribution">@*org.withouthat.acalendarplus:drawable/places_powered_by_google_light</item>
+        <item name="*org.withouthat.acalendarplus:material_drawer_selected">@*android:color/background_floating_material_dark</item>
+        <item name="*org.withouthat.acalendarplus:material_drawer_selected_text">@*org.withouthat.acalendarplus:color/acalendarBlue</item>
+        <item name="*org.withouthat.acalendarplus:popupMenuStyle">@*org.withouthat.acalendarplus:style/PopupMenu</item>
+        <item name="*org.withouthat.acalendarplus:preferenceTheme">@*org.withouthat.acalendarplus:style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="*org.withouthat.acalendarplus:shadedBg">@*android:color/background_floating_material_dark</item>
+        <item name="*org.withouthat.acalendarplus:windowActionBar">false</item>
+        <item name="*org.withouthat.acalendarplus:windowActionModeOverlay">true</item>
+        <item name="*org.withouthat.acalendarplus:windowNoTitle">true</item>
+    </style>
+    <style name="AppTheme.Blue" parent="@*org.withouthat.acalendarplus:style/AppTheme">
+        <item name="*org.withouthat.acalendarplus:colorPrimary">@*org.withouthat.acalendarplus:color/acalendarBlue</item>
+        <item name="*org.withouthat.acalendarplus:colorPrimaryDark">@*org.withouthat.acalendarplus:color/acalendarBlueDark</item>
+        <item name="*org.withouthat.acalendarplus:colorSidebar">@*android:color/background_floating_material_dark</item>
+        <item name="*org.withouthat.acalendarplus:themeColorPrimary">@*org.withouthat.acalendarplus:color/acalendarBlue</item>
+        <item name="*org.withouthat.acalendarplus:themeColorPrimaryDark">@*org.withouthat.acalendarplus:color/acalendarBlueDark</item>
+        <item name="*org.withouthat.acalendarplus:themeColorPrimaryHighContrast">@*org.withouthat.acalendarplus:color/acalendarBlueDark</item>
+        <item name="*org.withouthat.acalendarplus:themeColorPrimaryLight">@*org.withouthat.acalendarplus:color/acalendarBlueLight</item>
+        <item name="*org.withouthat.acalendarplus:themeColorPrimaryLowContrast">@*org.withouthat.acalendarplus:color/acalendarBlueLight</item>
+    </style>
+    <style name="AppTheme.Blue2" parent="@*org.withouthat.acalendarplus:style/AppTheme">
+        <item name="*org.withouthat.acalendarplus:colorPrimary">@*org.withouthat.acalendarplus:color/acalendarBlue2</item>
+        <item name="*org.withouthat.acalendarplus:colorPrimaryDark">@*org.withouthat.acalendarplus:color/acalendarBlue2Dark</item>
+        <item name="*org.withouthat.acalendarplus:colorSidebar">@*android:color/background_floating_material_dark</item>
+        <item name="*org.withouthat.acalendarplus:themeColorPrimary">@*org.withouthat.acalendarplus:color/acalendarBlue2</item>
+        <item name="*org.withouthat.acalendarplus:themeColorPrimaryDark">@*org.withouthat.acalendarplus:color/acalendarBlue2Dark</item>
+        <item name="*org.withouthat.acalendarplus:themeColorPrimaryHighContrast">@*org.withouthat.acalendarplus:color/acalendarBlue2Dark</item>
+        <item name="*org.withouthat.acalendarplus:themeColorPrimaryLight">@*org.withouthat.acalendarplus:color/acalendarBlue2Light</item>
+        <item name="*org.withouthat.acalendarplus:themeColorPrimaryLowContrast">@*org.withouthat.acalendarplus:color/acalendarBlue2Light</item>
+    </style>
+    <style name="EventDialogTheme" parent="@*org.withouthat.acalendarplus:style/Theme.AppCompat.Light.Dialog.Alert">
+        <item name="*android:colorForeground">#ffffffff</item>
+        <item name="*android:colorBackground">@*android:color/background_floating_material_dark</item>
+        <item name="*android:textColorSecondary">#b2ffffff</item>
+        <item name="*android:textColorTertiary">#80ffffff</item>
+        <item name="*org.withouthat.acalendarplus:dialogCornerRadius">16dp</item>
+    </style>
+</resources>

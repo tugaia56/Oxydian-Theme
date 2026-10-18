@@ -24,7 +24,7 @@ public final class AospTheme {
 
     private AospTheme() {}
 
-    private static final int COUNT = 20;
+    private static final int COUNT = 40;
 
     private static int mix(int a, int b, float t) {
         int r = Math.round(((a >> 16) & 255) * (1 - t) + ((b >> 16) & 255) * t);
@@ -45,18 +45,33 @@ public final class AospTheme {
      * accent null = li toglie.
      */
     static void applyFixedColors(Integer accent, Integer bg) {
+        applyFixedColors(accent, bg, false);
+    }
+
+    /**
+     * @param rolesOnly true su OxygenOS: solo i colori "di ruolo" della palette dinamica (pulsanti, selettori,
+     *                  contenitori) che app come Calendar e Traduttore leggono direttamente dal sistema e che un
+     *                  tema per singola app non puo' cambiare. Testo e icone sopra l'accento: bianchi.
+     */
+    static void applyFixedColors(Integer accent, Integer bg, boolean rolesOnly) {
         // Il sistema rifa' i suoi colori qualche secondo dopo il cambio di impostazione e si rimette davanti: si aspetta
-        android.os.SystemClock.sleep(6000);
+        if (!rolesOnly) android.os.SystemClock.sleep(6000);
         java.util.List<String> cmds = new java.util.ArrayList<>();
         java.util.LinkedHashMap<String, Integer> m = new java.util.LinkedHashMap<>();
         if (accent != null) {
-            int a = 0xFF000000 | accent, on = onColor(a);
+            int a = 0xFF000000 | accent, on = onColor(a), w = 0xFFFFFFFF;
             m.put("system_primary_dark", a);
-            m.put("system_on_primary_dark", on);
-            m.put("system_surface_tint_dark", a);
-            m.put("system_control_activated_dark", a);
-            m.put("system_shade_active_dark", a);
-            m.put("system_on_shade_active_dark", on);
+            m.put("system_on_primary_dark", rolesOnly ? w : on);
+            m.put("system_primary_container_dark", a);
+            m.put("system_on_primary_container_dark", w);
+            m.put("system_secondary_container_dark", a);
+            m.put("system_on_secondary_container_dark", w);
+            if (!rolesOnly) {
+                m.put("system_surface_tint_dark", a);
+                m.put("system_control_activated_dark", a);
+                m.put("system_shade_active_dark", a);
+                m.put("system_on_shade_active_dark", on);
+            }
         }
         if (bg != null) {
             int b = 0xFF000000 | bg, w = 0xFFFFFFFF;
@@ -109,7 +124,11 @@ public final class AospTheme {
      */
     public static void apply(Context ctx, boolean enabled) {
         try {
-            if (!isAosp()) return;
+            if (!isAosp()) {
+                // OxygenOS: niente impostazioni di sistema, solo i colori di ruolo dell'accento scelto
+                applyFixedColors(enabled ? SystemColorsDialog.effAccent(ctx) : null, null, true);
+                return;
+            }
             String current = String.join("", Shell.cmd("settings get secure " + KEY).exec().getOut()).trim();
             if (current.isEmpty() || current.equals("null")) current = "{}";
             // copia dell'impostazione originale, una volta sola, per poterla rimettere
