@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Platform.V25.AppCompat.Light" parent="@*android:style/Theme.Material.NoActionBar">
+        <item name="*android:textColorHintInverse">@null</item>
+        <item name="*android:itemBackground">@*android:color/background_dark</item>
+        <item name="*android:backgroundTint">@*android:color/background_dark</item>
+        <item name="*android:windowBackground">@*android:color/background_dark</item>
+        <item name="*android:textColorHint">@null</item>
+        <item name="*android:textColorLink">?android:colorAccent</item>
+        <item name="*android:listDivider">@*android:color/transparent</item>
+        <item name="*android:buttonBarStyle">?android:buttonBarStyle</item>
+        <item name="*android:buttonBarButtonStyle">?android:buttonBarButtonStyle</item>
+        <item name="*android:textColorLinkInverse">?android:colorAccent</item>
+        <item name="*android:navigationBarColor">@*android:color/background_dark</item>
+        <!-- RRO non sostituisce il tema padre (Theme.Material.Light): gli attributi chiari del padre
+             vanno riscritti qui, con i valori del tema scuro Material -->
+        <item name="*android:colorBackground">@*android:color/background_dark</item>
+        <item name="*android:colorBackgroundFloating">@*android:color/background_floating_material_dark</item>
+        <item name="*android:textColorPrimary">@*android:color/primary_text_material_dark</item>
+        <item name="*android:textColorSecondary">@*android:color/secondary_text_material_dark</item>
+        <item name="*android:textColorTertiary">@*android:color/secondary_text_material_dark</item>
+        <item name="*android:textColorPrimaryInverse">@*android:color/primary_text_material_light</item>
+        <item name="*android:textColorSecondaryInverse">@*android:color/secondary_text_material_light</item>
+        <item name="*android:textColorPrimaryDisableOnly">@*android:color/primary_text_disable_only_material_dark</item>
+        <item name="*android:textColorPrimaryInverseDisableOnly">@*android:color/primary_text_disable_only_material_light</item>
+        <item name="*android:colorForeground">@*android:color/foreground_material_dark</item>
+        <item name="*android:colorForegroundInverse">@*android:color/foreground_material_light</item>
+        <item name="*android:colorButtonNormal">@*android:color/button_material_dark</item>
+        <item name="*android:isLightTheme">false</item>
+        <item name="*android:windowLightStatusBar">false</item>
+    </style>
+</resources>
