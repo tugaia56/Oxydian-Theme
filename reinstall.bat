@@ -15,7 +15,7 @@ pause
 exit /b 1
 :trovato
 echo Installo %APK% ...
-adb install -r "%APK%"
+adb install -r -t "%APK%"
 echo.
 echo Fatto. Se compare "Success" l'app e' aggiornata.
 pause
