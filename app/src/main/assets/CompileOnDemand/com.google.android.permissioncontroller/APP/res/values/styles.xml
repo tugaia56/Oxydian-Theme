@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="PermissionGrantDialogMaterial3">
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/car_ui_activity_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="PermissionGrantDialog">
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/car_ui_activity_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:showDividers">middle</item>
+    </style>
+</resources>
