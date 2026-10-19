@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Sfondo delle finestre dei permessi (Consentire a ... di inviarti notifiche?): Blue Gray Dark con bordo nell'accento.
-     Si usa un disegno "overlayable" dell'app (qui inutilizzato) come contenitore: gli stili sotto lo richiamano. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="@*android:color/background_dark" />
-    <stroke android:width="2dp" android:color="@*android:color/accent_material_dark" />
-    <corners android:radius="28dp" />
-</shape>
