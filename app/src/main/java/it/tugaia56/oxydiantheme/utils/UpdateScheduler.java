@@ -33,7 +33,9 @@ public final class UpdateScheduler {
                     .setPeriodic(TimeUnit.HOURS.toMillis(12))
                     .setPersisted(true)
                     .build());
-        } catch (Throwable ignored) {}
+        } catch (Throwable t) {
+            android.util.Log.e("OxydianTheme", "reschedule: " + t);
+        }
     }
 
     public static void ensureChannel(Context ctx) {
