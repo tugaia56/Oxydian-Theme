@@ -64,7 +64,9 @@ public final class AospTheme {
             m.put("system_on_primary_dark", rolesOnly ? w : on);
             m.put("system_primary_container_dark", a);
             m.put("system_on_primary_container_dark", w);
-            m.put("system_secondary_container_dark", a);
+            // un po' piu' scuro dell'accento: nelle app che usano il contenitore secondario come sfondo della voce selezionata
+            // e il colore primario per l'icona (es. KernelSU), a tinta uguale l'icona sparirebbe
+            m.put("system_secondary_container_dark", mix(a, 0xFF000000, 0.35f));
             m.put("system_on_secondary_container_dark", w);
             if (!rolesOnly) {
                 m.put("system_surface_tint_dark", a);
