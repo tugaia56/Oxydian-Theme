@@ -263,7 +263,21 @@ public class MainActivity extends AppCompatActivity {
     private TextView mSubProgress, mSubActivity;
     private static final String SYSTEMUI_PKG = "com.android.systemui";
 
+    /** Aggiornamento automatico acceso di serie: la prima volta si chiede il permesso per le notifiche. */
+    private void askNotificationsOnce() {
+        try {
+            android.content.SharedPreferences sp = getSharedPreferences("theme_prefs", MODE_PRIVATE);
+            if (sp.getBoolean("notif_asked", false) || !ThemePrefs.isAutoUpdate()) return;
+            sp.edit().putBoolean("notif_asked", true).apply();
+            if (android.os.Build.VERSION.SDK_INT >= 33
+                    && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 71);
+            }
+        } catch (Throwable ignored) {}
+    }
+
     private void setupCards() {
+        askNotificationsOnce();
         android.widget.LinearLayout r1 = findViewById(R.id.cards_row1);
         android.widget.LinearLayout r2 = findViewById(R.id.cards_row2);
         android.widget.LinearLayout r3 = findViewById(R.id.cards_row3);
@@ -443,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
         box.addView(row);
         android.widget.LinearLayout row2 = new android.widget.LinearLayout(this);
         row2.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-        row2.addView(makeCard(R.string.card_update, sub, () -> SettingsPage.checkUpdates(this)));
+        row2.addView(makeCard(R.string.card_update, sub, () -> SettingsPage.updatesMenu(this)));
         sub[0].setText(R.string.card_update_sub);
         row2.addView(makeCard(R.string.card_backup, sub, this::backupDialog));
         sub[0].setText(R.string.card_backup_sub);

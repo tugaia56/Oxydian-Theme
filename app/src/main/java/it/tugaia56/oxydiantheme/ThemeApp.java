@@ -18,6 +18,7 @@ public class ThemeApp extends Application {
     public void onCreate() {
         super.onCreate();
         appContext = this;
+        it.tugaia56.oxydiantheme.utils.UpdateScheduler.reschedule(this);
     }
 
     public static Context getAppContext() {

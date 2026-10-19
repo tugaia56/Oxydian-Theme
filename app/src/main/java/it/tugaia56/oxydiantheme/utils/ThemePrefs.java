@@ -13,6 +13,11 @@ public final class ThemePrefs {
 
     private ThemePrefs() {}
 
+    /** Controllo automatico degli aggiornamenti (acceso di serie). */
+    public static boolean isAutoUpdate() { return sp().getBoolean("auto_update", true); }
+
+    public static void setAutoUpdate(boolean on) { sp().edit().putBoolean("auto_update", on).commit(); }
+
     private static SharedPreferences sp() {
         return ThemeApp.getAppContext().getSharedPreferences(FILE, Context.MODE_PRIVATE);
     }

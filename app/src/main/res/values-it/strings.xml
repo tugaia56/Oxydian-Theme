@@ -186,4 +186,12 @@ Rimuovere il suo tema? Serve un riavvio.</item>
         <item quantity="other">%d app selezionate.
 Rimuovere i loro temi? Serve un riavvio.</item>
     </plurals>
+    <string name="update_channel">Aggiornamenti</string>
+    <string name="update_notif_title">Aggiornamento di Oxydian Theme</string>
+    <string name="update_notif_body">È disponibile la versione %1$s. Tocca per aprire l\'app.</string>
+    <string name="update_auto_on">L\'aggiornamento automatico è acceso: l\'app controlla da sola se c\'è una nuova versione e manda una notifica.</string>
+    <string name="update_auto_off">L\'aggiornamento automatico è spento.</string>
+    <string name="update_auto_turn_on">Accendi automatico</string>
+    <string name="update_auto_turn_off">Spegni automatico</string>
+    <string name="update_check_now">Controlla ora</string>
 </resources>

@@ -1,0 +1,2 @@
+Added:
+- Automatic updates: the app checks for a new version by itself and sends a notification (on by default; on first launch it asks for the notification permission). Turn it on or off from the Updates card

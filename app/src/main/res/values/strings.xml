@@ -187,4 +187,12 @@ Remove its theme? A reboot is needed.</item>
         <item quantity="other">%d apps selected.
 Remove their themes? A reboot is needed.</item>
     </plurals>
+    <string name="update_channel">Updates</string>
+    <string name="update_notif_title">Oxydian Theme update</string>
+    <string name="update_notif_body">Version %1$s is available. Tap to open the app.</string>
+    <string name="update_auto_on">Automatic updates are on: the app checks for a new version by itself and sends a notification.</string>
+    <string name="update_auto_off">Automatic updates are off.</string>
+    <string name="update_auto_turn_on">Turn on automatic</string>
+    <string name="update_auto_turn_off">Turn off automatic</string>
+    <string name="update_check_now">Check now</string>
 </resources>

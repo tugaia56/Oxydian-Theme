@@ -1,0 +1,2 @@
+Aggiunto:
+- Aggiornamento automatico: l'app controlla da sola se c'è una nuova versione e manda una notifica (acceso di serie, alla prima apertura chiede il permesso per le notifiche). Si accende e si spegne dalla scheda Aggiornamenti

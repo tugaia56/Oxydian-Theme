@@ -30,6 +30,24 @@ final class SettingsPage {
 
     // ── Aggiornamenti ────────────────────────────────────────────────────────
 
+    /** Scheda "Aggiornamenti": controllo manuale e interruttore del controllo automatico. */
+    static void updatesMenu(Activity a) {
+        final boolean on = ThemePrefs.isAutoUpdate();
+        Dialogs.show(a, new MaterialAlertDialogBuilder(a)
+                .setTitle(R.string.card_update)
+                .setMessage(on ? R.string.update_auto_on : R.string.update_auto_off)
+                .setPositiveButton(R.string.update_check_now, (d, w) -> checkUpdates(a))
+                .setNeutralButton(on ? R.string.update_auto_turn_off : R.string.update_auto_turn_on, (d, w) -> {
+                    ThemePrefs.setAutoUpdate(!on);
+                    it.tugaia56.oxydiantheme.utils.UpdateScheduler.reschedule(a);
+                    if (!on && android.os.Build.VERSION.SDK_INT >= 33
+                            && a.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                        a.requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 71);
+                    }
+                })
+                .setNegativeButton(R.string.legend_close, null));
+    }
+
     static void checkUpdates(Activity a) {
         Toast.makeText(a, R.string.update_checking, Toast.LENGTH_SHORT).show();
         new Thread(() -> {
