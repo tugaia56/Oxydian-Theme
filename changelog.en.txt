@@ -1,8 +1,10 @@
 Added:
-- New app: GitHub (theme + Italian translation)
-- Android 16 / 17 (e.g. crDroid): the chosen background and accent now reach the quick panel, notifications and Settings too
+- aCalendar+: active icons in the side menu and the menu header in the accent colour
+- SwitchAI: "Digital assistant" card with a Blue Gray Dark background and an accent-colour border
 
 Fixed:
-- On plain Android the ROM could be mis-detected when apps were copied from a OnePlus phone: only the real ROM counts now
-- The chosen system colours are re-applied on every Install
-- Android 16 / 17: the chosen colours come back by themselves after every reboot
+- 12 apps whose theme was not being applied (the system dropped the old-version themes): they show up now
+- Google Calendar: the selected date number is now white; buttons and navigation in the accent colour
+- Google Translate: microphone button in the accent colour with a white icon
+- SwitchAI: the Italian translation was being dropped by the compiler and did not show up
+- aCalendar+: light themes and event dialogs with the dark colours

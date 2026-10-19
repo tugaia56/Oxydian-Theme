@@ -1,8 +1,10 @@
 Aggiunto:
-- Nuova app: GitHub (tema + traduzione in italiano)
-- Android 16 / 17 (es. crDroid): lo sfondo e l'accento scelti ora arrivano anche a pannello rapido, notifiche e Impostazioni
+- aCalendar+: icone attive del menu laterale e intestazione del menu nell'accento
+- SwitchAI: card "Assistente digitale" con sfondo Blue Gray Dark e bordo nell'accento
 
 Corretto:
-- Su Android puro la ROM veniva riconosciuta male se si erano copiate app da un telefono OnePlus: ora conta solo la ROM vera
-- I colori di sistema scelti si riapplicano a ogni Installa
-- Android 16 / 17: i colori scelti tornano da soli dopo ogni riavvio
+- 12 app il cui tema non si applicava (il sistema scartava le versioni vecchie dei temi): ora si vedono
+- Google Calendar: la cifra della data selezionata ora è bianca; pulsanti e navigazione nell'accento
+- Google Traduttore: pulsante del microfono nell'accento con icona bianca
+- SwitchAI: la traduzione italiana veniva scartata dal compilatore e non si vedeva
+- aCalendar+: temi chiaro e finestre degli eventi con i colori scuri
