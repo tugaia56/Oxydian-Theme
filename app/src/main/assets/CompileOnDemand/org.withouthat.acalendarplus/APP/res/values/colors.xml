@@ -179,9 +179,9 @@
     <color name="md_grey_850">@*android:color/background_dark</color>
     <color name="md_grey_900">@*android:color/background_dark</color>
     <color name="md_light_blue_100">#ffb3e5fc</color>
-    <color name="md_light_blue_700">#ff0288d1</color>
+    <color name="md_light_blue_700">@*android:color/accent_material_dark</color>
     <color name="md_light_blue_800">@*android:color/accent_material_dark</color>
-    <color name="md_light_blue_900">#ff01579b</color>
+    <color name="md_light_blue_900">@*android:color/accent_material_dark</color>
     <color name="md_light_blue_A200">#ff40c4ff</color>
     <color name="md_light_disabled">#61000000</color>
     <color name="md_light_dividers">#1f000000</color>
