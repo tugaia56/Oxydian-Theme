@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Card "piene" dell'app (anche "Assistente digitale"): bordo nell'accento. Versione 36: il sistema toglie le versioni vecchie. -->
+<resources>
+    <style name="Widget.Material3.CardView.Filled" parent="@*com.wstxda.switchai:style/Base.Widget.Material3.CardView">
+        <item name="*com.wstxda.switchai:cardBackgroundColor">@*android:color/button_material_dark</item>
+        <item name="*com.wstxda.switchai:cardElevation">@*com.wstxda.switchai:dimen/m3_comp_filled_card_container_elevation</item>
+        <item name="*com.wstxda.switchai:checkedIconSize">@*com.wstxda.switchai:dimen/m3_comp_filled_card_icon_size</item>
+        <item name="*com.wstxda.switchai:shapeAppearance">@*com.wstxda.switchai:style/ShapeAppearance.Material3.Corner.Medium</item>
+        <item name="*com.wstxda.switchai:strokeWidth">2dp</item>
+    </style>
+</resources>
