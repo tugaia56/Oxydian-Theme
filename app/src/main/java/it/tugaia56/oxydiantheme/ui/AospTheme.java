@@ -135,7 +135,10 @@ public final class AospTheme {
         try {
             if (!isAosp()) {
                 // OxygenOS: niente impostazioni di sistema, solo i colori di ruolo dell'accento scelto
-                applyFixedColors(enabled ? SystemColorsDialog.effAccent(ctx) : null, null, true);
+                Integer eff = enabled ? SystemColorsDialog.effAccent(ctx) : null;
+                applyFixedColors(eff, null, true);
+                // "Personalizzato" e i colori COUI di sistema seguono l'accento scelto (come faceva il vecchio modulo Oxydian)
+                if (enabled) OplusColorEngine.apply(eff != null ? eff : ThemePrefs.accentColor());
                 return;
             }
             String current = String.join("", Shell.cmd("settings get secure " + KEY).exec().getOut()).trim();
