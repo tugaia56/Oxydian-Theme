@@ -108,6 +108,14 @@ public final class ThemeCompiler {
                 "mv -f \"" + moved + "\" \"" + source + "\"",
                 "find \"" + source + "/res\" -type f -name '*.xml'"
                         + " -exec sed -i -E 's|(@\\*)+android:color/accent_material_dark|" + accent + "|g' {} +").exec();
+        // molti temi hanno l'accento predefinito (#908dff) scritto fisso, anche con trasparenza (#4d908dff):
+        // se l'accento scelto e' un altro, lo si sostituisce (la trasparenza resta)
+        String hex = String.format("%06X", ThemePrefs.accentColor() & 0xFFFFFF);
+        if (!hex.equals("908DFF")) {
+            Shell.cmd("find \"" + source + "/res\" -type f -name '*.xml'"
+                    + " -exec sed -i -E 's/#([0-9A-Fa-f]{2})908[dD][fF][fF]/#\\1" + hex + "/g;"
+                    + " s/#908[dD][fF][fF]([^0-9A-Fa-f]|$)/#" + hex + "\\1/g' {} +").exec();
+        }
 
         if (optionAssetPaths != null) {
             for (String opt : optionAssetPaths) {
