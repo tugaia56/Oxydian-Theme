@@ -1303,23 +1303,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Dopo aver rifatto i temi: il nuovo accento in SystemUI si vede solo riavviando l'interfaccia. */
+    private static androidx.appcompat.app.AlertDialog sRestartDialog;
+
     private void showRestartDialogIfPending() {
         if (!ThemePrefs.isUiRestartPending() || mBusy) return;
-        ThemePrefs.setUiRestartPending(false);
-        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+        if (sRestartDialog != null && sRestartDialog.isShowing()) return;
+        // il segno "da riavviare" si toglie solo quando l'utente sceglie: se l'attivita' viene ricreata la finestra sparisce e
+        // alla riapertura si rimostra
+        androidx.appcompat.app.AlertDialog d = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.restart_needed_title)
                 .setMessage(R.string.restart_needed_message)
-                .setPositiveButton(R.string.restart_now, (d, w) -> {
+                .setCancelable(false)
+                .setPositiveButton(R.string.restart_now, (dlg, w) -> {
+                    ThemePrefs.setUiRestartPending(false);
                     Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
                     new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
                 })
-                .setNegativeButton(R.string.restart_later, null));
+                .setNegativeButton(R.string.restart_later, (dlg, w) -> ThemePrefs.setUiRestartPending(false))
+                .create();
+        Dialogs.style(this, d);
+        d.show();
+        int acc = ThemePrefs.accentColor();
+        if (d.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE) != null) d.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(acc);
+        if (d.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE) != null) d.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(acc);
+        sRestartDialog = d;
     }
 
     @Override
     protected void onDestroy() {
         // la finestra di attesa e' legata a questa attivita': si toglie, ma il lavoro continua e si rimostra alla nuova
         if (sBusyDialog != null && sActivity == this) { Dialogs.Busy d = sBusyDialog; sBusyDialog = null; d.dismissNow(); }
+        if (sRestartDialog != null) { try { sRestartDialog.dismiss(); } catch (Throwable ignored) {} sRestartDialog = null; }
         if (sActivity == this) sActivity = null;
         super.onDestroy();
     }
