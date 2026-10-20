@@ -1277,7 +1277,10 @@ public class MainActivity extends AppCompatActivity {
                         String b = e.builtSig();
                         if (b != null && !b.isEmpty() && !b.startsWith(sigNow)) stale.add(e);
                     }
-                    if (!stale.isEmpty()) runAction(stale, ACT_ACTIVATE);
+                    if (!stale.isEmpty()) {
+                        Toast.makeText(MainActivity.this, R.string.rebuild_started, Toast.LENGTH_LONG).show();
+                        runAction(stale, ACT_ACTIVATE);
+                    }
                 }
                 if (mRestartUiAfter) {
                     mRestartUiAfter = false;
