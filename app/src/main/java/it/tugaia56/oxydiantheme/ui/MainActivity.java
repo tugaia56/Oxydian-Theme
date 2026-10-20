@@ -1141,6 +1141,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int ACT_ACTIVATE = 0, ACT_DISABLE = 1, ACT_REMOVE = 2;
     private boolean mRestartUiAfter;
+    private boolean mUiRestartPending;
 
     /** Azione sulle voci spuntate nella lista. */
     private void runSelected(int action) {
@@ -1281,10 +1282,23 @@ public class MainActivity extends AppCompatActivity {
                         String b = e.builtSig();
                         if (b != null && !b.isEmpty() && !b.startsWith(sigNow)) stale.add(e);
                     }
+                    mUiRestartPending = true;
                     if (!stale.isEmpty()) {
                         Toast.makeText(MainActivity.this, R.string.rebuild_started, Toast.LENGTH_LONG).show();
                         runAction(stale, ACT_ACTIVATE);
                     }
+                }
+                // finiti anche i temi delle app: il nuovo accento si vede in SystemUI solo dopo il riavvio dell'interfaccia
+                if (mUiRestartPending && !(autoRebuild && mBusy)) {
+                    mUiRestartPending = false;
+                    Dialogs.show(MainActivity.this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(MainActivity.this)
+                            .setTitle(R.string.restart_needed_title)
+                            .setMessage(R.string.restart_needed_message)
+                            .setPositiveButton(R.string.restart_now, (d, w) -> {
+                                Toast.makeText(MainActivity.this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+                                new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+                            })
+                            .setNegativeButton(R.string.restart_later, null));
                 }
                 if (mRestartUiAfter) {
                     mRestartUiAfter = false;

@@ -199,4 +199,8 @@ Rimuovere i loro temi? Serve un riavvio.</item>
     <string name="busy_title">Sto lavorando sui temi</string>
     <string name="busy_message">Sto costruendo i temi delle app con i colori scelti. Ci vogliono alcuni minuti: lascia aperta l\'app e aspetta che finisca. Intanto lo schermo resta acceso.</string>
     <string name="busy_progress">%1$d di %2$d: %3$s</string>
+    <string name="restart_needed_title">Riavvia l\'interfaccia</string>
+    <string name="restart_needed_message">Fatto tutto. Per vedere i nuovi colori nella barra di stato, nel pannello rapido e nel sistema bisogna riavviare l\'interfaccia.\n\nSe dopo il riavvio c\'è ancora il vecchio colore, riavviala una seconda volta.</string>
+    <string name="restart_now">Riavvia ora</string>
+    <string name="restart_later">Più tardi</string>
 </resources>
