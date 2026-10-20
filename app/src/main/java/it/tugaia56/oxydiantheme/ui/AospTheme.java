@@ -115,6 +115,9 @@ public final class AospTheme {
             for (String c : cmds) sb.append(" '").append(c).append("'");
             sb.append(" > ").append(file);
             Shell.cmd(sb.toString(), "chmod 755 " + file).exec();
+            // subito dopo "Installa" il sistema rifa' i suoi colori e si rimette davanti a questi: si ripassa un
+            // paio di volte, in background, dopo qualche secondo
+            Shell.cmd("nohup sh -c 'sleep 8; sh " + file + "; sleep 20; sh " + file + "' >/dev/null 2>&1 &").exec();
         }
     }
 
