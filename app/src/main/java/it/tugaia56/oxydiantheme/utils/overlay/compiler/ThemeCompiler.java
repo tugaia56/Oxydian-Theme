@@ -170,8 +170,13 @@ public final class ThemeCompiler {
         // all'effetto immediato (se l'unione e' gia' montata) e puo' anche fallire senza danni.
         Shell.cmd("cp -f " + signed + " " + inStore,
                 "chmod 644 " + inStore,
-                "[ -d " + ModuleConstants.LIVE_UPPER_DIR + " ] && cp -f " + signed + " " + inSystem + " 2>/dev/null",
-                "chmod 644 " + inSystem + " 2>/dev/null").exec();
+                // File nuovo e poi rinominato (non sovrascritto): SystemUI & co tengono aperto l'APK vecchio, e se il
+                // file viene riscritto sul posto leggono dati sbagliati e vanno in crash ("File res/drawable/... not found")
+                "[ -d " + ModuleConstants.LIVE_UPPER_DIR + " ] && cp -f " + signed + " " + inSystem + ".tmp 2>/dev/null"
+                        + " && chown 0:0 " + inSystem + ".tmp && chmod 644 " + inSystem + ".tmp"
+                        + " && (chcon u:object_r:vendor_overlay_file:s0 " + inSystem + ".tmp 2>/dev/null"
+                        + " || chcon u:object_r:system_file:s0 " + inSystem + ".tmp 2>/dev/null; true)"
+                        + " && mv -f " + inSystem + ".tmp " + inSystem + " 2>/dev/null").exec();
         return false;
     }
 
