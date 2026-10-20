@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
     private Button mApply;
     // stato del lavoro in corso: statico, perche' l'attivita' viene ricreata quando gli overlay cambiano le risorse
     private static boolean mBusy = false;
-    private static boolean mUiRestartPending;
     private static MainActivity sActivity;
     private static Dialogs.Busy sBusyDialog;
     private static String sBusyText = "";
@@ -1259,7 +1258,10 @@ public class MainActivity extends AppCompatActivity {
             // Android puro: l'accento va dato anche al sistema (colore di partenza)
             boolean sysTarget = false;
             for (AppEntry e : targets) if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) { sysTarget = true; break; }
+            if (sysTarget && action == ACT_ACTIVATE) ThemePrefs.setUiRestartPending(true);
             if (sysTarget) AospTheme.apply(MainActivity.this, action == ACT_ACTIVATE);
+            // icone Wi-Fi/segnale e pack icone Impostazioni hanno l'accento scritto dentro: si rifanno anche loro
+            if (sysTarget && action == ACT_ACTIVATE) { busyUpdate(getString(R.string.busy_styles)); StyleActivity.rebuildStale(MainActivity.this); }
             // colori di sistema gia' scelti: si riapplicano anche quando si installa un'altra app
             else if (action == ACT_ACTIVATE && ThemePrefs.isDarkShadowEnabled(SystemColorsDialog.PKG)) AospTheme.apply(MainActivity.this, true);
 
@@ -1274,7 +1276,7 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity act = sActivity;
                 if (act == null) {
                     mBusy = false;
-                    if (autoRebuild) mUiRestartPending = true;
+                    if (autoRebuild) ThemePrefs.setUiRestartPending(true);
                     return;
                 }
                 act.completeRun(f, n, removedCount, autoRebuild);
@@ -1302,8 +1304,8 @@ public class MainActivity extends AppCompatActivity {
 
     /** Dopo aver rifatto i temi: il nuovo accento in SystemUI si vede solo riavviando l'interfaccia. */
     private void showRestartDialogIfPending() {
-        if (!mUiRestartPending || mBusy) return;
-        mUiRestartPending = false;
+        if (!ThemePrefs.isUiRestartPending() || mBusy) return;
+        ThemePrefs.setUiRestartPending(false);
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.restart_needed_title)
                 .setMessage(R.string.restart_needed_message)
@@ -1343,7 +1345,7 @@ public class MainActivity extends AppCompatActivity {
                     String b = e.builtSig();
                     if (b != null && !b.isEmpty() && !b.startsWith(sigNow)) stale.add(e);
                 }
-                mUiRestartPending = true;
+                ThemePrefs.setUiRestartPending(true);
                 if (!stale.isEmpty()) {
                     Toast.makeText(this, R.string.rebuild_started, Toast.LENGTH_LONG).show();
                     runAction(stale, ACT_ACTIVATE);

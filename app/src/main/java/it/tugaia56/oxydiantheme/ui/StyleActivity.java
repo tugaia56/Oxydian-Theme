@@ -1,5 +1,6 @@
 package it.tugaia56.oxydiantheme.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -347,7 +348,7 @@ public class StyleActivity extends AppCompatActivity {
         return pack != null && pack.startsWith("pui_") ? "pui_" : "";
     }
 
-    private String iconOptsKey(String pack) {
+    private static String iconOptsKey(String pack) {
         String f = optFamily(pack);
         return ThemePrefs.getIconOpt(f + "bgcolor", 0) + "," + ThemePrefs.getIconOpt(f + "solid", 0) + ","
                 + ThemePrefs.getIconOpt(f + "shape", 0) + "," + ThemePrefs.getIconOpt(f + "iconcolor", 0);
@@ -362,7 +363,7 @@ public class StyleActivity extends AppCompatActivity {
     }
 
     /** Stesse risorse (res/values/Obsidian.xml) che costruiva Oxydian per ogni pack. */
-    private String settingsValuesXml(String pack) {
+    private static String settingsValuesXml(String pack) {
         String f = optFamily(pack);
         int bgColor = ThemePrefs.getIconOpt(f + "bgcolor", 0);
         boolean solid = ThemePrefs.getIconOpt(f + "solid", 0) == 1;
@@ -495,6 +496,50 @@ public class StyleActivity extends AppCompatActivity {
                 .setView(sv)
                 .setPositiveButton(android.R.string.ok, null));
         Toast.makeText(this, R.string.icon_size_hint, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Cambiato l'accento: gli stili gia' scelti (icone Wi-Fi/segnale, pack icone Impostazioni) hanno l'accento scritto dentro
+     * quando vengono costruiti, quindi vanno rifatti. Non riavvia SystemUI (lo si chiede all'utente alla fine).
+     * Chiamare fuori dal thread principale.
+     */
+    static void rebuildStale(Context ctx) {
+        Map<String, String> before = states();
+        List<String> refresh = new ArrayList<>();
+        long updated = 0;
+        try { updated = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).lastUpdateTime; } catch (Exception ignored) {}
+        String accent = String.format("%08X", ThemePrefs.accentColor()) + ":" + updated;
+        boolean batchOpen = false;
+        try {
+            for (int i = 0; i < SLOTS.length; i++) {
+                String slot = SLOTS[i], ov = ThemeCompiler.namedPackage(slot);
+                String style = ThemePrefs.getStyle(slot);
+                if (style.isEmpty()) continue;
+                if (i == 4) {
+                    try { ctx.getPackageManager().getPackageInfo(TARGET_PKG[4], 0); }
+                    catch (Exception notInstalled) { continue; }
+                }
+                String st = before.get(ov);
+                boolean active = "[x]".equals(st);
+                String sig = style + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey(style) : "")
+                        + ((i <= 1) ? ":s" + ThemePrefs.getIconSize() : "");
+                if (sig.equals(ThemePrefs.getStyleBuilt(slot))) continue;
+                if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
+                try {
+                    if (!ThemeCompiler.buildNamedInBatch(TARGET_PKG[i], PREFIXES[i] + style, slot, null,
+                            (i == 3 || i == 4) ? settingsValuesXml(style) : null,
+                            (i <= 1) ? ThemePrefs.getIconSize() : 0)) {
+                        ThemePrefs.setStyleBuilt(slot, sig);
+                        if (active) refresh.add(ov);
+                    }
+                } catch (Throwable t) {
+                    android.util.Log.e("OxyTheme", "style " + slot + " rebuild failed", t);
+                }
+            }
+        } catch (Throwable ignored) {
+        } finally {
+            if (batchOpen) ThemeCompiler.endBatch(refresh);
+        }
     }
 
     private void onApply() {

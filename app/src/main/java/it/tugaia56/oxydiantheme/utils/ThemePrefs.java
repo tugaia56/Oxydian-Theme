@@ -42,6 +42,8 @@ public final class ThemePrefs {
 
     public static void setStyle(String slot, String style) { sp().edit().putString("style_" + slot, style == null ? "" : style).commit(); }
 
+    public static boolean isUiRestartPending() { return sp().getBoolean("ui_restart_pending", false); }
+    public static void setUiRestartPending(boolean v) { sp().edit().putBoolean("ui_restart_pending", v).commit(); }
     public static String getStyleBuilt(String slot) { return sp().getString("style_built_" + slot, ""); }
 
     public static void setStyleBuilt(String slot, String sig) { sp().edit().putString("style_built_" + slot, sig).commit(); }
