@@ -36,6 +36,10 @@ final class Dialogs {
 
         void update(String text) { ui.post(() -> progress.setText(text)); }
 
+        void dismissNow() {
+            try { dialog.dismiss(); } catch (Throwable ignored) {}
+        }
+
         void dismiss() {
             ui.post(() -> {
                 try { dialog.dismiss(); } catch (Throwable ignored) {}

@@ -85,7 +85,12 @@ public class MainActivity extends AppCompatActivity {
     private android.widget.ImageButton mWarn;
     private int mWarnCount = 0;
     private Button mApply;
-    private boolean mBusy = false;
+    // stato del lavoro in corso: statico, perche' l'attivita' viene ricreata quando gli overlay cambiano le risorse
+    private static boolean mBusy = false;
+    private static boolean mUiRestartPending;
+    private static MainActivity sActivity;
+    private static Dialogs.Busy sBusyDialog;
+    private static String sBusyText = "";
 
     // Stato di ogni app, con gli stessi colori di Substratum
     private static final int ST_NONE = 0, ST_ACTIVE = 1, ST_DISABLED = 2, ST_REBOOT = 3, ST_INVALID = 4;
@@ -627,6 +632,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        sActivity = this;
+        if (mBusy) busyShow();
+        else showRestartDialogIfPending();
         if (mSubAccent != null) refreshCards();
         refreshStates();
         if (ThemePrefs.isNavPending() && !mBusy) {
@@ -1141,7 +1149,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int ACT_ACTIVATE = 0, ACT_DISABLE = 1, ACT_REMOVE = 2;
     private boolean mRestartUiAfter;
-    private boolean mUiRestartPending;
 
     /** Azione sulle voci spuntate nella lista. */
     private void runSelected(int action) {
@@ -1180,7 +1187,8 @@ public class MainActivity extends AppCompatActivity {
         if (mBusy) return;
         mBusy = true;
         setButtonsEnabled(false);
-        final Dialogs.Busy busyDialog = Dialogs.showBusy(this, R.string.busy_title, R.string.busy_message);
+        sBusyText = "";
+        busyShow();
         for (AppEntry e : targets) {
             e.enabled = action == ACT_ACTIVATE;   // stato voluto: acceso solo dopo Attiva
             e.saveEnabled();
@@ -1199,7 +1207,7 @@ public class MainActivity extends AppCompatActivity {
                 int step = 0;
                 for (AppEntry e : targets) {
                     step++;
-                    busyDialog.update(getString(R.string.busy_progress, step, targets.size(), e.name));
+                    busyUpdate(getString(R.string.busy_progress, step, targets.size(), e.name));
                     boolean active = before.contains(e.overlay());
                     if (action != ACT_ACTIVATE) {
                         if (active) toDisable.add(e.overlay());
@@ -1258,61 +1266,101 @@ public class MainActivity extends AppCompatActivity {
             Set<String> after = enabledOverlays();
             int notYetActive = 0;
             if (action == ACT_ACTIVATE) for (AppEntry e : targets) if (!after.contains(e.overlay())) notYetActive++;
-            busyDialog.dismiss();
+            busyHide();
             final int f = failed, n = notYetActive, removedCount = toRemove.size();
             final boolean autoRebuild = sysTarget && action == ACT_ACTIVATE;
             new Handler(Looper.getMainLooper()).post(() -> {
-                mBusy = false;
-                setButtonsEnabled(true);
-                mSelected.clear();
-                String msg;
-                if (f > 0) msg = getString(R.string.failed_n, f);
-                else if (n > 0) msg = getString(R.string.applied_reboot);
-                else msg = getString(R.string.applied);
-                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
-                refreshStates();
-                updateNotice();
-                // cambiato l'accento dai colori di sistema: i temi delle app gia' accesi vanno rifatti con il nuovo
-                // accento (ognuno ha l'accento scritto dentro quando viene costruito): lo si fa da soli
-                if (autoRebuild) {
-                    final String sigNow = signature();
-                    List<AppEntry> stale = new ArrayList<>();
-                    for (AppEntry e : mApps) {
-                        if (!e.enabled || (e.ds && SystemColorsDialog.PKG.equals(e.pkg))) continue;
-                        String b = e.builtSig();
-                        if (b != null && !b.isEmpty() && !b.startsWith(sigNow)) stale.add(e);
-                    }
-                    mUiRestartPending = true;
-                    if (!stale.isEmpty()) {
-                        Toast.makeText(MainActivity.this, R.string.rebuild_started, Toast.LENGTH_LONG).show();
-                        runAction(stale, ACT_ACTIVATE);
-                    }
+                // l'attivita' puo' essere stata ricreata mentre si lavorava (gli overlay cambiano le risorse): si usa quella viva
+                MainActivity act = sActivity;
+                if (act == null) {
+                    mBusy = false;
+                    if (autoRebuild) mUiRestartPending = true;
+                    return;
                 }
-                // finiti anche i temi delle app: il nuovo accento si vede in SystemUI solo dopo il riavvio dell'interfaccia
-                if (mUiRestartPending && !(autoRebuild && mBusy)) {
-                    mUiRestartPending = false;
-                    Dialogs.show(MainActivity.this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(MainActivity.this)
-                            .setTitle(R.string.restart_needed_title)
-                            .setMessage(R.string.restart_needed_message)
-                            .setPositiveButton(R.string.restart_now, (d, w) -> {
-                                Toast.makeText(MainActivity.this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-                                new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
-                            })
-                            .setNegativeButton(R.string.restart_later, null));
-                }
-                if (mRestartUiAfter) {
-                    mRestartUiAfter = false;
-                    Toast.makeText(MainActivity.this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-                    new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
-                }
-                if (removedCount > 0) {
-                    Dialogs.show(MainActivity.this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(MainActivity.this)
-                            .setTitle(R.string.off_title)
-                            .setMessage(R.string.off_message)
-                            .setPositiveButton(android.R.string.ok, null));
-                }
+                act.completeRun(f, n, removedCount, autoRebuild);
             });
         }).start();
+    }
+
+    private static void busyShow() {
+        MainActivity a = sActivity;
+        if (a == null || sBusyDialog != null) return;
+        sBusyDialog = Dialogs.showBusy(a, R.string.busy_title, R.string.busy_message);
+        sBusyDialog.update(sBusyText);
+    }
+
+    private static void busyUpdate(String text) {
+        sBusyText = text;
+        if (sBusyDialog != null) sBusyDialog.update(text);
+    }
+
+    private static void busyHide() {
+        final Dialogs.Busy d = sBusyDialog;
+        sBusyDialog = null;
+        if (d != null) d.dismiss();
+    }
+
+    /** Dopo aver rifatto i temi: il nuovo accento in SystemUI si vede solo riavviando l'interfaccia. */
+    private void showRestartDialogIfPending() {
+        if (!mUiRestartPending || mBusy) return;
+        mUiRestartPending = false;
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.restart_needed_title)
+                .setMessage(R.string.restart_needed_message)
+                .setPositiveButton(R.string.restart_now, (d, w) -> {
+                    Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+                    new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+                })
+                .setNegativeButton(R.string.restart_later, null));
+    }
+
+    @Override
+    protected void onDestroy() {
+        // la finestra di attesa e' legata a questa attivita': si toglie, ma il lavoro continua e si rimostra alla nuova
+        if (sBusyDialog != null && sActivity == this) { Dialogs.Busy d = sBusyDialog; sBusyDialog = null; d.dismissNow(); }
+        if (sActivity == this) sActivity = null;
+        super.onDestroy();
+    }
+
+    private void completeRun(final int f, final int n, final int removedCount, final boolean autoRebuild) {
+            mBusy = false;
+            setButtonsEnabled(true);
+            mSelected.clear();
+            String msg;
+            if (f > 0) msg = getString(R.string.failed_n, f);
+            else if (n > 0) msg = getString(R.string.applied_reboot);
+            else msg = getString(R.string.applied);
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+            refreshStates();
+            updateNotice();
+            // cambiato l'accento dai colori di sistema: i temi delle app gia' accesi vanno rifatti con il nuovo
+            // accento (ognuno ha l'accento scritto dentro quando viene costruito): lo si fa da soli
+            if (autoRebuild) {
+                final String sigNow = signature();
+                List<AppEntry> stale = new ArrayList<>();
+                for (AppEntry e : mApps) {
+                    if (!e.enabled || (e.ds && SystemColorsDialog.PKG.equals(e.pkg))) continue;
+                    String b = e.builtSig();
+                    if (b != null && !b.isEmpty() && !b.startsWith(sigNow)) stale.add(e);
+                }
+                mUiRestartPending = true;
+                if (!stale.isEmpty()) {
+                    Toast.makeText(this, R.string.rebuild_started, Toast.LENGTH_LONG).show();
+                    runAction(stale, ACT_ACTIVATE);
+                }
+            }
+            if (!(autoRebuild && mBusy)) showRestartDialogIfPending();
+            if (mRestartUiAfter) {
+                mRestartUiAfter = false;
+                Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+                new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+            }
+            if (removedCount > 0) {
+                Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                        .setTitle(R.string.off_title)
+                        .setMessage(R.string.off_message)
+                        .setPositiveButton(android.R.string.ok, null));
+            }
     }
 
     /** Cambia se si reinstalla l'app o si cambia accento: allora gli overlay vanno rifatti. */
