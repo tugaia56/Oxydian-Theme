@@ -1255,6 +1255,7 @@ public class MainActivity extends AppCompatActivity {
             int notYetActive = 0;
             if (action == ACT_ACTIVATE) for (AppEntry e : targets) if (!after.contains(e.overlay())) notYetActive++;
             final int f = failed, n = notYetActive, removedCount = toRemove.size();
+            final boolean autoRebuild = sysTarget && action == ACT_ACTIVATE;
             new Handler(Looper.getMainLooper()).post(() -> {
                 mBusy = false;
                 setButtonsEnabled(true);
@@ -1266,6 +1267,18 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
                 refreshStates();
                 updateNotice();
+                // cambiato l'accento dai colori di sistema: i temi delle app gia' accesi vanno rifatti con il nuovo
+                // accento (ognuno ha l'accento scritto dentro quando viene costruito): lo si fa da soli
+                if (autoRebuild) {
+                    final String sigNow = signature();
+                    List<AppEntry> stale = new ArrayList<>();
+                    for (AppEntry e : mApps) {
+                        if (!e.enabled || (e.ds && SystemColorsDialog.PKG.equals(e.pkg))) continue;
+                        String b = e.builtSig();
+                        if (b != null && !b.isEmpty() && !b.startsWith(sigNow)) stale.add(e);
+                    }
+                    if (!stale.isEmpty()) runAction(stale, ACT_ACTIVATE);
+                }
                 if (mRestartUiAfter) {
                     mRestartUiAfter = false;
                     Toast.makeText(MainActivity.this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
