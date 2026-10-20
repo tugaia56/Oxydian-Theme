@@ -69,6 +69,23 @@ public final class ThemeCompiler {
                 "chmod -R 777 " + ModuleConstants.TEMP_DIR).exec();
     }
 
+    /** Scrive l'accento scelto al posto di quello di sistema/predefinito scritto fisso nei sorgenti. */
+    private static void substituteAccent(String source) {
+        // @*android:color/accent_material_dark fuori dai processi hookati resta il teal di sistema:
+        // si scrive l'accento reale scelto. Il prefisso "@*" puo' comparire doppio nei sorgenti.
+        String accent = String.format("#%08X", ThemePrefs.accentColor());
+        Shell.cmd("find \"" + source + "/res\" -type f -name '*.xml'"
+                + " -exec sed -i -E 's|(@\\*)+android:color/accent_material_dark|" + accent + "|g' {} +").exec();
+        // molti temi hanno l'accento predefinito (#908dff) scritto fisso, anche con trasparenza (#4d908dff):
+        // se l'accento scelto e' un altro, lo si sostituisce (la trasparenza resta)
+        String hex = String.format("%06X", ThemePrefs.accentColor() & 0xFFFFFF);
+        if (!hex.equals("908DFF")) {
+            Shell.cmd("find \"" + source + "/res\" -type f -name '*.xml'"
+                    + " -exec sed -i -E 's/#([0-9A-Fa-f]{2})908[dD][fF][fF]/#\\1" + hex + "/g;"
+                    + " s/#908[dD][fF][fF]([^0-9A-Fa-f]|$)/#" + hex + "\\1/g' {} +").exec();
+        }
+    }
+
     /** @return true se la compilazione e' fallita */
     public static boolean buildInBatch(String targetPackage) throws IOException {
         return buildNamedInBatch(targetPackage, ASSET_DIR, overlayName(targetPackage));
@@ -100,22 +117,9 @@ public final class ThemeCompiler {
         String source = cacheRoot + "/" + name;
 
         copyAssets("CompileOnDemand/" + targetPackage + "/" + assetDir);
-        // @*android:color/accent_material_dark fuori dai processi hookati resta il teal di sistema:
-        // si scrive l'accento reale scelto. Il prefisso "@*" puo' comparire doppio nei sorgenti.
-        String accent = String.format("#%08X", ThemePrefs.accentColor());
-        String moved = ModuleConstants.DATA_DIR + "/CompileOnDemand/" + targetPackage + "/" + assetDir;
         Shell.cmd("mkdir -p \"" + cacheRoot + "\"",
-                "mv -f \"" + moved + "\" \"" + source + "\"",
-                "find \"" + source + "/res\" -type f -name '*.xml'"
-                        + " -exec sed -i -E 's|(@\\*)+android:color/accent_material_dark|" + accent + "|g' {} +").exec();
-        // molti temi hanno l'accento predefinito (#908dff) scritto fisso, anche con trasparenza (#4d908dff):
-        // se l'accento scelto e' un altro, lo si sostituisce (la trasparenza resta)
-        String hex = String.format("%06X", ThemePrefs.accentColor() & 0xFFFFFF);
-        if (!hex.equals("908DFF")) {
-            Shell.cmd("find \"" + source + "/res\" -type f -name '*.xml'"
-                    + " -exec sed -i -E 's/#([0-9A-Fa-f]{2})908[dD][fF][fF]/#\\1" + hex + "/g;"
-                    + " s/#908[dD][fF][fF]([^0-9A-Fa-f]|$)/#" + hex + "\\1/g' {} +").exec();
-        }
+                "mv -f \"" + ModuleConstants.DATA_DIR + "/CompileOnDemand/" + targetPackage + "/" + assetDir + "\" \"" + source + "\"").exec();
+        substituteAccent(source);
 
         if (optionAssetPaths != null) {
             for (String opt : optionAssetPaths) {
@@ -132,6 +136,9 @@ public final class ThemeCompiler {
                         "mkdir -p \"" + source + "/res\" && cp -rf \"" + o + "/.\" \"" + source + "/res/\"").exec();
             }
         }
+
+        // anche i file delle opzioni (es. pacchetto icone) hanno l'accento predefinito scritto fisso
+        if (optionAssetPaths != null && !optionAssetPaths.isEmpty()) substituteAccent(source);
 
         if (iconSizeDp > 0 && iconSizeDp != 15) {
             // i vettori delle icone sono da 15dp: si riscrive larghezza e altezza della radice
@@ -170,13 +177,16 @@ public final class ThemeCompiler {
         // all'effetto immediato (se l'unione e' gia' montata) e puo' anche fallire senza danni.
         Shell.cmd("cp -f " + signed + " " + inStore,
                 "chmod 644 " + inStore,
-                // File nuovo e poi rinominato (non sovrascritto): SystemUI & co tengono aperto l'APK vecchio, e se il
-                // file viene riscritto sul posto leggono dati sbagliati e vanno in crash ("File res/drawable/... not found")
-                "[ -d " + ModuleConstants.LIVE_UPPER_DIR + " ] && cp -f " + signed + " " + inSystem + ".tmp 2>/dev/null"
-                        + " && chown 0:0 " + inSystem + ".tmp && chmod 644 " + inSystem + ".tmp"
-                        + " && (chcon u:object_r:vendor_overlay_file:s0 " + inSystem + ".tmp 2>/dev/null"
-                        + " || chcon u:object_r:system_file:s0 " + inSystem + ".tmp 2>/dev/null; true)"
-                        + " && mv -f " + inSystem + ".tmp " + inSystem + " 2>/dev/null").exec();
+                // Il file va riscritto sul posto (con un file nuovo l'unione montata continua a mostrare quello vecchio).
+                // Ma SystemUI & co tengono aperto l'APK: se lo si riscrive mentre l'overlay e' acceso, leggono dati
+                // sbagliati e vanno in crash ("File res/drawable/... not found"). Quindi prima si spegne l'overlay e si
+                // aspetta che il processo lo lasci; verra' riacceso a fine lavoro.
+                "[ -d " + ModuleConstants.LIVE_UPPER_DIR + " ] && { OV=" + namedPackage(name) + "; "
+                        + "if cmd overlay list 2>/dev/null | grep -q \"^\\[x\\] $OV\\$\"; then "
+                        + "cmd overlay disable --user 0 $OV >/dev/null 2>&1; sleep "
+                        + (("com.android.systemui".equals(targetPackage) || "android".equals(targetPackage)) ? "3" : "1")
+                        + "; fi; cp -f " + signed + " " + inSystem + " 2>/dev/null; }",
+                "chmod 644 " + inSystem + " 2>/dev/null").exec();
         return false;
     }
 
