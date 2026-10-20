@@ -40,7 +40,15 @@ echo "=== fine ==="
 # poco dopo l'avvio: si rimettono, in parallelo al resto, dopo un po' e di nuovo piu' tardi.
 if [ -f "$MODDIR/fixedcolors.sh" ]; then
   (
-    for t in 15 30 60; do
+    # si riprova finche' i colori non risultano creati (all'avvio il sistema a volte non e' ancora pronto
+    # e i comandi falliscono in silenzio), poi due ripassate di sicurezza
+    for t in 15 15 20 30 30 60 60; do
+      sleep $t
+      sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
+      n=$(cmd overlay list 2>/dev/null | grep -c "^\[x\] com.android.shell:oxyfix")
+      [ "${n:-0}" -ge 1 ] && break
+    done
+    for t in 60 120; do
       sleep $t
       sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
     done

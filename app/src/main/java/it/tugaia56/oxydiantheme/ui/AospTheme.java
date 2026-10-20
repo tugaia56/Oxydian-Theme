@@ -94,10 +94,14 @@ public final class AospTheme {
         for (java.util.Map.Entry<String, Integer> e : m.entrySet()) {
             long v = e.getValue() & 0xFFFFFFFFL;
             cmds.add("cmd overlay fabricate --target android --name oxyfix" + i + " android:color/" + e.getKey() + " 0x1c " + v);
+            // l'identificativo dell'overlay creato dipende da chi lancia il comando (da "adb shell" e' com.android.shell,
+            // all'avvio dal modulo puo' essere diverso): si legge dall'elenco invece di darlo per scontato
+            cmds.add("P=$(cmd overlay list 2>/dev/null | grep -o \"[A-Za-z0-9_.]*:oxyfix" + i + "$\" | head -1); "
+                    + "[ -n \"$P\" ] || P=com.android.shell:oxyfix" + i + "; echo \"fixedcolors oxyfix" + i + " -> $P\"");
             // disable+enable prima di set-priority: senza, a volte resta dietro ai colori del sistema
-            cmds.add("cmd overlay disable --user 0 com.android.shell:oxyfix" + i);
-            cmds.add("cmd overlay enable --user 0 com.android.shell:oxyfix" + i);
-            cmds.add("cmd overlay set-priority com.android.shell:oxyfix" + i + " highest");
+            cmds.add("cmd overlay disable --user 0 $P");
+            cmds.add("cmd overlay enable --user 0 $P");
+            cmds.add("cmd overlay set-priority $P highest");
             i++;
         }
         for (; i < COUNT; i++) cmds.add("cmd overlay disable --user 0 com.android.shell:oxyfix" + i);
