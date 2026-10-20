@@ -201,7 +201,7 @@ Remove their themes? A reboot is needed.</item>
     <string name="busy_message">Building the app themes with the chosen colours. It takes a few minutes: keep the app open and wait until it finishes. The interface may restart several times until it is done: that is normal.</string>
     <string name="busy_progress">%1$d of %2$d: %3$s</string>
     <string name="restart_needed_title">Restart the interface</string>
-    <string name="restart_needed_message">All done. To see the new colours in the status bar, quick panel and system, the interface must be restarted.\n\nIf the old colour is still there after the restart, restart it a second time.</string>
+    <string name="restart_needed_message">All done. To see the new colours in the status bar, quick panel and system, the interface must be restarted.\n\nIf the old colour is still there after the restart, you can restart it a second time from this page with the @@ icon at the top right.</string>
     <string name="restart_now">Restart now</string>
     <string name="restart_later">Later</string>
     <string name="busy_styles">Wi-Fi, signal and settings icons…</string>

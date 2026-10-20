@@ -1304,6 +1304,23 @@ public class MainActivity extends AppCompatActivity {
     /** Dopo aver rifatto i temi: il nuovo accento in SystemUI si vede solo riavviando l'interfaccia. */
     private static androidx.appcompat.app.AlertDialog sRestartDialog;
 
+    /** Testo del riavvio, con l'icona di riavvio dell'intestazione al posto di "@@". */
+    private CharSequence restartMessage() {
+        String text = getString(R.string.restart_needed_message);
+        int at = text.indexOf("@@");
+        if (at < 0) return text;
+        android.text.SpannableString sp = new android.text.SpannableString(text);
+        try {
+            android.graphics.drawable.Drawable ic = getDrawable(R.drawable.ic_restart_thin).mutate();
+            ic.setTint(ThemePrefs.accentColor());
+            int size = (int) (20 * getResources().getDisplayMetrics().density);
+            ic.setBounds(0, 0, size, size);
+            sp.setSpan(new android.text.style.ImageSpan(ic, android.text.style.ImageSpan.ALIGN_BOTTOM), at, at + 2,
+                    android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } catch (Throwable ignored) {}
+        return sp;
+    }
+
     private void showRestartDialogIfPending() {
         if (!ThemePrefs.isUiRestartPending() || mBusy) return;
         if (sRestartDialog != null && sRestartDialog.isShowing()) return;
@@ -1311,7 +1328,7 @@ public class MainActivity extends AppCompatActivity {
         // alla riapertura si rimostra
         androidx.appcompat.app.AlertDialog d = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.restart_needed_title)
-                .setMessage(R.string.restart_needed_message)
+                .setMessage(restartMessage())
                 .setCancelable(false)
                 .setPositiveButton(R.string.restart_now, (dlg, w) -> {
                     ThemePrefs.setUiRestartPending(false);
