@@ -553,7 +553,6 @@ public class MainActivity extends AppCompatActivity {
             Tint.tree(findViewById(android.R.id.content));
             refreshCards();
             mList.getAdapter().notifyDataSetChanged();
-            Toast.makeText(this, R.string.accent_hint, Toast.LENGTH_LONG).show();
             onApply(SystemColorsDialog.PKG, false);
         });
     }
@@ -1361,7 +1360,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 ThemePrefs.setUiRestartPending(true);
                 if (!stale.isEmpty()) {
-                    Toast.makeText(this, R.string.rebuild_started, Toast.LENGTH_LONG).show();
                     runAction(stale, ACT_ACTIVATE);
                 }
             }
