@@ -197,4 +197,7 @@ Remove their themes? A reboot is needed.</item>
     <string name="update_check_now">Check now</string>
     <string name="rebuild_notice">Changing the accent or the background means every themed app has to be rebuilt with the new colour. It starts by itself when you tap Apply and takes a few minutes: wait for it to finish.</string>
     <string name="rebuild_started">Rebuilding the app themes with the new colour… it takes a few minutes</string>
+    <string name="busy_title">Working on the themes</string>
+    <string name="busy_message">Building the app themes with the chosen colours. It takes a few minutes: keep the app open and wait until it finishes. The screen stays on meanwhile.</string>
+    <string name="busy_progress">%1$d of %2$d: %3$s</string>
 </resources>

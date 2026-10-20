@@ -196,4 +196,7 @@ Rimuovere i loro temi? Serve un riavvio.</item>
     <string name="update_check_now">Controlla ora</string>
     <string name="rebuild_notice">Cambiare accento o sfondo vuol dire rifare ogni tema delle app con il nuovo colore. Parte da solo quando tocchi Applica e ci vogliono alcuni minuti: aspetta che finisca.</string>
     <string name="rebuild_started">Rifaccio i temi delle app con il nuovo colore… ci vogliono alcuni minuti</string>
+    <string name="busy_title">Sto lavorando sui temi</string>
+    <string name="busy_message">Sto costruendo i temi delle app con i colori scelti. Ci vogliono alcuni minuti: lascia aperta l\'app e aspetta che finisca. Intanto lo schermo resta acceso.</string>
+    <string name="busy_progress">%1$d di %2$d: %3$s</string>
 </resources>

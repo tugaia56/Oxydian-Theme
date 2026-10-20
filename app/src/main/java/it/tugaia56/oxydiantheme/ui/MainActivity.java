@@ -1179,7 +1179,7 @@ public class MainActivity extends AppCompatActivity {
         if (mBusy) return;
         mBusy = true;
         setButtonsEnabled(false);
-        Toast.makeText(this, R.string.working, Toast.LENGTH_SHORT).show();
+        final Dialogs.Busy busyDialog = Dialogs.showBusy(this, R.string.busy_title, R.string.busy_message);
         for (AppEntry e : targets) {
             e.enabled = action == ACT_ACTIVATE;   // stato voluto: acceso solo dopo Attiva
             e.saveEnabled();
@@ -1195,7 +1195,10 @@ public class MainActivity extends AppCompatActivity {
             boolean batchOpen = false;
             try {
                 ModuleSetup.ensure();
+                int step = 0;
                 for (AppEntry e : targets) {
+                    step++;
+                    busyDialog.update(getString(R.string.busy_progress, step, targets.size(), e.name));
                     boolean active = before.contains(e.overlay());
                     if (action != ACT_ACTIVATE) {
                         if (active) toDisable.add(e.overlay());
@@ -1254,6 +1257,7 @@ public class MainActivity extends AppCompatActivity {
             Set<String> after = enabledOverlays();
             int notYetActive = 0;
             if (action == ACT_ACTIVATE) for (AppEntry e : targets) if (!after.contains(e.overlay())) notYetActive++;
+            busyDialog.dismiss();
             final int f = failed, n = notYetActive, removedCount = toRemove.size();
             final boolean autoRebuild = sysTarget && action == ACT_ACTIVATE;
             new Handler(Looper.getMainLooper()).post(() -> {
