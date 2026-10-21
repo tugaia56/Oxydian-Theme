@@ -312,23 +312,16 @@ public class MainActivity extends AppCompatActivity {
         mSubActivity = s[0];
         r3.addView(makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinbg", "pindots", "pinnum"}, R.string.card_pin)));
         mSubPin = s[0];
-        View sp3 = new View(this);
-        sp3.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-        r3.addView(sp3);
+        r3.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
+        mSubSettings = s[0];
         r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
         r4.addView(makeCard(R.string.card_signal, s, () -> openStyles("signal")));
         mSubSignal = s[0];
         r5.addView(makeCard(R.string.card_nav, s, () -> openStyles("nav")));
         mSubNav = s[0];
-        r5.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
-        mSubSettings = s[0];
-        android.widget.LinearLayout r7 = findViewById(R.id.cards_row7);
-        r7.addView(makeCard(R.string.card_tasker, s, this::taskerDialog));
+        r5.addView(makeCard(R.string.card_tasker, s, this::taskerDialog));
         mSubTasker = s[0];
-        View sp7 = new View(this);
-        sp7.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-        r7.addView(sp7);
         refreshCards();
     }
 
