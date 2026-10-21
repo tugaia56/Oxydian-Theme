@@ -1,2 +1,12 @@
 Aggiunto:
 - Aggiornamento automatico: l'app controlla da sola se c'è una nuova versione e manda una notifica (acceso di serie, alla prima apertura chiede il permesso per le notifiche). Si accende e si spegne dalla scheda Aggiornamenti
+- Cambio accento o sfondo: l'app rifà da sola i temi delle app accese e le icone Wi-Fi, segnale e Impostazioni, con una finestra di attesa che mostra l'avanzamento. Alla fine chiede di riavviare l'interfaccia (se serve, un secondo riavvio si fa dall'icona in alto)
+- Tastierino PIN: una sola scheda con tre scelte separate: colore sfondo tasti, colore pallini e colore numeri
+- OxygenOS: l'accento scelto arriva anche al motore dei colori del sistema ("Personalizzato", colori delle app di sistema)
+Aggiornato:
+- Pagina Mods: "Icone Impostazioni" diventa "Pack Icone Impostazioni" e le schede sono riordinate
+- Le icone, il pack icone e i temi con il viola predefinito scritto fisso seguono l'accento scelto
+- "Riavvia interfaccia" riavvia anche il launcher; all'avvio il colore di sistema scelto viene rimesso
+- Il colore del pulsante Chiudi dei recenti di Oxydian viene aggiornato con il nuovo accento
+- Più stabile il cambio dei temi mentre l'interfaccia è in uso (niente più riavvii casuali di SystemUI)
+- Calendar: il numero della data selezionata torna scuro

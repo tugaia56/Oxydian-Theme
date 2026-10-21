@@ -1,2 +1,12 @@
 Added:
 - Automatic updates: the app checks for a new version by itself and sends a notification (on by default; on first launch it asks for the notification permission). Turn it on or off from the Updates card
+- Changing the accent or background: the app rebuilds the enabled app themes and the Wi-Fi, signal and Settings icons by itself, with a waiting dialog showing the progress. At the end it asks to restart the interface (if needed, a second restart can be done from the icon at the top)
+- PIN keypad: one card with three separate choices: key background colour, dots colour and numbers colour
+- OxygenOS: the chosen accent also goes to the system colour engine ("Custom", colours of system apps)
+Changed:
+- Mods page: "Settings icons" becomes "Settings icon pack" and the cards are reordered
+- Icons, the icon pack and themes with the hard-coded default purple follow the chosen accent
+- "Restart interface" also restarts the launcher; the chosen system colour is put back at boot
+- The colour of Oxydian's recents Close button is refreshed with the new accent
+- Safer theme changes while the interface is in use (no more random SystemUI restarts)
+- Calendar: the selected date number is dark again
