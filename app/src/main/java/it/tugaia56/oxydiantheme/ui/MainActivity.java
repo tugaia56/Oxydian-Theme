@@ -194,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        OptionGroupsDialog.migratePinSplit();
         setContentView(R.layout.activity_main);
         mList = findViewById(R.id.list);
         mStatus = findViewById(R.id.status);
@@ -211,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         restart.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         restart.setOnClickListener(v -> {
             Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-            new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+            new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
         });
         setupCards();
         if (savedInstanceState == null) mTab = TAB_IDS[Math.max(0, Math.min(3, ThemePrefs.getDefaultTab()))];
@@ -232,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private TextView mSubPinNum, mSubPinBg, mSubRipple, mSubDefaultTab;
+    private TextView mSubPin, mSubRipple, mSubDefaultTab;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
         float d = getResources().getDisplayMetrics().density;
@@ -309,10 +310,11 @@ public class MainActivity extends AppCompatActivity {
         mSubProgress = s[0];
         r2.addView(makeCard(R.string.card_activity, s, this::toggleHideActivity));
         mSubActivity = s[0];
-        r3.addView(makeCard(R.string.card_pin_num, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinnum"}, R.string.card_pin_num)));
-        mSubPinNum = s[0];
-        r3.addView(makeCard(R.string.card_pin_bg, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinbg"}, R.string.card_pin_bg)));
-        mSubPinBg = s[0];
+        r3.addView(makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinbg", "pindots", "pinnum"}, R.string.card_pin)));
+        mSubPin = s[0];
+        View sp3 = new View(this);
+        sp3.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+        r3.addView(sp3);
         r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
         r4.addView(makeCard(R.string.card_signal, s, () -> openStyles("signal")));
@@ -455,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
         sub[0].setText(R.string.card_info_sub);
         row.addView(makeCard(R.string.restart_ui, sub, () -> {
             Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-            new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+            new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
         }));
         sub[0].setText(R.string.card_restart_sub);
         box.addView(row);
@@ -510,6 +512,7 @@ public class MainActivity extends AppCompatActivity {
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
+                    || !ThemePrefs.getOption(pkg, "pindots").isEmpty()
                     || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty();
             if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
         }
@@ -617,8 +620,7 @@ public class MainActivity extends AppCompatActivity {
             mSubDefaultTab.setText(names[Math.max(0, Math.min(3, ThemePrefs.getDefaultTab()))]);
         }
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
-        mSubPinNum.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinnum"));
-        mSubPinBg.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg"));
+        mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg", "pindots", "pinnum"));
         boolean hideOn = !ThemePrefs.getOption(SYSTEMUI_PKG, "icons").isEmpty();
         mSubActivity.setText(hideOn ? getString(R.string.state_on_full) : getString(R.string.state_off));
         mSubActivity.setTextColor(hideOn ? ThemePrefs.accentColor() : getColor(R.color.text_dim));
@@ -984,17 +986,24 @@ public class MainActivity extends AppCompatActivity {
                     {"coui_numeric_keyboard_outer_gradient_color_1", hex8(0xCC000000 | rgb)},
                     {"coui_numeric_keyboard_outer_gradient_color_2", hex8(0x40000000 | rgb)},
                     {"coui_numeric_keyboard_outer_gradient_color_3", hex8(0x21000000 | rgb)},
+            };
+            for (String[] c : m) sb.append("    <color name=\"").append(c[0]).append("\">").append(c[1]).append("</color>\n");
+            any = true;
+        }
+        if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(pkg, "pindots"))) {
+            int rgb = ThemePrefs.getCustomColor(pkg + "_pindots") & 0xFFFFFF;
+            String[][] m = {
                     {"coui_simple_lock_transparent_filled_rectangle_icon_color", hex8(0xFF000000 | rgb)},
-                    {"coui_simple_lock_transparent_outlined_rectangle_icon_color", "#33FFFFFF"},
-                    {"coui_numeric_keyboard_dark_word_text_normal_color", hex8(0xFF000000 | rgb)},
-                    {"coui_numeric_keyboard_dark_word_text_normal_light_color", hex8(0xFF000000 | rgb)},
+                    {"coui_simple_lock_transparent_outlined_rectangle_icon_color", hex8(0x59000000 | rgb)},
             };
             for (String[] c : m) sb.append("    <color name=\"").append(c[0]).append("\">").append(c[1]).append("</color>\n");
             any = true;
         }
         if (OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(pkg, "pinnum"))) {
             int rgb = ThemePrefs.getCustomColor(pkg + "_pinnum") & 0xFFFFFF;
-            sb.append("    <color name=\"coui_numeric_keyboard_number_color\">").append(hex8(0xFF000000 | rgb)).append("</color>\n");
+            for (String n : new String[]{"coui_numeric_keyboard_number_color", "coui_numeric_keyboard_dark_word_text_normal_color",
+                    "coui_numeric_keyboard_dark_word_text_normal_light_color"})
+                sb.append("    <color name=\"").append(n).append("\">").append(hex8(0xFF000000 | rgb)).append("</color>\n");
             any = true;
         }
         Integer nav = IconColorDialog.value("nav");
@@ -1333,7 +1342,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.restart_now, (dlg, w) -> {
                     ThemePrefs.setUiRestartPending(false);
                     Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-                    new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+                    new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
                 })
                 .setNegativeButton(R.string.restart_later, (dlg, w) -> ThemePrefs.setUiRestartPending(false))
                 .create();
@@ -1384,7 +1393,7 @@ public class MainActivity extends AppCompatActivity {
             if (mRestartUiAfter) {
                 mRestartUiAfter = false;
                 Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-                new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+                new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
             }
             if (removedCount > 0) {
                 Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)

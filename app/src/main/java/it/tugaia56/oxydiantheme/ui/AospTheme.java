@@ -139,6 +139,7 @@ public final class AospTheme {
                 applyFixedColors(eff, null, true);
                 // "Personalizzato" e i colori COUI di sistema seguono l'accento scelto (come faceva il vecchio modulo Oxydian)
                 if (enabled) OplusColorEngine.apply(eff != null ? eff : ThemePrefs.accentColor());
+                else OplusColorEngine.clearSaved();
                 return;
             }
             String current = String.join("", Shell.cmd("settings get secure " + KEY).exec().getOut()).trim();

@@ -458,7 +458,7 @@ public class StyleActivity extends AppCompatActivity {
 
     private void restartUi() {
         Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-        new Thread(() -> Shell.cmd("killall com.android.systemui").exec()).start();
+        new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
     }
 
     private void showIconSize() {
@@ -606,7 +606,7 @@ public class StyleActivity extends AppCompatActivity {
             if (!toEnable.isEmpty()) OverlayUtil.enableOverlays(toEnable.toArray(new String[0]));
             ThemeCompiler.removeNamedApks(toRemove);
             // la barra di stato non rilegge da sola le icone cambiate: la si riavvia (schermo di blocco per un attimo)
-            if (batchOpenFinal(refresh, toEnable, toDisable)) Shell.cmd("killall com.android.systemui").exec();
+            if (batchOpenFinal(refresh, toEnable, toDisable)) it.tugaia56.oxydiantheme.utils.UiRestart.run();
 
             final int f = failed;
             final boolean fRemoved = removed, fNeedReboot = notActive;

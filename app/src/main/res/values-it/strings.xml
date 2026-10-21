@@ -131,8 +131,6 @@
     <string name="credits_substratum_summary">Il formato dei temi overlay da cui nasce tutto</string>
     <string name="credits_claude_summary">Assistente IA (Anthropic) — senza non sarebbe mai esistita questa app</string>
     <string name="credits_oxydian_summary">L\'app compagna con le mod che richiedono Xposed</string>
-    <string name="card_pin_num">Tastierino PIN: numeri e pallini</string>
-    <string name="card_pin_bg">Tastierino PIN: sfondo tasti</string>
     <string name="card_signal">Icone Segnale</string>
     <string name="state_on">Nascondi In/Out</string>
     <string name="state_off">Spento</string>

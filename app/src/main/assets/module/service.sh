@@ -36,6 +36,12 @@ done
 echo "=== fine ==="
 } >> "$LOG" 2>&1
 
+# Colori "couiSingleFirst*" del sistema (Personalizzato, pulsanti dei recenti): dopo l'avvio si rimettono quelli scelti
+# e, se erano cambiati, si riavvia il launcher.
+if [ -f "$MODDIR/uxcolor.sh" ]; then
+  ( sleep 20; sh "$MODDIR/uxcolor.sh" >> "$LOG" 2>&1; sleep 70; sh "$MODDIR/uxcolor.sh" >> "$LOG" 2>&1 ) &
+fi
+
 # Android 16/17: i colori scelti (creati al volo) spariscono ad ogni riavvio e il sistema rifa' i suoi
 # poco dopo l'avvio: si rimettono, in parallelo al resto, dopo un po' e di nuovo piu' tardi.
 if [ -f "$MODDIR/fixedcolors.sh" ]; then

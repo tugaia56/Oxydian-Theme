@@ -132,8 +132,6 @@
     <string name="credits_substratum_summary">The overlay theme format everything comes from</string>
     <string name="credits_claude_summary">AI assistant (Anthropic) — this app simply wouldn\'t exist without it</string>
     <string name="credits_oxydian_summary">The companion app with the mods that need Xposed</string>
-    <string name="card_pin_num">PIN keypad: numbers and dots</string>
-    <string name="card_pin_bg">PIN keypad: key background</string>
     <string name="card_signal">Signal icons</string>
     <string name="state_on">Hide In/Out</string>
     <string name="state_off">Off</string>

@@ -64,7 +64,25 @@ final class OptionGroupsDialog {
 
     /** Gruppi che accettano anche un colore a scelta libera. */
     static boolean allowsCustom(String pkg, String group) {
-        return "com.android.systemui".equals(pkg) && ("pinbg".equals(group) || "pinnum".equals(group));
+        return "com.android.systemui".equals(pkg) && ("pinbg".equals(group) || "pinnum".equals(group) || "pindots".equals(group));
+    }
+
+    /**
+     * Una tantum: prima "sfondo tasti" colorava anche i pallini e "numeri e pallini" li colorava con i numeri;
+     * ora i pallini hanno la loro scelta, che parte da quella che aveva effetto prima.
+     */
+    static void migratePinSplit() {
+        String pkg = "com.android.systemui";
+        if (ThemePrefs.isPinSplitDone()) return;
+        ThemePrefs.setPinSplitDone();
+        if (ThemePrefs.getOption(pkg, "pindots").isEmpty()) {
+            if (CUSTOM.equals(ThemePrefs.getOption(pkg, "pinbg"))) {
+                ThemePrefs.setCustomColor(pkg + "_pindots", ThemePrefs.getCustomColor(pkg + "_pinbg"));
+                ThemePrefs.setOption(pkg, "pindots", CUSTOM);
+            } else if (!ThemePrefs.getOption(pkg, "pinnum").isEmpty()) {
+                ThemePrefs.setOption(pkg, "pindots", ThemePrefs.getOption(pkg, "pinnum"));
+            }
+        }
     }
 
     static String summary(Context ctx, String pkg, String... groups) {

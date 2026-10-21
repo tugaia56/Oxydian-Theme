@@ -49,7 +49,15 @@ final class OplusColorEngine {
     }
 
     private static void write(String content, String name) {
-        Shell.cmd("mkdir -p " + DIR, "printf '" + content.replace("'", "'\''") + "' > " + DIR + "/" + name).exec();
+        String mod = it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/uxcolor";
+        String q = "printf '" + content.replace("'", "'\''") + "'";
+        // anche una copia nel modulo: all'avvio il modulo la rimette se il sistema l'ha cambiata
+        Shell.cmd("mkdir -p " + DIR + " " + mod, q + " > " + DIR + "/" + name, q + " > " + mod + "/" + name).exec();
+    }
+
+    /** Colori di sistema spenti: il modulo non deve rimettere piu' quelli vecchi all'avvio. */
+    static void clearSaved() {
+        Shell.cmd("rm -rf " + it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/uxcolor").exec();
     }
 
     static void apply(int color) {
