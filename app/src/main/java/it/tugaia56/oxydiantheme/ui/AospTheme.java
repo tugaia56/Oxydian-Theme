@@ -104,7 +104,10 @@ public final class AospTheme {
             cmds.add("cmd overlay set-priority $P highest");
             i++;
         }
-        for (; i < COUNT; i++) cmds.add("cmd overlay disable --user 0 com.android.shell:oxyfix" + i);
+        // quelli in piu' si spengono con un solo giro sull'elenco reale (solo quelli che esistono), non con 30+ comandi alla cieca
+        final int used = i;
+        cmds.add("for n in $(cmd overlay list 2>/dev/null | grep \"^.x. com.android.shell:oxyfix\" | sed \"s/.*oxyfix//\"); do "
+                + "[ \"$n\" -ge " + used + " ] && cmd overlay disable --user 0 com.android.shell:oxyfix$n; done");
         Shell.cmd(cmds.toArray(new String[0])).exec();
         // dopo un riavvio gli overlay creati al volo spariscono: il modulo rilancia questo elenco ad ogni avvio
         String file = it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/fixedcolors.sh";

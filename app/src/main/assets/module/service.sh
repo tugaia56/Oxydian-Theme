@@ -36,28 +36,40 @@ done
 echo "=== fine ==="
 } >> "$LOG" 2>&1
 
+# Pause: all'avvio il telefono e' gia' molto carico (memoria quasi piena, molti moduli): i lavori qui sotto aspettano che il
+# carico scenda, cosi' non peggiorano i blocchi alla schermata di avvio/PIN.
+wait_idle() {
+  i=0
+  while [ $i -lt 30 ]; do
+    l=$(cut -d' ' -f1 /proc/loadavg 2>/dev/null)
+    [ "${l%%.*}" -lt 8 ] 2>/dev/null && break
+    sleep 5
+    i=$((i+1))
+  done
+}
+
 # Colori "couiSingleFirst*" del sistema (Personalizzato, pulsanti dei recenti): dopo l'avvio si rimettono quelli scelti
 # e, se erano cambiati, si riavvia il launcher.
 if [ -f "$MODDIR/uxcolor.sh" ]; then
-  ( sleep 20; sh "$MODDIR/uxcolor.sh" >> "$LOG" 2>&1; sleep 70; sh "$MODDIR/uxcolor.sh" >> "$LOG" 2>&1 ) &
+  ( sleep 75; wait_idle; sh "$MODDIR/uxcolor.sh" >> "$LOG" 2>&1; sleep 150; sh "$MODDIR/uxcolor.sh" >> "$LOG" 2>&1 ) &
 fi
 
 # Android 16/17: i colori scelti (creati al volo) spariscono ad ogni riavvio e il sistema rifa' i suoi
-# poco dopo l'avvio: si rimettono, in parallelo al resto, dopo un po' e di nuovo piu' tardi.
+# poco dopo l'avvio: si rimettono, a carico basso, e di nuovo piu' tardi. Poche passate, spaziate.
 if [ -f "$MODDIR/fixedcolors.sh" ]; then
   (
-    # si riprova finche' i colori non risultano creati (all'avvio il sistema a volte non e' ancora pronto
-    # e i comandi falliscono in silenzio), poi due ripassate di sicurezza
-    for t in 15 15 20 30 30 60 60; do
+    # si riprova finche' i colori non risultano creati (all'avvio il sistema a volte non e' ancora pronto)
+    for t in 45 45 60 90; do
       sleep $t
+      wait_idle
       sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
       n=$(cmd overlay list 2>/dev/null | grep -c "^\[x\] com.android.shell:oxyfix")
       [ "${n:-0}" -ge 1 ] && break
     done
-    for t in 60 120; do
-      sleep $t
-      sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
-    done
+    # una ripassata di sicurezza piu' tardi (il sistema rifa' i suoi colori)
+    sleep 120
+    wait_idle
+    sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
   ) &
 fi
 
