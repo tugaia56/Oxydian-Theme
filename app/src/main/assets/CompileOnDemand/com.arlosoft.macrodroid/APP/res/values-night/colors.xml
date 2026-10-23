@@ -128,4 +128,40 @@
     <color name="undo_bar_foreground">@*android:color/background_dark</color>
     <color name="white_or_black">#ffffff</color>
     <color name="widget_selection_icon_bg">#252525</color>
+
+    <!-- Home (nuova interfaccia): sfondo, barre e tessere in Blue Gray Dark, bordi delle tessere piu' accesi, accento sui tasti principali. Solo notte: se uguale al valore di base il compilatore scarta la voce e vince quella dell'app. -->
+    <color name="home_app_bar_gradient_end">#ff1b2029</color>
+    <color name="home_app_bar_gradient_start">#ff1b2029</color>
+    <color name="home_bottom_nav_background">#ff1b2029</color>
+    <color name="home_bottom_nav_indicator">#40908dff</color>
+    <color name="home_dashboard_background">#ff1b2029</color>
+    <color name="home_tile_action_blocks">#ff2897f2</color>
+    <color name="home_tile_add_macro">@*android:color/accent_material_dark</color>
+    <color name="home_tile_ai_macro_builder">#ff7e899e</color>
+    <color name="home_tile_auto_backup">#ffff5e5e</color>
+    <color name="home_tile_categories">#ff6579ee</color>
+    <color name="home_tile_cell_towers">#ff6b93be</color>
+    <color name="home_tile_drawer">#ffb196ab</color>
+    <color name="home_tile_export_import">#ffff7e35</color>
+    <color name="home_tile_favourites">#ffffa932</color>
+    <color name="home_tile_forum">#ff37ace4</color>
+    <color name="home_tile_geofences">#ff59b2a7</color>
+    <color name="home_tile_last_edited_macro">#ffb08ab5</color>
+    <color name="home_tile_last_opened_action_block">#ff3294ff</color>
+    <color name="home_tile_macro_toggle">#ff44b17f</color>
+    <color name="home_tile_macros">@*android:color/accent_material_dark</color>
+    <color name="home_tile_modes">#ff8a909e</color>
+    <color name="home_tile_notification_bar">#ff5956ae</color>
+    <color name="home_tile_plugins">#ff878e9e</color>
+    <color name="home_tile_quick_run_macro">#ff7c69d5</color>
+    <color name="home_tile_quick_settings">#ff8c919e</color>
+    <color name="home_tile_remote_control">#ff4094d1</color>
+    <color name="home_tile_settings">@*android:color/accent_material_dark</color>
+    <color name="home_tile_stopwatches">#ffe14b7c</color>
+    <color name="home_tile_system_log">#ff3ebf6e</color>
+    <color name="home_tile_user_log">#ff80bf4e</color>
+    <color name="home_tile_variables">#ff26c4af</color>
+    <color name="home_tile_videos">#ffab6a93</color>
+    <color name="home_tile_widgets">#ff69b287</color>
+    <color name="section_card_background">#ff1b2029</color>
 </resources>
