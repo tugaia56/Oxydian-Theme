@@ -14,7 +14,7 @@
     <color name="FondoDropDown">#ffdddddd</color>
     <color name="FondoGris">#ffcad3ca</color>
     <color name="PerfilBloqueado">@*android:color/accent_material_dark</color>
-    <color name="PerfilNoSeleccionado">#ffc9d0dc</color>
+    <color name="PerfilNoSeleccionado">#ffc9d0db</color>
     <color name="PerfilSeleccionado">@*android:color/accent_material_dark</color>
     <color name="Verde_perfil_de_sonido_000">@*android:color/accent_material_dark</color>
     <color name="abc_decor_view_status_guard">@*android:color/background_dark</color>
