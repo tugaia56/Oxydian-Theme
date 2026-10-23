@@ -5,8 +5,8 @@
     <color name="FondoAdvertencia">@*android:color/ripple_material_dark</color>
     <color name="FondoConTransparencia75">#bf000000</color>
     <color name="FondoDialogo">@*android:color/transparent</color>
-    <color name="FondoDropDown">@*android:color/darker_gray</color>
+    <color name="FondoDropDown">@*android:color/ripple_material_dark</color>
     <color name="FondoGris">@*android:color/button_material_dark</color>
     <color name="PerfilBloqueado">@*android:color/accent_material_dark</color>
-    <color name="PerfilNoSeleccionado">@*android:color/ripple_material_dark</color>
+    <color name="PerfilNoSeleccionado">#ffc9d0dc</color>
 </resources>
