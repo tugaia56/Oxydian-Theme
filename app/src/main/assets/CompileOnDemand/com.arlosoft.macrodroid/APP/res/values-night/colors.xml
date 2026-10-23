@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary">@*android:color/background_dark</color>								<!-- 1° pulsante - statusbar e navbar -->
-    <color name="actions_primary">#ff6e40</color>												<!-- 2° pulsante -->
+												<!-- 2° pulsante -->
     <color name="forum_primary">#ff6e40</color>													<!-- 3°	pulsante -->
 	
     <color name="export_import_primary">#33691e</color>											<!-- 4°	pulsante -->
@@ -33,8 +33,6 @@
     <color name="accent">@*android:color/accent_material_dark</color>
     <color name="action_ok_button_disabled">#888888</color>
     <color name="actions_accent">#90caf9</color>
-    <color name="actions_primary_bit_dark">#1360a3</color>
-    <color name="actions_primary_dark">@*android:color/button_material_dark</color>
     <color name="actions_text_list_item">#2297dd</color>
     <color name="adb_command_color">#87dbe9</color>
     <color name="auto_backup_accent">#fa847f</color>
@@ -119,7 +117,6 @@
     <color name="text_color_macro_list_name">#ffffff</color>
     <color name="text_color_macro_list_secondary">#dfdfdf</color>
     <color name="trigger_accent">#ef9a9a</color>
-    <color name="trigger_primary">@*android:color/ripple_material_dark</color>
     <color name="trigger_primary_dark">#9a1a1a</color>
     <color name="trigger_primary_slight_darker">@*android:color/ripple_material_dark</color>
     <color name="trigger_primary_transparent">#dec62828</color>
@@ -164,4 +161,12 @@
     <color name="home_tile_videos">#ffab6a93</color>
     <color name="home_tile_widgets">#ff69b287</color>
     <color name="section_card_background">#ff1b2029</color>
+    <!-- Lista macro: icone A (azioni) e E (eventi) e chip selezionato nell'accento, chip disattivati con lo sfondo del tema, testo del chip selezionato bianco -->
+    <color name="actions_primary">@*android:color/accent_material_dark</color>
+    <color name="actions_primary_bit_dark">@*android:color/accent_material_dark</color>
+    <color name="actions_primary_dark">@*android:color/accent_material_dark</color>
+    <color name="trigger_primary">@*android:color/accent_material_dark</color>
+    <color name="macro_list_chip_background">#ff1b2029</color>
+    <color name="macro_list_chip_background_selected">@*android:color/accent_material_dark</color>
+    <color name="macro_list_chip_text_selected">#ffffffff</color>
 </resources>
