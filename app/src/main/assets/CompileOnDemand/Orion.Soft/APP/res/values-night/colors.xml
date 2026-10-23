@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ColorDeShowcase">#d91b2029</color>
+    <color name="ColorDeShowcase">#f01b2029</color>
     <color name="ColorOscuroEnLightYClaroEnDark">@*android:color/accent_material_dark</color>
     <color name="FondoAdvertencia">@*android:color/ripple_material_dark</color>
     <color name="FondoConTransparencia75">#bf000000</color>
