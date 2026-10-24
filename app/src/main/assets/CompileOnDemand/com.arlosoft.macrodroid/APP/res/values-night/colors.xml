@@ -164,7 +164,7 @@
     <!-- Lista macro: icone A (azioni) e E (eventi) e chip selezionato nell'accento, chip disattivati con lo sfondo del tema, testo del chip selezionato bianco -->
     <color name="actions_primary">@*android:color/accent_material_dark</color>
     <color name="actions_primary_bit_dark">@*android:color/accent_material_dark</color>
-    <color name="actions_primary_dark">@*android:color/accent_material_dark</color>
+    <color name="actions_primary_dark">#ff1b2029</color>
     <color name="trigger_primary">@*android:color/accent_material_dark</color>
     <color name="macro_list_chip_background">#ff1b2029</color>
     <color name="macro_list_chip_background_selected">@*android:color/accent_material_dark</color>
