@@ -105,6 +105,17 @@
     <string name="card_update_sub">Cerca una nuova versione su GitHub</string>
     <string name="card_backup">Backup e ripristino</string>
     <string name="card_backup_sub">Salva e ricarica le tue scelte</string>
+    <string name="card_backup_date">Formato data del backup</string>
+    <string name="card_backup_time">Formato ora del backup</string>
+    <string name="bf_dmy">giorno-mese-anno</string>
+    <string name="bf_dmy_short">giorno-mese-anno, anno corto</string>
+    <string name="bf_ymd">anno-mese-giorno</string>
+    <string name="bf_ymd_compact">anno mese giorno, senza trattini</string>
+    <string name="bf_hm">ore:minuti, 24 ore</string>
+    <string name="bf_hms">ore:minuti:secondi</string>
+    <string name="bf_hm_compact">ore e minuti, senza trattino</string>
+    <string name="bf_hm12">12 ore con AM/PM</string>
+    <string name="backup_time_none">Nessuna ora (solo data)</string>
     <string name="card_about">Informazioni</string>
     <string name="card_about_sub">Versione e link</string>
     <string name="card_credits">Crediti</string>

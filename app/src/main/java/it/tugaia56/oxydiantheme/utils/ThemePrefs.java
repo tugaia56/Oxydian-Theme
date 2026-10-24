@@ -177,6 +177,34 @@ public final class ThemePrefs {
     public static String getSystemVariant() { return sp().getString("system_variant", ""); }
     public static void setSystemVariant(String v) { sp().edit().putString("system_variant", v == null ? "" : v).commit(); }
 
+    /** Data e ora nel nome del file di backup (""= nessuna ora). */
+    public static String getBackupDate() { return sp().getString("backup_name_date", java.util.Locale.getDefault().getLanguage().equals("it") ? "dd-MM-yyyy" : "yyyy-MM-dd"); }
+    public static void setBackupDate(String v) { sp().edit().putString("backup_name_date", v).commit(); }
+    public static String getBackupTime() {
+        String t = sp().getString("backup_name_time", "HH:mm");
+        switch (t) {   // valori delle prime versioni, con il trattino
+            case "HH-mm": return "HH:mm";
+            case "HH-mm-ss": return "HH:mm:ss";
+            case "hh-mm-a": return "hh:mm a";
+            default: return t;
+        }
+    }
+    /** Nel nome del file i due punti normali non sono ammessi (Windows): si usano quelli gemelli, identici alla vista. */
+    public static String fileSafe(String s) { return s.replace(':', '∶'); }
+    public static void setBackupTime(String v) { sp().edit().putString("backup_name_time", v).commit(); }
+
+    public static final String[] BACKUP_DATES = {"dd-MM-yyyy", "dd-MM-yy", "yyyy-MM-dd", "yyyyMMdd"};
+    public static final String[] BACKUP_TIMES = {"HH:mm", "HH:mm:ss", "HHmm", "hh:mm a", ""};
+
+    /** Data (e ora) di adesso come richiesto nelle impostazioni, per il nome del backup. */
+    public static String backupStamp() {
+        java.util.Date now = new java.util.Date();
+        String s = new java.text.SimpleDateFormat(getBackupDate(), java.util.Locale.ROOT).format(now);
+        String t = getBackupTime();
+        if (!t.isEmpty()) s += "_" + fileSafe(new java.text.SimpleDateFormat(t, java.util.Locale.ROOT).format(now));
+        return s;
+    }
+
     /** Impostazione colori di Android puro com'era prima del nostro intervento. */
     public static String getAospBackup() { return sp().getString("aosp_backup", ""); }
     public static void setAospBackup(String v) { sp().edit().putString("aosp_backup", v == null ? "" : v).commit(); }

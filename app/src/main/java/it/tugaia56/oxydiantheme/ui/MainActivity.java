@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.card_backup)
                 .setMessage(R.string.backup_message)
-                .setPositiveButton(R.string.backup_save, (d, w) -> mBackupSave.launch(new java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm", java.util.Locale.ROOT).format(new java.util.Date()) + "_OxydianTheme-backup.json"))
+                .setPositiveButton(R.string.backup_save, (d, w) -> mBackupSave.launch(ThemePrefs.backupStamp() + "_OxydianTheme-backup.json"))
                 .setNeutralButton(R.string.backup_restore, (d, w) -> mBackupLoad.launch(new String[]{"application/json", "text/plain", "*/*"}))
                 .setNegativeButton(R.string.legend_close, null));
     }
@@ -325,6 +325,19 @@ public class MainActivity extends AppCompatActivity {
         mSubNav = s[0];
         r5.addView(makeCard(R.string.card_tasker, s, this::taskerDialog));
         mSubTasker = s[0];
+        // Riavvia interfaccia (era nelle Impostazioni)
+        android.widget.LinearLayout r7 = findViewById(R.id.cards_row7);
+        r7.addView(makeCard(R.string.restart_ui, s, () -> {
+            Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+            new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
+        }));
+        s[0].setText(R.string.card_restart_sub);
+        View sp7 = new View(this);
+        android.widget.LinearLayout.LayoutParams lp7 = new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+        int m7 = (int) (4 * getResources().getDisplayMetrics().density);
+        lp7.setMargins(m7, m7, m7, m7);
+        sp7.setLayoutParams(lp7);
+        r7.addView(sp7);
         refreshCards();
     }
 
@@ -394,6 +407,46 @@ public class MainActivity extends AppCompatActivity {
                 }));
     }
 
+    private TextView mSubBackupDate, mSubBackupTime;
+
+    /** Esempio di adesso + spiegazione del formato (in italiano: giorno-mese-anno ecc.). */
+    private String backupLabel(String p) {
+        int d;
+        switch (p) {
+            case "dd-MM-yyyy": d = R.string.bf_dmy; break;
+            case "dd-MM-yy": d = R.string.bf_dmy_short; break;
+            case "yyyy-MM-dd": d = R.string.bf_ymd; break;
+            case "yyyyMMdd": d = R.string.bf_ymd_compact; break;
+            case "HH:mm": d = R.string.bf_hm; break;
+            case "HH:mm:ss": d = R.string.bf_hms; break;
+            case "HHmm": d = R.string.bf_hm_compact; break;
+            case "hh:mm a": d = R.string.bf_hm12; break;
+            default: return p.isEmpty() ? getString(R.string.backup_time_none) : stampExample(p);
+        }
+        return stampExample(p) + "\n(" + getString(d) + ")";
+    }
+
+    private static String stampExample(String pattern) {
+        return pattern.isEmpty() ? "" : ThemePrefs.fileSafe(new java.text.SimpleDateFormat(pattern, java.util.Locale.ROOT).format(new java.util.Date()));
+    }
+
+    /** Data o ora nel nome del file di backup. */
+    private void backupNameDialog(boolean date) {
+        String[] values = date ? ThemePrefs.BACKUP_DATES : ThemePrefs.BACKUP_TIMES;
+        String[] names = new String[values.length];
+        for (int i = 0; i < values.length; i++)
+            names[i] = backupLabel(values[i]);
+        final int[] sel = {Math.max(0, Arrays.asList(values).indexOf(date ? ThemePrefs.getBackupDate() : ThemePrefs.getBackupTime()))};
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(date ? R.string.card_backup_date : R.string.card_backup_time)
+                .setSingleChoiceItems(names, sel[0], (d, w) -> sel[0] = w)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, (d, w) -> {
+                    if (date) ThemePrefs.setBackupDate(values[sel[0]]); else ThemePrefs.setBackupTime(values[sel[0]]);
+                    refreshCards();
+                }));
+    }
+
     private void defaultTabDialog() {
         String[] names = {getString(R.string.tab_themes), getString(R.string.tab_colors), getString(R.string.tab_icons), getString(R.string.tab_info)};
         final int[] sel = {ThemePrefs.getDefaultTab()};
@@ -451,11 +504,8 @@ public class MainActivity extends AppCompatActivity {
         TextView[] sub = new TextView[1];
         row.addView(makeCard(R.string.card_info, sub, this::showLegend));
         sub[0].setText(R.string.card_info_sub);
-        row.addView(makeCard(R.string.restart_ui, sub, () -> {
-            Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-            new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
-        }));
-        sub[0].setText(R.string.card_restart_sub);
+        row.addView(makeCard(R.string.card_default_tab, sub, this::defaultTabDialog));
+        mSubDefaultTab = sub[0];
         box.addView(row);
         android.widget.LinearLayout row2 = new android.widget.LinearLayout(this);
         row2.setOrientation(android.widget.LinearLayout.HORIZONTAL);
@@ -471,14 +521,13 @@ public class MainActivity extends AppCompatActivity {
         row3.addView(makeCard(R.string.card_credits, sub, () -> SettingsPage.credits(this)));
         sub[0].setText(R.string.card_credits_sub);
         box.addView(row3);
-        android.widget.LinearLayout row4 = new android.widget.LinearLayout(this);
-        row4.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-        row4.addView(makeCard(R.string.card_default_tab, sub, this::defaultTabDialog));
-        mSubDefaultTab = sub[0];
-        View spacer4 = new View(this);
-        spacer4.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-        row4.addView(spacer4);
-        box.addView(row4);
+        android.widget.LinearLayout row5 = new android.widget.LinearLayout(this);
+        row5.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        row5.addView(makeCard(R.string.card_backup_date, sub, () -> backupNameDialog(true)));
+        mSubBackupDate = sub[0];
+        row5.addView(makeCard(R.string.card_backup_time, sub, () -> backupNameDialog(false)));
+        mSubBackupTime = sub[0];
+        box.addView(row5);
         TextView ver = new TextView(this);
         String v = "";
         try { v = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; } catch (Exception ignored) {}
@@ -609,6 +658,11 @@ public class MainActivity extends AppCompatActivity {
         mSubRipple.setText(RippleDialog.summary(this));
         if (mSubVariant != null) {
             mSubVariant.setText(SystemVariant.label(this, ThemePrefs.getSystemVariant()) + "\n" + getString(R.string.card_variant_sub));
+        }
+        if (mSubBackupDate != null) {
+            mSubBackupDate.setText(stampExample(ThemePrefs.getBackupDate()));
+            String bt = ThemePrefs.getBackupTime();
+            mSubBackupTime.setText(bt.isEmpty() ? getString(R.string.backup_time_none) : stampExample(bt));
         }
         if (mSubTasker != null)
             mSubTasker.setText(ThemePrefs.isTaskerEnabled() ? R.string.state_on_simple : R.string.state_off);
