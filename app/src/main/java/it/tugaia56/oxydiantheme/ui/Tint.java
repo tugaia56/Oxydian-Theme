@@ -41,7 +41,7 @@ final class Tint {
             b.setRippleColor(ColorStateList.valueOf(acc & 0x33FFFFFF | 0x33000000));
         } else if (b.getId() == it.tugaia56.oxydiantheme.R.id.btn_apply) {
             b.setBackgroundTintList(ColorStateList.valueOf(acc));
-            b.setTextColor(isLight(acc) ? 0xFF1B1B1B : Color.WHITE);
+            b.setTextColor(Color.WHITE);   // sempre bianco (anche con accento chiaro)
         } else {
             b.setTextColor(acc);
         }
