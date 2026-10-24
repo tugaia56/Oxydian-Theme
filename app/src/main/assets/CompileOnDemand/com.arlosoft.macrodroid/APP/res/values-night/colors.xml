@@ -30,7 +30,6 @@
 	
 	<color name="ai_macro_builder_primary">#ff6d00</color>										<!-- 22° pulsante -->
 	
-    <color name="accent">@*android:color/accent_material_dark</color>
     <color name="action_ok_button_disabled">#888888</color>
     <color name="actions_accent">#90caf9</color>
     <color name="actions_text_list_item">#2297dd</color>
@@ -111,7 +110,6 @@
     <color name="subscribe_prepay_button_bg">#a8e92d</color>
     <color name="subscription_selected_bg">#22ffffff</color>
     <color name="system_log_accent">#41ce82</color>
-    <color name="template_accent">@*android:color/accent_material_dark</color>
     <color name="template_comments_bg">?android:colorBackground</color>
     <color name="text_color_error">@*android:color/accent_material_dark</color>
     <color name="text_color_macro_list_name">#ffffff</color>
@@ -169,4 +167,11 @@
     <color name="macro_list_chip_background">#ff1b2029</color>
     <color name="macro_list_chip_background_selected">@*android:color/accent_material_dark</color>
     <color name="macro_list_chip_text_selected">#ffffffff</color>
+    <!-- Esempi e Impostazioni: barra delle Impostazioni nel colore di sfondo, schede degli Esempi scure, icone/selettori (accent) nell'accento -->
+    <color name="accent">@*android:color/accent_material_dark</color>
+    <color name="template_accent">@*android:color/accent_material_dark</color>
+    <color name="settings_app_bar_gradient_start">#ff1b2029</color>
+    <color name="settings_app_bar_gradient_end">#ff1b2029</color>
+    <color name="template_card_background">#ff242832</color>
+    <color name="template_card_footer_background">#ff2d323e</color>
 </resources>
