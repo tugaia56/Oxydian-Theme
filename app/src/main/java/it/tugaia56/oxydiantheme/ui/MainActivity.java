@@ -305,6 +305,9 @@ public class MainActivity extends AppCompatActivity {
         sp6.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
         r6.addView(sp6);
         // Pagina Mods
+        android.widget.LinearLayout r0 = findViewById(R.id.cards_row0);
+        r0.addView(makeCard(R.string.card_variant, s, this::variantDialog));
+        mSubVariant = s[0];
         android.widget.LinearLayout r5 = findViewById(R.id.cards_row5);
         r2.addView(makeCard(R.string.card_progress, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"progress"}, R.string.card_progress)));
         mSubProgress = s[0];
@@ -472,8 +475,9 @@ public class MainActivity extends AppCompatActivity {
         row4.setOrientation(android.widget.LinearLayout.HORIZONTAL);
         row4.addView(makeCard(R.string.card_default_tab, sub, this::defaultTabDialog));
         mSubDefaultTab = sub[0];
-        row4.addView(makeCard(R.string.card_variant, sub, this::variantDialog));
-        mSubVariant = sub[0];
+        View spacer4 = new View(this);
+        spacer4.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+        row4.addView(spacer4);
         box.addView(row4);
         TextView ver = new TextView(this);
         String v = "";
@@ -604,7 +608,7 @@ public class MainActivity extends AppCompatActivity {
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
         if (mSubVariant != null) {
-            mSubVariant.setText(SystemVariant.label(this, ThemePrefs.getSystemVariant()));
+            mSubVariant.setText(SystemVariant.label(this, ThemePrefs.getSystemVariant()) + "\n" + getString(R.string.card_variant_sub));
         }
         if (mSubTasker != null)
             mSubTasker.setText(ThemePrefs.isTaskerEnabled() ? R.string.state_on_simple : R.string.state_off);
