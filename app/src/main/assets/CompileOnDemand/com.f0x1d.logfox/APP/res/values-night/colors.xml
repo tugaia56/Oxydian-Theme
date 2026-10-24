@@ -9,7 +9,7 @@
     <color name="md_theme_onBackground">#ffefe0d6</color>
     <color name="md_theme_onError">#ff690005</color>
     <color name="md_theme_onErrorContainer">#ffffdad6</color>
-    <color name="md_theme_onPrimary">#ffffffff</color>
+    <color name="md_theme_onPrimary">#feffffff</color>
     <color name="md_theme_onPrimaryContainer">#ffffffff</color>
     <color name="md_theme_onSecondary">#ff412c1a</color>
     <color name="md_theme_onSecondaryContainer">#ffffffff</color>
