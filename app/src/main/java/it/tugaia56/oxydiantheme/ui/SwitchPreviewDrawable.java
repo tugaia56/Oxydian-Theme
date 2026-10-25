@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
 import android.graphics.PixelFormat;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 
 import it.tugaia56.oxydiantheme.R;
@@ -56,6 +58,12 @@ final class SwitchPreviewDrawable extends Drawable {
         }
         boolean ring = "Anello".equals(mVariant), onoff = mVariant.startsWith("ON_OFF"), btn = "Pulsante".equals(mVariant);
         if (ring || onoff || btn) { form(c, x, y, on, ring, onoff, btn); return; }
+        if ("Levetta".equals(mVariant) || "LED".equals(mVariant) || "Tacche".equals(mVariant) || "Neon".equals(mVariant)) {
+            float w0 = 52 * d, h0 = 28 * d, cy0 = y + 15 * d, rad0 = 11 * d;
+            float cx0 = on ? x + w0 - 3 * d - rad0 : x + 3 * d + rad0;
+            special(c, p, r, mVariant.toLowerCase(java.util.Locale.ROOT), on, x, x + w0, cy0, h0, cx0, rad0, mFg, mAccent, d);
+            return;
+        }
         boolean sprite = "Sprite".equals(mVariant);
         float th = 2f * d;
         float bl = x + 3 * d, br = x + w - 3 * d, rad = 11 * d;
@@ -116,6 +124,115 @@ final class SwitchPreviewDrawable extends Drawable {
             p.setStyle(Paint.Style.FILL);
             p.setColor(on ? mAccent : 0xFF8A8F99);
             c.drawCircle(cx, cy, rad - 3f * d, p);
+        }
+    }
+
+
+    /** Stili "di carattere": levetta, led, tacche, neon. cx = centro del pallino, rad = suo raggio, h = altezza della barra. */
+    static void special(Canvas c, Paint p, RectF r, String var, boolean on, float left, float right, float cy, float h,
+                        float cx, float rad, int fg, int accent, float d) {
+        p.setShader(null);
+        switch (var) {
+            case "levetta": {
+                p.setStyle(Paint.Style.FILL);
+                p.setColor(0xFF2A2D33);
+                float bl = left + 4 * d, br = right - 4 * d, bt = cy - h / 2f + 2 * d, bb = cy + h / 2f - 2 * d;
+                r.set(bl, bt, br, bb);
+                c.drawRoundRect(r, 5 * d, 5 * d, p);
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(1.5f * d);
+                p.setColor((0x66 << 24) | (fg & 0xFFFFFF));
+                r.inset(0.75f * d, 0.75f * d);
+                c.drawRoundRect(r, 5 * d, 5 * d, p);
+                float kw = (br - bl) / 2f - 3 * d, kh = bb - bt - 4 * d;
+                float kx = Math.max(bl + 2 * d + kw / 2f, Math.min(br - 2 * d - kw / 2f, cx));
+                r.set(kx - kw / 2f, cy - kh / 2f, kx + kw / 2f, cy + kh / 2f);
+                p.setStyle(Paint.Style.FILL);
+                p.setColor(on ? accent : 0xFF8A8F99);
+                c.drawRoundRect(r, 4 * d, 4 * d, p);
+                p.setColor(0x55FFFFFF);
+                r.set(kx - kw / 2f + 3 * d, cy - kh / 2f + 1.5f * d, kx + kw / 2f - 3 * d, cy - kh / 2f + 3f * d);
+                c.drawRect(r, p);
+                break;
+            }
+            case "led": {
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(1.5f * d);
+                p.setColor((0x44 << 24) | (fg & 0xFFFFFF));
+                r.set(left + 0.75f * d, cy - 4 * d, right - 0.75f * d, cy + 4 * d);
+                c.drawRoundRect(r, 4 * d, 4 * d, p);
+                float rr = rad * 0.55f;
+                p.setStyle(Paint.Style.FILL);
+                if (on) {
+                    p.setShader(new RadialGradient(cx, cy, rr * 2.4f,
+                            new int[]{(0x99 << 24) | (accent & 0xFFFFFF), (accent & 0xFFFFFF)}, null, Shader.TileMode.CLAMP));
+                    c.drawCircle(cx, cy, rr * 2.4f, p);
+                    p.setShader(null);
+                }
+                p.setColor(on ? accent : 0xFF4A4E56);
+                c.drawCircle(cx, cy, rr, p);
+                p.setColor(on ? 0x88FFFFFF : 0x22FFFFFF);
+                c.drawCircle(cx - rr * 0.3f, cy - rr * 0.3f, rr * 0.3f, p);
+                break;
+            }
+            case "tacche": {
+                int n = 9;
+                float tw = 3 * d, th = 12 * d;
+                float l0 = left + 3 * d + tw / 2f, r0 = right - 3 * d - tw / 2f;
+                p.setStyle(Paint.Style.FILL);
+                for (int i = 0; i < n; i++) {
+                    float x = l0 + (r0 - l0) * i / (n - 1);
+                    boolean act = x <= cx + 0.5f * d;
+                    p.setColor(act ? accent : ((0x44 << 24) | (fg & 0xFFFFFF)));
+                    r.set(x - tw / 2f, cy - th / 2f, x + tw / 2f, cy + th / 2f);
+                    c.drawRoundRect(r, tw / 2f, tw / 2f, p);
+                }
+                float bw = 4 * d, bh = h - 2 * d;
+                p.setColor(on ? 0xFFFFFFFF : ((0xCC << 24) | (fg & 0xFFFFFF)));
+                r.set(cx - bw / 2f, cy - bh / 2f, cx + bw / 2f, cy + bh / 2f);
+                c.drawRoundRect(r, bw / 2f, bw / 2f, p);
+                break;
+            }
+            case "neon": {
+                float ph = h - 8 * d;
+                r.set(left + 4 * d, cy - ph / 2f, right - 4 * d, cy + ph / 2f);
+                p.setStyle(Paint.Style.STROKE);
+                if (on) {
+                    float[] sw = {8 * d, 5 * d, 2 * d};
+                    int[] al = {0x22, 0x44, 0xFF};
+                    for (int i = 0; i < 3; i++) {
+                        p.setStrokeWidth(sw[i]);
+                        p.setColor((al[i] << 24) | (accent & 0xFFFFFF));
+                        c.drawRoundRect(r, ph / 2f, ph / 2f, p);
+                    }
+                } else {
+                    p.setStrokeWidth(1.5f * d);
+                    p.setColor((0x66 << 24) | (fg & 0xFFFFFF));
+                    c.drawRoundRect(r, ph / 2f, ph / 2f, p);
+                }
+                float rr = rad - 4 * d;
+                if (on) {
+                    p.setStyle(Paint.Style.FILL);
+                    p.setColor((0x22 << 24) | (accent & 0xFFFFFF));
+                    c.drawCircle(cx, cy, rr, p);
+                    p.setStyle(Paint.Style.STROKE);
+                    float[] sw = {7 * d, 4.5f * d, 2.5f * d};
+                    int[] al = {0x22, 0x44, 0xFF};
+                    for (int i = 0; i < 3; i++) {
+                        p.setStrokeWidth(sw[i]);
+                        p.setColor((al[i] << 24) | (accent & 0xFFFFFF));
+                        c.drawCircle(cx, cy, rr, p);
+                    }
+                } else {
+                    p.setStyle(Paint.Style.STROKE);
+                    p.setStrokeWidth(1.5f * d);
+                    p.setColor((0x66 << 24) | (fg & 0xFFFFFF));
+                    c.drawCircle(cx, cy, rr, p);
+                }
+                break;
+            }
+            default:
+                break;
         }
     }
 

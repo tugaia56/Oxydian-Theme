@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true"><layer-list>
+        <item android:gravity="center"><shape android:shape="oval"><size android:width="28dip" android:height="28dip" /><solid android:color="#33908dff" /></shape></item>
+        <item android:gravity="center"><shape android:shape="oval"><size android:width="16dip" android:height="16dip" /><solid android:color="#908dff" /></shape></item>
+    </layer-list></item>
+    <item><layer-list>
+        <item android:gravity="center"><shape android:shape="oval"><size android:width="16dip" android:height="16dip" /><solid android:color="#4a4e56" /></shape></item>
+    </layer-list></item>
+</selector>
