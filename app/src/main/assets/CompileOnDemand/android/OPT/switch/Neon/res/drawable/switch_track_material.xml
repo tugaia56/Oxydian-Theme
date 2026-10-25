@@ -4,7 +4,7 @@
         <item android:gravity="fill_horizontal|center"><shape android:shape="rectangle">
 <corners android:radius="14dip" />
 <solid android:color="#00000000" />
-<stroke android:width="2dip" android:color="#908dff" />
+<stroke android:width="2dip" android:color="#ffffff" />
 <size android:height="28dip" />
 </shape></item>
     </layer-list></item>

@@ -97,7 +97,7 @@ final class SwitchPreviewDrawable extends Drawable {
             c.drawRoundRect(r, h / 2f, h / 2f, p);
             p.setStyle(Paint.Style.STROKE);
             p.setStrokeWidth(1.5f * d);
-            p.setColor(a(mFg, 0x66));
+            p.setColor(on ? (0xFF000000 | (mFg & 0xFFFFFF)) : a(mFg, 0x66));   // ON: bordo bianco
             r.inset(0.75f * d, 0.75f * d);
             c.drawRoundRect(r, h / 2f, h / 2f, p);
         } else {
@@ -142,7 +142,7 @@ final class SwitchPreviewDrawable extends Drawable {
                 c.drawRoundRect(r, 5 * d, 5 * d, p);
                 p.setStyle(Paint.Style.STROKE);
                 p.setStrokeWidth(1.5f * d);
-                p.setColor((0x66 << 24) | (fg & 0xFFFFFF));
+                p.setColor(on ? (0xFF000000 | (fg & 0xFFFFFF)) : ((0x66 << 24) | (fg & 0xFFFFFF)));   // ON: bordo bianco
                 r.inset(0.75f * d, 0.75f * d);
                 c.drawRoundRect(r, 5 * d, 5 * d, p);
                 float kw = (br - bl) / 2f - 3 * d, kh = bb - bt - 4 * d;
@@ -159,7 +159,7 @@ final class SwitchPreviewDrawable extends Drawable {
             case "led": {
                 p.setStyle(Paint.Style.STROKE);
                 p.setStrokeWidth(1.5f * d);
-                p.setColor((0x44 << 24) | (fg & 0xFFFFFF));
+                p.setColor(on ? (0xFF000000 | (fg & 0xFFFFFF)) : ((0x44 << 24) | (fg & 0xFFFFFF)));   // ON: bordo bianco
                 r.set(left + 0.75f * d, cy - 4 * d, right - 0.75f * d, cy + 4 * d);
                 c.drawRoundRect(r, 4 * d, 4 * d, p);
                 float rr = rad * 0.62f;
@@ -207,9 +207,9 @@ final class SwitchPreviewDrawable extends Drawable {
                 r.set(left + 5 * d, cy - ph / 2f, right - 5 * d, cy + ph / 2f);
                 p.setStyle(Paint.Style.STROKE);
                 if (on) {
-                    // bordo senza alone: l'alone resta solo sul pallino
+                    // bordo bianco senza alone: l'alone resta solo sul pallino
                     p.setStrokeWidth(2 * d);
-                    p.setColor(accent);
+                    p.setColor(0xFF000000 | (fg & 0xFFFFFF));
                     c.drawRoundRect(r, ph / 2f, ph / 2f, p);
                 } else {
                     p.setStrokeWidth(1.5f * d);
