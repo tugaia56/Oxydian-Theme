@@ -3,6 +3,7 @@ package it.tugaia56.oxydiantheme.ui;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -102,6 +103,27 @@ final class OptionGroupsDialog {
         return sb.length() == 0 ? ctx.getString(R.string.options_default) : sb.toString();
     }
 
+    /** Pulsante di scelta con l'anteprima di uno stile disegnata sul bordo destro. */
+    private static final class PreviewRadio extends RadioButton {
+        private final android.graphics.drawable.Drawable mPreview;
+
+        PreviewRadio(Context ctx, android.graphics.drawable.Drawable preview) {
+            super(ctx);
+            mPreview = preview;
+            setPadding(getPaddingLeft(), getPaddingTop(), preview.getIntrinsicWidth() + (int) (8 * ctx.getResources().getDisplayMetrics().density), getPaddingBottom());
+        }
+
+        @Override
+        protected void onDraw(android.graphics.Canvas canvas) {
+            super.onDraw(canvas);
+            int w = mPreview.getIntrinsicWidth(), h = mPreview.getIntrinsicHeight();
+            int right = getWidth();
+            int top = (getHeight() - h) / 2;
+            mPreview.setBounds(right - w, top, right, top + h);
+            mPreview.draw(canvas);
+        }
+    }
+
     static void show(Context ctx, String pkg, String[] groups, int titleRes, Listener listener) {
         float d = ctx.getResources().getDisplayMetrics().density;
         int pad = (int) (20 * d);
@@ -149,16 +171,16 @@ final class OptionGroupsDialog {
             all.addAll(ch);
             if (allowsCustom(pkg, g)) all.add(CUSTOM);
             for (String c : all) {
-                RadioButton rb = new RadioButton(ctx);
+                final boolean withPreview = "switch".equals(g) && !CUSTOM.equals(c);
+                RadioButton rb = withPreview ? new PreviewRadio(ctx, new SwitchPreviewDrawable(ctx, c)) : new RadioButton(ctx);
                 rb.setText(c.isEmpty() ? ctx.getString(R.string.options_default)
                         : CUSTOM.equals(c) ? ctx.getString(R.string.opt_custom) : pretty(c));
                 rb.setId(View.generateViewId());
                 rb.setChecked(c.equals(cur));
                 rb.setButtonTintList(ColorStateList.valueOf(ThemePrefs.accentColor()));
-                if ("switch".equals(g) && !CUSTOM.equals(c)) {
-                    // anteprima dello stile (spento / acceso) accanto al nome, senza doverlo applicare
-                    rb.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, new SwitchPreviewDrawable(ctx, c), null);
-                    rb.setCompoundDrawablePadding(pad / 2);
+                if (withPreview) {
+                    // anteprima dello stile (spento / acceso) a destra, senza doverlo applicare
+                    rb.setLayoutParams(new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     rb.setPadding(rb.getPaddingLeft(), pad / 3, rb.getPaddingRight(), pad / 3);   // piu' spazio tra le righe
                 }
                 rb.setOnClickListener(v -> {
