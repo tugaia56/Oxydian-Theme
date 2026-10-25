@@ -562,8 +562,15 @@ public class MainActivity extends AppCompatActivity {
         for (AppEntry e : mApps) if (e.ds && e.pkg.equals(pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(pkg);
     }
 
+    /** Interruttori OnePlus (Impostazioni ecc.): li ridisegna Oxydian, acceso da questa proprieta'. */
+    private static void applySwitchProp() {
+        String v = ThemePrefs.getOption(SystemColorsDialog.PKG, "switch").isEmpty() ? "\"\"" : "narrow";
+        new Thread(() -> com.topjohnwu.superuser.Shell.cmd("setprop persist.oxytheme.switchstyle " + v).exec()).start();
+    }
+
     private void openGroups(String pkg, String[] groups, int titleRes) {
         OptionGroupsDialog.show(this, pkg, groups, titleRes, () -> {
+            if (Arrays.asList(groups).contains("switch")) applySwitchProp();
             syncEnabled(pkg);
             refreshCards();
             mList.getAdapter().notifyDataSetChanged();
