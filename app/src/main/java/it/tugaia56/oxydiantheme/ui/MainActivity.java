@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
         return card;
     }
 
-    private TextView mSubProgress, mSubActivity;
+    private TextView mSubProgress, mSubActivity, mSubSwitch;
     private static final String SYSTEMUI_PKG = "com.android.systemui";
 
     /** Aggiornamento automatico acceso di serie: la prima volta si chiede il permesso per le notifiche. */
@@ -332,12 +332,8 @@ public class MainActivity extends AppCompatActivity {
             new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
         }));
         s[0].setText(R.string.card_restart_sub);
-        View sp7 = new View(this);
-        android.widget.LinearLayout.LayoutParams lp7 = new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
-        int m7 = (int) (4 * getResources().getDisplayMetrics().density);
-        lp7.setMargins(m7, m7, m7, m7);
-        sp7.setLayoutParams(lp7);
-        r7.addView(sp7);
+        r7.addView(makeCard(R.string.card_switch, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"switch"}, R.string.card_switch)));
+        mSubSwitch = s[0];
         refreshCards();
     }
 
@@ -554,7 +550,8 @@ public class MainActivity extends AppCompatActivity {
         boolean any;
         if (SystemColorsDialog.PKG.equals(pkg)) {
             any = !ThemePrefs.getOption(pkg, "accent").isEmpty() || !ThemePrefs.getOption(pkg, "background").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "progress").isEmpty() || ThemePrefs.getRippleAlpha() > 0;
+                    || !ThemePrefs.getOption(pkg, "progress").isEmpty() || !ThemePrefs.getOption(pkg, "switch").isEmpty()
+                    || ThemePrefs.getRippleAlpha() > 0;
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
@@ -671,6 +668,7 @@ public class MainActivity extends AppCompatActivity {
             mSubDefaultTab.setText(names[Math.max(0, Math.min(3, ThemePrefs.getDefaultTab()))]);
         }
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
+        mSubSwitch.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "switch"));
         mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg", "pindots", "pinnum"));
         boolean hideOn = !ThemePrefs.getOption(SYSTEMUI_PKG, "icons").isEmpty();
         mSubActivity.setText(hideOn ? getString(R.string.state_on_full) : getString(R.string.state_off));
