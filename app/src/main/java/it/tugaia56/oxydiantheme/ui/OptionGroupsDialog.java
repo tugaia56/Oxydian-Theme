@@ -159,6 +159,7 @@ final class OptionGroupsDialog {
                     // anteprima dello stile (spento / acceso) accanto al nome, senza doverlo applicare
                     rb.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, new SwitchPreviewDrawable(ctx, c), null);
                     rb.setCompoundDrawablePadding(pad / 2);
+                    rb.setPadding(rb.getPaddingLeft(), pad / 3, rb.getPaddingRight(), pad / 3);   // piu' spazio tra le righe
                 }
                 rb.setOnClickListener(v -> {
                     if (CUSTOM.equals(c)) {
