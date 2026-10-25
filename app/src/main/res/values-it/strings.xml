@@ -81,7 +81,8 @@
     <string name="icopt_rounded">Quadrato arrotondato</string>
     <string name="icopt_teardrop">Goccia</string>
     <string name="icopt_diamond">Rombo</string>
-    <string name="card_switch_sub">Interruttori e goccine di selezione del testo</string>
+    <string name="switch_in_use">In uso: %1$s</string>
+    <string name="card_switch_sub">Interruttori on/off, come quello del Wi-Fi, e goccine di selezione del testo</string>
     <string name="card_switch">Interruttori e Maniglie</string>
     <string name="card_progress">Barra di progresso</string>
     <string name="card_pin">Tastierino PIN</string>

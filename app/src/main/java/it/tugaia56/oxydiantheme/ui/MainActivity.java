@@ -676,7 +676,15 @@ public class MainActivity extends AppCompatActivity {
             mSubDefaultTab.setText(names[Math.max(0, Math.min(3, ThemePrefs.getDefaultTab()))]);
         }
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
-        mSubSwitch.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "switch") + "\n" + getString(R.string.card_switch_sub));
+        {
+            // descrizione, poi "In uso: nome" con il nome nel colore dell'accento
+            String name = OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "switch");
+            String line = getString(R.string.switch_in_use, name);
+            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder(getString(R.string.card_switch_sub) + "\n" + line);
+            int st = sb.length() - name.length();
+            if (st >= 0) sb.setSpan(new android.text.style.ForegroundColorSpan(ThemePrefs.accentColor()), st, sb.length(), 0);
+            mSubSwitch.setText(sb);
+        }
         mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg", "pindots", "pinnum"));
         boolean hideOn = !ThemePrefs.getOption(SYSTEMUI_PKG, "icons").isEmpty();
         mSubActivity.setText(hideOn ? getString(R.string.state_on_full) : getString(R.string.state_off));
