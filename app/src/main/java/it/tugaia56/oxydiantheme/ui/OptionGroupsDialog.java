@@ -125,22 +125,6 @@ final class OptionGroupsDialog {
             }
             box.addView(row);
         }
-        if (java.util.Arrays.asList(groups).contains("switch")) {
-            // anteprima: due interruttori di sistema (spento e acceso) con l'aspetto in uso adesso
-            LinearLayout row = new LinearLayout(ctx);
-            row.setOrientation(LinearLayout.HORIZONTAL);
-            row.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            row.setPadding(0, pad / 2, 0, pad / 2);
-            for (int i = 0; i < 2; i++) {
-                android.widget.Switch sw = new android.widget.Switch(ctx);
-                sw.setChecked(i == 1);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                lp.setMarginEnd(pad * 2);
-                row.addView(sw, lp);
-            }
-            box.addView(row);
-        }
         final java.util.Map<String, String> initial = new java.util.HashMap<>();
         final java.util.Map<String, Integer> initialColor = new java.util.HashMap<>();
         for (String g : groups) {
@@ -171,6 +155,11 @@ final class OptionGroupsDialog {
                 rb.setId(View.generateViewId());
                 rb.setChecked(c.equals(cur));
                 rb.setButtonTintList(ColorStateList.valueOf(ThemePrefs.accentColor()));
+                if ("switch".equals(g) && !CUSTOM.equals(c)) {
+                    // anteprima dello stile (spento / acceso) accanto al nome, senza doverlo applicare
+                    rb.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, new SwitchPreviewDrawable(ctx, c), null);
+                    rb.setCompoundDrawablePadding(pad / 2);
+                }
                 rb.setOnClickListener(v -> {
                     if (CUSTOM.equals(c)) {
                         ColorPickDialog.show(ctx, ThemePrefs.getCustomColor(pkg + "_" + g), R.string.opt_custom,
