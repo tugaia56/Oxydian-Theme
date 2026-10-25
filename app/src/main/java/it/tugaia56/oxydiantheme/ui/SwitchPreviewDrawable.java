@@ -67,12 +67,12 @@ final class SwitchPreviewDrawable extends Drawable {
         float sw = (sprite ? 1f : 1.5f) * d;
         float cx = on ? br - rad : bl + rad;
         boolean full = "Pallino_pieno".equals(mVariant);
-        int fill = sprite ? a(mAccent, 0x59) : on ? a(mAccent, full ? 0xFF : 0x59) : a(mFg, full ? 0x99 : 0x22);
+        int fill = sprite ? (on ? a(mAccent, 0x59) : a(mFg, 0x4D)) : on ? a(mAccent, full ? 0xFF : 0x59) : full ? mFg : a(mFg, 0x22);
         p.setColor(fill);
         c.drawCircle(cx, cy, rad - sw / 2f, p);
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(sw);
-        p.setColor(on ? mAccent : a(mFg, 0x99));
+        p.setColor(on ? mAccent : full ? mFg : a(mFg, 0x99));
         c.drawCircle(cx, cy, rad - sw / 2f, p);
     }
 
@@ -105,10 +105,6 @@ final class SwitchPreviewDrawable extends Drawable {
             p.setStyle(Paint.Style.FILL);
             p.setColor(0xFFFFFFFF);
             c.drawCircle(cx, cy, rad - 1f * d, p);
-            p.setStyle(Paint.Style.STROKE);
-            p.setStrokeWidth(1f * d);
-            p.setColor(0xFFB0B0B0);
-            c.drawCircle(cx, cy, rad - 1f * d, p);
             Paint t = new Paint(Paint.ANTI_ALIAS_FLAG);
             t.setColor(0xFFFFFFFF);
             t.setTextAlign(Paint.Align.CENTER);
@@ -119,10 +115,6 @@ final class SwitchPreviewDrawable extends Drawable {
         } else {
             p.setStyle(Paint.Style.FILL);
             p.setColor(on ? mAccent : 0xFF8A8F99);
-            c.drawCircle(cx, cy, rad - 3f * d, p);
-            p.setStyle(Paint.Style.STROKE);
-            p.setStrokeWidth(1.5f * d);
-            p.setColor(a(mFg, 0x66));
             c.drawCircle(cx, cy, rad - 3f * d, p);
         }
     }
