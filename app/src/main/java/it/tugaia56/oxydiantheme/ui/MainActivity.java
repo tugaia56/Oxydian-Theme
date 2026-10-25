@@ -677,14 +677,13 @@ public class MainActivity extends AppCompatActivity {
         }
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
         {
-            // descrizione, poi "In uso: nome" con il nome nel colore dell'accento
+            // "In uso: nome" subito sotto il titolo (nome nel colore dell'accento), poi la descrizione
             String name = OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "switch");
             String line = getString(R.string.switch_in_use, name);
-            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder(getString(R.string.card_switch_sub) + "\n" + line);
-            int st = sb.length() - name.length();
-            int ls = sb.length() - line.length();
-            if (ls >= 0) sb.setSpan(new android.text.style.ForegroundColorSpan(getColor(R.color.text)), ls, sb.length(), 0);   // "In uso:" bianco
-            if (st >= 0) sb.setSpan(new android.text.style.ForegroundColorSpan(ThemePrefs.accentColor()), st, sb.length(), 0);
+            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder(line + "\n" + getString(R.string.card_switch_sub));
+            sb.setSpan(new android.text.style.ForegroundColorSpan(getColor(R.color.text)), 0, line.length(), 0);   // "In uso:" bianco
+            int st = line.length() - name.length();
+            if (st >= 0) sb.setSpan(new android.text.style.ForegroundColorSpan(ThemePrefs.accentColor()), st, line.length(), 0);
             mSubSwitch.setText(sb);
         }
         mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg", "pindots", "pinnum"));
