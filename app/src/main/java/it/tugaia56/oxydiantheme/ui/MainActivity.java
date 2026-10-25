@@ -564,7 +564,8 @@ public class MainActivity extends AppCompatActivity {
 
     /** Interruttori OnePlus (Impostazioni ecc.): li ridisegna Oxydian, acceso da questa proprieta'. */
     private static void applySwitchProp() {
-        String v = ThemePrefs.getOption(SystemColorsDialog.PKG, "switch").isEmpty() ? "\"\"" : "narrow";
+        String o = ThemePrefs.getOption(SystemColorsDialog.PKG, "switch");
+        String v = o.isEmpty() ? "\"\"" : o.toLowerCase(java.util.Locale.ROOT);
         new Thread(() -> com.topjohnwu.superuser.Shell.cmd("setprop persist.oxytheme.switchstyle " + v).exec()).start();
     }
 
