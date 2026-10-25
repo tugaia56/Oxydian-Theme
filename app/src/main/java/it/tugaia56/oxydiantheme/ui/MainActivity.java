@@ -682,6 +682,8 @@ public class MainActivity extends AppCompatActivity {
             String line = getString(R.string.switch_in_use, name);
             android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder(getString(R.string.card_switch_sub) + "\n" + line);
             int st = sb.length() - name.length();
+            int ls = sb.length() - line.length();
+            if (ls >= 0) sb.setSpan(new android.text.style.ForegroundColorSpan(getColor(R.color.text)), ls, sb.length(), 0);   // "In uso:" bianco
             if (st >= 0) sb.setSpan(new android.text.style.ForegroundColorSpan(ThemePrefs.accentColor()), st, sb.length(), 0);
             mSubSwitch.setText(sb);
         }
