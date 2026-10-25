@@ -3,6 +3,7 @@ package it.tugaia56.oxydiantheme.ui;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.RadialGradient;
 import android.graphics.PixelFormat;
@@ -58,7 +59,7 @@ final class SwitchPreviewDrawable extends Drawable {
         }
         boolean ring = "Anello".equals(mVariant), onoff = mVariant.startsWith("ON_OFF"), btn = "Pulsante".equals(mVariant);
         if (ring || onoff || btn) { form(c, x, y, on, ring, onoff, btn); return; }
-        if ("Levetta".equals(mVariant) || "LED".equals(mVariant) || "Tacche".equals(mVariant) || "Neon".equals(mVariant)) {
+        if ("Levetta".equals(mVariant) || "LED".equals(mVariant) || "Tacche".equals(mVariant) || "Neon".equals(mVariant) || "Lucido_3D".equals(mVariant)) {
             float w0 = 52 * d, h0 = 28 * d, cy0 = y + 15 * d, rad0 = 11 * d;
             float cx0 = on ? x + w0 - 3 * d - rad0 : x + 3 * d + rad0;
             special(c, p, r, mVariant.toLowerCase(java.util.Locale.ROOT), on, x, x + w0, cy0, h0, cx0, rad0, mFg, mAccent, d);
@@ -128,7 +129,7 @@ final class SwitchPreviewDrawable extends Drawable {
     }
 
 
-    /** Stili "di carattere": levetta, led, tacche, neon. cx = centro del pallino, rad = suo raggio, h = altezza della barra. */
+    /** Stili "di carattere": levetta, led, tacche, neon, lucido_3d. cx = centro del pallino, rad = suo raggio, h = altezza della barra. */
     static void special(Canvas c, Paint p, RectF r, String var, boolean on, float left, float right, float cy, float h,
                         float cx, float rad, int fg, int accent, float d) {
         p.setShader(null);
@@ -161,64 +162,69 @@ final class SwitchPreviewDrawable extends Drawable {
                 p.setColor((0x44 << 24) | (fg & 0xFFFFFF));
                 r.set(left + 0.75f * d, cy - 4 * d, right - 0.75f * d, cy + 4 * d);
                 c.drawRoundRect(r, 4 * d, 4 * d, p);
-                float rr = rad * 0.55f;
+                float rr = rad * 0.62f;
                 p.setStyle(Paint.Style.FILL);
                 if (on) {
-                    p.setShader(new RadialGradient(cx, cy, rr * 2.4f,
-                            new int[]{(0x99 << 24) | (accent & 0xFFFFFF), (accent & 0xFFFFFF)}, null, Shader.TileMode.CLAMP));
-                    c.drawCircle(cx, cy, rr * 2.4f, p);
+                    float gr = Math.max(h / 2f, rr * 2f);
+                    p.setColor(0xFF000000);
+                    p.setShader(new RadialGradient(cx, cy, gr,
+                            new int[]{(0xE6 << 24) | (accent & 0xFFFFFF), (0x80 << 24) | (accent & 0xFFFFFF),
+                                    (0x30 << 24) | (accent & 0xFFFFFF), (accent & 0xFFFFFF)},
+                            new float[]{0f, 0.35f, 0.7f, 1f}, Shader.TileMode.CLAMP));
+                    c.drawCircle(cx, cy, gr, p);
                     p.setShader(null);
                 }
                 p.setColor(on ? accent : 0xFF4A4E56);
                 c.drawCircle(cx, cy, rr, p);
-                p.setColor(on ? 0x88FFFFFF : 0x22FFFFFF);
-                c.drawCircle(cx - rr * 0.3f, cy - rr * 0.3f, rr * 0.3f, p);
+                p.setColor(on ? 0xAAFFFFFF : 0x22FFFFFF);
+                c.drawCircle(cx - rr * 0.3f, cy - rr * 0.3f, rr * 0.32f, p);
                 break;
             }
             case "tacche": {
                 int n = 9;
                 float tw = 3 * d, th = 12 * d;
                 float l0 = left + 3 * d + tw / 2f, r0 = right - 3 * d - tw / 2f;
+                // l'indice percorre tutte le tacche: da quella di sinistra a quella di destra
+                float c0 = left + 3 * d + rad, c1 = right - 3 * d - rad;
+                float prog = c1 - c0 > 1f ? Math.max(0f, Math.min(1f, (cx - c0) / (c1 - c0))) : (on ? 1f : 0f);
+                float mx = l0 + prog * (r0 - l0);
                 p.setStyle(Paint.Style.FILL);
                 for (int i = 0; i < n; i++) {
                     float x = l0 + (r0 - l0) * i / (n - 1);
-                    boolean act = x <= cx + 0.5f * d;
+                    boolean act = x <= mx + 0.5f * d;
                     p.setColor(act ? accent : ((0x44 << 24) | (fg & 0xFFFFFF)));
                     r.set(x - tw / 2f, cy - th / 2f, x + tw / 2f, cy + th / 2f);
                     c.drawRoundRect(r, tw / 2f, tw / 2f, p);
                 }
-                float bw = 4 * d, bh = h - 2 * d;
+                float bw = 4 * d, bh = Math.min(h - 2 * d, 16 * d);
                 p.setColor(on ? 0xFFFFFFFF : ((0xCC << 24) | (fg & 0xFFFFFF)));
-                r.set(cx - bw / 2f, cy - bh / 2f, cx + bw / 2f, cy + bh / 2f);
+                r.set(mx - bw / 2f, cy - bh / 2f, mx + bw / 2f, cy + bh / 2f);
                 c.drawRoundRect(r, bw / 2f, bw / 2f, p);
                 break;
             }
             case "neon": {
-                float ph = h - 8 * d;
-                r.set(left + 4 * d, cy - ph / 2f, right - 4 * d, cy + ph / 2f);
+                float ph = h - 10 * d;
+                r.set(left + 5 * d, cy - ph / 2f, right - 5 * d, cy + ph / 2f);
                 p.setStyle(Paint.Style.STROKE);
                 if (on) {
-                    float[] sw = {8 * d, 5 * d, 2 * d};
-                    int[] al = {0x22, 0x44, 0xFF};
-                    for (int i = 0; i < 3; i++) {
-                        p.setStrokeWidth(sw[i]);
-                        p.setColor((al[i] << 24) | (accent & 0xFFFFFF));
-                        c.drawRoundRect(r, ph / 2f, ph / 2f, p);
-                    }
+                    // bordo senza alone: l'alone resta solo sul pallino
+                    p.setStrokeWidth(2 * d);
+                    p.setColor(accent);
+                    c.drawRoundRect(r, ph / 2f, ph / 2f, p);
                 } else {
                     p.setStrokeWidth(1.5f * d);
                     p.setColor((0x66 << 24) | (fg & 0xFFFFFF));
                     c.drawRoundRect(r, ph / 2f, ph / 2f, p);
                 }
-                float rr = rad - 4 * d;
+                float rr = rad - 5 * d;
                 if (on) {
                     p.setStyle(Paint.Style.FILL);
-                    p.setColor((0x22 << 24) | (accent & 0xFFFFFF));
+                    p.setColor((0x33 << 24) | (accent & 0xFFFFFF));
                     c.drawCircle(cx, cy, rr, p);
                     p.setStyle(Paint.Style.STROKE);
-                    float[] sw = {7 * d, 4.5f * d, 2.5f * d};
-                    int[] al = {0x22, 0x44, 0xFF};
-                    for (int i = 0; i < 3; i++) {
+                    float[] sw = {9 * d, 6 * d, 4 * d, 2.5f * d};
+                    int[] al = {0x33, 0x55, 0x99, 0xFF};
+                    for (int i = 0; i < 4; i++) {
                         p.setStrokeWidth(sw[i]);
                         p.setColor((al[i] << 24) | (accent & 0xFFFFFF));
                         c.drawCircle(cx, cy, rr, p);
@@ -231,9 +237,49 @@ final class SwitchPreviewDrawable extends Drawable {
                 }
                 break;
             }
+            case "lucido_3d": {
+                float top = cy - h / 2f + d, bot = cy + h / 2f - d;
+                int c1 = on ? mixc(accent, 0xFFFFFFFF, 0.30f) : 0xFF6A6F79;
+                int c2 = on ? mixc(accent, 0xFF000000, 0.40f) : 0xFF2B2E34;
+                r.set(left + d, top, right - d, bot);
+                p.setStyle(Paint.Style.FILL);
+                p.setColor(0xFF000000);
+                p.setShader(new LinearGradient(0, top, 0, bot, c1, c2, Shader.TileMode.CLAMP));
+                c.drawRoundRect(r, (bot - top) / 2f, (bot - top) / 2f, p);
+                p.setShader(null);
+                // bordo e riflesso sul bordo alto
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(1f * d);
+                p.setColor(0x55000000);
+                c.drawRoundRect(r, (bot - top) / 2f, (bot - top) / 2f, p);
+                p.setColor(0x44FFFFFF);
+                p.setStrokeWidth(1f * d);
+                r.set(left + d + 5 * d, top + 1.5f * d, right - d - 5 * d, top + 1.5f * d);
+                c.drawLine(r.left, r.top, r.right, r.top, p);
+                // pallino come una sfera lucida con ombra
+                float rr = rad - 2 * d;
+                p.setStyle(Paint.Style.FILL);
+                p.setColor(0x55000000);
+                c.drawCircle(cx, cy + 1.5f * d, rr, p);
+                p.setColor(0xFF000000);
+                p.setShader(new RadialGradient(cx - rr * 0.3f, cy - rr * 0.4f, rr * 1.4f,
+                        new int[]{0xFFFFFFFF, 0xFFE3E6EB, 0xFF9CA2AC}, new float[]{0f, 0.45f, 1f}, Shader.TileMode.CLAMP));
+                c.drawCircle(cx, cy, rr, p);
+                p.setShader(null);
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(1f * d);
+                p.setColor(0x44000000);
+                c.drawCircle(cx, cy, rr, p);
+                break;
+            }
             default:
                 break;
         }
+    }
+
+    private static int mixc(int a, int b, float t) {
+        int ar = (a >> 16) & 255, ag = (a >> 8) & 255, ab = a & 255, br = (b >> 16) & 255, bg = (b >> 8) & 255, bb = b & 255;
+        return 0xFF000000 | (Math.round(ar + (br - ar) * t) << 16) | (Math.round(ag + (bg - ag) * t) << 8) | Math.round(ab + (bb - ab) * t);
     }
 
     @Override public void setAlpha(int alpha) {}

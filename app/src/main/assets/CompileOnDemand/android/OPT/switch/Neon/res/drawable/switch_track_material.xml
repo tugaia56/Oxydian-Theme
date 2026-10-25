@@ -4,18 +4,6 @@
         <item android:gravity="fill_horizontal|center"><shape android:shape="rectangle">
 <corners android:radius="14dip" />
 <solid android:color="#00000000" />
-<stroke android:width="8dip" android:color="#22908dff" />
-<size android:height="28dip" />
-</shape></item>
-        <item android:gravity="fill_horizontal|center"><shape android:shape="rectangle">
-<corners android:radius="14dip" />
-<solid android:color="#00000000" />
-<stroke android:width="5dip" android:color="#44908dff" />
-<size android:height="28dip" />
-</shape></item>
-        <item android:gravity="fill_horizontal|center"><shape android:shape="rectangle">
-<corners android:radius="14dip" />
-<solid android:color="#00000000" />
 <stroke android:width="2dip" android:color="#908dff" />
 <size android:height="28dip" />
 </shape></item>
