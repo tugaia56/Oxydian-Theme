@@ -59,7 +59,8 @@ final class SwitchPreviewDrawable extends Drawable {
         }
         boolean ring = "Anello".equals(mVariant), onoff = mVariant.startsWith("ON_OFF"), btn = "Pulsante".equals(mVariant);
         if (ring || onoff || btn) { form(c, x, y, on, ring, onoff, btn); return; }
-        if ("Levetta".equals(mVariant) || "LED".equals(mVariant) || "Tacche".equals(mVariant) || "Neon".equals(mVariant) || "Lucido_3D".equals(mVariant)) {
+        if ("Levetta".equals(mVariant) || "LED".equals(mVariant) || "Tacche".equals(mVariant) || "Neon".equals(mVariant) || "Lucido_3D".equals(mVariant)
+                || "Spunta".equals(mVariant) || "Solo_punto".equals(mVariant) || "Quadrato".equals(mVariant)) {
             float w0 = 52 * d, h0 = 28 * d, cy0 = y + 15 * d, rad0 = 11 * d;
             float cx0 = on ? x + w0 - 3 * d - rad0 : x + 3 * d + rad0;
             special(c, p, r, mVariant.toLowerCase(java.util.Locale.ROOT), on, x, x + w0, cy0, h0, cx0, rad0, mFg, mAccent, d);
@@ -270,6 +271,69 @@ final class SwitchPreviewDrawable extends Drawable {
                 p.setStrokeWidth(1f * d);
                 p.setColor(0x44000000);
                 c.drawCircle(cx, cy, rr, p);
+                break;
+            }
+            case "spunta": {
+                float ph = h - 4 * d;
+                r.set(left + 2 * d, cy - ph / 2f, right - 2 * d, cy + ph / 2f);
+                p.setStyle(Paint.Style.FILL);
+                p.setColor(on ? accent : ((0x55 << 24) | (fg & 0xFFFFFF)));
+                c.drawRoundRect(r, ph / 2f, ph / 2f, p);
+                float tr = rad - 1 * d;
+                p.setColor(0xFFFFFFFF);
+                c.drawCircle(cx, cy, tr, p);
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(2.4f * d);
+                p.setStrokeCap(Paint.Cap.ROUND);
+                float s = tr * 0.5f;
+                if (on) {
+                    p.setColor(accent);
+                    c.drawLine(cx - s * 0.9f, cy + s * 0.1f, cx - s * 0.25f, cy + s * 0.75f, p);
+                    c.drawLine(cx - s * 0.25f, cy + s * 0.75f, cx + s, cy - s * 0.7f, p);
+                } else {
+                    p.setColor(0xFF6E727C);
+                    c.drawLine(cx - s * 0.7f, cy - s * 0.7f, cx + s * 0.7f, cy + s * 0.7f, p);
+                    c.drawLine(cx - s * 0.7f, cy + s * 0.7f, cx + s * 0.7f, cy - s * 0.7f, p);
+                }
+                p.setStrokeCap(Paint.Cap.BUTT);
+                break;
+            }
+            case "solo_punto": {
+                float mx = (left + right) / 2f;
+                float rr = rad * 0.62f;
+                if (on) {
+                    float gr = Math.max(h / 2f, rr * 2f);
+                    p.setStyle(Paint.Style.FILL);
+                    p.setColor(0xFF000000);
+                    p.setShader(new RadialGradient(mx, cy, gr,
+                            new int[]{(0xE6 << 24) | (accent & 0xFFFFFF), (0x80 << 24) | (accent & 0xFFFFFF),
+                                    (0x30 << 24) | (accent & 0xFFFFFF), (accent & 0xFFFFFF)},
+                            new float[]{0f, 0.35f, 0.7f, 1f}, Shader.TileMode.CLAMP));
+                    c.drawCircle(mx, cy, gr, p);
+                    p.setShader(null);
+                    p.setColor(accent);
+                    c.drawCircle(mx, cy, rr, p);
+                    p.setColor(0xAAFFFFFF);
+                    c.drawCircle(mx - rr * 0.3f, cy - rr * 0.3f, rr * 0.32f, p);
+                } else {
+                    p.setStyle(Paint.Style.STROKE);
+                    p.setStrokeWidth(2 * d);
+                    p.setColor((0xB0 << 24) | (fg & 0xFFFFFF));
+                    c.drawCircle(mx, cy, rr, p);
+                }
+                break;
+            }
+            case "quadrato": {
+                float bl = left + 4 * d, br = right - 4 * d, bt = cy - h / 2f + 2 * d, bb = cy + h / 2f - 2 * d;
+                r.set(bl, bt, br, bb);
+                p.setStyle(Paint.Style.FILL);
+                p.setColor(on ? accent : ((0x55 << 24) | (fg & 0xFFFFFF)));
+                c.drawRoundRect(r, 3 * d, 3 * d, p);
+                float s = (bb - bt) - 6 * d;
+                float sx = Math.max(bl + 3 * d + s / 2f, Math.min(br - 3 * d - s / 2f, cx));
+                r.set(sx - s / 2f, cy - s / 2f, sx + s / 2f, cy + s / 2f);
+                p.setColor(0xFFFFFFFF);
+                c.drawRoundRect(r, 3 * d, 3 * d, p);
                 break;
             }
             default:
