@@ -57,7 +57,7 @@ final class SwitchPreviewDrawable extends Drawable {
         boolean ring = "Anello".equals(mVariant), onoff = mVariant.startsWith("ON_OFF"), btn = "Pulsante".equals(mVariant);
         if (ring || onoff || btn) { form(c, x, y, on, ring, onoff, btn); return; }
         boolean sprite = "Sprite".equals(mVariant);
-        float th = ("Barra_media".equals(mVariant) ? 4f : 2f) * d;
+        float th = 2f * d;
         float bl = x + 3 * d, br = x + w - 3 * d, rad = 11 * d;
         p.setStyle(Paint.Style.FILL);
         int bar = sprite ? (on ? mAccent : a(mFg, 0x40)) : ("Barra_accento".equals(mVariant) && on ? mAccent : mFg);
@@ -66,7 +66,8 @@ final class SwitchPreviewDrawable extends Drawable {
         c.drawRoundRect(r, th / 2f, th / 2f, p);
         float sw = (sprite ? 1f : 1.5f) * d;
         float cx = on ? br - rad : bl + rad;
-        int fill = sprite ? a(mAccent, 0x59) : on ? a(mAccent, "Pallino_pieno".equals(mVariant) ? 0xFF : 0x59) : a(mFg, 0x22);
+        boolean full = "Pallino_pieno".equals(mVariant);
+        int fill = sprite ? a(mAccent, 0x59) : on ? a(mAccent, full ? 0xFF : 0x59) : a(mFg, full ? 0x99 : 0x22);
         p.setColor(fill);
         c.drawCircle(cx, cy, rad - sw / 2f, p);
         p.setStyle(Paint.Style.STROKE);
@@ -117,7 +118,7 @@ final class SwitchPreviewDrawable extends Drawable {
             c.drawText(on ? "ON" : "OFF", mid, cy - (t.ascent() + t.descent()) / 2f, t);
         } else {
             p.setStyle(Paint.Style.FILL);
-            p.setColor(on ? mAccent : 0xFF3A3E46);
+            p.setColor(on ? mAccent : 0xFF8A8F99);
             c.drawCircle(cx, cy, rad - 3f * d, p);
             p.setStyle(Paint.Style.STROKE);
             p.setStrokeWidth(1.5f * d);
