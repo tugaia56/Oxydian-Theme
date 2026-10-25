@@ -30,7 +30,7 @@ final class SwitchPreviewDrawable extends Drawable {
         mAccent = ThemePrefs.accentColor() | 0xFF000000;
     }
 
-    @Override public int getIntrinsicWidth() { return Math.round((52 + 14 + 52) * d); }
+    @Override public int getIntrinsicWidth() { return Math.round((52 + 14 + 52 + 16 + 20) * d); }
     @Override public int getIntrinsicHeight() { return Math.round(30 * d); }
 
     private static int a(int color, int alpha) { return (alpha << 24) | (color & 0xFFFFFF); }
@@ -40,6 +40,30 @@ final class SwitchPreviewDrawable extends Drawable {
         float top = getBounds().top, left = getBounds().left;
         one(c, left, top, false);
         one(c, left + (52 + 14) * d, top, true);
+        handle(c, left + (52 + 14 + 52 + 16 + 10) * d, top + 2 * d);
+    }
+
+    /** Maniglia centrale di selezione del testo dello stile: sempre a goccia, cambia riempimento e bordo. */
+    private void handle(Canvas c, float hx, float y) {
+        boolean ring = "Anello".equals(mVariant), sprite = "Sprite".equals(mVariant);
+        float sw = ring ? 2f * d : sprite ? 1f * d : 0f;
+        float R = 10 * d - sw / 2f;
+        float cy = y + 14 * d;
+        float k = R * 0.7071f;
+        android.graphics.Path t = new android.graphics.Path();
+        t.moveTo(hx, cy - R * 1.4142f);
+        t.lineTo(hx + k, cy - k);
+        t.arcTo(new RectF(hx - R, cy - R, hx + R, cy + R), -45f, 270f, false);
+        t.close();
+        p.setStyle(Paint.Style.FILL);
+        p.setColor(ring ? a(mAccent, 0x33) : sprite ? a(mAccent, 0x59) : mAccent);
+        c.drawPath(t, p);
+        if (sw > 0) {
+            p.setStyle(Paint.Style.STROKE);
+            p.setStrokeWidth(sw);
+            p.setColor(mAccent);
+            c.drawPath(t, p);
+        }
     }
 
     private void one(Canvas c, float x, float y, boolean on) {

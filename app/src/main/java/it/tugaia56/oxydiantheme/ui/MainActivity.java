@@ -676,7 +676,7 @@ public class MainActivity extends AppCompatActivity {
             mSubDefaultTab.setText(names[Math.max(0, Math.min(3, ThemePrefs.getDefaultTab()))]);
         }
         mSubProgress.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "progress"));
-        mSubSwitch.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "switch"));
+        mSubSwitch.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "switch") + "\n" + getString(R.string.card_switch_sub));
         mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg", "pindots", "pinnum"));
         boolean hideOn = !ThemePrefs.getOption(SYSTEMUI_PKG, "icons").isEmpty();
         mSubActivity.setText(hideOn ? getString(R.string.state_on_full) : getString(R.string.state_off));
