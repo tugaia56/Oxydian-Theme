@@ -83,8 +83,8 @@
     <string name="icopt_teardrop">Teardrop</string>
     <string name="icopt_diamond">Diamond</string>
     <string name="switch_in_use">In use: %1$s</string>
-    <string name="card_switch_sub">On/off switches, like the Wi-Fi one, and text selection drops</string>
-    <string name="card_switch">Switches and handles</string>
+    <string name="card_switch_sub">The on/off switches, like the Wi-Fi or Airplane mode ones</string>
+    <string name="card_switch">Switches</string>
     <string name="card_progress">Progress bar</string>
     <string name="card_pin">PIN keypad</string>
     <string name="card_activity">Network activity icons</string>
