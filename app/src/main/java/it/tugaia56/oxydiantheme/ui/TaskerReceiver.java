@@ -87,7 +87,7 @@ public class TaskerReceiver extends BroadcastReceiver {
                 Log.w(TAG, "Tasker: colore non valido " + v);
             }
         } else {
-            String m = SystemColorsDialog.matchPreset(ctx, group, v);
+            String m = SystemColorsDialog.matchPreset(ctx, group, ThemePrefs.legacy(group, v));
             if (m != null) ThemePrefs.setOption(pkg, group, m);
             else Log.w(TAG, "Tasker: preset sconosciuto " + v);
         }

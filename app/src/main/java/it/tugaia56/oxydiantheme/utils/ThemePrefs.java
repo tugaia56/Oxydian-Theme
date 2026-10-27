@@ -59,7 +59,13 @@ public final class ThemePrefs {
     public static void setDarkShadowBuilt(String pkg, String sig) { sp().edit().putString("ds_built_" + pkg, sig).commit(); }
 
     /** Scelta dell'utente in un gruppo di opzioni di un tema; stringa vuota = predefinito. */
-    public static String getOption(String pkg, String group) { return sp().getString("opt_" + pkg + "_" + group, ""); }
+    public static String getOption(String pkg, String group) { return legacy(group, sp().getString("opt_" + pkg + "_" + group, "")); }
+
+    /** Nomi di preset rinominati: la scelta salvata (o l'extra di Tasker) col vecchio nome vale per il nuovo. */
+    public static String legacy(String group, String choice) {
+        if ("background".equals(group) && "Blue_Gray_Dark".equals(choice)) return "Midnight_Slate";
+        return choice;
+    }
 
     public static void setOption(String pkg, String group, String choice) { sp().edit().putString("opt_" + pkg + "_" + group, choice == null ? "" : choice).commit(); }
 

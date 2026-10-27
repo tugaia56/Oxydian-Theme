@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  */
 final class CustomPalette {
     private static final String BASE = "CompileOnDemand/android/OPT/";
-    // colori del modello: accento "Blue" (0097ff, variante scura 007de2) e sfondo "Blue_Gray_Dark" (1b2029)
+    // colori del modello: accento "Blue" (0097ff, variante scura 007de2) e sfondo "Midnight_Slate" (1b2029, gia' Blue_Gray_Dark)
     private static final int TEMPLATE_BG = 0xFF1B2029;
 
     private CustomPalette() {}
@@ -42,7 +42,7 @@ final class CustomPalette {
 
     /** Contenuto delle risorse per uno sfondo a scelta (le sfumature seguono il modello). */
     static String backgroundBody(Context ctx, int color) {
-        String s = read(ctx, BASE + "background/Blue_Gray_Dark/res/values/type1b.xml");
+        String s = read(ctx, BASE + "background/Midnight_Slate/res/values/type1b.xml");
         float[] hc = new float[3], h0 = new float[3];
         rgbToHsl(color, hc);
         rgbToHsl(TEMPLATE_BG, h0);
