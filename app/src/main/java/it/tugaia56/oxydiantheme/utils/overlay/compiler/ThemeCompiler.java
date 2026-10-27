@@ -163,7 +163,9 @@ public final class ThemeCompiler {
                     "cp -f \"" + source + "/res/values/Obsidian.xml\" \"" + source + "/res/values-night/Obsidian.xml\"").exec();
         }
 
-        OverlayCompiler.keepNightDuplicates = extraValuesXml != null;
+        // Sempre: se la variante "notte" dell'overlay e' uguale a quella base, aapt2 la toglie, ma se l'app ha una sua variante
+        // "notte" (piu' specifica) vince quella dell'app e il colore dell'overlay non si vede (es. titolo di OneSync dopo l'aggiornamento).
+        OverlayCompiler.keepNightDuplicates = true;
         if (OverlayCompiler.createManifest(name, targetPackage, source)) return true;
         if (OverlayCompiler.runAapt(source, targetPackage)) return true;
         if (OverlayCompiler.zipAlign(ModuleConstants.UNSIGNED_UNALIGNED_DIR + "/" + name + "-unsigned-unaligned.apk")) return true;
