@@ -218,4 +218,7 @@ Remove their themes? A reboot is needed.</item>
     <string name="restart_now">Restart now</string>
     <string name="restart_later">Later</string>
     <string name="busy_styles">Wi-Fi, signal and settings icons…</string>
+    <string name="cat_accents_title">Accents by category</string>
+    <string name="cat_backgrounds_title">Backgrounds by category</string>
+    <string name="cat_count">%d colours</string>
 </resources>

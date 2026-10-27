@@ -217,4 +217,7 @@ Rimuovere i loro temi? Serve un riavvio.</item>
     <string name="restart_now">Riavvia ora</string>
     <string name="restart_later">Più tardi</string>
     <string name="busy_styles">Icone Wi-Fi, segnale e Impostazioni…</string>
+    <string name="cat_accents_title">Accenti per categoria</string>
+    <string name="cat_backgrounds_title">Sfondi per categoria</string>
+    <string name="cat_count">%d colori</string>
 </resources>

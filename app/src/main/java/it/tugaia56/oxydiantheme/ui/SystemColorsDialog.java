@@ -74,14 +74,14 @@ final class SystemColorsDialog {
     }
 
     private static void section(Context ctx, LinearLayout box, int titleRes, List<Swatch> items,
-                                String[] selection, int idx, int pad) {
+                                String[] selection, int idx, int pad, boolean plain) {
         final float d = ctx.getResources().getDisplayMetrics().density;
         final String key = PKG + "_" + (idx == 0 ? "accent" : "background");
         // elenco completo: Predefinito, tutti i preset (pallino + nome), Personalizzato
         final List<Swatch> all = new ArrayList<>();
-        all.add(new Swatch(OptionGroupsDialog.CUSTOM, ThemePrefs.getCustomColor(key)));
+        if (!plain) all.add(new Swatch(OptionGroupsDialog.CUSTOM, ThemePrefs.getCustomColor(key)));
         all.addAll(items);
-        all.add(new Swatch("", idx == 0 ? ThemePrefs.DEFAULT_ACCENT : 0xFF1B2029)); // Predefinito, in fondo
+        if (!plain) all.add(new Swatch("", idx == 0 ? ThemePrefs.DEFAULT_ACCENT : 0xFF1B2029)); // Predefinito, in fondo
 
         final List<TextView> labels = new ArrayList<>();
         final List<View> dots = new ArrayList<>();
@@ -270,6 +270,11 @@ final class SystemColorsDialog {
 
     /** @param which 0 = solo accento, 1 = solo sfondo */
     static void show(Context ctx, int which, Listener listener) {
+        show(ctx, which, listener, null, null);
+    }
+
+    /** Come sopra, ma con solo i colori di una categoria (only = cartelle ammesse, title = titolo della finestra). */
+    static void show(Context ctx, int which, Listener listener, java.util.Set<String> only, String title) {
         float d = ctx.getResources().getDisplayMetrics().density;
         int pad = (int) (16 * d);
         LinearLayout box = new LinearLayout(ctx);
@@ -280,8 +285,21 @@ final class SystemColorsDialog {
         List<Swatch> bg = load(ctx, "background", "type1b.xml", "background_dark");
         final String[] sel = {ThemePrefs.getOption(PKG, "accent"), ThemePrefs.getOption(PKG, "background")};
 
-        if (which == 0) section(ctx, box, R.string.sys_accent, acc, sel, 0, pad);
-        else section(ctx, box, R.string.sys_background, bg, sel, 1, pad);
+        if (which == 0) {
+            List<Swatch> shown = acc;
+            if (only != null) {
+                shown = new ArrayList<>();
+                for (Swatch sw : acc) if (only.contains(sw.name)) shown.add(sw);
+            }
+            section(ctx, box, R.string.sys_accent, shown, sel, 0, pad, only != null);
+        } else {
+            List<Swatch> shown = bg;
+            if (only != null) {
+                shown = new ArrayList<>();
+                for (Swatch sw : bg) if (only.contains(sw.name)) shown.add(sw);
+            }
+            section(ctx, box, R.string.sys_background, shown, sel, 1, pad, only != null);
+        }
 
         // ritocchi (valgono con un colore scelto, non con Predefinito)
         final int[] accSat = {ThemePrefs.getAccSat()};
@@ -309,7 +327,7 @@ final class SystemColorsDialog {
         ScrollView sv = new ScrollView(ctx);
         sv.addView(box);
         Dialogs.show(ctx, new MaterialAlertDialogBuilder(ctx)
-                .setTitle(which == 0 ? R.string.card_accent : R.string.card_background)
+                .setTitle(title != null ? title : ctx.getString(which == 0 ? R.string.card_accent : R.string.card_background))
                 .setView(sv)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(android.R.string.ok, (dlg, w) -> {
