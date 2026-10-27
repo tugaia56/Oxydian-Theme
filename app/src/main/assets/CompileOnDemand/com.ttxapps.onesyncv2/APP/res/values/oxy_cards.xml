@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="cardBackgroundColor" format="reference|color" />
-    <attr name="cardElevation" format="dimension" />
-    <attr name="shapeAppearance" format="reference" />
-    <attr name="strokeWidth" format="dimension" />
-    <attr name="strokeColor" format="reference|color" />
-    <attr name="colorSurfaceContainerLow" format="reference|color" />
-    <attr name="shapeAppearanceCornerMedium" format="reference" />
+    <attr name="cardNormalBackgroundColor" format="reference|color" />
+    <dimen name="card_horizontal_padding">16.0dip</dimen>
+    <dimen name="card_vertical_padding">8.0dip</dimen>
 
-    <!-- card dell'app (MaterialCardView, stile Elevated): stesse impostazioni dell'originale piu' il bordo accento di 1 dp -->
-    <style name="Widget.Material3.CardView.Elevated" parent="">
-        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLow</item>
-        <item name="cardElevation">1.0dip</item>
-        <item name="shapeAppearance">?attr/shapeAppearanceCornerMedium</item>
-        <item name="strokeWidth">1.0dip</item>
-        <item name="strokeColor">@*android:color/accent_material_dark</item>
+    <!-- contenuto delle card: stesso stile dell'app, piu' il bordo accento come primo piano (l'app cambia lo sfondo da codice).
+         abc_ratingbar_small_material e' un disegno non usato dall'app, qui riutilizzato come bordo. -->
+    <style name="Widget.MyTheme.CardContent" parent="">
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/abc_ratingbar_material</item>
+        <item name="android:foreground">@drawable/abc_ratingbar_small_material</item>
+        <item name="android:paddingTop">@dimen/card_vertical_padding</item>
+        <item name="android:paddingBottom">@dimen/card_vertical_padding</item>
+        <item name="android:paddingStart">@dimen/card_horizontal_padding</item>
+        <item name="android:paddingEnd">@dimen/card_horizontal_padding</item>
     </style>
 </resources>
