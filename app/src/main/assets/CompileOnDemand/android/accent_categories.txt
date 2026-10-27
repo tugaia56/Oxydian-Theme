@@ -1,9 +1,9 @@
 Pastello|Pastel|Pastel_Blue,Pastel_Pink,Pastel_Green,Pastel_Lavender,Pastel_Mint,Pastel_Peach,Pastel_Yellow,Pastel_Lilac,Pastel_Aqua,Pastel_Coral,Pastel_Orange
 Colori Google|Google colours|Google_Red,Google_Yellow,Google_Green,Blue_Android,Pixel_Blue,Green_Android,Orange_Android,Yellow_Dark
-Tonalità di rosso|Shades of red|Red,Red_Dark,Red_Deep,Red_Deep_Dark,Red_Umbrella,Coral,Coral_Vivid,Star_Wars,Google_Red,Pastel_Coral
-Arancioni e gialli|Oranges and yellows|Orange,Orange_Android,Crayola,McLaren,Indian_Yellow,Yellow,Yellow_Dark,Google_Yellow,Pastel_Orange,Pastel_Peach,Pastel_Yellow
-Tonalità di verde|Shades of green|Green_Android,Green_Dark,Green_Fluorescent,Green_Fluorish,Pastel_Green,Lime,Chartreuse_Green,Teal,Teal_Dark,Turquoise,Google_Green,Pastel_Mint
-Tonalità di blu|Shades of blue|Blue,Blue_Android,Blue_Green,Cyano,Indigo,Pixel_Blue,Sky_Blue,Air_Force_Blue,YInMn_Blue,Pastel_Blue,Pastel_Aqua
-Viola e rosa|Purples and pinks|Purple,Purple_Dark,Purple_Fluorescent,Deep_Purple,Violet,Violet_Dark,Fuchsia,Fuchsia_Light,Taupe,Heliotrope,Tyrian_Purple,Copying_Pencil,Pastel_Pink,Pastel_Lavender,Pastel_Lilac
+Tonalità di rosso|Shades of red|Red,Red_Dark,Red_Deep,Red_Deep_Dark,Red_Umbrella,Coral,Coral_Vivid,Star_Wars
+Arancioni e gialli|Oranges and yellows|Orange,Crayola,McLaren,Indian_Yellow,Yellow
+Tonalità di verde|Shades of green|Green_Dark,Green_Fluorescent,Green_Fluorish,Lime,Chartreuse_Green,Teal,Teal_Dark,Turquoise
+Tonalità di blu|Shades of blue|Blue,Blue_Green,Cyano,Indigo,Sky_Blue,Air_Force_Blue,YInMn_Blue
+Viola e rosa|Purples and pinks|Purple,Purple_Dark,Purple_Fluorescent,Deep_Purple,Violet,Violet_Dark,Fuchsia,Fuchsia_Light,Taupe,Heliotrope,Tyrian_Purple,Copying_Pencil
 Grigi e marroni|Greys and browns|Gray_400,Gray_500,Blue_Gray_300,Blue_Gray_400,Blue_Gray_500,Blue_Gray_600,Blue_Gray_700,Van_Dyke_Brown,Mummy_Brown
-Nomi famosi|Famous names|McLaren,Star_Wars,Red_Umbrella,Crayola,Pixel_Blue,YInMn_Blue,Tyrian_Purple,Van_Dyke_Brown,Mummy_Brown,Indian_Yellow,Heliotrope,Air_Force_Blue,Chartreuse_Green,Copying_Pencil
+Nomi famosi|Famous names|

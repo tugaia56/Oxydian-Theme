@@ -36,7 +36,7 @@ final class ColorCategories {
                 if (p.length < 3 || line.startsWith("#")) continue;
                 Set<String> names = new LinkedHashSet<>();
                 for (String n : p[2].split(",")) if (!n.trim().isEmpty()) names.add(n.trim());
-                out.add(new Cat(it ? p[0].trim() : p[1].trim(), names));
+                if (!names.isEmpty()) out.add(new Cat(it ? p[0].trim() : p[1].trim(), names));
             }
         } catch (Exception ignored) {}
         return out;
