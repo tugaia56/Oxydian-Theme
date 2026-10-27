@@ -641,6 +641,11 @@ public class MainActivity extends AppCompatActivity {
         tintBottomNav();
         float d = getResources().getDisplayMetrics().density;
         for (View c : mCards) {
+            android.graphics.drawable.Drawable grad = GradBorder.card(getColor(R.color.card), 14 * d, d, ThemePrefs.accentColor());
+            if (grad != null) {
+                c.setBackground(grad);
+                continue;
+            }
             android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable();
             g.setColor(getColor(R.color.card));
             g.setCornerRadius(14 * d);
