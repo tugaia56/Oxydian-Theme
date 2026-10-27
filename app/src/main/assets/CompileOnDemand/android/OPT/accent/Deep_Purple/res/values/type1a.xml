@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="accent_material_dark">#78038C</color>
-    <color name="accent_material_light">#0c6318</color>
+    <color name="accent_material_light">#5c0070</color>
     <color name="holo_blue_light">#78038C</color>
     <color name="keyguard_avatar_frame_pressed_color">#4078038C</color>
     <color name="holo_red_light">#cc78038C</color>
