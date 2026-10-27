@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:width="52dp" android:height="32dp" android:gravity="center"><shape android:shape="rectangle"><size android:width="52dp" android:height="32dp"/><solid android:color="#00FFFFFF"/></shape></item>
-    <item android:width="40dp" android:height="2dp" android:gravity="center">
-        <shape android:shape="rectangle"><corners android:radius="1dp"/><solid android:color="#FFFFFFFF"/></shape>
+    <item android:width="52.0dip" android:height="32.0dip" android:gravity="center">
+        <shape android:shape="rectangle">
+            <size android:width="52.0dip" android:height="32.0dip" />
+            <solid android:color="#00000000" />
+        </shape>
+    </item>
+    <item android:gravity="fill" android:left="4.0dip" android:right="4.0dip">
+        <selector>
+            <item android:drawable="@*android:drawable/switch_track_material" />
+        </selector>
     </item>
 </layer-list>

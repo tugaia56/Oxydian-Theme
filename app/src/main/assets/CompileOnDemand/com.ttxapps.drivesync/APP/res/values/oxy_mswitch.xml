@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Senza tinta, MaterialSwitch usa i disegni di sistema del Theme (scelta "Interruttori") cosi' come sono -->
+    <item name="mtrl_switch_thumb_tint" type="color">@null</item>
+    <item name="mtrl_switch_track_tint" type="color">@null</item>
+    <item name="mtrl_switch_track_decoration_tint" type="color">@null</item>
+    <item name="mtrl_switch_thumb_icon_tint" type="color">@null</item>
+</resources>
