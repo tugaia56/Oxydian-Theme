@@ -64,6 +64,11 @@ public final class ThemePrefs {
     /** Nomi di preset rinominati: la scelta salvata (o l'extra di Tasker) col vecchio nome vale per il nuovo. */
     public static String legacy(String group, String choice) {
         if ("background".equals(group) && "Blue_Gray_Dark".equals(choice)) return "Midnight_Slate";
+        if ("accent".equals(group)) {
+            if ("Pale_Blue".equals(choice)) return "Pastel_Blue";
+            if ("Pink".equals(choice)) return "Pastel_Pink";
+            if ("Green_New".equals(choice)) return "Pastel_Green";
+        }
         return choice;
     }
 
