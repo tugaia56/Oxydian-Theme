@@ -87,7 +87,7 @@ public class OverlayCompiler {
     private static String getAAPT2Command(String source, String name, String outputDir) {
         String folderCommand = "rm -rf " + source + "/compiled; mkdir " + source + "/compiled; [ -d " + source + "/compiled ] && ";
         String compileCommand = aapt2 + " compile --dir " + source + "/res -o " + source + "/compiled && ";
-        String linkCommand = aapt2 + " link -o " + outputDir + '/' + name + " -I " + FRAMEWORK_DIR + " --manifest " + source + "/AndroidManifest.xml " + source + "/compiled/* --auto-add-overlay" + (keepNightDuplicates ? " --no-resource-deduping" : "");
+        String linkCommand = aapt2 + " link -o " + outputDir + '/' + name + " -I " + FRAMEWORK_DIR + " --manifest " + source + "/AndroidManifest.xml " + source + "/compiled/* --auto-add-overlay --no-resource-removal" + (keepNightDuplicates ? " --no-resource-deduping" : "");
         return folderCommand + compileCommand + linkCommand;
     }
 
