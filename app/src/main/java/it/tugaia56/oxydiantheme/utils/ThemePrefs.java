@@ -177,8 +177,6 @@ public final class ThemePrefs {
     public static void setBgSat(int v) { sp().edit().putInt("tweak_bg_sat", v).commit(); }
     public static int getBgLight() { return sp().getInt("tweak_bg_light", 0); }
     public static void setBgLight(int v) { sp().edit().putInt("tweak_bg_light", v).commit(); }
-    public static boolean isBgPitch() { return sp().getBoolean("tweak_bg_pitch", false); }
-    public static void setBgPitch(boolean on) { sp().edit().putBoolean("tweak_bg_pitch", on).commit(); }
 
     /** Integrazione con Tasker/MacroDroid (broadcast per cambiare i colori): spenta di default. */
     public static boolean isTaskerEnabled() { return sp().getBoolean("tasker_enabled", false); }

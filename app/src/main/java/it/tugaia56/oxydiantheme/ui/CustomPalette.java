@@ -83,35 +83,23 @@ final class CustomPalette {
         return inner(read(ctx, BASE + group + "/" + choice + "/res/values/" + file));
     }
 
-    /** Luminosita' (0..1) del colore background_dark in un corpo di risorse, o -1. */
-    static float bgDarkLightness(String body) {
-        Matcher m = Pattern.compile("name=\"background_dark\">#([0-9a-fA-F]{6,8})<").matcher(body);
-        if (!m.find()) return -1f;
-        String hex = m.group(1);
-        int rgb = Integer.parseInt(hex.substring(hex.length() - 6), 16);
-        float[] hsl = new float[3];
-        rgbToHsl(0xFF000000 | rgb, hsl);
-        return hsl[2];
-    }
 
     /**
-     * Ritocca un colore: saturazione in % (100 = invariata), luminosita' in punti % (0 = invariata),
-     * nero puro: la luminosita' del colore di fondo l0 diventa 0 e il resto si riallinea.
+     * Ritocca un colore: saturazione in % (100 = invariata), luminosita' in punti % (0 = invariata).
      */
-    static int tweakColor(int rgb, int satPct, int lightPts, boolean pitch, float l0) {
+    static int tweakColor(int rgb, int satPct, int lightPts) {
         float[] hx = new float[3];
         rgbToHsl(0xFF000000 | rgb, hx);
         boolean neutralExtreme = hx[1] < 0.05f && (hx[2] > 0.85f || hx[2] < 0.03f);
         if (neutralExtreme) return rgb & 0xFFFFFF;
         float s = clamp(hx[1] * satPct / 100f);
         float l = hx[2];
-        if (pitch && l0 > 0f) l = l <= l0 ? 0f : (l - l0) / (1f - l0);
         l = clamp(l + lightPts / 100f);
         return hslToRgb(hx[0], s, l) & 0xFFFFFF;
     }
 
     /** Applica i ritocchi a tutti i colori espliciti di un corpo di risorse (i riferimenti restano). */
-    static String tweakBody(String body, int satPct, int lightPts, boolean pitch, float l0) {
+    static String tweakBody(String body, int satPct, int lightPts) {
         Pattern p = Pattern.compile("(<color name=\"[^\"]+\">)#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})(</color>)");
         Matcher m = p.matcher(body);
         StringBuffer out = new StringBuffer();
@@ -129,7 +117,7 @@ final class CustomPalette {
             if (alpha == 0) {
                 nh = hex;
             } else {
-                int res = tweakColor(rgb, satPct, lightPts, pitch, l0);
+                int res = tweakColor(rgb, satPct, lightPts);
                 nh = hex.length() == 8 ? String.format("%02x%06x", alpha, res) : String.format("%06x", res);
             }
             m.appendReplacement(out, Matcher.quoteReplacement(m.group(1) + "#" + nh + m.group(3)));

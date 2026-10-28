@@ -175,19 +175,16 @@ final class SystemColorsDialog {
         if (a == null) return null;
         int sat = ThemePrefs.getAccSat();
         if (sat == 100) return a;
-        return 0xFF000000 | CustomPalette.tweakColor(a & 0xFFFFFF, sat, 0, false, 0f);
+        return 0xFF000000 | CustomPalette.tweakColor(a & 0xFFFFFF, sat, 0);
     }
 
-    /** Sfondo effettivo: quello scelto con saturazione, luminosita' e nero puro (null = predefinito). */
+    /** Sfondo effettivo: quello scelto con saturazione e luminosita' (null = predefinito). */
     static Integer effBg(Context ctx) {
         Integer b = currentBg(ctx);
         if (b == null) return null;
         int sat = ThemePrefs.getBgSat(), light = ThemePrefs.getBgLight();
-        boolean pitch = ThemePrefs.isBgPitch();
-        if (sat == 100 && light == 0 && !pitch) return b;
-        float l0 = CustomPalette.bgDarkLightness(CustomPalette.baseBody(ctx, "background",
-                ThemePrefs.getOption(PKG, "background"), ThemePrefs.getCustomColor(PKG + "_background")));
-        return 0xFF000000 | CustomPalette.tweakColor(b & 0xFFFFFF, sat, light, pitch, Math.max(l0, 0f));
+        if (sat == 100 && light == 0) return b;
+        return 0xFF000000 | CustomPalette.tweakColor(b & 0xFFFFFF, sat, light);
     }
 
     /** Accento scelto (null = predefinito). */
@@ -305,19 +302,9 @@ final class SystemColorsDialog {
         final int[] accSat = {ThemePrefs.getAccSat()};
         final int[] bgSat = {ThemePrefs.getBgSat()};
         final int[] bgLight = {ThemePrefs.getBgLight()};
-        final boolean[] pitch = {ThemePrefs.isBgPitch()};
         if (which == 0) {
             slider(ctx, box, R.string.tweak_sat_accent, 0, 200, 5, accSat, false, 100);
         } else {
-            com.google.android.material.materialswitch.MaterialSwitch sw =
-                    new com.google.android.material.materialswitch.MaterialSwitch(ctx);
-            sw.setText(R.string.tweak_pitch);
-            sw.setTextColor(ctx.getColor(R.color.text));
-            sw.setChecked(pitch[0]);
-            Tint.sw(sw);
-            sw.setPadding(0, (int) (14 * d), 0, 0);
-            sw.setOnCheckedChangeListener((b, on) -> pitch[0] = on);
-            box.addView(sw);
             slider(ctx, box, R.string.tweak_sat_bg, 0, 200, 5, bgSat, false, 100);
             slider(ctx, box, R.string.tweak_light_bg, -10, 10, 1, bgLight, true, 0);
         }
@@ -338,7 +325,6 @@ final class SystemColorsDialog {
                     } else {
                         ThemePrefs.setBgSat(bgSat[0]);
                         ThemePrefs.setBgLight(bgLight[0]);
-                        ThemePrefs.setBgPitch(pitch[0]);
                     }
                     int c = ThemePrefs.accentColor();
                     for (Swatch s : acc) if (s.name.equals(sel[0])) c = s.color;

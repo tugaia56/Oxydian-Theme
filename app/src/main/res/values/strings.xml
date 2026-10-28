@@ -165,8 +165,7 @@
     <string name="tweak_sat_accent">Accent saturation</string>
     <string name="tweak_sat_bg">Background saturation</string>
     <string name="tweak_light_bg">Background lightness</string>
-    <string name="tweak_pitch">Pure black</string>
-    <string name="tweak_note">Pure black: the base becomes black and the lighter parts (cards, buttons) keep the tint of the chosen colour. Saturation: lower = greyer, higher = more colourful. Lightness: moves the background towards light or dark. Tweaks only apply with a chosen colour (not Default).</string>
+    <string name="tweak_note">Saturation: lower = greyer, higher = more colourful. Lightness: moves the background towards light or dark. Tweaks only apply with a chosen colour (not Default).</string>
     <string name="tweak_reset">Reset</string>
     <string name="card_tasker">Colour automation</string>
     <string name="state_on_simple">On</string>

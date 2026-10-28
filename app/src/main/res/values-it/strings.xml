@@ -164,8 +164,7 @@
     <string name="tweak_sat_accent">Saturazione accento</string>
     <string name="tweak_sat_bg">Saturazione sfondo</string>
     <string name="tweak_light_bg">Luminosità sfondo</string>
-    <string name="tweak_pitch">Nero puro</string>
-    <string name="tweak_note">Nero puro: il fondo diventa nero e le parti più chiare (riquadri, pulsanti) mantengono la tinta del colore scelto. Saturazione: più bassa = più grigio, più alta = più colorato. Luminosità: sposta lo sfondo verso il chiaro o lo scuro. I ritocchi valgono solo con un colore scelto (non con Predefinito).</string>
+    <string name="tweak_note">Saturazione: più bassa = più grigio, più alta = più colorato. Luminosità: sposta lo sfondo verso il chiaro o lo scuro. I ritocchi valgono solo con un colore scelto (non con Predefinito).</string>
     <string name="tweak_reset">Azzera</string>
     <string name="card_tasker">Automazione colori</string>
     <string name="state_on_simple">Attiva</string>

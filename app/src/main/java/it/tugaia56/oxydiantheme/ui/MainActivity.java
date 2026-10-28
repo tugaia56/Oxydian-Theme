@@ -1041,7 +1041,7 @@ public class MainActivity extends AppCompatActivity {
         if (ds && SystemColorsDialog.PKG.equals(pkg)) {
             sb.append("|ripple=").append(ThemePrefs.getRippleAlpha());
             sb.append("|tw=").append(ThemePrefs.getAccSat()).append(',').append(ThemePrefs.getBgSat())
-                    .append(',').append(ThemePrefs.getBgLight()).append(',').append(ThemePrefs.isBgPitch());
+                    .append(',').append(ThemePrefs.getBgLight());
         }
         if ((ds && !SystemColorsDialog.PKG.equals(pkg)) || usesRipple(pkg)) sb.append("|rpl=").append(ThemePrefs.getRippleAlpha());
         if (ds && SYSTEMUI_PKG.equals(pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav"));
@@ -1061,17 +1061,16 @@ public class MainActivity extends AppCompatActivity {
             StringBuilder body = new StringBuilder();
             String accSel = ThemePrefs.getOption(pkg, "accent"), bgSel = ThemePrefs.getOption(pkg, "background");
             boolean accTw = !accSel.isEmpty() && ThemePrefs.getAccSat() != 100;
-            boolean bgTw = !bgSel.isEmpty() && (ThemePrefs.isBgPitch() || ThemePrefs.getBgSat() != 100 || ThemePrefs.getBgLight() != 0);
+            boolean bgTw = !bgSel.isEmpty() && (ThemePrefs.getBgSat() != 100 || ThemePrefs.getBgLight() != 0);
             if (OptionGroupsDialog.CUSTOM.equals(accSel) || accTw) {
                 String b = CustomPalette.baseBody(ctx, "accent", accSel, ThemePrefs.getCustomColor(pkg + "_accent"));
-                if (accTw) b = CustomPalette.tweakBody(b, ThemePrefs.getAccSat(), 0, false, 0f);
+                if (accTw) b = CustomPalette.tweakBody(b, ThemePrefs.getAccSat(), 0);
                 body.append(b);
             }
             if (OptionGroupsDialog.CUSTOM.equals(bgSel) || bgTw) {
                 String b = CustomPalette.baseBody(ctx, "background", bgSel, ThemePrefs.getCustomColor(pkg + "_background"));
                 if (bgTw) {
-                    float l0 = Math.max(CustomPalette.bgDarkLightness(b), 0f);
-                    b = CustomPalette.tweakBody(b, ThemePrefs.getBgSat(), ThemePrefs.getBgLight(), ThemePrefs.isBgPitch(), l0);
+                    b = CustomPalette.tweakBody(b, ThemePrefs.getBgSat(), ThemePrefs.getBgLight());
                 }
                 body.append(b);
             }

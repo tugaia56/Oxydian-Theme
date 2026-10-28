@@ -24,7 +24,6 @@ import it.tugaia56.oxydiantheme.utils.overlay.compiler.ThemeCompiler;
  * (con il pacchetto it.tugaia56.oxydian.theme). Extra (si mandano solo quelli da cambiare):
  *   accent, background        nome di un preset (es. Violet), "#RRGGBB" oppure "default"
  *   randomColor               true = accento a caso
- *   pitchBlack                true/false
  *   accentSaturation, backgroundSaturation   0..200 (100 = invariata)
  *   backgroundLightness       -10..10 (0 = invariata)
  * Funziona se i colori di sistema sono gia' stati applicati almeno una volta dall'app.
@@ -102,8 +101,6 @@ public class TaskerReceiver extends BroadcastReceiver {
             ThemePrefs.setCustomColor(pkg + "_accent", Color.HSVToColor(hsv) | 0xFF000000);
             ThemePrefs.setOption(pkg, "accent", OptionGroupsDialog.CUSTOM);
         }
-        Boolean pitch = boolExtra(b, "pitchBlack");
-        if (pitch != null) ThemePrefs.setBgPitch(pitch);
         Integer as = intExtra(b, "accentSaturation");
         if (as != null && as >= 0 && as <= 200) ThemePrefs.setAccSat(as);
         Integer bs = intExtra(b, "backgroundSaturation");
