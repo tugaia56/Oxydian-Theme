@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="MediaControlView_ad_remaining_time">Annuncio · %1$ rimanenti</string>
+    <string name="MediaControlView_ad_remaining_time">Annuncio · %1$s rimanenti</string>
     <string name="MediaControlView_ad_skip_wait_time">Puoi saltare l\'annuncio in %1$ds</string>
     <string name="MediaControlView_ad_text">Visita l\'inserzionista</string>
     <string name="MediaControlView_audio_track_none_text">Nessuno</string>
