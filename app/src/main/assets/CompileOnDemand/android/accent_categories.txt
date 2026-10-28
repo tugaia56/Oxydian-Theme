@@ -10,3 +10,5 @@ Viola|Purples|Purple,Violet,Violet_Dark,Purple_Dark,Deep_Purple,Taupe
 Grigi|Greys|Gray_400,Gray_500,Blue_Gray_300,Blue_Gray_400,Blue_Gray_500,Blue_Gray_600,Blue_Gray_700
 Nomi famosi|Famous names|McLaren,Star_Wars,Red_Umbrella,Crayola,Pixel_Blue,Copying_Pencil,Air_Force_Blue
 Pigmenti storici|Historic pigments|Mummy_Brown,Van_Dyke_Brown,Tyrian_Purple,Indian_Yellow,YInMn_Blue,Heliotrope,Chartreuse_Green
+Material caldi|Material warm|Material_Red,Material_Pink,Material_Deep_Orange,Material_Orange,Material_Amber,Material_Yellow,Material_Lime,Material_Brown,Material_Grey
+Material freddi|Material cool|Material_Light_Green,Material_Green,Material_Teal,Material_Cyan,Material_Light_Blue,Material_Blue,Material_Indigo,Material_Deep_Purple,Material_Purple,Material_Blue_Grey
