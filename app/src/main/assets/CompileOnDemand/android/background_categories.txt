@@ -1,5 +1,5 @@
-Neri e grigi|Blacks and greys|Black_Amoled,Onyx,Eerie,Taupe,Grey,Grey_Night,Dark_Gray,Light_Grey,Dark_Steel,Night
-Tonalità di blu|Shades of blue|Abyss_Blue,Midnight_Slate,Blue_Gray,Dark_Blue
-Tonalità di verde|Shades of green|Dark_Green,Green
-Viola e rosa|Purples and pinks|Dark_Purple,Deep_Purple,Dark_Pink
+Neri|Blacks|Black_Amoled,Taupe,Eerie,Onyx,Dark_Gray
+Grigi|Greys|Grey,Grey_Night,Light_Grey,Dark_Steel,Night
+Blu notte|Night blues|Abyss_Blue,Midnight_Slate,Blue_Gray,Dark_Blue
+Verdi e viola|Greens and purples|Dark_Green,Green,Dark_Purple,Deep_Purple,Dark_Pink
 Trasparenti|Transparent|Transparency_Lower,Transparency_Medium,Transparency_Higher,Transparency_Crazy_Full
