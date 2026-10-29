@@ -1,0 +1,6 @@
+Added:
+- Backup and restore: also holds the date format, time format and "Backup folder" (choose once where to save, then "Save backup" writes there without asking) and "Delete backups" (removes only the Theme backups)
+Changed:
+- Transparent backgrounds: the levels now really differ (Low, Medium, High, Crazy Full) and work in Settings and in Oxydian too. Choosing a transparent background turns off Oxydian's system background, which was covering it
+- The app dialogs stay solid and readable with transparent backgrounds
+- The backup folder shows the full path
