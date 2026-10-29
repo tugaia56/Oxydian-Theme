@@ -1,6 +1,0 @@
-Aggiunto:
-- Backup e ripristino: contiene anche formato data, formato ora e "Cartella backup" (scegli una volta dove salvare, poi "Salva backup" scrive lì senza chiedere) e "Elimina backup" (toglie solo i backup del Theme)
-Aggiornato:
-- Sfondi trasparenti: i livelli ora si distinguono davvero (Bassa, Media, Alta, Crazy Full) e funzionano anche in Impostazioni e in Oxydian. Scegliendo uno sfondo trasparente il Theme spegne lo sfondo di sistema di Oxydian, che lo copriva
-- Le finestre dell'app restano solide e leggibili con gli sfondi trasparenti
-- La cartella backup mostra il percorso completo
