@@ -239,12 +239,56 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void backupDialog() {
+        float d = getResources().getDisplayMetrics().density;
+        android.widget.LinearLayout col = new android.widget.LinearLayout(this);
+        col.setOrientation(android.widget.LinearLayout.VERTICAL);
+        col.setPadding((int) (22 * d), (int) (4 * d), (int) (22 * d), 0);
+        TextView msg = new TextView(this);
+        msg.setText(R.string.backup_message);
+        msg.setTextColor(getColor(R.color.text_dim));
+        msg.setTextSize(14);
+        msg.setPadding(0, 0, 0, (int) (8 * d));
+        col.addView(msg);
+        TextView[] subs = new TextView[3];
+        int[] titles = {R.string.card_backup_date, R.string.card_backup_time, R.string.card_backup_folder};
+        Runnable[] actions = {() -> backupNameDialog(true), () -> backupNameDialog(false), this::backupFolderDialog};
+        android.util.TypedValue ripple = new android.util.TypedValue();
+        getTheme().resolveAttribute(android.R.attr.selectableItemBackground, ripple, true);
+        for (int i = 0; i < 3; i++) {
+            android.widget.LinearLayout row = new android.widget.LinearLayout(this);
+            row.setOrientation(android.widget.LinearLayout.VERTICAL);
+            row.setPadding(0, (int) (10 * d), 0, (int) (10 * d));
+            row.setBackgroundResource(ripple.resourceId);
+            row.setClickable(true);
+            TextView t = new TextView(this);
+            t.setText(titles[i]);
+            t.setTextColor(getColor(R.color.text));
+            t.setTextSize(15);
+            t.setTypeface(null, android.graphics.Typeface.BOLD);
+            TextView sub = new TextView(this);
+            sub.setTextColor(getColor(R.color.text_dim));
+            sub.setTextSize(12);
+            row.addView(t);
+            row.addView(sub);
+            final Runnable a = actions[i];
+            row.setOnClickListener(v -> a.run());
+            subs[i] = sub;
+            col.addView(row);
+        }
+        mBackupRowsRefresh = () -> {
+            subs[0].setText(stampExample(ThemePrefs.getBackupDate()));
+            String bt = ThemePrefs.getBackupTime();
+            subs[1].setText(bt.isEmpty() ? getString(R.string.backup_time_none) : stampExample(bt));
+            subs[2].setText(backupFolderLabel());
+        };
+        mBackupRowsRefresh.run();
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.card_backup)
-                .setMessage(R.string.backup_message)
-                .setPositiveButton(R.string.backup_save, (d, w) -> saveBackup())
-                .setNeutralButton(R.string.backup_restore, (d, w) -> mBackupLoad.launch(new String[]{"application/json", "text/plain", "*/*"}))
-                .setNegativeButton(R.string.legend_close, null));
+                .setView(col)
+                .setPositiveButton(R.string.backup_save, (dd, w) -> saveBackup())
+                .setNeutralButton(R.string.backup_restore, (dd, w) -> mBackupLoad.launch(new String[]{"application/json", "text/plain", "*/*"}))
+                .setNegativeButton(R.string.legend_close, null)
+                .setOnDismissListener(dd -> mBackupRowsRefresh = null));
     }
 
     @Override
@@ -464,7 +508,8 @@ public class MainActivity extends AppCompatActivity {
                 }));
     }
 
-    private TextView mSubBackupDate, mSubBackupTime, mSubBackupFolder;
+    /** Righe formato data / ora / cartella nel riquadro del backup, aperte solo quando il riquadro e' visibile. */
+    private Runnable mBackupRowsRefresh;
 
     /** Esempio di adesso + spiegazione del formato (in italiano: giorno-mese-anno ecc.). */
     private String backupLabel(String p) {
@@ -578,24 +623,6 @@ public class MainActivity extends AppCompatActivity {
         row3.addView(makeCard(R.string.card_credits, sub, () -> SettingsPage.credits(this)));
         sub[0].setText(R.string.card_credits_sub);
         box.addView(row3);
-        android.widget.LinearLayout row5 = new android.widget.LinearLayout(this);
-        row5.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-        row5.addView(makeCard(R.string.card_backup_date, sub, () -> backupNameDialog(true)));
-        mSubBackupDate = sub[0];
-        row5.addView(makeCard(R.string.card_backup_time, sub, () -> backupNameDialog(false)));
-        mSubBackupTime = sub[0];
-        box.addView(row5);
-        android.widget.LinearLayout row6 = new android.widget.LinearLayout(this);
-        row6.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-        row6.addView(makeCard(R.string.card_backup_folder, sub, this::backupFolderDialog));
-        mSubBackupFolder = sub[0];
-        View sp7 = new View(this);
-        android.widget.LinearLayout.LayoutParams sp7lp = new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
-        int sp7m = (int) (4 * getResources().getDisplayMetrics().density);
-        sp7lp.setMargins(sp7m, sp7m, sp7m, sp7m);
-        sp7.setLayoutParams(sp7lp);
-        row6.addView(sp7);
-        box.addView(row6);
         TextView ver = new TextView(this);
         String v = "";
         try { v = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; } catch (Exception ignored) {}
@@ -784,12 +811,7 @@ public class MainActivity extends AppCompatActivity {
         if (mSubVariant != null) {
             mSubVariant.setText(SystemVariant.label(this, ThemePrefs.getSystemVariant()) + "\n" + getString(R.string.card_variant_sub));
         }
-        if (mSubBackupDate != null) {
-            mSubBackupDate.setText(stampExample(ThemePrefs.getBackupDate()));
-            String bt = ThemePrefs.getBackupTime();
-            mSubBackupTime.setText(bt.isEmpty() ? getString(R.string.backup_time_none) : stampExample(bt));
-        }
-        if (mSubBackupFolder != null) mSubBackupFolder.setText(backupFolderLabel());
+        if (mBackupRowsRefresh != null) mBackupRowsRefresh.run();
         if (mSubTasker != null)
             mSubTasker.setText(ThemePrefs.isTaskerEnabled() ? R.string.state_on_simple : R.string.state_off);
         if (mSubDefaultTab != null) {
