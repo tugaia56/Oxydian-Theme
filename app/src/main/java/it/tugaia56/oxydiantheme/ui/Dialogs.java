@@ -81,7 +81,10 @@ final class Dialogs {
     static void style(Context ctx, Dialog d) {
         float density = ctx.getResources().getDisplayMetrics().density;
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(ctx.getColor(R.color.card));
+        // con uno sfondo con trasparenza il colore "card" diventa quasi trasparente: le finestre restano opache e leggibili
+        int fill = ctx.getColor(R.color.card);
+        if (android.graphics.Color.alpha(fill) < 0xFF) fill = 0xFF232A36;
+        bg.setColor(fill);
         bg.setCornerRadius(18 * density);
         bg.setStroke((int) (2 * density), ThemePrefs.accentColor());
         if (d.getWindow() != null) d.getWindow().setBackgroundDrawable(bg);

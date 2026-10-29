@@ -31,8 +31,8 @@ public final class OxydianLink {
     public static void disableDstBackground() {
         Shell.cmd("P=" + PREFS + "; X=" + POST_EXEC + "; "
                 + "if grep -q 'name=\"DST_BACKGROUND_on\" value=\"true\"' $P 2>/dev/null; then "
+                + "am force-stop it.tugaia56.oxydian; sleep 1; "   // prima si chiude Oxydian: potrebbe riscrivere le sue preferenze
                 + "sed -i 's/name=\"DST_BACKGROUND_on\" value=\"true\"/name=\"DST_BACKGROUND_on\" value=\"false\"/' $P; "
-                + "am force-stop it.tugaia56.oxydian; "
                 + "for n in $(cmd overlay list --user 0 | sed -n 's/^\\[.\\] com.android.shell:\\(ObsidianComponentBACKGROUND_[0-9]*\\)$/\\1/p'); do "
                 + "cmd overlay disable --user 0 com.android.shell:$n; done; "
                 + "[ -f $X ] && sed -i '/ObsidianComponentBACKGROUND_/d' $X; "
