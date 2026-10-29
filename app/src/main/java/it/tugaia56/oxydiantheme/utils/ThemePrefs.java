@@ -101,6 +101,7 @@ public final class ThemePrefs {
         try {
             JSONObject all = new JSONObject();
             for (java.util.Map.Entry<String, ?> e : sp().getAll().entrySet()) {
+                if (BACKUP_FOLDER_KEY.equals(e.getKey())) continue;
                 Object v = e.getValue();
                 JSONObject o = new JSONObject();
                 if (v instanceof Boolean) o.put("t", "b");
@@ -127,13 +128,15 @@ public final class ThemePrefs {
             JSONObject root = new JSONObject(text);
             if (!"oxydian-theme".equals(root.optString("app"))) return false;
             JSONObject all = root.getJSONObject("prefs");
+            String folder = getBackupFolder();
             SharedPreferences.Editor ed = sp().edit();
             ed.clear();
+            if (!folder.isEmpty()) ed.putString(BACKUP_FOLDER_KEY, folder);
             java.util.Iterator<String> it = all.keys();
             while (it.hasNext()) {
                 String k = it.next();
                 // le firme delle ultime build non valgono su un altro telefono/stato: si rifanno
-                if (k.startsWith("ds_built_") || k.startsWith("app_built_") || k.startsWith("style_built_")) continue;
+                if (k.startsWith("ds_built_") || k.startsWith("app_built_") || k.startsWith("style_built_") || BACKUP_FOLDER_KEY.equals(k)) continue;
                 JSONObject o = all.getJSONObject(k);
                 switch (o.getString("t")) {
                     case "b": ed.putBoolean(k, o.getBoolean("v")); break;
@@ -201,6 +204,11 @@ public final class ThemePrefs {
     /** Nel nome del file i due punti normali non sono ammessi (Windows): si usano quelli gemelli, identici alla vista. */
     public static String fileSafe(String s) { return s.replace(':', '∶'); }
     public static void setBackupTime(String v) { sp().edit().putString("backup_name_time", v).commit(); }
+
+    /** Cartella scelta per i backup (indirizzo ad albero di Android); "" = si chiede dove salvare ogni volta. Non entra nei backup. */
+    public static final String BACKUP_FOLDER_KEY = "backup_folder";
+    public static String getBackupFolder() { return sp().getString(BACKUP_FOLDER_KEY, ""); }
+    public static void setBackupFolder(String v) { sp().edit().putString(BACKUP_FOLDER_KEY, v == null ? "" : v).commit(); }
 
     public static final String[] BACKUP_DATES = {"dd-MM-yyyy", "dd-MM-yy", "yyyy-MM-dd", "yyyyMMdd"};
     public static final String[] BACKUP_TIMES = {"HH:mm", "HH:mm:ss", "HHmm", "hh:mm a", ""};

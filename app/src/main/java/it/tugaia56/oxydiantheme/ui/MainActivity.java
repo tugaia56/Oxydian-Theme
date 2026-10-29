@@ -98,13 +98,69 @@ public class MainActivity extends AppCompatActivity {
     private final androidx.activity.result.ActivityResultLauncher<String> mBackupSave =
             registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json"), uri -> {
                 if (uri == null) return;
-                try (java.io.OutputStream out = getContentResolver().openOutputStream(uri)) {
-                    out.write(ThemePrefs.exportJson().getBytes(java.nio.charset.StandardCharsets.UTF_8));
-                    Toast.makeText(this, R.string.backup_saved, Toast.LENGTH_LONG).show();
-                } catch (Throwable t) {
-                    Toast.makeText(this, R.string.backup_error, Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(this, writeBackup(uri) ? R.string.backup_saved : R.string.backup_error, Toast.LENGTH_LONG).show();
             });
+
+    /** Cartella dei backup: si sceglie una volta, poi "Salva backup" scrive li' senza chiedere. */
+    private final androidx.activity.result.ActivityResultLauncher<android.net.Uri> mBackupFolderPick =
+            registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree(), uri -> {
+                if (uri == null) return;
+                try {
+                    getContentResolver().takePersistableUriPermission(uri,
+                            android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION | android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                } catch (Throwable ignored) {}
+                ThemePrefs.setBackupFolder(uri.toString());
+                refreshCards();
+            });
+
+    private boolean writeBackup(android.net.Uri uri) {
+        try (java.io.OutputStream out = getContentResolver().openOutputStream(uri)) {
+            out.write(ThemePrefs.exportJson().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return true;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /** Salva nella cartella scelta; se non c'e' o non e' piu' disponibile chiede dove salvare. */
+    private void saveBackup() {
+        String name = ThemePrefs.backupStamp() + "_OxydianTheme-backup.json";
+        String tree = ThemePrefs.getBackupFolder();
+        if (!tree.isEmpty()) {
+            try {
+                android.net.Uri t = android.net.Uri.parse(tree);
+                android.net.Uri dir = android.provider.DocumentsContract.buildDocumentUriUsingTree(t, android.provider.DocumentsContract.getTreeDocumentId(t));
+                android.net.Uri f = android.provider.DocumentsContract.createDocument(getContentResolver(), dir, "application/json", name);
+                if (f != null && writeBackup(f)) {
+                    Toast.makeText(this, R.string.backup_saved, Toast.LENGTH_LONG).show();
+                    return;
+                }
+            } catch (Throwable ignored) {}
+            Toast.makeText(this, R.string.backup_folder_gone, Toast.LENGTH_LONG).show();
+        }
+        mBackupSave.launch(name);
+    }
+
+    private String backupFolderLabel() {
+        String tree = ThemePrefs.getBackupFolder();
+        if (tree.isEmpty()) return getString(R.string.backup_folder_ask);
+        String seg = android.net.Uri.parse(tree).getLastPathSegment();
+        if (seg == null) return tree;
+        int c = seg.indexOf(':');
+        String name = c >= 0 ? seg.substring(c + 1) : seg;
+        return name.isEmpty() ? getString(R.string.backup_folder_root) : name;
+    }
+
+    private void backupFolderDialog() {
+        com.google.android.material.dialog.MaterialAlertDialogBuilder b = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.card_backup_folder)
+                .setMessage(getString(R.string.backup_folder_message, backupFolderLabel()))
+                .setPositiveButton(R.string.backup_folder_pick, (d, w) -> mBackupFolderPick.launch(null))
+                .setNegativeButton(R.string.legend_close, null);
+        if (!ThemePrefs.getBackupFolder().isEmpty())
+            b.setNeutralButton(R.string.backup_folder_ask, (d, w) -> { ThemePrefs.setBackupFolder(""); refreshCards(); });
+        Dialogs.show(this, b);
+    }
 
     private final androidx.activity.result.ActivityResultLauncher<String[]> mBackupLoad =
             registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.OpenDocument(), uri -> {
@@ -186,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.card_backup)
                 .setMessage(R.string.backup_message)
-                .setPositiveButton(R.string.backup_save, (d, w) -> mBackupSave.launch(ThemePrefs.backupStamp() + "_OxydianTheme-backup.json"))
+                .setPositiveButton(R.string.backup_save, (d, w) -> saveBackup())
                 .setNeutralButton(R.string.backup_restore, (d, w) -> mBackupLoad.launch(new String[]{"application/json", "text/plain", "*/*"}))
                 .setNegativeButton(R.string.legend_close, null));
     }
@@ -408,7 +464,7 @@ public class MainActivity extends AppCompatActivity {
                 }));
     }
 
-    private TextView mSubBackupDate, mSubBackupTime;
+    private TextView mSubBackupDate, mSubBackupTime, mSubBackupFolder;
 
     /** Esempio di adesso + spiegazione del formato (in italiano: giorno-mese-anno ecc.). */
     private String backupLabel(String p) {
@@ -529,6 +585,17 @@ public class MainActivity extends AppCompatActivity {
         row5.addView(makeCard(R.string.card_backup_time, sub, () -> backupNameDialog(false)));
         mSubBackupTime = sub[0];
         box.addView(row5);
+        android.widget.LinearLayout row6 = new android.widget.LinearLayout(this);
+        row6.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        row6.addView(makeCard(R.string.card_backup_folder, sub, this::backupFolderDialog));
+        mSubBackupFolder = sub[0];
+        View sp7 = new View(this);
+        android.widget.LinearLayout.LayoutParams sp7lp = new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+        int sp7m = (int) (4 * getResources().getDisplayMetrics().density);
+        sp7lp.setMargins(sp7m, sp7m, sp7m, sp7m);
+        sp7.setLayoutParams(sp7lp);
+        row6.addView(sp7);
+        box.addView(row6);
         TextView ver = new TextView(this);
         String v = "";
         try { v = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; } catch (Exception ignored) {}
@@ -722,6 +789,7 @@ public class MainActivity extends AppCompatActivity {
             String bt = ThemePrefs.getBackupTime();
             mSubBackupTime.setText(bt.isEmpty() ? getString(R.string.backup_time_none) : stampExample(bt));
         }
+        if (mSubBackupFolder != null) mSubBackupFolder.setText(backupFolderLabel());
         if (mSubTasker != null)
             mSubTasker.setText(ThemePrefs.isTaskerEnabled() ? R.string.state_on_simple : R.string.state_off);
         if (mSubDefaultTab != null) {

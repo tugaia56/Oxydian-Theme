@@ -119,6 +119,12 @@
     <string name="bf_hm_compact">ore e minuti, senza trattino</string>
     <string name="bf_hm12">12 ore con AM/PM</string>
     <string name="backup_time_none">Nessuna ora (solo data)</string>
+    <string name="card_backup_folder">Cartella backup</string>
+    <string name="backup_folder_ask">Chiedi ogni volta</string>
+    <string name="backup_folder_root">Memoria interna</string>
+    <string name="backup_folder_pick">Scegli cartella</string>
+    <string name="backup_folder_message">Scegli dove \"Salva backup\" mette il file. Senza cartella ti viene chiesto ogni volta.\n\nAdesso: %1$s</string>
+    <string name="backup_folder_gone">Cartella non disponibile: scegli dove salvare</string>
     <string name="card_about">Informazioni</string>
     <string name="card_about_sub">Versione e link</string>
     <string name="card_credits">Crediti</string>

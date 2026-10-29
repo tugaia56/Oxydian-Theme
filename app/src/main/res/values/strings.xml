@@ -120,6 +120,12 @@
     <string name="bf_hm_compact">hours and minutes, no dash</string>
     <string name="bf_hm12">12-hour with AM/PM</string>
     <string name="backup_time_none">No time (date only)</string>
+    <string name="card_backup_folder">Backup folder</string>
+    <string name="backup_folder_ask">Ask every time</string>
+    <string name="backup_folder_root">Main storage</string>
+    <string name="backup_folder_pick">Choose folder</string>
+    <string name="backup_folder_message">Choose where \"Save backup\" puts the file. Without a folder you are asked every time.\n\nNow: %1$s</string>
+    <string name="backup_folder_gone">Folder not available: choose where to save</string>
     <string name="card_about">About</string>
     <string name="card_about_sub">Version and links</string>
     <string name="card_credits">Credits</string>
