@@ -188,11 +188,17 @@ public class MainActivity extends AppCompatActivity {
     private String backupFolderLabel() {
         String tree = ThemePrefs.getBackupFolder();
         if (tree.isEmpty()) return getString(R.string.backup_folder_ask);
+        try {
+            String id = android.provider.DocumentsContract.getTreeDocumentId(android.net.Uri.parse(tree));
+            int c = id.indexOf(':');
+            if (c >= 0) {
+                String vol = id.substring(0, c), rel = id.substring(c + 1);
+                String base = vol.equals("primary") ? "/sdcard" : "/storage/" + vol;
+                return rel.isEmpty() ? base : base + "/" + rel;
+            }
+        } catch (Throwable ignored) {}
         String seg = android.net.Uri.parse(tree).getLastPathSegment();
-        if (seg == null) return tree;
-        int c = seg.indexOf(':');
-        String name = c >= 0 ? seg.substring(c + 1) : seg;
-        return name.isEmpty() ? getString(R.string.backup_folder_root) : name;
+        return seg == null ? tree : seg;
     }
 
     private void backupFolderDialog() {
