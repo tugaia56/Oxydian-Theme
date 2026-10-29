@@ -225,4 +225,11 @@ Rimuovere i loro temi? Serve un riavvio.</item>
     <string name="cat_accents_title">Accenti per categoria</string>
     <string name="cat_backgrounds_title">Sfondi per categoria</string>
     <string name="cat_count">%d colori</string>
+    <string name="backup_delete_title">Elimina backup</string>
+    <string name="backup_delete_summary">Toglie solo i backup del Theme dalla cartella scelta</string>
+    <string name="backup_delete_need_folder">Scegli prima una cartella per i backup</string>
+    <string name="backup_delete_none">Nessun backup da eliminare</string>
+    <string name="backup_delete_confirm">Eliminare %1$d file di backup dalla cartella scelta? Si tolgono solo i backup del Theme.</string>
+    <string name="backup_delete_done">Eliminati: %1$d</string>
+    <string name="backup_delete_button">Elimina</string>
 </resources>

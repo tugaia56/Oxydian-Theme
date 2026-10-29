@@ -141,6 +141,50 @@ public class MainActivity extends AppCompatActivity {
         mBackupSave.launch(name);
     }
 
+    /** Toglie solo i backup del Theme (*_OxydianTheme-backup.json) dalla cartella scelta, dopo conferma col numero. */
+    private void confirmDeleteBackups() {
+        final String tree = ThemePrefs.getBackupFolder();
+        if (tree.isEmpty()) {
+            Toast.makeText(this, R.string.backup_delete_need_folder, Toast.LENGTH_LONG).show();
+            return;
+        }
+        new Thread(() -> {
+            java.util.List<android.net.Uri> found = new java.util.ArrayList<>();
+            try {
+                android.net.Uri t = android.net.Uri.parse(tree);
+                android.net.Uri children = android.provider.DocumentsContract.buildChildDocumentsUriUsingTree(t,
+                        android.provider.DocumentsContract.getTreeDocumentId(t));
+                try (android.database.Cursor c = getContentResolver().query(children, new String[]{
+                        android.provider.DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                        android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME}, null, null, null)) {
+                    while (c != null && c.moveToNext()) {
+                        String name = c.getString(1);
+                        if (name != null && name.endsWith("_OxydianTheme-backup.json"))
+                            found.add(android.provider.DocumentsContract.buildDocumentUriUsingTree(t, c.getString(0)));
+                    }
+                }
+            } catch (Throwable ignored) {}
+            runOnUiThread(() -> {
+                if (isFinishing()) return;
+                if (found.isEmpty()) {
+                    Toast.makeText(this, R.string.backup_delete_none, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                        .setMessage(getString(R.string.backup_delete_confirm, found.size()))
+                        .setPositiveButton(R.string.backup_delete_button, (d, w) -> new Thread(() -> {
+                            int n = 0;
+                            for (android.net.Uri u : found) {
+                                try { if (android.provider.DocumentsContract.deleteDocument(getContentResolver(), u)) n++; } catch (Throwable ignored) {}
+                            }
+                            final int done = n;
+                            runOnUiThread(() -> Toast.makeText(this, getString(R.string.backup_delete_done, done), Toast.LENGTH_SHORT).show());
+                        }).start())
+                        .setNegativeButton(android.R.string.cancel, null));
+            });
+        }).start();
+    }
+
     private String backupFolderLabel() {
         String tree = ThemePrefs.getBackupFolder();
         if (tree.isEmpty()) return getString(R.string.backup_folder_ask);
@@ -249,12 +293,12 @@ public class MainActivity extends AppCompatActivity {
         msg.setTextSize(14);
         msg.setPadding(0, 0, 0, (int) (8 * d));
         col.addView(msg);
-        TextView[] subs = new TextView[3];
-        int[] titles = {R.string.card_backup_date, R.string.card_backup_time, R.string.card_backup_folder};
-        Runnable[] actions = {() -> backupNameDialog(true), () -> backupNameDialog(false), this::backupFolderDialog};
+        TextView[] subs = new TextView[4];
+        int[] titles = {R.string.card_backup_date, R.string.card_backup_time, R.string.card_backup_folder, R.string.backup_delete_title};
+        Runnable[] actions = {() -> backupNameDialog(true), () -> backupNameDialog(false), this::backupFolderDialog, this::confirmDeleteBackups};
         android.util.TypedValue ripple = new android.util.TypedValue();
         getTheme().resolveAttribute(android.R.attr.selectableItemBackground, ripple, true);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             android.widget.LinearLayout row = new android.widget.LinearLayout(this);
             row.setOrientation(android.widget.LinearLayout.VERTICAL);
             row.setPadding(0, (int) (10 * d), 0, (int) (10 * d));
@@ -280,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
             String bt = ThemePrefs.getBackupTime();
             subs[1].setText(bt.isEmpty() ? getString(R.string.backup_time_none) : stampExample(bt));
             subs[2].setText(backupFolderLabel());
+            subs[3].setText(R.string.backup_delete_summary);
         };
         mBackupRowsRefresh.run();
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
