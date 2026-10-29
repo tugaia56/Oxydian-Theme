@@ -18,7 +18,7 @@
 
     <!--Trasparenze e background-->
     <color name="background_dark">#00000000</color>
-    <color name="background_floating_material_dark">#26000000</color>
+    <color name="background_floating_material_dark">#00000000</color>
     <color name="background_holo_dark">#26000000</color>
     <color name="background_leanback_dark">#26000000</color>
     <color name="background_material_dark">#00000000</color>
