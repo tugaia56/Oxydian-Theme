@@ -208,6 +208,17 @@ final class SystemColorsDialog {
     /** Sfondi con trasparenza: pubblicati come colore diventerebbero neri pieni in Oxydian, e lo sfondo DST di Oxydian li coprirebbe. */
     static boolean isTransparentBg(String name) { return name != null && name.startsWith("Transparency_"); }
 
+    /** Opacita' del nero di Oxydian per ogni livello: come Impostazioni (che impila piu' strati) ma su uno strato solo. */
+    static Integer oxydianAlpha(String name) {
+        if (!isTransparentBg(name)) return null;
+        switch (name) {
+            case "Transparency_Lower": return 0xD0;
+            case "Transparency_Medium": return 0x8C;
+            case "Transparency_Higher": return 0x46;
+            default: return 0x00;
+        }
+    }
+
     static void republish(Context ctx) {
         String a = ThemePrefs.getOption(PKG, "accent"), b = ThemePrefs.getOption(PKG, "background");
         Integer accent = null, bgc = null;
@@ -221,7 +232,7 @@ final class SystemColorsDialog {
             pubBg = null;
             new Thread(it.tugaia56.oxydiantheme.utils.OxydianLink::disableDstBackground).start();
         }
-        it.tugaia56.oxydiantheme.utils.ThemeProps.publish(ea != null ? ea : accent, pubBg);
+        it.tugaia56.oxydiantheme.utils.ThemeProps.publish(ea != null ? ea : accent, pubBg, oxydianAlpha(b));
     }
 
     private static TextView note(Context ctx, int textRes) {
@@ -351,7 +362,7 @@ final class SystemColorsDialog {
                         bgColor = null;
                         new Thread(it.tugaia56.oxydiantheme.utils.OxydianLink::disableDstBackground).start();
                     }
-                    it.tugaia56.oxydiantheme.utils.ThemeProps.publish(sel[0].isEmpty() ? null : c, bgColor);
+                    it.tugaia56.oxydiantheme.utils.ThemeProps.publish(sel[0].isEmpty() ? null : c, bgColor, oxydianAlpha(sel[1]));
                     listener.onSaved(c);
                 }));
     }

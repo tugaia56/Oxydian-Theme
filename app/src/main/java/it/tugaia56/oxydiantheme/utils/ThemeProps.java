@@ -10,7 +10,13 @@ public final class ThemeProps {
     private ThemeProps() {}
 
     public static void publish(Integer accent, Integer bg) {
+        publish(accent, bg, null);
+    }
+
+    /** bgAlpha: opacita' (0-255) del nero per gli sfondi con trasparenza, oppure null per uno sfondo pieno. */
+    public static void publish(Integer accent, Integer bg, Integer bgAlpha) {
         StringBuilder sb = new StringBuilder();
+        put(sb, "persist.oxytheme.bg_alpha", bgAlpha == null ? "" : String.valueOf(bgAlpha));
         put(sb, "persist.oxytheme.accent", accent == null ? "" : String.format("%08x", accent));
         put(sb, "persist.oxytheme.bg", bg == null ? "" : String.format("%08x", bg));
         // stesse proprieta' usate dai "preload fallback" di Oxydian nei processi senza prefs
