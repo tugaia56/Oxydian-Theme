@@ -205,6 +205,9 @@ final class SystemColorsDialog {
         return null;
     }
 
+    /** Sfondi con trasparenza: pubblicati come colore diventerebbero neri pieni in Oxydian, e lo sfondo DST di Oxydian li coprirebbe. */
+    static boolean isTransparentBg(String name) { return name != null && name.startsWith("Transparency_"); }
+
     static void republish(Context ctx) {
         String a = ThemePrefs.getOption(PKG, "accent"), b = ThemePrefs.getOption(PKG, "background");
         Integer accent = null, bgc = null;
@@ -213,7 +216,12 @@ final class SystemColorsDialog {
         if (OptionGroupsDialog.CUSTOM.equals(a)) accent = ThemePrefs.getCustomColor(PKG + "_accent");
         if (OptionGroupsDialog.CUSTOM.equals(b)) bgc = ThemePrefs.getCustomColor(PKG + "_background");
         Integer ea = effAccent(ctx), eb = effBg(ctx);
-        it.tugaia56.oxydiantheme.utils.ThemeProps.publish(ea != null ? ea : accent, eb != null ? eb : bgc);
+        Integer pubBg = eb != null ? eb : bgc;
+        if (isTransparentBg(b)) {
+            pubBg = null;
+            new Thread(it.tugaia56.oxydiantheme.utils.OxydianLink::disableDstBackground).start();
+        }
+        it.tugaia56.oxydiantheme.utils.ThemeProps.publish(ea != null ? ea : accent, pubBg);
     }
 
     private static TextView note(Context ctx, int textRes) {
@@ -339,6 +347,10 @@ final class SystemColorsDialog {
                     if (OptionGroupsDialog.CUSTOM.equals(sel[1])) bgColor = ThemePrefs.getCustomColor(PKG + "_background");
                     Integer tweakedBg = effBg(ctx);
                     if (tweakedBg != null && !sel[1].isEmpty()) bgColor = tweakedBg;
+                    if (isTransparentBg(sel[1])) {
+                        bgColor = null;
+                        new Thread(it.tugaia56.oxydiantheme.utils.OxydianLink::disableDstBackground).start();
+                    }
                     it.tugaia56.oxydiantheme.utils.ThemeProps.publish(sel[0].isEmpty() ? null : c, bgColor);
                     listener.onSaved(c);
                 }));

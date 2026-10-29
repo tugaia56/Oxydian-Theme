@@ -22,4 +22,20 @@ public final class OxydianLink {
                 + "sed -i -E '/LAUNCHER_RECENTS/ s/ 0x[0-9A-Fa-f]{8}$/ " + hex + "/' $X; "
                 + "grep 'cmd overlay fabricate.*LAUNCHER_RECENTS' $X | sh; }; true").exec();
     }
+
+    /**
+     * Spegne lo sfondo DST di Oxydian (colori di sistema opachi con priorita' massima): coprirebbe uno sfondo con trasparenza
+     * scelto qui. Lo spegne nelle preferenze di Oxydian, toglie i suoi overlay e le righe salvate per il riavvio. Va rifatto
+     * dall'interno di Oxydian se lo si vuole riaccendere. Chiamare fuori dal thread principale.
+     */
+    public static void disableDstBackground() {
+        Shell.cmd("P=" + PREFS + "; X=" + POST_EXEC + "; "
+                + "if grep -q 'name=\"DST_BACKGROUND_on\" value=\"true\"' $P 2>/dev/null; then "
+                + "sed -i 's/name=\"DST_BACKGROUND_on\" value=\"true\"/name=\"DST_BACKGROUND_on\" value=\"false\"/' $P; "
+                + "am force-stop it.tugaia56.oxydian; "
+                + "for n in $(cmd overlay list --user 0 | sed -n 's/^\\[.\\] com.android.shell:\\(ObsidianComponentBACKGROUND_[0-9]*\\)$/\\1/p'); do "
+                + "cmd overlay disable --user 0 com.android.shell:$n; done; "
+                + "[ -f $X ] && sed -i '/ObsidianComponentBACKGROUND_/d' $X; "
+                + "fi; true").exec();
+    }
 }
