@@ -83,14 +83,4 @@
 
     <!-- This is a lazy change, dwai -->
     <color name="bootleg_accent_gradient_end_color">@*android:color/accent_material_dark</color>
-
-    <!--Superfici Material You (app a colori dinamici): pagine e card sul colore di sfondo, contenitori alti sul colore delle card-->
-    <color name="system_background_dark">@*android:color/background_dark</color>
-    <color name="system_surface_dark">@*android:color/background_dark</color>
-    <color name="system_surface_dim_dark">@*android:color/background_dark</color>
-    <color name="system_surface_container_lowest_dark">@*android:color/background_dark</color>
-    <color name="system_surface_container_low_dark">@*android:color/background_dark</color>
-    <color name="system_surface_container_dark">@*android:color/background_dark</color>
-    <color name="system_surface_container_high_dark">@*android:color/holo_light_primary_dark</color>
-    <color name="system_surface_container_highest_dark">@*android:color/holo_light_primary_dark</color>
 </resources>
