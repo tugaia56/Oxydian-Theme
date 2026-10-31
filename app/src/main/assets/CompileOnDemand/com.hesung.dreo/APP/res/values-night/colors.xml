@@ -117,4 +117,5 @@
     <color name="surface_2">@*android:color/background_leanback_dark</color>
     <color name="tinted_container">@*android:color/button_material_dark</color>
     <color name="waring">#ffff8d0a</color>
+    <color name="home_tab_selected">@*android:color/accent_material_dark</color>
 </resources>

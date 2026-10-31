@@ -825,4 +825,5 @@
     <color name="yellow_14">#ff4a3503</color>
     <color name="yellow_15">#ff3a2903</color>
     <color name="yellow_16">#ff261902</color>
+    <color name="home_tab_selected">@*android:color/accent_material_dark</color>
 </resources>
