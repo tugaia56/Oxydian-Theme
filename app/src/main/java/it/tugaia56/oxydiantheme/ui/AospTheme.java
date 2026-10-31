@@ -75,7 +75,19 @@ public final class AospTheme {
                 m.put("system_on_shade_active_dark", on);
             }
         }
-        if (bg != null) {
+        if (bg != null && rolesOnly) {
+            // OxygenOS: le app a colori dinamici (Droid-ify, Drive, APKUpdater...) leggono dal sistema sfondo e superfici:
+            // pagine e card sul colore di sfondo scelto, contenitori alti sul colore delle card (poco piu' chiaro)
+            int b = 0xFF000000 | bg, card = mix(b, 0xFFFFFFFF, 0.075f);
+            m.put("system_background_dark", b);
+            m.put("system_surface_dark", b);
+            m.put("system_surface_dim_dark", b);
+            m.put("system_surface_container_lowest_dark", b);
+            m.put("system_surface_container_low_dark", b);
+            m.put("system_surface_container_dark", b);
+            m.put("system_surface_container_high_dark", card);
+            m.put("system_surface_container_highest_dark", card);
+        } else if (bg != null) {
             int b = 0xFF000000 | bg, w = 0xFFFFFFFF;
             m.put("system_background_dark", b);
             m.put("system_surface_dark", b);
@@ -139,7 +151,10 @@ public final class AospTheme {
             if (!isAosp()) {
                 // OxygenOS: niente impostazioni di sistema, solo i colori di ruolo dell'accento scelto
                 Integer eff = enabled ? SystemColorsDialog.effAccent(ctx) : null;
-                applyFixedColors(eff, null, true);
+                // sfondo scelto (non i trasparenti: li gestisce Oxydian) per le superfici delle app a colori dinamici
+                Integer surf = enabled && !SystemColorsDialog.isTransparentBg(ThemePrefs.getOption(SystemColorsDialog.PKG, "background"))
+                        ? SystemColorsDialog.effBg(ctx) : null;
+                applyFixedColors(eff, surf, true);
                 // "Personalizzato" e i colori COUI di sistema seguono l'accento scelto (come faceva il vecchio modulo Oxydian)
                 if (enabled) OplusColorEngine.apply(eff != null ? eff : ThemePrefs.accentColor());
                 else OplusColorEngine.clearSaved();
