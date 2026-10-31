@@ -135,7 +135,7 @@
     <color name="gm3_ref_palette_neutral_variant90">#ffe1e3e1</color>
     <color name="gm3_ref_palette_primary10">#ff041e49</color>
     <color name="gm3_ref_palette_primary100">#ffffffff</color>
-    <color name="gm3_ref_palette_primary20">#ff062e6f</color>
+    <color name="gm3_ref_palette_primary20">@*android:color/white</color>
     <color name="gm3_ref_palette_primary30">#ff0842a0</color>
     <color name="gm3_ref_palette_primary40">@*android:color/accent_material_dark</color>
     <color name="gm3_ref_palette_primary70">#ff7cacf8</color>
