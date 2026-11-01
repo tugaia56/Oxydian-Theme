@@ -86,6 +86,39 @@ public final class ThemeCompiler {
         }
     }
 
+    /** "1b2029" -> "[1][bB][2][0][2][9]": confronto senza distinzione fra maiuscole e minuscole (sed senza il flag I). */
+    private static String ci(int rgb) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : String.format("%06x", rgb & 0xFFFFFF).toCharArray()) {
+            if (Character.isLetter(c)) sb.append('[').append(Character.toLowerCase(c)).append(Character.toUpperCase(c)).append(']');
+            else sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Con uno sfondo diverso da quello predefinito, i colori della tavolozza predefinita (Midnight_Slate) scritti fissi nei
+     * sorgenti (anche con trasparenza) diventano quelli dello sfondo scelto. Si passa da segnaposto per non sostituire due volte.
+     */
+    private static void substituteBackground(String source) {
+        java.util.Map<Integer, Integer> m = it.tugaia56.oxydiantheme.ui.BackgroundRemap.get(it.tugaia56.oxydiantheme.ThemeApp.getAppContext());
+        if (m.isEmpty()) return;
+        StringBuilder sed = new StringBuilder();
+        int i = 0;
+        for (java.util.Map.Entry<Integer, Integer> e : m.entrySet()) {
+            String c = ci(e.getKey());
+            sed.append("s/#([0-9A-Fa-f]{2})").append(c).append("([^0-9A-Fa-f]|$)/#\\1@@").append(i).append("@@\\2/g;");
+            sed.append("s/#").append(c).append("([^0-9A-Fa-f]|$)/#@@").append(i).append("@@\\1/g;");
+            i++;
+        }
+        i = 0;
+        for (java.util.Map.Entry<Integer, Integer> e : m.entrySet()) {
+            sed.append("s/@@").append(i).append("@@/").append(String.format("%06X", e.getValue() & 0xFFFFFF)).append("/g;");
+            i++;
+        }
+        Shell.cmd("find \"" + source + "/res\" -type f -name '*.xml' -exec sed -i -E '" + sed + "' {} +").exec();
+    }
+
     /** @return true se la compilazione e' fallita */
     public static boolean buildInBatch(String targetPackage) throws IOException {
         return buildNamedInBatch(targetPackage, ASSET_DIR, overlayName(targetPackage));
@@ -120,6 +153,7 @@ public final class ThemeCompiler {
         Shell.cmd("mkdir -p \"" + cacheRoot + "\"",
                 "mv -f \"" + ModuleConstants.DATA_DIR + "/CompileOnDemand/" + targetPackage + "/" + assetDir + "\" \"" + source + "\"").exec();
         substituteAccent(source);
+        substituteBackground(source);
 
         if (optionAssetPaths != null) {
             for (String opt : optionAssetPaths) {

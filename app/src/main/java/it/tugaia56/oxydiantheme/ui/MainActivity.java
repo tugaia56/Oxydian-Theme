@@ -1674,6 +1674,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             updated = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).lastUpdateTime;
         } catch (Exception ignored) {}
-        return updated + ":" + String.format("%08X", ThemePrefs.accentColor());
+        return updated + ":" + String.format("%08X", ThemePrefs.accentColor()) + BackgroundRemap.key();
     }
 }
