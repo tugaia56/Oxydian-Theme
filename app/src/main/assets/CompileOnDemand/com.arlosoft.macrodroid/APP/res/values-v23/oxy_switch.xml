@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AppCompat tinge la traccia con questo colore (azzerarlo manda in crash l'app): usa il colore della traccia del Theme -->
+    <item name="abc_tint_switch_track" type="color">@*android:color/switch_track_material</item>
+</resources>

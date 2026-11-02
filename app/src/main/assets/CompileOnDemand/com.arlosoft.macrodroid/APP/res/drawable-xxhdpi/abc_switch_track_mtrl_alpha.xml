@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Selettore intorno alla traccia di sistema del Theme: lo stato (acceso/spento) arriva fino ai disegni interni -->
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- Il layer-list passa lo stato (acceso/spento) alla traccia di sistema del Theme (un selector con una sola voce non lo fa) -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@*android:drawable/switch_track_material" />
-</selector>
+</layer-list>
