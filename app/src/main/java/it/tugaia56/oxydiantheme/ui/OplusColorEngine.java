@@ -72,6 +72,9 @@ final class OplusColorEngine {
             String bare = String.format("%08X", color & 0xFFFFFFFFL);
             String cur = String.join("", Shell.cmd("settings get secure " + KEY).exec().getOut()).trim();
             JSONObject o = new JSONObject(cur.isEmpty() || cur.equals("null") ? "{}" : cur);
+            // gia' questo colore: riscrivere l'impostazione (col timestamp nuovo) fa ricolorare tutto il sistema per niente
+            if (bare.equalsIgnoreCase(o.optString("android.theme.customization.system_palette"))
+                    && bare.equalsIgnoreCase(o.optString("android.theme.customization.accent_color"))) return;
             o.put("android.theme.customization.system_palette", bare);
             o.put("android.theme.customization.accent_color", bare);
             o.put("_applied_timestamp", System.currentTimeMillis());

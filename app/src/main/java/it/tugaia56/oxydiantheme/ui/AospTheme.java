@@ -102,6 +102,12 @@ public final class AospTheme {
             m.put("system_shade_inactive_dark", mix(b, w, 0.10f));
             m.put("system_surface_effect_1_dark", mix(b, w, 0.10f));
         }
+        // Stessi colori dell'ultima volta e overlay gia' tutti accesi: non si rifa' niente. Ogni giro (spegni/accendi
+        // fino a 14 overlay, poi ripetuto due volte in background) fa ridisegnare tutte le app aperte e blocca il
+        // telefono per un minuto; succedeva anche cambiando solo lo stile degli interruttori o installando un'altra app.
+        final String sigFile = it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/fixedcolors.sig";
+        final String sig = (rolesOnly ? "r" : "a") + m.size() + ":" + m.toString().hashCode();
+        if (rolesOnly && sig.equals(firstLine("cat " + sigFile + " 2>/dev/null")) && enabledFix() == m.size()) return;
         int i = 0;
         for (java.util.Map.Entry<String, Integer> e : m.entrySet()) {
             long v = e.getValue() & 0xFFFFFFFFL;
@@ -121,6 +127,7 @@ public final class AospTheme {
         cmds.add("for n in $(cmd overlay list 2>/dev/null | grep \"^.x. com.android.shell:oxyfix\" | sed \"s/.*oxyfix//\"); do "
                 + "[ \"$n\" -ge " + used + " ] && cmd overlay disable --user 0 com.android.shell:oxyfix$n; done");
         Shell.cmd(cmds.toArray(new String[0])).exec();
+        Shell.cmd("printf '%s' '" + sig + "' > " + sigFile).exec();
         // dopo un riavvio gli overlay creati al volo spariscono: il modulo rilancia questo elenco ad ogni avvio
         String file = it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/fixedcolors.sh";
         if (m.isEmpty()) {
@@ -134,6 +141,17 @@ public final class AospTheme {
             // paio di volte, in background, dopo qualche secondo
             Shell.cmd("nohup sh -c 'sleep 8; sh " + file + "; sleep 20; sh " + file + "' >/dev/null 2>&1 &").exec();
         }
+    }
+
+    private static String firstLine(String cmd) {
+        java.util.List<String> o = Shell.cmd(cmd).exec().getOut();
+        return o.isEmpty() ? "" : o.get(0).trim();
+    }
+
+    /** Quanti overlay oxyfix sono accesi adesso (-1 se non si riesce a leggere). */
+    private static int enabledFix() {
+        try { return Integer.parseInt(firstLine("cmd overlay list 2>/dev/null | grep -c \"^.x. .*:oxyfix\"")); }
+        catch (NumberFormatException e) { return -1; }
     }
 
     /** True se la variante in uso e' Android puro (non OxygenOS). */
