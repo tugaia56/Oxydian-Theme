@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Il SwitchCompat di MacroDroid usa i disegni di sistema del Theme (scelta "Interruttori") cosi' come sono -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@*android:drawable/switch_thumb_material_anim" />
+</layer-list>

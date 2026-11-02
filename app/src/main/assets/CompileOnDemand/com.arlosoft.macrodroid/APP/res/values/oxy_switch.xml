@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Senza tinta, l'interruttore usa i disegni di sistema del Theme (scelta "Interruttori") cosi' come sono -->
+    <item name="switch_track_selector_dark" type="color">@null</item>
+</resources>
