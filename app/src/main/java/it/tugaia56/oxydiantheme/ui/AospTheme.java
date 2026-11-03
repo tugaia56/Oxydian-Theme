@@ -89,12 +89,16 @@ public final class AospTheme {
             m.put("system_surface_container_highest_dark", card);
         } else if (bg != null) {
             int b = 0xFF000000 | bg, w = 0xFFFFFFFF;
-            m.put("system_background_dark", b);
-            m.put("system_surface_dark", b);
-            m.put("system_surface_dim_dark", b);
-            m.put("system_surface_container_lowest_dark", mix(b, 0xFF000000, 0.4f));
-            m.put("system_surface_container_low_dark", mix(b, w, 0.03f));
-            m.put("system_surface_container_dark", mix(b, w, 0.06f));
+            // Sfondo "Trasparente": su Android puro la finestra di Impostazioni e' opaca; solo se il modulo Oxydian e' installato
+            // (rende trasparente quella finestra) i colori di sfondo diventano semitrasparenti, altrimenti si scurirebbe e basta
+            Integer ta = SystemColorsDialog.oxydianAlpha(ThemePrefs.getOption(SystemColorsDialog.PKG, "background"));
+            if (ta != null && !hasOxydianModule()) ta = null;
+            m.put("system_background_dark", fade(b, ta));
+            m.put("system_surface_dark", fade(b, ta));
+            m.put("system_surface_dim_dark", fade(b, ta));
+            m.put("system_surface_container_lowest_dark", fade(mix(b, 0xFF000000, 0.4f), ta));
+            m.put("system_surface_container_low_dark", fade(mix(b, w, 0.03f), ta));
+            m.put("system_surface_container_dark", fade(mix(b, w, 0.06f), ta));
             m.put("system_surface_container_high_dark", mix(b, w, 0.09f));
             m.put("system_surface_container_highest_dark", mix(b, w, 0.12f));
             m.put("system_surface_bright_dark", mix(b, w, 0.15f));
@@ -160,6 +164,16 @@ public final class AospTheme {
             // paio di volte, in background, dopo qualche secondo
             Shell.cmd("nohup sh -c 'sleep 8; sh " + file + "; sleep 20; sh " + file + "' >/dev/null 2>&1 &").exec();
         }
+    }
+
+    /** Stesso colore con la trasparenza data (null = invariato). */
+    private static int fade(int color, Integer alpha) {
+        return alpha == null ? color : (alpha << 24) | (color & 0xFFFFFF);
+    }
+
+    /** Il modulo Oxydian e' installato (serve per la finestra trasparente di Impostazioni su Android puro)? */
+    private static boolean hasOxydianModule() {
+        return "package:it.tugaia56.oxydian".equals(firstLine("pm list packages it.tugaia56.oxydian | grep -x package:it.tugaia56.oxydian"));
     }
 
     private static String firstLine(String cmd) {
