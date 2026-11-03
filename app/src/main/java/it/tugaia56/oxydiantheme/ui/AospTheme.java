@@ -102,6 +102,15 @@ public final class AospTheme {
             m.put("system_shade_inactive_dark", mix(b, w, 0.10f));
             m.put("system_surface_effect_1_dark", mix(b, w, 0.10f));
         }
+        // Colore scelto per le icone della barra di stato (comando unico): la percentuale della batteria e le altre icone a un
+        // solo colore leggono questi colori di SystemUI (verificato su OxygenOS 16); Wi-Fi e segnale li fa lo stile (WIFI1/SIG1)
+        Integer barColor = rolesOnly ? IconColorDialog.value("all") : null;
+        if (barColor != null) {
+            int rgb = barColor & 0xFFFFFF;
+            m.put("systemui:light_mode_icon_color_single_tone", 0xCC000000 | rgb);
+            m.put("systemui:light_mode_icon_color_dual_tone_fill", 0xF0000000 | rgb);
+            m.put("systemui:light_mode_icon_color_dual_tone_background", 0x4D000000 | rgb);
+        }
         // Stessi colori dell'ultima volta e overlay gia' tutti accesi: non si rifa' niente. Ogni giro (spegni/accendi
         // fino a 14 overlay, poi ripetuto due volte in background) fa ridisegnare tutte le app aperte e blocca il
         // telefono per un minuto; succedeva anche cambiando solo lo stile degli interruttori o installando un'altra app.
@@ -111,7 +120,11 @@ public final class AospTheme {
         int i = 0;
         for (java.util.Map.Entry<String, Integer> e : m.entrySet()) {
             long v = e.getValue() & 0xFFFFFFFFL;
-            cmds.add("cmd overlay fabricate --target android --name oxyfix" + i + " android:color/" + e.getKey() + " 0x1c " + v);
+            // chiavi "systemui:nome" = colori di SystemUI (barra di stato), le altre sono colori di "android"
+            String key = e.getKey();
+            String target = "android", res = "android:color/" + key;
+            if (key.startsWith("systemui:")) { target = "com.android.systemui"; res = "com.android.systemui:color/" + key.substring(9); }
+            cmds.add("cmd overlay fabricate --target " + target + " --name oxyfix" + i + " " + res + " 0x1c " + v);
             // l'identificativo dell'overlay creato dipende da chi lancia il comando (da "adb shell" e' com.android.shell,
             // all'avvio dal modulo puo' essere diverso): si legge dall'elenco invece di darlo per scontato
             cmds.add("P=$(cmd overlay list 2>/dev/null | grep -o \"[A-Za-z0-9_.]*:oxyfix" + i + "$\" | head -1); "

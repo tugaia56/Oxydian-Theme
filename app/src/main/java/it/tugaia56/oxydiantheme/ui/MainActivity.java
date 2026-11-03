@@ -384,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private TextView mSubPin, mSubRipple, mSubDefaultTab;
+    private TextView mSubPin, mSubRipple, mSubDefaultTab, mSubSbColor;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
         return makeCard(getString(titleRes), subOut, onClick);
@@ -456,9 +456,8 @@ public class MainActivity extends AppCompatActivity {
             onApply(SystemColorsDialog.PKG, false);
         })));
         mSubRipple = s[0];
-        View sp6 = new View(this);
-        sp6.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-        r6.addView(sp6);
+        r6.addView(makeCard(R.string.card_sbcolor, s, this::statusBarColorDialog));
+        mSubSbColor = s[0];
         setupCategoryCards(s);
         // Pagina Mods
         android.widget.LinearLayout r0 = findViewById(R.id.cards_row0);
@@ -784,6 +783,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Un solo colore per le icone della barra di stato: Wi-Fi e segnale (scritto nei loro overlay) e la batteria
+     * (colori di SystemUI creati al volo). Poi si riavvia l'interfaccia per vederlo.
+     */
+    private void statusBarColorDialog() {
+        IconColorDialog.show(this, "all", R.string.card_sbcolor, () -> {
+            String n = ThemePrefs.getIconColor("all");
+            ThemePrefs.setIconColor("wifi", n);
+            ThemePrefs.setIconColor("mobile", n);
+            IconColorDialog.republish();
+            refreshCards();
+            Toast.makeText(this, R.string.working, Toast.LENGTH_SHORT).show();
+            final android.content.Context app = getApplicationContext();
+            final boolean on = ThemePrefs.isDarkShadowEnabled(SystemColorsDialog.PKG);
+            new Thread(() -> {
+                StyleActivity.rebuildStale(app);
+                if (!AospTheme.isAosp()) AospTheme.apply(app, on);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+                    new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
+                });
+            }).start();
+        });
+    }
+
     private void openColors(int which) { openColors(which, null, null); }
 
     private void openColors(int which, java.util.Set<String> only, String title) {
@@ -859,6 +883,7 @@ public class MainActivity extends AppCompatActivity {
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
+        if (mSubSbColor != null) mSubSbColor.setText(IconColorDialog.summary(this, "all"));
         if (mSubVariant != null) {
             mSubVariant.setText(SystemVariant.label(this, ThemePrefs.getSystemVariant()) + "\n" + getString(R.string.card_variant_sub));
         }
