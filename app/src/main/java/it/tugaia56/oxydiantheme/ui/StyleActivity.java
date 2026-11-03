@@ -111,11 +111,11 @@ public class StyleActivity extends AppCompatActivity {
         mobileColorBtn.setText(getString(R.string.color_mobile_title) + "  ·  " + IconColorDialog.summary(this, "mobile"));
         wifiColorBtn.setOnClickListener(v -> IconColorDialog.show(this, "wifi", R.string.color_wifi_title, () -> {
             wifiColorBtn.setText(getString(R.string.color_wifi_title) + "  ·  " + IconColorDialog.summary(this, "wifi"));
-            restartUi();
+            rebuildThenRestart();
         }));
         mobileColorBtn.setOnClickListener(v -> IconColorDialog.show(this, "mobile", R.string.color_mobile_title, () -> {
             mobileColorBtn.setText(getString(R.string.color_mobile_title) + "  ·  " + IconColorDialog.summary(this, "mobile"));
-            restartUi();
+            rebuildThenRestart();
         }));
         Button navColorBtn = findViewById(R.id.btn_color_nav);
         navColorBtn.setVisibility("nav".equals(mMode) ? View.VISIBLE : View.GONE);
@@ -456,6 +456,16 @@ public class StyleActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.ok, null));
     }
 
+    /** Il colore scelto e' scritto nei disegni dell'overlay: va rifatto, poi si riavvia l'interfaccia. */
+    private void rebuildThenRestart() {
+        final android.content.Context app = getApplicationContext();
+        Toast.makeText(this, R.string.working, Toast.LENGTH_SHORT).show();
+        new Thread(() -> {
+            rebuildStale(app);
+            runOnUiThread(this::restartUi);
+        }).start();
+    }
+
     private void restartUi() {
         Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
         new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
@@ -498,6 +508,16 @@ public class StyleActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.icon_size_hint, Toast.LENGTH_LONG).show();
     }
 
+    /** Colore scelto per le icone di quello slot (0 = Wi-Fi, 1 = segnale), null = predefinito. */
+    private static Integer slotColor(int i) {
+        return i == 0 ? IconColorDialog.value("wifi") : i == 1 ? IconColorDialog.value("mobile") : null;
+    }
+
+    private static String colorKey(int i) {
+        Integer c = slotColor(i);
+        return c == null ? "" : ":c" + Integer.toHexString(c);
+    }
+
     /**
      * Cambiato l'accento: gli stili gia' scelti (icone Wi-Fi/segnale, pack icone Impostazioni) hanno l'accento scritto dentro
      * quando vengono costruiti, quindi vanno rifatti. Non riavvia SystemUI (lo si chiede all'utente alla fine).
@@ -522,13 +542,13 @@ public class StyleActivity extends AppCompatActivity {
                 String st = before.get(ov);
                 boolean active = "[x]".equals(st);
                 String sig = style + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey(style) : "")
-                        + ((i <= 1) ? ":s" + ThemePrefs.getIconSize() : "");
+                        + ((i <= 1) ? ":s" + ThemePrefs.getIconSize() + colorKey(i) : "");
                 if (sig.equals(ThemePrefs.getStyleBuilt(slot))) continue;
                 if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                 try {
                     if (!ThemeCompiler.buildNamedInBatch(TARGET_PKG[i], PREFIXES[i] + style, slot, null,
                             (i == 3 || i == 4) ? settingsValuesXml(style) : null,
-                            (i <= 1) ? ThemePrefs.getIconSize() : 0)) {
+                            (i <= 1) ? ThemePrefs.getIconSize() : 0, slotColor(i))) {
                         ThemePrefs.setStyleBuilt(slot, sig);
                         if (active) refresh.add(ov);
                     }
@@ -580,14 +600,14 @@ public class StyleActivity extends AppCompatActivity {
                         ThemePrefs.setStyleBuilt(slot, "");
                         continue;
                     }
-                    String sig = choice[i] + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey(choice[i]) : "") + ((i <= 1) ? ":s" + ThemePrefs.getIconSize() : "");
+                    String sig = choice[i] + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey(choice[i]) : "") + ((i <= 1) ? ":s" + ThemePrefs.getIconSize() + colorKey(i) : "");
                     if ("[ ]".equals(st)) toEnable.add(ov);
                     if (active && sig.equals(ThemePrefs.getStyleBuilt(slot))) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
                         if (ThemeCompiler.buildNamedInBatch(TARGET_PKG[i], PREFIXES[i] + choice[i], slot, null,
                                 (i == 3 || i == 4) ? settingsValuesXml(choice[i]) : null,
-                                (i <= 1) ? ThemePrefs.getIconSize() : 0)) {
+                                (i <= 1) ? ThemePrefs.getIconSize() : 0, slotColor(i))) {
                             failed++;
                         } else {
                             ThemePrefs.setStyleBuilt(slot, sig);

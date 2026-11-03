@@ -142,10 +142,20 @@ public final class ThemeCompiler {
         return buildNamedInBatch(targetPackage, assetDir, name, optionAssetPaths, extraValuesXml, 0);
     }
 
-    /** @param iconSizeDp se diverso da 0 e da 15 (misura stock), le icone (vettori da 15dp) vengono ridimensionate */
     public static boolean buildNamedInBatch(String targetPackage, String assetDir, String name,
                                             List<String> optionAssetPaths, String extraValuesXml,
                                             int iconSizeDp) throws IOException {
+        return buildNamedInBatch(targetPackage, assetDir, name, optionAssetPaths, extraValuesXml, iconSizeDp, null);
+    }
+
+    /**
+     * @param iconSizeDp se diverso da 0 e da 15 (misura stock), le icone (vettori da 15dp) vengono ridimensionate
+     * @param iconColor  se non nullo, il nero dei disegni (con la sua trasparenza) diventa questo colore: SystemUI mostra i
+     *                   colori scritti nei disegni delle icone Wi-Fi/segnale, non serve nessun hook (provato su OxygenOS 16)
+     */
+    public static boolean buildNamedInBatch(String targetPackage, String assetDir, String name,
+                                            List<String> optionAssetPaths, String extraValuesXml,
+                                            int iconSizeDp, Integer iconColor) throws IOException {
         String cacheRoot = ModuleConstants.TEMP_CACHE_DIR + "/" + targetPackage;
         String source = cacheRoot + "/" + name;
 
@@ -178,6 +188,13 @@ public final class ThemeCompiler {
             // i vettori delle icone sono da 15dp: si riscrive larghezza e altezza della radice
             String expr = "s/(android:(width|height)=\")15(\\.0+)?(dp|dip)\"/\\1" + iconSizeDp + ".0dp\"/g";
             Shell.cmd("find \"" + source + "/res/drawable\" -type f -name '*.xml' -exec sed -i -E '" + expr + "' {} +").exec();
+        }
+
+        if (iconColor != null) {
+            // il nero dei disegni (anche con trasparenza: #66000000 = barre spente) diventa il colore scelto
+            String rgb = String.format("%06X", iconColor & 0xFFFFFF);
+            Shell.cmd("find \"" + source + "/res\" -type f -name '*.xml' -path '*drawable*'"
+                    + " -exec sed -i -E 's/#([0-9A-Fa-f]{2})000000([^0-9A-Fa-f]|$)/#\\1" + rgb + "\\2/g' {} +").exec();
         }
 
         if (extraValuesXml != null) {
