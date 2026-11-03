@@ -192,6 +192,10 @@ public final class ThemeCompiler {
                     + "[ -f \"$d/ic_wifi_signal_$j.xml\" ] || continue; "
                     + "cp -f \"$d/ic_wifi_signal_$j.xml\" \"$d/ic_wifi_$i.xml\"; "
                     + "cp -f \"$d/ic_wifi_signal_$j.xml\" \"$d/ic_wifi_${i}_error.xml\"; done").exec();
+            // SystemUI disegna la tessera Wi-Fi con queste stesse icone e accetta solo disegni che iniziano con <vector>: lo stile
+            // li avvolge in un <inset> (margini minimi) e la schermata di modifica dei tasti rapidi andava in crash. Si toglie.
+            Shell.cmd("d=\"" + source + "/res/drawable\"; for f in \"$d\"/ic_wifi_[0-3].xml \"$d\"/ic_wifi_[0-3]_error.xml; do "
+                    + "[ -f \"$f\" ] && sed -i -E 's#<inset[^>]*>##; s#</inset>##' \"$f\"; done").exec();
         }
 
         if (iconSizeDp > 0 && iconSizeDp != 15) {
