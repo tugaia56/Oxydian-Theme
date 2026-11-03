@@ -67,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
         void clearBuilt() { if (ds) ThemePrefs.setDarkShadowBuilt(pkg, ""); else ThemePrefs.clearBuiltSignature(pkg); }
     }
 
+    /** App che su Android puro non si possono tematizzare (overlay "non valido"). */
+    private static final Set<String> PURE_UNSUPPORTED = new HashSet<>(Arrays.asList(
+            "com.android.intentresolver", "com.android.server.telecom"));
+
     /** Bersagli Dark Shadow: pacchetto, cartella negli asset. */
     private static final String[][] DS_TARGETS = {
             {"com.android.settings", "SST"}, {"com.android.systemui", "SUT"}, {"com.android.launcher", "LT"},
@@ -1060,6 +1064,9 @@ public class MainActivity extends AppCompatActivity {
             if (dirs != null) for (String pkg : dirs) {
                 String[] sub = getAssets().list("CompileOnDemand/" + pkg);
                 if (sub == null || !Arrays.asList(sub).contains("APP")) continue;
+                // su Android puro (verificato su crDroid, A17) il sistema li rifiuta ("non valido"): IntentResolver non ha le
+                // risorse dichiarate modificabili, Telecom ha spostato le sue in un altro pacchetto
+                if (SystemVariant.isPure() && PURE_UNSUPPORTED.contains(pkg)) continue;
                 try {
                     ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
                     mApps.add(new AppEntry(pkg, String.valueOf(pm.getApplicationLabel(ai)), ThemePrefs.isAppEnabled(pkg)));
