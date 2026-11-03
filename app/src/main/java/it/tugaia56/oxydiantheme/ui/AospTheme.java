@@ -110,6 +110,12 @@ public final class AospTheme {
             m.put("systemui:light_mode_icon_color_single_tone", 0xCC000000 | rgb);
             m.put("systemui:light_mode_icon_color_dual_tone_fill", 0xF0000000 | rgb);
             m.put("systemui:light_mode_icon_color_dual_tone_background", 0x4D000000 | rgb);
+            // riempimento della batteria di serie quando non e' in carica (verificato su OxygenOS 16)
+            m.put("systemui:light_mode_icon_color_progress_forground", 0xB5000000 | rgb);
+            // e quando e' in carica (di serie prende l'accento; vooc/svooc1/pps sono i tipi di ricarica veloce)
+            m.put("systemui:battery_progress_bar_color_vooc", 0xFF000000 | rgb);
+            m.put("systemui:battery_progress_bar_color_svooc1", 0xFF000000 | rgb);
+            m.put("systemui:battery_progress_bar_color_pps", 0xFF000000 | rgb);
         }
         // Stessi colori dell'ultima volta e overlay gia' tutti accesi: non si rifa' niente. Ogni giro (spegni/accendi
         // fino a 14 overlay, poi ripetuto due volte in background) fa ridisegnare tutte le app aperte e blocca il
