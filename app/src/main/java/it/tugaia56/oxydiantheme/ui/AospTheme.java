@@ -101,7 +101,12 @@ public final class AospTheme {
             m.put("system_surface_container_dark", fade(mix(b, w, 0.06f), ta));
             m.put("system_surface_container_high_dark", mix(b, w, 0.09f));
             m.put("system_surface_container_highest_dark", mix(b, w, 0.12f));
-            m.put("system_surface_bright_dark", mix(b, w, 0.15f));
+            // le card di Impostazioni usano questo colore: piu' coprenti dello sfondo, per tenere il testo leggibile
+            // (card "Trasparenti": con lo sfondo trasparente seguono il suo livello, altrimenti una trasparenza fissa)
+            Integer cardAlpha = null;
+            if (SettingsCards.GLASS.equals(ThemePrefs.getSettingsCards()) && hasOxydianModule())
+                cardAlpha = ta != null ? 0x50 + ta * (0xFF - 0x50) / 0xFF : 0xB3;
+            m.put("system_surface_bright_dark", fade(mix(b, w, 0.15f), cardAlpha));
             m.put("system_surface_variant_dark", mix(b, w, 0.12f));
             m.put("system_shade_inactive_dark", mix(b, w, 0.10f));
             m.put("system_surface_effect_1_dark", mix(b, w, 0.10f));
@@ -237,6 +242,10 @@ public final class AospTheme {
             o.put("_applied_timestamp", System.currentTimeMillis());
             Shell.cmd("settings put secure " + KEY + " '" + o.toString().replace("'", "") + "'").exec();
             applyFixedColors(accent, bg);
+            // la finestra di Impostazioni diventa trasparente (modulo Oxydian) solo con uno sfondo "Trasparente" scelto qui
+            it.tugaia56.oxydiantheme.utils.ThemeProps.publishSettingsWindow(enabled
+                    && SystemColorsDialog.oxydianAlpha(ThemePrefs.getOption(SystemColorsDialog.PKG, "background")) != null
+                    && hasOxydianModule());
         } catch (Throwable ignored) {}
     }
 }

@@ -186,6 +186,10 @@ public final class ThemePrefs {
     public static void setTaskerEnabled(boolean on) { sp().edit().putBoolean("tasker_enabled", on).commit(); }
 
     /** Versione del sistema scelta per SystemUI ("" = automatica). */
+    /** Stile delle card di Impostazioni su Android puro: "" = piene, "glass" = trasparenti, "border" = con bordo. */
+    public static String getSettingsCards() { return sp().getString("settings_cards", ""); }
+    public static void setSettingsCards(String v) { sp().edit().putString("settings_cards", v == null ? "" : v).commit(); }
+
     public static String getSystemVariant() { return sp().getString("system_variant", ""); }
     public static void setSystemVariant(String v) { sp().edit().putString("system_variant", v == null ? "" : v).commit(); }
 

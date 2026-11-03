@@ -388,7 +388,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private View mSignalCard;
+    private View mSignalCard, mSCardsCard;
+    private TextView mSubSCards;
     private TextView mSubPin, mSubRipple, mSubDefaultTab, mSubSbColor;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
@@ -477,6 +478,9 @@ public class MainActivity extends AppCompatActivity {
         mSubPin = s[0];
         r3.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
         mSubSettings = s[0];
+        mSCardsCard = makeCard(R.string.card_scards, s, () -> SettingsCards.show(this, this::refreshCards));
+        r3.addView(mSCardsCard);
+        mSubSCards = s[0];
         r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
         mSignalCard = makeCard(R.string.card_signal, s, () -> openStyles("signal"));
@@ -888,6 +892,9 @@ public class MainActivity extends AppCompatActivity {
         mSubSignal.setText(sg.isEmpty() ? def : pretty(sg));
         // gli stili del segnale usano i nomi delle icone di OxygenOS: su Android puro (A17) non sono ancora adattati
         if (mSignalCard != null) mSignalCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
+        // le card di Impostazioni si scelgono solo su Android puro (su OxygenOS le gestisce il tema di sistema)
+        if (mSCardsCard != null) mSCardsCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mSubSCards != null) mSubSCards.setText(SettingsCards.label(this, ThemePrefs.getSettingsCards()));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
@@ -1567,6 +1574,7 @@ public class MainActivity extends AppCompatActivity {
             // elenco dei temi da accendere ad ogni avvio (lo legge il modulo)
             List<String> wanted = new ArrayList<>();
             for (AppEntry e : all) if (e.enabled) wanted.add(e.overlay());
+            if (SettingsCards.BORDER.equals(ThemePrefs.getSettingsCards())) wanted.add(SettingsCards.overlayPackage());
             ThemeCompiler.writeEnabledList(wanted);
             // Android puro: l'accento va dato anche al sistema (colore di partenza)
             boolean sysTarget = false;

@@ -161,6 +161,11 @@
     <string name="state_on_full">On · Hide In/Out</string>
     <string name="card_ripple">Touch opacity</string>
     <string name="card_sbcolor">Status bar icon colour</string>
+    <string name="card_scards">Settings cards</string>
+    <string name="scards_full">Solid</string>
+    <string name="scards_glass">Transparent</string>
+    <string name="scards_border">With border</string>
+    <string name="scards_reboot">Restart the phone once to activate this style</string>
     <string name="ripple_hint">The colored wave that appears when you press a button or a list item. The higher the opacity, the stronger it looks.</string>
     <string name="card_default_tab">Start page</string>
     <string name="btn_disable">Disable</string>

@@ -44,6 +44,11 @@ public final class ThemeProps {
         Shell.cmd("resetprop persist.oxytheme.battery_icon_color \"" + v + "\"").submit();
     }
 
+    /** Finestra di Impostazioni trasparente su Android puro (1 = si, 0 = no): la applica il modulo Oxydian. */
+    public static void publishSettingsWindow(boolean on) {
+        Shell.cmd("resetprop persist.oxytheme.settings_window " + (on ? "1" : "0")).submit();
+    }
+
     /** Colore delle icone della barra di navigazione (null = predefinito): lo applica Oxydian. */
     public static void publishNavColor(Integer nav) {
         String n = nav == null ? "" : String.format("%08x", nav);
