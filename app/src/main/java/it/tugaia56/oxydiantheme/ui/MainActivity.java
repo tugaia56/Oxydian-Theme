@@ -1046,6 +1046,13 @@ public class MainActivity extends AppCompatActivity {
     // ── Elenco ───────────────────────────────────────────────────────────────
 
     private void loadApps() {
+        if (SystemVariant.needsDetect()) {
+            // il riconoscimento usa la shell: fuori dal thread principale, poi si ricarica l'elenco
+            new Thread(() -> {
+                SystemVariant.detect();
+                runOnUiThread(this::loadApps);
+            }).start();
+        }
         mApps.clear();
         PackageManager pm = getPackageManager();
         try {
@@ -1064,6 +1071,9 @@ public class MainActivity extends AppCompatActivity {
         mApps.sort(Comparator.comparing(e -> e.label.toLowerCase(Locale.ROOT)));
         List<AppEntry> dsList = new ArrayList<>();
         for (String[] t : DS_TARGETS) {
+            // le Impostazioni dell'overlay sono fatte per OxygenOS: su Android puro (crDroid, ecc.) cambierebbero i colori
+            // delle icone dell'elenco (cerchio e simbolo dello stesso accento) senza che serva
+            if ("SST".equals(t[1]) && SystemVariant.isPure()) continue;
             try {
                 ApplicationInfo ai = pm.getApplicationInfo(t[0], 0);
                 dsList.add(new AppEntry(t[0], "android".equals(t[0]) ? getString(R.string.system_colors) : String.valueOf(pm.getApplicationLabel(ai)), t[1],

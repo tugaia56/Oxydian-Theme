@@ -52,6 +52,18 @@ public final class SystemVariant {
         return saved.isEmpty() ? detect() : saved;
     }
 
+    /** Serve ancora riconoscere la variante (nessuna scelta salvata e nessun riconoscimento in memoria)? */
+    public static boolean needsDetect() {
+        return ThemePrefs.getSystemVariant().isEmpty() && sAuto == null;
+    }
+
+    /** Android puro (non OxygenOS)? Non usa la shell: se la variante non e' ancora nota risponde false. */
+    public static boolean isPure() {
+        String saved = ThemePrefs.getSystemVariant();
+        String v = saved.isEmpty() ? sAuto : saved;
+        return A16.equals(v) || A15.equals(v);
+    }
+
     /** Suffisso della cartella negli asset: vuoto per OxygenOS 16 (la base). */
     public static String dirSuffix(String variant) {
         switch (variant) {
