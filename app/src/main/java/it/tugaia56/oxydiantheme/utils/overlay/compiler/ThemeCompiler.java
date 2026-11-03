@@ -184,6 +184,16 @@ public final class ThemeCompiler {
         // anche i file delle opzioni (es. pacchetto icone) hanno l'accento predefinito scritto fisso
         if (optionAssetPaths != null && !optionAssetPaths.isEmpty()) substituteAccent(source);
 
+        if ("com.android.systemui".equals(targetPackage) && assetDir.startsWith("WIFI_")) {
+            // Android puro (verificato su crDroid, Android 17): SystemUI ha 4 livelli ic_wifi_0..3 (e ic_wifi_N_error) invece dei
+            // 5 ic_wifi_signal_0..4 di OxygenOS. Il livello 0 dello stile (nessuna barra) non serve: 1..4 diventano 0..3.
+            // I file con i nomi di OxygenOS restano: dove i nomi non esistono l'overlay li ignora.
+            Shell.cmd("d=\"" + source + "/res/drawable\"; for i in 0 1 2 3; do j=$((i+1)); "
+                    + "[ -f \"$d/ic_wifi_signal_$j.xml\" ] || continue; "
+                    + "cp -f \"$d/ic_wifi_signal_$j.xml\" \"$d/ic_wifi_$i.xml\"; "
+                    + "cp -f \"$d/ic_wifi_signal_$j.xml\" \"$d/ic_wifi_${i}_error.xml\"; done").exec();
+        }
+
         if (iconSizeDp > 0 && iconSizeDp != 15) {
             // i vettori delle icone sono da 15dp: si riscrive larghezza e altezza della radice
             String expr = "s/(android:(width|height)=\")15(\\.0+)?(dp|dip)\"/\\1" + iconSizeDp + ".0dp\"/g";
