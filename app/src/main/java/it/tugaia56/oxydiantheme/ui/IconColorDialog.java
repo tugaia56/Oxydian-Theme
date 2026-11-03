@@ -66,6 +66,7 @@ final class IconColorDialog {
         String w = ThemePrefs.getIconColor("wifi"), m = ThemePrefs.getIconColor("mobile");
         ThemeProps.publishIconColors(w.isEmpty() ? null : colorOf(w), m.isEmpty() ? null : colorOf(m));
         ThemeProps.publishNavColor(value("nav"));
+        ThemeProps.publishBatteryColor(value("all"));
     }
 
     private static GradientDrawable circle(int fill, boolean selected, int accent) {

@@ -38,6 +38,12 @@ public final class ThemeProps {
         Shell.cmd("resetprop persist.oxytheme.wifi_icon_color \"" + w + "\"; resetprop persist.oxytheme.mobile_icon_color \"" + m + "\"").submit();
     }
 
+    /** Colore del fulmine e dell'icona della batteria (null = predefinito): lo applica Oxydian. */
+    public static void publishBatteryColor(Integer c) {
+        String v = c == null ? "" : String.format("%08x", c);
+        Shell.cmd("resetprop persist.oxytheme.battery_icon_color \"" + v + "\"").submit();
+    }
+
     /** Colore delle icone della barra di navigazione (null = predefinito): lo applica Oxydian. */
     public static void publishNavColor(Integer nav) {
         String n = nav == null ? "" : String.format("%08x", nav);
