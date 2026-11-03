@@ -73,6 +73,11 @@ if [ -f "$MODDIR/fixedcolors.sh" ]; then
   ) &
 fi
 
+# Android 16/17: quando SystemUI riparte rimette i suoi colori sopra quelli del Theme; il controllo li riporta davanti.
+if [ -f "$MODDIR/colorwatch.sh" ]; then
+  sh "$MODDIR/colorwatch.sh" >> "$LOG" 2>&1 &
+fi
+
 # I colori di sistema (overlay su "android") devono restare sopra gli overlay di altre app/moduli
 # (es. i vecchi accento/sfondo di Oxydian, ColorBlendr), che si riapplicano dopo l'avvio:
 # si riporta in cima, adesso e di nuovo dopo un po'.
