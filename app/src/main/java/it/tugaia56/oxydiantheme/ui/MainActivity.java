@@ -388,6 +388,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
+    private View mSignalCard;
     private TextView mSubPin, mSubRipple, mSubDefaultTab, mSubSbColor;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
@@ -478,7 +479,8 @@ public class MainActivity extends AppCompatActivity {
         mSubSettings = s[0];
         r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
-        r4.addView(makeCard(R.string.card_signal, s, () -> openStyles("signal")));
+        mSignalCard = makeCard(R.string.card_signal, s, () -> openStyles("signal"));
+        r4.addView(mSignalCard);
         mSubSignal = s[0];
         r5.addView(makeCard(R.string.card_nav, s, () -> openStyles("nav")));
         mSubNav = s[0];
@@ -884,6 +886,8 @@ public class MainActivity extends AppCompatActivity {
         String w = ThemePrefs.getStyle("WIFI1"), sg = ThemePrefs.getStyle("SIG1");
         mSubWifi.setText(w.isEmpty() ? def : pretty(w));
         mSubSignal.setText(sg.isEmpty() ? def : pretty(sg));
+        // gli stili del segnale usano i nomi delle icone di OxygenOS: su Android puro (A17) non sono ancora adattati
+        if (mSignalCard != null) mSignalCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
@@ -1054,7 +1058,7 @@ public class MainActivity extends AppCompatActivity {
             // il riconoscimento usa la shell: fuori dal thread principale, poi si ricarica l'elenco
             new Thread(() -> {
                 SystemVariant.detect();
-                runOnUiThread(this::loadApps);
+                runOnUiThread(() -> { loadApps(); refreshCards(); });
             }).start();
         }
         mApps.clear();

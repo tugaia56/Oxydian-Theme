@@ -84,7 +84,7 @@ public class StyleActivity extends AppCompatActivity {
         optBtn.setOnClickListener(v -> showIconOptions());
         View sameRow = findViewById(R.id.row_same);
         com.google.android.material.materialswitch.MaterialSwitch sameSw = findViewById(R.id.sw_same);
-        sameRow.setVisibility(isWifiOrSignal() ? View.VISIBLE : View.GONE);
+        sameRow.setVisibility(isWifiOrSignal() && !it.tugaia56.oxydiantheme.utils.SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         sameSw.setChecked(ThemePrefs.isSameIcon());
         sameSw.setOnCheckedChangeListener((b, on) -> {
             ThemePrefs.setSameIcon(on);
@@ -535,6 +535,7 @@ public class StyleActivity extends AppCompatActivity {
                 String slot = SLOTS[i], ov = ThemeCompiler.namedPackage(slot);
                 String style = ThemePrefs.getStyle(slot);
                 if (style.isEmpty()) continue;
+                if (i == 1 && it.tugaia56.oxydiantheme.utils.SystemVariant.isPure()) continue;   // segnale: nomi di OxygenOS, non per A17
                 if (i == 4) {
                     try { ctx.getPackageManager().getPackageInfo(TARGET_PKG[4], 0); }
                     catch (Exception notInstalled) { continue; }
