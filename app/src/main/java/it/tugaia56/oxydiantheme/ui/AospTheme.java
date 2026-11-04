@@ -104,20 +104,6 @@ public final class AospTheme {
             m.put("system_surface_container_lowest_dark", mix(b, 0xFF000000, 0.4f));
             m.put("system_surface_container_low_dark", mix(b, w, 0.03f));
             m.put("system_surface_container_dark", mix(b, w, 0.06f));
-            m.put("system_surface_container_high_dark", card);
-            m.put("system_surface_container_highest_dark", card);
-        } else if (bg != null) {
-            int b = 0xFF000000 | bg, w = 0xFFFFFFFF;
-            // Sfondo "Trasparente": su Android puro la finestra di Impostazioni e' opaca; solo se il modulo Oxydian e' installato
-            // (rende trasparente quella finestra) i colori di sfondo diventano semitrasparenti, altrimenti si scurirebbe e basta
-            Integer ta = SystemColorsDialog.aospAlpha(ThemePrefs.getOption(SystemColorsDialog.PKG, "background"));
-            if (ta != null && !hasOxydianModule()) ta = null;
-            m.put("system_background_dark", fade(b, ta));
-            m.put("system_surface_dark", fade(b, ta));
-            m.put("system_surface_dim_dark", fade(b, ta));
-            m.put("system_surface_container_lowest_dark", fade(mix(b, 0xFF000000, 0.4f), ta));
-            m.put("system_surface_container_low_dark", fade(mix(b, w, 0.03f), ta));
-            m.put("system_surface_container_dark", fade(mix(b, w, 0.06f), ta));
             m.put("system_surface_container_high_dark", mix(b, w, 0.09f));
             m.put("system_surface_container_highest_dark", mix(b, w, 0.12f));
             // le card di Impostazioni usano questo colore: piu' coprenti dello sfondo, per tenere il testo leggibile
