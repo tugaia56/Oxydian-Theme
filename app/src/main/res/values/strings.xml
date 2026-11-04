@@ -165,6 +165,11 @@
     <string name="scards_full">Solid</string>
     <string name="scards_glass">Transparent</string>
     <string name="scards_border">With border</string>
+    <string name="card_shade">QS and notifications panel</string>
+    <string name="shade_solid">Solid</string>
+    <string name="shade_light">Transparent</string>
+    <string name="shade_strong">Very transparent</string>
+    <string name="shade_need_module">Needs the Oxydian module (Android version) with SystemUI in the LSPosed scope</string>
     <string name="scards_reboot">Restart the phone once to activate this style</string>
     <string name="ripple_hint">The colored wave that appears when you press a button or a list item. The higher the opacity, the stronger it looks.</string>
     <string name="card_default_tab">Start page</string>

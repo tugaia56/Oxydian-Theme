@@ -44,6 +44,11 @@ public final class ThemeProps {
         Shell.cmd("resetprop persist.oxytheme.battery_icon_color \"" + v + "\"").submit();
     }
 
+    /** Opacita' del pannello rapido/notifiche su Android puro in percentuale (100 = di serie): la applica il modulo Oxydian. */
+    public static void publishShadeAlpha(int percent) {
+        Shell.cmd("resetprop persist.oxytheme.shade_alpha " + percent).submit();
+    }
+
     /** Finestra di Impostazioni trasparente su Android puro (1 = si, 0 = no): la applica il modulo Oxydian. */
     public static void publishSettingsWindow(boolean on) {
         Shell.cmd("resetprop persist.oxytheme.settings_window " + (on ? "1" : "0")).submit();

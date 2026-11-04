@@ -177,7 +177,7 @@ public final class AospTheme {
     }
 
     /** Il modulo Oxydian e' installato (serve per la finestra trasparente di Impostazioni su Android puro)? */
-    private static boolean hasOxydianModule() {
+    static boolean hasOxydianModule() {
         return "package:it.tugaia56.oxydian".equals(firstLine("pm list packages it.tugaia56.oxydian | grep -x package:it.tugaia56.oxydian"));
     }
 

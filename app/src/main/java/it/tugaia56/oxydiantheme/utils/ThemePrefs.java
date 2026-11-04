@@ -190,6 +190,10 @@ public final class ThemePrefs {
     public static String getSettingsCards() { return sp().getString("settings_cards", ""); }
     public static void setSettingsCards(String v) { sp().edit().putString("settings_cards", v == null ? "" : v).commit(); }
 
+    /** Opacita' (percentuale di quella di serie) dello sfondo del pannello rapido e delle notifiche su Android puro; 100 = di serie. */
+    public static int getShadeAlpha() { return sp().getInt("shade_alpha", 100); }
+    public static void setShadeAlpha(int v) { sp().edit().putInt("shade_alpha", v).commit(); }
+
     public static String getSystemVariant() { return sp().getString("system_variant", ""); }
     public static void setSystemVariant(String v) { sp().edit().putString("system_variant", v == null ? "" : v).commit(); }
 

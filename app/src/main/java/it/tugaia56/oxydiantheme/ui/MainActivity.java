@@ -388,8 +388,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private View mSignalCard, mSCardsCard;
-    private TextView mSubSCards;
+    private View mSignalCard, mSCardsCard, mShadeCard;
+    private TextView mSubSCards, mSubShade;
     private TextView mSubPin, mSubRipple, mSubDefaultTab, mSubSbColor;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
@@ -481,6 +481,9 @@ public class MainActivity extends AppCompatActivity {
         mSCardsCard = makeCard(R.string.card_scards, s, () -> SettingsCards.show(this, this::refreshCards));
         r3.addView(mSCardsCard);
         mSubSCards = s[0];
+        mShadeCard = makeCard(R.string.card_shade, s, () -> ShadeAlpha.show(this, this::refreshCards));
+        r3.addView(mShadeCard);
+        mSubShade = s[0];
         r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
         mSignalCard = makeCard(R.string.card_signal, s, () -> openStyles("signal"));
@@ -897,6 +900,8 @@ public class MainActivity extends AppCompatActivity {
         // le card di Impostazioni si scelgono solo su Android puro (su OxygenOS le gestisce il tema di sistema)
         if (mSCardsCard != null) mSCardsCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubSCards != null) mSubSCards.setText(SettingsCards.label(this, ThemePrefs.getSettingsCards()));
+        if (mShadeCard != null) mShadeCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
