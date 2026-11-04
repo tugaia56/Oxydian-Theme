@@ -388,7 +388,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mClockColorRow;
+    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mStatusSpacer;
+    private android.widget.LinearLayout mClockColorRow;
+    private Boolean mStatusRowsPure = null;
     private TextView mSubSCards, mSubShade, mSubClockColor;
     private TextView mSubPin, mSubRipple, mSubDefaultTab, mSubSbColor;
 
@@ -455,14 +457,16 @@ public class MainActivity extends AppCompatActivity {
         r1.addView(makeCard(R.string.card_background, s, () -> openColors(1)));
         mSubBg = s[0];
         android.widget.LinearLayout r6 = findViewById(R.id.cards_row6);
-        r6.addView(makeCard(R.string.card_ripple, s, () -> RippleDialog.show(this, () -> {
+        mRippleCard = makeCard(R.string.card_ripple, s, () -> RippleDialog.show(this, () -> {
             syncEnabled(SystemColorsDialog.PKG);
             refreshCards();
             mList.getAdapter().notifyDataSetChanged();
             onApply(SystemColorsDialog.PKG, false);
-        })));
+        }));
+        r6.addView(mRippleCard);
         mSubRipple = s[0];
-        r6.addView(makeCard(R.string.card_sbcolor, s, this::statusBarColorDialog));
+        mSbColorCard = makeCard(R.string.card_sbcolor, s, this::statusBarColorDialog);
+        r6.addView(mSbColorCard);
         mSubSbColor = s[0];
         setupCategoryCards(s);
         // riga sotto le categorie: orologio (solo Android puro) e, accanto, un posto libero per una card futura
@@ -470,17 +474,12 @@ public class MainActivity extends AppCompatActivity {
         mSubClockColor = s[0];
         android.widget.LinearLayout clockRow = new android.widget.LinearLayout(this);
         clockRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-        // il posto libero fa da spalla: due colonne uguali, ma l'altezza viene dalla card (non MATCH_PARENT, altrimenti si schiaccia)
-        android.widget.LinearLayout.LayoutParams clp = (android.widget.LinearLayout.LayoutParams) mClockColorCard.getLayoutParams();
-        clp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        mClockColorCard.setLayoutParams(clp);
-        clockRow.addView(mClockColorCard);
-        View spacer = new View(this);
-        spacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
-        clockRow.addView(spacer);
+        mStatusSpacer = new View(this);
+        mStatusSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
         ViewGroup catsParent = (ViewGroup) findViewById(R.id.cards_cats).getParent();
         catsParent.addView(clockRow, catsParent.indexOfChild(findViewById(R.id.cards_cats)) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         mClockColorRow = clockRow;
+        mStatusRowsPure = null;
         // Pagina Mods
         android.widget.LinearLayout r0 = findViewById(R.id.cards_row0);
         r0.addView(makeCard(R.string.card_variant, s, this::variantDialog));
@@ -821,6 +820,43 @@ public class MainActivity extends AppCompatActivity {
      * Un solo colore per le icone della barra di stato: Wi-Fi e segnale (scritto nei loro overlay) e la batteria
      * (colori di SystemUI creati al volo). Poi si riavvia l'interfaccia per vederlo.
      */
+    /**
+     * Su Android puro: icone e orologio della barra di stato uno accanto all'altro e "Opacita' tocco" nella riga sotto (da sola);
+     * su OxygenOS (niente colore orologio separato) restano "Opacita' tocco" e "Colore icone" insieme.
+     */
+    private void arrangeStatusRows(boolean pure) {
+        if (mClockColorRow == null || mRippleCard == null) return;
+        if (mStatusRowsPure != null && mStatusRowsPure == pure) return;
+        mStatusRowsPure = pure;
+        android.widget.LinearLayout r6 = findViewById(R.id.cards_row6);
+        for (View v : new View[]{mRippleCard, mSbColorCard, mClockColorCard, mStatusSpacer}) {
+            if (v.getParent() instanceof ViewGroup) ((ViewGroup) v.getParent()).removeView(v);
+        }
+        if (pure) {
+            setCardHeight(mSbColorCard, ViewGroup.LayoutParams.MATCH_PARENT);
+            setCardHeight(mClockColorCard, ViewGroup.LayoutParams.MATCH_PARENT);
+            r6.addView(mSbColorCard);
+            r6.addView(mClockColorCard);
+            // l'altezza della riga sotto viene dalla card (con MATCH_PARENT e un posto libero senza altezza si schiaccia)
+            setCardHeight(mRippleCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+            mClockColorRow.addView(mRippleCard);
+            mClockColorRow.addView(mStatusSpacer);
+            mClockColorRow.setVisibility(View.VISIBLE);
+        } else {
+            setCardHeight(mRippleCard, ViewGroup.LayoutParams.MATCH_PARENT);
+            setCardHeight(mSbColorCard, ViewGroup.LayoutParams.MATCH_PARENT);
+            r6.addView(mRippleCard);
+            r6.addView(mSbColorCard);
+            mClockColorRow.setVisibility(View.GONE);
+        }
+    }
+
+    private static void setCardHeight(View card, int h) {
+        ViewGroup.LayoutParams lp = card.getLayoutParams();
+        lp.height = h;
+        card.setLayoutParams(lp);
+    }
+
     private void clockColorDialog() {
         IconColorDialog.show(this, "clock", R.string.card_clockcolor, () -> {
             IconColorDialog.republish();
@@ -937,7 +973,7 @@ public class MainActivity extends AppCompatActivity {
         mSubRipple.setText(RippleDialog.summary(this));
         if (mSubSbColor != null) mSubSbColor.setText(IconColorDialog.summary(this, "all"));
         // il colore dell'orologio separato dalle icone si sceglie solo su Android puro (lo applica il modulo)
-        if (mClockColorRow != null) mClockColorRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        arrangeStatusRows(SystemVariant.isPure());
         if (mSubClockColor != null) mSubClockColor.setText(IconColorDialog.summary(this, "clock"));
         if (mSubVariant != null) {
             mSubVariant.setText(SystemVariant.label(this, ThemePrefs.getSystemVariant()) + "\n" + getString(R.string.card_variant_sub));
