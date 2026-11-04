@@ -44,6 +44,12 @@ public final class ThemeProps {
         Shell.cmd("resetprop persist.oxytheme.battery_icon_color \"" + v + "\"").submit();
     }
 
+    /** Colore dell'orologio della barra di stato su Android puro (null = come le icone): lo applica il modulo Oxydian. */
+    public static void publishClockColor(Integer c) {
+        String v = c == null ? "" : String.format("%08x", c);
+        Shell.cmd("resetprop persist.oxytheme.clock_color \"" + v + "\"").submit();
+    }
+
     /** Opacita' del pannello rapido/notifiche su Android puro in percentuale (100 = di serie): la applica il modulo Oxydian. */
     public static void publishShadeAlpha(int percent) {
         Shell.cmd("resetprop persist.oxytheme.shade_alpha " + percent).submit();

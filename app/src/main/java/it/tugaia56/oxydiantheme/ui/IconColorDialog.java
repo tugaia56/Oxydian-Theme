@@ -58,6 +58,7 @@ final class IconColorDialog {
 
     static String summary(Context ctx, String kind) {
         String n = ThemePrefs.getIconColor(kind);
+        if (n.isEmpty() && "clock".equals(kind)) return ctx.getString(R.string.clock_same_as_icons);
         return n.isEmpty() ? ctx.getString(R.string.options_default) : n;
     }
 
@@ -67,6 +68,11 @@ final class IconColorDialog {
         ThemeProps.publishIconColors(w.isEmpty() ? null : colorOf(w), m.isEmpty() ? null : colorOf(m));
         ThemeProps.publishNavColor(value("nav"));
         ThemeProps.publishBatteryColor(value("all"));
+        ThemeProps.publishClockColor(value("clock"));
+    }
+
+    private static String summary0(Context ctx, String kind) {
+        return "clock".equals(kind) ? ctx.getString(R.string.clock_same_as_icons) : ctx.getString(R.string.options_default);
     }
 
     private static GradientDrawable circle(int fill, boolean selected, int accent) {
@@ -106,7 +112,7 @@ final class IconColorDialog {
             for (int i = 0; i < count; i++) {
                 grid.getChildAt(i).setBackground(circle(fills[i], names[i].equals(sel[0]), ThemePrefs.accentColor()));
             }
-            name.setText(sel[0].isEmpty() ? ctx.getString(R.string.options_default) : sel[0]);
+            name.setText(sel[0].isEmpty() ? summary0(ctx, kind) : sel[0]);
         };
         for (int i = 0; i < count; i++) {
             View v = new View(ctx);
