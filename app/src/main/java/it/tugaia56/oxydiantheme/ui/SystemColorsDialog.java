@@ -219,6 +219,20 @@ final class SystemColorsDialog {
         }
     }
 
+    /**
+     * Opacita' dello sfondo "Trasparente" su Android puro (Impostazioni con la finestra trasparente): piu' coprente di
+     * quella di OxygenOS (oxydianAlpha), perche' qui lo sfondo del telefono passa attraverso tutta la pagina.
+     */
+    static Integer aospAlpha(String name) {
+        if (!isTransparentBg(name)) return null;
+        switch (name) {
+            case "Transparency_Lower": return 0xEB;
+            case "Transparency_Medium": return 0xCC;
+            case "Transparency_Higher": return 0x99;
+            default: return 0x40;
+        }
+    }
+
     static void republish(Context ctx) {
         String a = ThemePrefs.getOption(PKG, "accent"), b = ThemePrefs.getOption(PKG, "background");
         Integer accent = null, bgc = null;

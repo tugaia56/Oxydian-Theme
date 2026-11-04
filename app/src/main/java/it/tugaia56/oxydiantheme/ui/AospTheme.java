@@ -91,7 +91,7 @@ public final class AospTheme {
             int b = 0xFF000000 | bg, w = 0xFFFFFFFF;
             // Sfondo "Trasparente": su Android puro la finestra di Impostazioni e' opaca; solo se il modulo Oxydian e' installato
             // (rende trasparente quella finestra) i colori di sfondo diventano semitrasparenti, altrimenti si scurirebbe e basta
-            Integer ta = SystemColorsDialog.oxydianAlpha(ThemePrefs.getOption(SystemColorsDialog.PKG, "background"));
+            Integer ta = SystemColorsDialog.aospAlpha(ThemePrefs.getOption(SystemColorsDialog.PKG, "background"));
             if (ta != null && !hasOxydianModule()) ta = null;
             m.put("system_background_dark", fade(b, ta));
             m.put("system_surface_dark", fade(b, ta));
