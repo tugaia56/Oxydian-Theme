@@ -20,15 +20,16 @@ import it.tugaia56.oxydiantheme.utils.overlay.compiler.ThemeCompiler;
  * lo fa AospTheme) oppure con bordo (overlay DS_SSB che ridisegna le card con sfondo e accento del Theme).
  */
 final class SettingsCards {
-    static final String FULL = "", GLASS = "glass", BORDER = "border";
+    static final String FULL = "", GLASS = "glass", BORDER = "border", GLASS_BORDER = "glassborder";
     static final String OVERLAY_NAME = "DS_SSTB";
-    private static final String ASSET_DIR = "SSB";
+    private static final String ASSET_DIR = "SSB", ASSET_DIR_GLASS = "SSBG";
 
     private SettingsCards() {}
 
     static String label(Context ctx, String mode) {
         if (GLASS.equals(mode)) return ctx.getString(R.string.scards_glass);
         if (BORDER.equals(mode)) return ctx.getString(R.string.scards_border);
+        if (GLASS_BORDER.equals(mode)) return ctx.getString(R.string.scards_glassborder);
         return ctx.getString(R.string.scards_full);
     }
 
@@ -37,11 +38,14 @@ final class SettingsCards {
         return ThemeCompiler.namedPackage(OVERLAY_NAME);
     }
 
+    /** Stili con l'overlay del bordo (DS_SSTB). */
+    static boolean usesBorder(String mode) { return BORDER.equals(mode) || GLASS_BORDER.equals(mode); }
+
     static void show(Activity act, Runnable onDone) {
-        final String[] modes = {FULL, GLASS, BORDER};
+        final String[] modes = {FULL, GLASS, BORDER, GLASS_BORDER};
         String cur = ThemePrefs.getSettingsCards();
-        int checked = GLASS.equals(cur) ? 1 : BORDER.equals(cur) ? 2 : 0;
-        CharSequence[] names = {act.getString(R.string.scards_full), act.getString(R.string.scards_glass), act.getString(R.string.scards_border)};
+        int checked = GLASS.equals(cur) ? 1 : BORDER.equals(cur) ? 2 : GLASS_BORDER.equals(cur) ? 3 : 0;
+        CharSequence[] names = {act.getString(R.string.scards_full), act.getString(R.string.scards_glass), act.getString(R.string.scards_border), act.getString(R.string.scards_glassborder)};
         Dialogs.show(act, new MaterialAlertDialogBuilder(act)
                 .setTitle(R.string.card_scards)
                 .setSingleChoiceItems(names, checked, (d, which) -> {
@@ -67,11 +71,11 @@ final class SettingsCards {
         String pkg = overlayPackage();
         String list = ModuleConstants.MODULE_DIR + "/enabled.list";
         boolean needsReboot = false;
-        if (BORDER.equals(mode)) {
+        if (usesBorder(mode)) {
             try {
                 ThemeCompiler.beginBatch();
                 boolean registeredBefore = registered(pkg);
-                boolean failed = ThemeCompiler.buildNamedInBatch("com.android.settings", ASSET_DIR, OVERLAY_NAME);
+                boolean failed = ThemeCompiler.buildNamedInBatch("com.android.settings", GLASS_BORDER.equals(mode) ? ASSET_DIR_GLASS : ASSET_DIR, OVERLAY_NAME);
                 if (!failed) {
                     Shell.cmd("grep -qx '" + pkg + "' " + list + " 2>/dev/null || echo '" + pkg + "' >> " + list).exec();
                     if (registeredBefore) {

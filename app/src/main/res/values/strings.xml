@@ -165,6 +165,7 @@
     <string name="scards_full">Solid</string>
     <string name="scards_glass">Transparent</string>
     <string name="scards_border">With border</string>
+    <string name="scards_glassborder">Transparent with border</string>
     <string name="card_shade">QS and notifications panel</string>
     <string name="shade_solid">Solid</string>
     <string name="shade_light">Transparent</string>

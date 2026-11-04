@@ -164,6 +164,7 @@
     <string name="scards_full">Piene</string>
     <string name="scards_glass">Trasparenti</string>
     <string name="scards_border">Con bordo</string>
+    <string name="scards_glassborder">Trasparenti con bordo</string>
     <string name="card_shade">Pannello rapido e notifiche</string>
     <string name="shade_solid">Pieno</string>
     <string name="shade_light">Trasparente</string>

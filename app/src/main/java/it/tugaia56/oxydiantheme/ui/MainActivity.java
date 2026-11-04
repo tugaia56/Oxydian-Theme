@@ -1581,7 +1581,7 @@ public class MainActivity extends AppCompatActivity {
             // elenco dei temi da accendere ad ogni avvio (lo legge il modulo)
             List<String> wanted = new ArrayList<>();
             for (AppEntry e : all) if (e.enabled) wanted.add(e.overlay());
-            if (SettingsCards.BORDER.equals(ThemePrefs.getSettingsCards())) wanted.add(SettingsCards.overlayPackage());
+            if (SettingsCards.usesBorder(ThemePrefs.getSettingsCards())) wanted.add(SettingsCards.overlayPackage());
             ThemeCompiler.writeEnabledList(wanted);
             // Android puro: l'accento va dato anche al sistema (colore di partenza)
             boolean sysTarget = false;

@@ -104,7 +104,7 @@ public final class AospTheme {
             // le card di Impostazioni usano questo colore: piu' coprenti dello sfondo, per tenere il testo leggibile
             // (card "Trasparenti": con lo sfondo trasparente hanno la sua stessa opacita', altrimenti una fissa)
             Integer cardAlpha = null;
-            if (SettingsCards.GLASS.equals(ThemePrefs.getSettingsCards()) && hasOxydianModule())
+            if ((SettingsCards.GLASS.equals(ThemePrefs.getSettingsCards()) || SettingsCards.GLASS_BORDER.equals(ThemePrefs.getSettingsCards())) && hasOxydianModule())
                 cardAlpha = ta != null ? ta : 0xB3;
             m.put("system_surface_bright_dark", fade(mix(b, w, 0.15f), cardAlpha));
             m.put("system_surface_variant_dark", mix(b, w, 0.12f));
