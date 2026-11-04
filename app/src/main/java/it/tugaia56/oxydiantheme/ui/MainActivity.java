@@ -757,40 +757,35 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new android.content.Intent(this, StyleActivity.class).putExtra("mode", mode));
     }
 
-    /** Una card per categoria di colori (accenti e sfondi): apre l'elenco con i soli colori della categoria. */
-    private final List<Object[]> mCatCards = new ArrayList<>();   // {TextView sotto-titolo, Cat, which}
+    /** Due card (accenti e sfondi per categoria): toccandole si sceglie la categoria e si apre l'elenco con i suoi colori. */
+    private final TextView[] mSubCat = new TextView[2];
+    private final List<List<ColorCategories.Cat>> mCats = new ArrayList<>();
 
     private void setupCategoryCards(TextView[] s) {
         android.widget.LinearLayout box = findViewById(R.id.cards_cats);
-        float d = getResources().getDisplayMetrics().density;
+        mCats.clear();
+        android.widget.LinearLayout row = new android.widget.LinearLayout(this);
+        row.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        box.addView(row, new android.widget.LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         for (int which = 0; which < 2; which++) {
             final int w = which;
-            List<ColorCategories.Cat> cats = ColorCategories.load(this, which == 0 ? "accent" : "background");
-            if (cats.isEmpty()) continue;
-            TextView h = new TextView(this);
-            h.setText(which == 0 ? R.string.cat_accents_title : R.string.cat_backgrounds_title);
-            h.setTextColor(getColor(R.color.text_dim));
-            h.setTextSize(13);
-            h.setPadding((int) (10 * d), (int) (16 * d), 0, (int) (4 * d));
-            box.addView(h);
-            android.widget.LinearLayout row = null;
-            for (int i = 0; i < cats.size(); i++) {
-                final ColorCategories.Cat c = cats.get(i);
-                if (i % 2 == 0) {
-                    row = new android.widget.LinearLayout(this);
-                    row.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-                    box.addView(row, new android.widget.LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                }
-                row.addView(makeCard(c.title, s, () -> openColors(w, c.names, c.title)));
-                mCatCards.add(new Object[]{s[0], c, w});
-                if (i == cats.size() - 1 && i % 2 == 0) {
-                    View sp = new View(this);
-                    sp.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-                    row.addView(sp);
-                }
-            }
+            final List<ColorCategories.Cat> cats = ColorCategories.load(this, which == 0 ? "accent" : "background");
+            mCats.add(cats);
+            row.addView(makeCard(which == 0 ? R.string.cat_accents_title : R.string.cat_backgrounds_title, s, () -> chooseCategory(w, cats)));
+            mSubCat[which] = s[0];
         }
+    }
+
+    /** Elenco delle categorie: la scelta apre i colori di quella categoria. */
+    private void chooseCategory(int which, List<ColorCategories.Cat> cats) {
+        if (cats.isEmpty()) { openColors(which); return; }
+        CharSequence[] names = new CharSequence[cats.size()];
+        for (int i = 0; i < names.length; i++) names[i] = cats.get(i).title + "  ·  " + cats.get(i).names.size();
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(which == 0 ? R.string.cat_accents_title : R.string.cat_backgrounds_title)
+                .setItems(names, (d, i) -> openColors(which, cats.get(i).names, cats.get(i).title))
+                .setNegativeButton(android.R.string.cancel, null));
     }
 
     /**
@@ -877,10 +872,12 @@ public class MainActivity extends AppCompatActivity {
         String def = getString(R.string.options_default);
         String acc = ThemePrefs.getOption(SystemColorsDialog.PKG, "accent");
         String bg = ThemePrefs.getOption(SystemColorsDialog.PKG, "background");
-        for (Object[] cc : mCatCards) {
-            ColorCategories.Cat cat = (ColorCategories.Cat) cc[1];
-            String cur = (Integer) cc[2] == 0 ? acc : bg;
-            ((TextView) cc[0]).setText(cat.names.contains(cur) ? pretty(cur) : getString(R.string.cat_count, cat.names.size()));
+        for (int w = 0; w < 2 && w < mCats.size(); w++) {
+            // colore scelto (se sta in una delle categorie) oppure quante categorie ci sono
+            String cur = w == 0 ? acc : bg;
+            boolean inCat = false;
+            for (ColorCategories.Cat cat : mCats.get(w)) if (cat.names.contains(cur)) { inCat = true; break; }
+            if (mSubCat[w] != null) mSubCat[w].setText(inCat ? pretty(cur) : getString(R.string.cat_categories, mCats.get(w).size()));
         }
         mSubAccent.setText(acc.isEmpty() ? def : OptionGroupsDialog.CUSTOM.equals(acc) ? getString(R.string.opt_custom) : pretty(acc));
         mSubBg.setText(bg.isEmpty() ? def : OptionGroupsDialog.CUSTOM.equals(bg) ? getString(R.string.opt_custom) : pretty(bg));

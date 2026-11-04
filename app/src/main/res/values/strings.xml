@@ -232,6 +232,7 @@ Remove their themes? A reboot is needed.</item>
     <string name="cat_accents_title">Accents by category</string>
     <string name="cat_backgrounds_title">Backgrounds by category</string>
     <string name="cat_count">%d colours</string>
+    <string name="cat_categories">%d categories</string>
     <string name="backup_delete_title">Delete backups</string>
     <string name="backup_delete_summary">Removes only the Theme backups from the chosen folder</string>
     <string name="backup_delete_need_folder">Choose a backup folder first</string>
