@@ -73,6 +73,8 @@ public final class AospTheme {
                 m.put("system_control_activated_dark", a);
                 m.put("system_shade_active_dark", a);
                 m.put("system_on_shade_active_dark", on);
+                // contorno dell'orologio nella barra di stato (crDroid, stile "Contorno"): usa questa tinta dell'accento di Android
+                m.put("system_accent1_300", a);
             }
         }
         if (bg != null && rolesOnly) {
