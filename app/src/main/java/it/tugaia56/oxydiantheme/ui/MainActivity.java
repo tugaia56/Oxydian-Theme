@@ -479,10 +479,15 @@ public class MainActivity extends AppCompatActivity {
         r3.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
         mSubSettings = s[0];
         mSCardsCard = makeCard(R.string.card_scards, s, () -> SettingsCards.show(this, this::refreshCards));
-        r3.addView(mSCardsCard);
+        // le due card nuove (solo Android) stanno in una riga a parte, altrimenti la riga con Tasti PIN e Pack Icone diventa troppo stretta
+        android.widget.LinearLayout r3b = new android.widget.LinearLayout(this);
+        r3b.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        ViewGroup r3p = (ViewGroup) r3.getParent();
+        r3p.addView(r3b, r3p.indexOfChild(r3) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        r3b.addView(mSCardsCard);
         mSubSCards = s[0];
         mShadeCard = makeCard(R.string.card_shade, s, () -> ShadeAlpha.show(this, this::refreshCards));
-        r3.addView(mShadeCard);
+        r3b.addView(mShadeCard);
         mSubShade = s[0];
         r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
