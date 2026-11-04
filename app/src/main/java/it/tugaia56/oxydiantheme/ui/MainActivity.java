@@ -777,15 +777,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** Elenco delle categorie: la scelta apre i colori di quella categoria. */
+    /** Pagina con le card delle categorie: la scelta torna qui e apre i colori di quella categoria. */
+    private final androidx.activity.result.ActivityResultLauncher<android.content.Intent> mCatPage =
+            registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(), r -> {
+                android.content.Intent data = r.getData();
+                if (r.getResultCode() != RESULT_OK || data == null) return;
+                int w = data.getIntExtra("which", 0), idx = data.getIntExtra("index", -1);
+                if (w < 0 || w >= mCats.size() || idx < 0 || idx >= mCats.get(w).size()) return;
+                ColorCategories.Cat c = mCats.get(w).get(idx);
+                openColors(w, c.names, c.title);
+            });
+
     private void chooseCategory(int which, List<ColorCategories.Cat> cats) {
         if (cats.isEmpty()) { openColors(which); return; }
-        CharSequence[] names = new CharSequence[cats.size()];
-        for (int i = 0; i < names.length; i++) names[i] = cats.get(i).title + "  ·  " + cats.get(i).names.size();
-        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-                .setTitle(which == 0 ? R.string.cat_accents_title : R.string.cat_backgrounds_title)
-                .setItems(names, (d, i) -> openColors(which, cats.get(i).names, cats.get(i).title))
-                .setNegativeButton(android.R.string.cancel, null));
+        mCatPage.launch(new android.content.Intent(this, CategoriesActivity.class).putExtra("which", which));
     }
 
     /**

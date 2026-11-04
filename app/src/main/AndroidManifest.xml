@@ -28,6 +28,10 @@
             android:name=".ui.StyleActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.CategoriesActivity"
+            android:exported="false" />
+
         <service
             android:name=".utils.UpdateJobService"
             android:exported="false"
