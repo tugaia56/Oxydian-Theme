@@ -246,6 +246,8 @@ public final class AospTheme {
             it.tugaia56.oxydiantheme.utils.ThemeProps.publishSettingsWindow(enabled
                     && SystemColorsDialog.oxydianAlpha(ThemePrefs.getOption(SystemColorsDialog.PKG, "background")) != null
                     && hasOxydianModule());
+            // Impostazioni, se e' aperta in memoria, tiene i vecchi colori finche' non riparte: la si chiude (si riapre da sola al prossimo uso)
+            Shell.cmd("am force-stop com.android.settings").submit();
         } catch (Throwable ignored) {}
     }
 }
