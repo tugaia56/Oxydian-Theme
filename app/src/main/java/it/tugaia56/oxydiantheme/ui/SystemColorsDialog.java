@@ -220,16 +220,17 @@ final class SystemColorsDialog {
     }
 
     /**
-     * Opacita' dello sfondo "Trasparente" su Android puro (Impostazioni con la finestra trasparente): piu' coprente di
-     * quella di OxygenOS (oxydianAlpha), perche' qui lo sfondo del telefono passa attraverso tutta la pagina.
+     * Opacita' dello sfondo "Trasparente" su Android puro (Impostazioni con la finestra trasparente): gli stessi valori che il
+     * Theme usa per il proprio sfondo (background_dark di Transparency_Lower/Medium/Higher: #60/#40/#20), cosi' Impostazioni
+     * e il Theme hanno lo stesso aspetto. Il minimo non e' 0 per non rendere trasparente del tutto i colori di sistema.
      */
     static Integer aospAlpha(String name) {
         if (!isTransparentBg(name)) return null;
         switch (name) {
-            case "Transparency_Lower": return 0xEB;
-            case "Transparency_Medium": return 0xCC;
-            case "Transparency_Higher": return 0x99;
-            default: return 0x40;
+            case "Transparency_Lower": return 0x60;
+            case "Transparency_Medium": return 0x40;
+            case "Transparency_Higher": return 0x20;
+            default: return 0x10;
         }
     }
 
