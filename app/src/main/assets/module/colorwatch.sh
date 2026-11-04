@@ -7,18 +7,23 @@ MODDIR=${0%/*}
 LOG=/data/local/tmp/oxydian_theme.log
 last=$(pidof com.android.systemui)
 while true; do
-  sleep 20
+  sleep 2
   [ -f "$MODDIR/fixedcolors.sh" ] || continue
   pid=$(pidof com.android.systemui)
   [ -n "$pid" ] && [ "$pid" != "$last" ] || continue
   last=$pid
-  # SystemUI ha bisogno di qualche secondo per rifare i suoi colori
-  sleep 30
-  top=$(cmd overlay list --user 0 android 2>/dev/null | grep '^\[x\]' | tail -1)
-  case "$top" in
-    *oxyfix*) ;;
-    *)
-      echo "colorwatch: colori del sistema davanti a quelli del Theme ($top), li rimetto $(date)" >> "$LOG"
-      sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1;;
-  esac
+  # SystemUI rifa' i suoi colori in pochi secondi: per una ventina di secondi si controlla ogni secondo e, appena quelli del
+  # sistema stanno davanti, si rimettono i colori del Theme (cosi' il ritardo e' minimo)
+  n=0
+  while [ $n -lt 20 ]; do
+    sleep 1
+    n=$((n+1))
+    top=$(cmd overlay list --user 0 android 2>/dev/null | grep '^\[x\]' | tail -1)
+    case "$top" in
+      *oxyfix*) ;;
+      *)
+        echo "colorwatch: colori del sistema davanti a quelli del Theme ($top), li rimetto $(date)" >> "$LOG"
+        sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1;;
+    esac
+  done
 done
