@@ -556,7 +556,7 @@ public class MainActivity extends AppCompatActivity {
 
     /** Versione del sistema per cui compilare SystemUI. */
     private void variantDialog() {
-        final String[] values = {"", SystemVariant.OOS16, SystemVariant.OOS15, SystemVariant.A16, SystemVariant.A15};
+        final String[] values = {"", SystemVariant.OOS17, SystemVariant.OOS16, SystemVariant.OOS15, SystemVariant.A17, SystemVariant.A16, SystemVariant.A15};
         String[] names = new String[values.length];
         for (int i = 0; i < values.length; i++) names[i] = SystemVariant.label(this, values[i]);
         int cur = Arrays.asList(values).indexOf(ThemePrefs.getSystemVariant());
@@ -584,6 +584,8 @@ public class MainActivity extends AppCompatActivity {
             rb.setId(View.generateViewId());
             rb.setChecked(i == sel[0]);
             rb.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+            // OxygenOS 17 non e' ancora uscito: si vede ma non si puo' scegliere
+            if (SystemVariant.OOS17.equals(values[i])) { rb.setEnabled(false); rb.setAlpha(0.5f); }
             final int idx = i;
             rb.setOnClickListener(v -> sel[0] = idx);
             rg.addView(rb);

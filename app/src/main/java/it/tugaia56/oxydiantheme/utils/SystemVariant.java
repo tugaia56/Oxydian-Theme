@@ -13,6 +13,8 @@ import it.tugaia56.oxydiantheme.R;
 public final class SystemVariant {
     /** Valori salvati: "" = automatico, oppure uno di questi. */
     public static final String OOS16 = "oos16", OOS15 = "oos15", A16 = "a16", A15 = "a15";
+    /** Android 17 (stesse risorse di SystemUI di Android 16) e OxygenOS 17 (non ancora uscito: si vede ma non si sceglie). */
+    public static final String A17 = "a17", OOS17 = "oos17";
 
     private static String sAuto;
 
@@ -22,8 +24,10 @@ public final class SystemVariant {
     public static String label(Context ctx, String value) {
         if (value == null || value.isEmpty()) return ctx.getString(R.string.variant_auto);
         switch (value) {
+            case OOS17: return "OxygenOS 17 (" + ctx.getString(R.string.variant_soon) + ")";
             case OOS16: return "OxygenOS 16";
             case OOS15: return "OxygenOS 15";
+            case A17: return "Android 17";
             case A16: return "Android 16";
             case A15: return "Android 15";
             default: return value;
@@ -41,7 +45,8 @@ public final class SystemVariant {
         } catch (Throwable ignored) {}
         // Solo la proprieta' di sistema decide: la presenza di app OnePlus installate a mano (per esempio
         // Giochi) NON vuol dire che il sistema sia OxygenOS (es. crDroid sul OnePlus 7T Pro).
-        if (sdk >= 36) sAuto = oplus ? OOS16 : A16;
+        if (sdk >= 37) sAuto = oplus ? OOS16 : A17;
+        else if (sdk >= 36) sAuto = oplus ? OOS16 : A16;
         else sAuto = oplus ? OOS15 : A15;
         return sAuto;
     }
@@ -61,13 +66,14 @@ public final class SystemVariant {
     public static boolean isPure() {
         String saved = ThemePrefs.getSystemVariant();
         String v = saved.isEmpty() ? sAuto : saved;
-        return A16.equals(v) || A15.equals(v);
+        return A17.equals(v) || A16.equals(v) || A15.equals(v);
     }
 
     /** Suffisso della cartella negli asset: vuoto per OxygenOS 16 (la base). */
     public static String dirSuffix(String variant) {
         switch (variant) {
             case OOS15: return "_OOS15";
+            case A17: return "_A16";   // Android 17 usa le stesse risorse di SystemUI di Android 16
             case A16: return "_A16";
             case A15: return "_A15";
             default: return "";

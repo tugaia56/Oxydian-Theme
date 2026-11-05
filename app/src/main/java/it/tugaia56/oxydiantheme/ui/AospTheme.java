@@ -200,7 +200,7 @@ public final class AospTheme {
     /** True se la variante in uso e' Android puro (non OxygenOS). */
     public static boolean isAosp() {
         String v = SystemVariant.effective();
-        return SystemVariant.A16.equals(v) || SystemVariant.A15.equals(v);
+        return SystemVariant.A17.equals(v) || SystemVariant.A16.equals(v) || SystemVariant.A15.equals(v);
     }
 
     /**

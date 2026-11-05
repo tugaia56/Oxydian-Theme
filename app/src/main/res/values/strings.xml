@@ -165,6 +165,7 @@
     <string name="clock_same_as_icons">Same as icons</string>
     <string name="card_notifstyle">Notification style</string>
     <string name="notif_style_default">Default</string>
+    <string name="variant_soon">coming soon</string>
     <string name="card_sbcolor">Status bar icon colour</string>
     <string name="card_scards">Settings cards</string>
     <string name="scards_full">Solid</string>
