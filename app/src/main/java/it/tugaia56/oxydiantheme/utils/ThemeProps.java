@@ -55,6 +55,12 @@ public final class ThemeProps {
         Shell.cmd("resetprop persist.oxytheme.notif_style \"" + (id == null ? "" : id) + "\"").submit();
     }
 
+    /** Colore del numero della batteria (null = come le icone): lo applica il modulo Oxydian. */
+    public static void publishBatteryPctColor(Integer c) {
+        String v = c == null ? "" : String.format("%08x", c);
+        Shell.cmd("resetprop persist.oxytheme.battery_pct_color \"" + v + "\"").submit();
+    }
+
     /** Opacita' del pannello rapido/notifiche su Android puro in percentuale (100 = di serie): la applica il modulo Oxydian. */
     public static void publishShadeAlpha(int percent) {
         Shell.cmd("resetprop persist.oxytheme.shade_alpha " + percent).submit();

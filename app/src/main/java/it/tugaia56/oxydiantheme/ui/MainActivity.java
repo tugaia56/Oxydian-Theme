@@ -389,7 +389,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mStatusSpacer, mNotifStyleRow;
+    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow;
+    private TextView mSubBatPct;
     private TextView mSubNotifStyle;
     private android.widget.LinearLayout mClockColorRow;
     private Boolean mStatusRowsPure = null;
@@ -476,8 +477,8 @@ public class MainActivity extends AppCompatActivity {
         mSubClockColor = s[0];
         android.widget.LinearLayout clockRow = new android.widget.LinearLayout(this);
         clockRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-        mStatusSpacer = new View(this);
-        mStatusSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
+        mBatPctCard = makeCard(R.string.card_batpctcolor, s, this::batPctColorDialog);
+        mSubBatPct = s[0];
         ViewGroup catsParent = (ViewGroup) findViewById(R.id.cards_cats).getParent();
         catsParent.addView(clockRow, catsParent.indexOfChild(findViewById(R.id.cards_cats)) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         mClockColorRow = clockRow;
@@ -840,29 +841,23 @@ public class MainActivity extends AppCompatActivity {
      */
     private void arrangeStatusRows(boolean pure) {
         if (mClockColorRow == null || mRippleCard == null) return;
-        if (mStatusRowsPure != null && mStatusRowsPure == pure) return;
+        if (mStatusRowsPure != null) return;
         mStatusRowsPure = pure;
         android.widget.LinearLayout r6 = findViewById(R.id.cards_row6);
-        for (View v : new View[]{mRippleCard, mSbColorCard, mClockColorCard, mStatusSpacer}) {
+        for (View v : new View[]{mRippleCard, mSbColorCard, mClockColorCard, mBatPctCard}) {
             if (v.getParent() instanceof ViewGroup) ((ViewGroup) v.getParent()).removeView(v);
         }
-        if (pure) {
-            setCardHeight(mSbColorCard, ViewGroup.LayoutParams.MATCH_PARENT);
-            setCardHeight(mClockColorCard, ViewGroup.LayoutParams.MATCH_PARENT);
-            r6.addView(mSbColorCard);
-            r6.addView(mClockColorCard);
-            // l'altezza della riga sotto viene dalla card (con MATCH_PARENT e un posto libero senza altezza si schiaccia)
-            setCardHeight(mRippleCard, ViewGroup.LayoutParams.WRAP_CONTENT);
-            mClockColorRow.addView(mRippleCard);
-            mClockColorRow.addView(mStatusSpacer);
-            mClockColorRow.setVisibility(View.VISIBLE);
-        } else {
-            setCardHeight(mRippleCard, ViewGroup.LayoutParams.MATCH_PARENT);
-            setCardHeight(mSbColorCard, ViewGroup.LayoutParams.MATCH_PARENT);
-            r6.addView(mRippleCard);
-            r6.addView(mSbColorCard);
-            mClockColorRow.setVisibility(View.GONE);
-        }
+        // stessa disposizione su OxygenOS e Android puro: icone e orologio vicini, sotto "Opacita' tocco" e "% batteria"
+        setCardHeight(mSbColorCard, ViewGroup.LayoutParams.MATCH_PARENT);
+        setCardHeight(mClockColorCard, ViewGroup.LayoutParams.MATCH_PARENT);
+        r6.addView(mSbColorCard);
+        r6.addView(mClockColorCard);
+        // l'altezza della riga sotto viene dalle card (con MATCH_PARENT e senza altro contenuto si schiaccia)
+        setCardHeight(mRippleCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        setCardHeight(mBatPctCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mClockColorRow.addView(mRippleCard);
+        mClockColorRow.addView(mBatPctCard);
+        mClockColorRow.setVisibility(View.VISIBLE);
     }
 
     private static void setCardHeight(View card, int h) {
@@ -871,12 +866,25 @@ public class MainActivity extends AppCompatActivity {
         card.setLayoutParams(lp);
     }
 
-    private void clockColorDialog() {
-        IconColorDialog.show(this, "clock", R.string.card_clockcolor, () -> {
+    private void clockColorDialog() { statusBarTextColorDialog("clock", R.string.card_clockcolor); }
+
+    private void batPctColorDialog() { statusBarTextColorDialog("batpct", R.string.card_batpctcolor); }
+
+    /**
+     * Colore dell'orologio o del numero della batteria. Android puro: si riavvia l'interfaccia (una volta). OxygenOS: niente riavvio
+     * (con i molti overlay di colore la barra di stato si bloccherebbe): il modulo lo applica al prossimo aggiornamento di ora/batteria.
+     */
+    private void statusBarTextColorDialog(String kind, int titleRes) {
+        IconColorDialog.show(this, kind, titleRes, () -> {
             IconColorDialog.republish();
             refreshCards();
-            Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-            new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
+            if (SystemVariant.isPure()) {
+                Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+                new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
+            } else if ("clock".equals(kind)) {
+                // un cambio d'ora fa ridisegnare subito l'orologio con il nuovo colore
+                new Thread(() -> com.topjohnwu.superuser.Shell.cmd("am broadcast -a android.intent.action.TIME_SET >/dev/null 2>&1").exec()).start();
+            }
         });
     }
 
@@ -988,9 +996,10 @@ public class MainActivity extends AppCompatActivity {
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
         if (mSubSbColor != null) mSubSbColor.setText(IconColorDialog.summary(this, "all"));
-        // il colore dell'orologio separato dalle icone si sceglie solo su Android puro (lo applica il modulo)
+        // colori separati di orologio e numero della batteria (li applica il modulo Oxydian)
         arrangeStatusRows(SystemVariant.isPure());
         if (mSubClockColor != null) mSubClockColor.setText(IconColorDialog.summary(this, "clock"));
+        if (mSubBatPct != null) mSubBatPct.setText(IconColorDialog.summary(this, "batpct"));
         if (mSubVariant != null) {
             mSubVariant.setText(SystemVariant.label(this, ThemePrefs.getSystemVariant()) + "\n" + getString(R.string.card_variant_sub));
         }

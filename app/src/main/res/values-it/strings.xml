@@ -159,6 +159,7 @@
     <string name="only_signal">solo Segnale</string>
     <string name="state_on_full">Attivo · Nascondi In/Out</string>
     <string name="card_ripple">Opacità tocco</string>
+    <string name="card_batpctcolor">Colore % batteria</string>
     <string name="card_clockcolor">Colore orologio barra di stato</string>
     <string name="clock_same_as_icons">Come le icone</string>
     <string name="card_notifstyle">Stile notifiche</string>
