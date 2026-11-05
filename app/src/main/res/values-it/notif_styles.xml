@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="notif_style_names">
+        <item>Trasparente con bordo sottile</item>
+        <item>Trasparenza Alta con bordo</item>
+        <item>Trasparenza Media con bordo</item>
+        <item>Trasparenza Bassa con bordo</item>
+        <item>Puntini</item>
+        <item>Righe</item>
+        <item>Rumore</item>
+        <item>Cuori</item>
+        <item>Quadri</item>
+        <item>Fiori</item>
+        <item>Picche</item>
+        <item>Scacchiera</item>
+        <item>Onde</item>
+        <item>Intreccio</item>
+        <item>Scuro con bordo</item>
+        <item>Semi Trasparente</item>
+        <item>Trasparente</item>
+        <item>Nero Assoluto</item>
+        <item>Monet</item>
+        <item>Accento Solido</item>
+        <item>Livelli</item>
+        <item>Bordo Sottile</item>
+        <item>Bordo Inferiore</item>
+        <item>Neumorph</item>
+        <item>Stack</item>
+        <item>Stack Laterale</item>
+        <item>Bordo Spesso</item>
+        <item>Vetro</item>
+        <item>Vetro v2</item>
+        <item>Vetro v3</item>
+        <item>Neumorph con Bordo</item>
+        <item>Cyberponk</item>
+        <item>Cyberponk v2</item>
+        <item>Linea Sottile</item>
+        <item>Sfumato</item>
+        <item>Manubrio</item>
+        <item>Doppia Linea</item>
+        <item>iOS</item>
+    </string-array>
+</resources>

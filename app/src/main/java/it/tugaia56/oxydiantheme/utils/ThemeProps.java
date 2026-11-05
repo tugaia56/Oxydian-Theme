@@ -50,6 +50,11 @@ public final class ThemeProps {
         Shell.cmd("resetprop persist.oxytheme.clock_color \"" + v + "\"").submit();
     }
 
+    /** Stile delle notifiche su Android puro (vuoto = di serie): lo applica il modulo Oxydian. */
+    public static void publishNotifStyle(String id) {
+        Shell.cmd("resetprop persist.oxytheme.notif_style \"" + (id == null ? "" : id) + "\"").submit();
+    }
+
     /** Opacita' del pannello rapido/notifiche su Android puro in percentuale (100 = di serie): la applica il modulo Oxydian. */
     public static void publishShadeAlpha(int percent) {
         Shell.cmd("resetprop persist.oxytheme.shade_alpha " + percent).submit();

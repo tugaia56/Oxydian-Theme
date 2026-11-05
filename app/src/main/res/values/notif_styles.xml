@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="notif_style_ids" translatable="false">
+        <item>DSTNFNTOT</item>
+        <item>DSTNFNO25</item>
+        <item>DSTNFNO50</item>
+        <item>DSTNFNO75</item>
+        <item>DSTNFNDOT</item>
+        <item>DSTNFNLNS</item>
+        <item>DSTNFNGRN</item>
+        <item>DSTNFNHRT</item>
+        <item>DSTNFNDIA</item>
+        <item>DSTNFNCLB</item>
+        <item>DSTNFNSPD</item>
+        <item>DSTNFNCHK</item>
+        <item>DSTNFNWAV</item>
+        <item>DSTNFNXH</item>
+        <item>DSTNFNOAC</item>
+        <item>DSTNFNST</item>
+        <item>DSTNFNTR</item>
+        <item>DSTNFNPB</item>
+        <item>DSTNFNMN</item>
+        <item>DSTNFNAS</item>
+        <item>DSTNFNLYR</item>
+        <item>DSTNFNTO2</item>
+        <item>DSTNFNBTM</item>
+        <item>DSTNFNNM1</item>
+        <item>DSTNFNSTK</item>
+        <item>DSTNFNSS</item>
+        <item>DSTNFNOL4</item>
+        <item>DSTNFNLT1</item>
+        <item>DSTNFNLT2</item>
+        <item>DSTNFNLT3</item>
+        <item>DSTNFNNM2</item>
+        <item>DSTNFNCP1</item>
+        <item>DSTNFNCP2</item>
+        <item>DSTNFNTL</item>
+        <item>DSTNFNFD</item>
+        <item>DSTNFNDB</item>
+        <item>DSTNFNDL</item>
+        <item>DSTNFNIOS</item>
+    </string-array>
+    <string-array name="notif_style_names">
+        <item>Thin Outline Transparent</item>
+        <item>Outline Transparent 25%</item>
+        <item>Outline Transparent 50%</item>
+        <item>Outline Transparent 75%</item>
+        <item>Dots</item>
+        <item>Lines</item>
+        <item>Noise</item>
+        <item>Hearts</item>
+        <item>Diamonds</item>
+        <item>Clubs</item>
+        <item>Spades</item>
+        <item>Checkerboard</item>
+        <item>Waves</item>
+        <item>Crosshatch</item>
+        <item>Outline Accent</item>
+        <item>Semi Transparent</item>
+        <item>Transparent</item>
+        <item>Pitch Black</item>
+        <item>Monet</item>
+        <item>Accent Solid</item>
+        <item>Layers</item>
+        <item>Thin Outline</item>
+        <item>Bottom Outline</item>
+        <item>Neumorph</item>
+        <item>Stack</item>
+        <item>Side Stack</item>
+        <item>Thick Outline</item>
+        <item>Lighty</item>
+        <item>Lighty v2</item>
+        <item>Lighty v3</item>
+        <item>Neumorph Outline</item>
+        <item>Cyberponk</item>
+        <item>Cyberponk v2</item>
+        <item>Thread Line</item>
+        <item>Faded</item>
+        <item>Dumbbell</item>
+        <item>Duoline</item>
+        <item>iOS</item>
+    </string-array>
+</resources>

@@ -194,6 +194,10 @@ public final class ThemePrefs {
     public static int getShadeAlpha() { return sp().getInt("shade_alpha", 100); }
     public static void setShadeAlpha(int v) { sp().edit().putInt("shade_alpha", v).commit(); }
 
+    /** Stile delle notifiche su Android puro (id di Oxydian, es. DSTNFNO50); vuoto = di serie. */
+    public static String getNotifStyle() { return sp().getString("notif_style", ""); }
+    public static void setNotifStyle(String v) { sp().edit().putString("notif_style", v == null ? "" : v).commit(); }
+
     public static String getSystemVariant() { return sp().getString("system_variant", ""); }
     public static void setSystemVariant(String v) { sp().edit().putString("system_variant", v == null ? "" : v).commit(); }
 

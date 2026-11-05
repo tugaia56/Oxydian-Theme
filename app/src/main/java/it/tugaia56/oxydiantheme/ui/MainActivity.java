@@ -376,6 +376,7 @@ public class MainActivity extends AppCompatActivity {
         buildInfoPage();
         SystemColorsDialog.republish(this);
         IconColorDialog.republish();
+        NotifStyle.republish();
         ((Button) findViewById(R.id.btn_all)).setOnClickListener(v -> setAll(true));
         ((Button) findViewById(R.id.btn_none)).setOnClickListener(v -> setAll(false));
 
@@ -388,7 +389,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mStatusSpacer;
+    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mStatusSpacer, mNotifStyleRow;
+    private TextView mSubNotifStyle;
     private android.widget.LinearLayout mClockColorRow;
     private Boolean mStatusRowsPure = null;
     private TextView mSubSCards, mSubShade, mSubClockColor;
@@ -504,6 +506,18 @@ public class MainActivity extends AppCompatActivity {
         mShadeCard = makeCard(R.string.card_shade, s, () -> ShadeAlpha.show(this, this::refreshCards));
         r3b.addView(mShadeCard);
         mSubShade = s[0];
+        // stile delle notifiche (solo Android): riga sotto, con un posto libero accanto
+        android.widget.LinearLayout r3c = new android.widget.LinearLayout(this);
+        r3c.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        r3p.addView(r3c, r3p.indexOfChild(r3b) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        View notifCard = makeCard(R.string.card_notifstyle, s, () -> NotifStyle.show(this, this::refreshCards));
+        mSubNotifStyle = s[0];
+        setCardHeight(notifCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r3c.addView(notifCard);
+        View notifSpacer = new View(this);
+        notifSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
+        r3c.addView(notifSpacer);
+        mNotifStyleRow = r3c;
         r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
         mSignalCard = makeCard(R.string.card_signal, s, () -> openStyles("signal"));
@@ -968,6 +982,8 @@ public class MainActivity extends AppCompatActivity {
         if (mSubSCards != null) mSubSCards.setText(SettingsCards.label(this, ThemePrefs.getSettingsCards()));
         if (mShadeCard != null) mShadeCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
+        if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mSubNotifStyle != null) mSubNotifStyle.setText(NotifStyle.label(this, ThemePrefs.getNotifStyle()));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
