@@ -1621,6 +1621,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void runAction(final List<AppEntry> targets, final int action) {
+        it.tugaia56.oxydiantheme.utils.OxyLog.log("runAction action=" + action + " targets=" + targets.size());
         if (mBusy) return;
         mBusy = true;
         setButtonsEnabled(false);
@@ -1640,7 +1641,9 @@ public class MainActivity extends AppCompatActivity {
             List<String> refresh = new ArrayList<>(), toDisable = new ArrayList<>(), toRemove = new ArrayList<>();
             boolean batchOpen = false;
             try {
+                it.tugaia56.oxydiantheme.utils.OxyLog.log("runAction: thread started, ensuring module");
                 ModuleSetup.ensure();
+                it.tugaia56.oxydiantheme.utils.OxyLog.log("runAction: module ready");
                 int step = 0;
                 for (AppEntry e : targets) {
                     step++;
@@ -1669,6 +1672,7 @@ public class MainActivity extends AppCompatActivity {
                     final String sigE = signatureFor(this, e);
                     if ((active || known) && (sigE + optsKey(this, e.pkg, e.ds) + "|var=" + variantTag).equals(e.builtSig())) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
+                    it.tugaia56.oxydiantheme.utils.OxyLog.log("build " + e.name);
                     try {
                         if (ThemeCompiler.buildNamedInBatch(e.pkg, assetDir, e.name, optionPaths(this, e.pkg), customValuesXml(this, e.pkg, e.ds))) {
                             failed++;
@@ -1686,6 +1690,7 @@ public class MainActivity extends AppCompatActivity {
             } finally {
                 if (batchOpen) ThemeCompiler.endBatch(refresh);
             }
+            it.tugaia56.oxydiantheme.utils.OxyLog.log("builds done (failed=" + failed + "), enabling/finishing");
             ThemeCompiler.disable(toDisable);
             if (!toEnable.isEmpty())
                 it.tugaia56.oxydiantheme.utils.overlay.OverlayUtil.enableOverlays(toEnable.toArray(new String[0]));
@@ -1701,9 +1706,11 @@ public class MainActivity extends AppCompatActivity {
             if (sysTarget && action == ACT_ACTIVATE) ThemePrefs.setUiRestartPending(true);
             if (sysTarget) AospTheme.apply(MainActivity.this, action == ACT_ACTIVATE);
             // icone Wi-Fi/segnale e pack icone Impostazioni hanno l'accento scritto dentro: si rifanno anche loro
-            if (sysTarget && action == ACT_ACTIVATE) { busyUpdate(getString(R.string.busy_styles)); StyleActivity.rebuildStale(MainActivity.this); }
+            if (sysTarget && action == ACT_ACTIVATE) { busyUpdate(getString(R.string.busy_styles)); it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale start"); StyleActivity.rebuildStale(MainActivity.this); it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale end"); }
             // Oxydian "cuoce" l'accento nel colore del pulsante Recenti del launcher: si rifa' col colore nuovo
+            it.tugaia56.oxydiantheme.utils.OxyLog.log("refreshRecentsButton");
             if (sysTarget && action == ACT_ACTIVATE) it.tugaia56.oxydiantheme.utils.OxydianLink.refreshRecentsButton(ThemePrefs.accentColor());
+            it.tugaia56.oxydiantheme.utils.OxyLog.log("action thread finished");
             // colori di sistema gia' scelti: si riapplicano anche quando si installa un'altra app
             else if (action == ACT_ACTIVATE && ThemePrefs.isDarkShadowEnabled(SystemColorsDialog.PKG)) AospTheme.apply(MainActivity.this, true);
 

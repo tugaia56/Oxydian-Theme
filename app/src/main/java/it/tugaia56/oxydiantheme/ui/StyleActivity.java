@@ -524,6 +524,7 @@ public class StyleActivity extends AppCompatActivity {
      * Chiamare fuori dal thread principale.
      */
     static void rebuildStale(Context ctx) {
+        it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale: reading states");
         Map<String, String> before = states();
         List<String> refresh = new ArrayList<>();
         long updated = 0;

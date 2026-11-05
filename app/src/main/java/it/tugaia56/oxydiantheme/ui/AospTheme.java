@@ -55,7 +55,16 @@ public final class AospTheme {
      */
     static void applyFixedColors(Integer accent, Integer bg, boolean rolesOnly) {
         // Il sistema rifa' i suoi colori qualche secondo dopo il cambio di impostazione e si rimette davanti: si aspetta
-        if (!rolesOnly) android.os.SystemClock.sleep(6000);
+        if (!rolesOnly && sWaitForSystem) {
+            long t0 = android.os.SystemClock.uptimeMillis();
+            // aspetta che il sistema abbia rifatto i suoi colori (finiscono in cima), al massimo 6 secondi
+            while (android.os.SystemClock.uptimeMillis() - t0 < 6000) {
+                if (!topIsOurs()) { android.os.SystemClock.sleep(1000); break; }
+                android.os.SystemClock.sleep(300);
+            }
+            sWaitForSystem = false;
+            it.tugaia56.oxydiantheme.utils.OxyLog.log("applyFixedColors: waited " + (android.os.SystemClock.uptimeMillis() - t0) + " ms for the system colours");
+        }
         java.util.List<String> cmds = new java.util.ArrayList<>();
         java.util.LinkedHashMap<String, Integer> m = new java.util.LinkedHashMap<>();
         if (accent != null) {
@@ -138,7 +147,12 @@ public final class AospTheme {
         // telefono per un minuto; succedeva anche cambiando solo lo stile degli interruttori o installando un'altra app.
         final String sigFile = it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/fixedcolors.sig";
         final String sig = (rolesOnly ? "r" : "a") + m.size() + ":" + m.toString().hashCode();
-        if (rolesOnly && sig.equals(firstLine("cat " + sigFile + " 2>/dev/null")) && enabledFix() == m.size()) return;
+        final boolean valuesSame = sig.equals(firstLine("cat " + sigFile + " 2>/dev/null")) && enabledFix() == m.size();
+        if (valuesSame && topIsOurs()) { it.tugaia56.oxydiantheme.utils.OxyLog.log("applyFixedColors: unchanged, skipped"); return; }
+        it.tugaia56.oxydiantheme.utils.OxyLog.log("applyFixedColors: " + m.size() + " colours, valuesSame=" + valuesSame);
+        // "cmds" va nello script di avvio (crea gli overlay), "run" e' quello che si esegue adesso: se i valori sono gli stessi non si
+        // ricreano (ogni comando fa ridisegnare le app), si rimette solo in ordine
+        java.util.List<String> run = new java.util.ArrayList<>();
         int i = 0;
         for (java.util.Map.Entry<String, Integer> e : m.entrySet()) {
             long v = e.getValue() & 0xFFFFFFFFL;
@@ -146,7 +160,10 @@ public final class AospTheme {
             String key = e.getKey();
             String target = "android", res = "android:color/" + key;
             if (key.startsWith("systemui:")) { target = "com.android.systemui"; res = "com.android.systemui:color/" + key.substring(9); }
-            cmds.add("cmd overlay fabricate --target " + target + " --name oxyfix" + i + " " + res + " 0x1c " + v);
+            final String fab = "cmd overlay fabricate --target " + target + " --name oxyfix" + i + " " + res + " 0x1c " + v;
+            cmds.add(fab);
+            if (!valuesSame) run.add(fab);
+            final int cmdStart = cmds.size();
             // l'identificativo dell'overlay creato dipende da chi lancia il comando (da "adb shell" e' com.android.shell,
             // all'avvio dal modulo puo' essere diverso): si legge dall'elenco invece di darlo per scontato
             cmds.add("P=$(cmd overlay list 2>/dev/null | grep -o \"[A-Za-z0-9_.]*:oxyfix" + i + "$\" | head -1); "
@@ -155,13 +172,18 @@ public final class AospTheme {
             cmds.add("cmd overlay disable --user 0 $P");
             cmds.add("cmd overlay enable --user 0 $P");
             cmds.add("cmd overlay set-priority $P highest");
+            run.addAll(cmds.subList(cmdStart, cmds.size()));
             i++;
         }
         // quelli in piu' si spengono con un solo giro sull'elenco reale (solo quelli che esistono), non con 30+ comandi alla cieca
         final int used = i;
-        cmds.add("for n in $(cmd overlay list 2>/dev/null | grep \"^.x. com.android.shell:oxyfix\" | sed \"s/.*oxyfix//\"); do "
-                + "[ \"$n\" -ge " + used + " ] && cmd overlay disable --user 0 com.android.shell:oxyfix$n; done");
-        Shell.cmd(cmds.toArray(new String[0])).exec();
+        final String extra = "for n in $(cmd overlay list 2>/dev/null | grep \"^.x. com.android.shell:oxyfix\" | sed \"s/.*oxyfix//\"); do "
+                + "[ \"$n\" -ge " + used + " ] && cmd overlay disable --user 0 com.android.shell:oxyfix$n; done";
+        cmds.add(extra);
+        run.add(extra);
+        long t1 = android.os.SystemClock.uptimeMillis();
+        Shell.cmd(run.toArray(new String[0])).exec();
+        it.tugaia56.oxydiantheme.utils.OxyLog.log("applyFixedColors: ran " + run.size() + " commands in " + (android.os.SystemClock.uptimeMillis() - t1) + " ms");
         Shell.cmd("printf '%s' '" + sig + "' > " + sigFile).exec();
         // dopo un riavvio gli overlay creati al volo spariscono: il modulo rilancia questo elenco ad ogni avvio
         String file = it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/fixedcolors.sh";
@@ -174,7 +196,10 @@ public final class AospTheme {
             Shell.cmd(sb.toString(), "chmod 755 " + file).exec();
             // subito dopo "Installa" il sistema rifa' i suoi colori e si rimette davanti a questi: si ripassa un
             // paio di volte, in background, dopo qualche secondo
-            Shell.cmd("nohup sh -c 'sleep 8; sh " + file + "; sleep 20; sh " + file + "' >/dev/null 2>&1 &").exec();
+            // (solo se serve: se i colori di sistema tornano davanti, una volta; prima erano due giri completi sempre, a 8 e 28 secondi)
+            Shell.cmd("nohup sh -c 'n=0; while [ $n -lt 25 ]; do sleep 2; n=$((n+1)); "
+                    + "t=$(cmd overlay list --user 0 android 2>/dev/null | grep \"^\\[x\\]\" | tail -1); "
+                    + "case \"$t\" in *oxyfix*) ;; *) sh " + file + "; break;; esac; done' >/dev/null 2>&1 &").exec();
         }
     }
 
@@ -191,6 +216,14 @@ public final class AospTheme {
     private static String firstLine(String cmd) {
         java.util.List<String> o = Shell.cmd(cmd).exec().getOut();
         return o.isEmpty() ? "" : o.get(0).trim();
+    }
+
+    /** Vero dopo aver cambiato l'impostazione dei colori di sistema: il sistema li rifa' e si rimette davanti. */
+    private static volatile boolean sWaitForSystem = false;
+
+    /** L'ultimo overlay acceso di "android" e' uno dei nostri (oxyfix), cioe' stiamo davanti ai colori del sistema? */
+    private static boolean topIsOurs() {
+        return firstLine("cmd overlay list --user 0 android 2>/dev/null | grep '^\\[x\\]' | tail -1").contains("oxyfix");
     }
 
     /** Quanti overlay oxyfix sono accesi adesso (-1 se non si riesce a leggere). */
@@ -210,6 +243,11 @@ public final class AospTheme {
      * Chiamare fuori dal thread principale.
      */
     public static void apply(Context ctx, boolean enabled) {
+        it.tugaia56.oxydiantheme.utils.OxyLog.log("AospTheme.apply start enabled=" + enabled);
+        try { applyImpl(ctx, enabled); } finally { it.tugaia56.oxydiantheme.utils.OxyLog.log("AospTheme.apply end"); }
+    }
+
+    private static void applyImpl(Context ctx, boolean enabled) {
         try {
             if (!isAosp()) {
                 // OxygenOS: niente impostazioni di sistema, solo i colori di ruolo dell'accento scelto
@@ -246,8 +284,16 @@ public final class AospTheme {
                 try { old = new JSONObject(ThemePrefs.getAospBackup().isEmpty() ? "{}" : ThemePrefs.getAospBackup()).optString(STYLE, "TONAL_SPOT"); } catch (Throwable ignored) {}
                 o.put(STYLE, old);
             }
-            o.put("_applied_timestamp", System.currentTimeMillis());
-            Shell.cmd("settings put secure " + KEY + " '" + o.toString().replace("'", "") + "'").exec();
+            // Stessa impostazione di prima (a parte l'ora): non si riscrive, altrimenti il sistema rifa' i suoi colori e si rimette davanti
+            JSONObject prev = new JSONObject(current);
+            prev.remove("_applied_timestamp");
+            final boolean same = prev.toString().equals(o.toString());
+            it.tugaia56.oxydiantheme.utils.OxyLog.log("AospTheme: system colour setting " + (same ? "unchanged" : "changed"));
+            if (!same) {
+                o.put("_applied_timestamp", System.currentTimeMillis());
+                Shell.cmd("settings put secure " + KEY + " '" + o.toString().replace("'", "") + "'").exec();
+            }
+            sWaitForSystem = !same;
             applyFixedColors(accent, bg);
             // la finestra di Impostazioni diventa trasparente (modulo Oxydian) solo con uno sfondo "Trasparente" scelto qui
             it.tugaia56.oxydiantheme.utils.ThemeProps.publishSettingsWindow(enabled

@@ -8,6 +8,8 @@ public final class UiRestart {
 
     /** Chiamare fuori dal thread principale. */
     public static void run() {
+        OxyLog.log("UiRestart: killall launcher + systemui");
         Shell.cmd("killall com.android.launcher", "killall com.android.systemui").exec();
+        OxyLog.log("UiRestart: done");
     }
 }
