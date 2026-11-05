@@ -389,6 +389,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
+    private View mSwitchCard, mSwitchSpacer;
     private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle;
@@ -535,8 +536,13 @@ public class MainActivity extends AppCompatActivity {
             new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
         }));
         s[0].setText(R.string.card_restart_sub);
-        r7.addView(makeCard(R.string.card_switch, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"switch"}, R.string.card_switch)));
+        mSwitchCard = makeCard(R.string.card_switch, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"switch"}, R.string.card_switch));
+        r7.addView(mSwitchCard);
         mSubSwitch = s[0];
+        // su Android puro (A17) gli interruttori di Impostazioni sono di un altro tipo: la scheda si nasconde, un posto libero tiene "Riavvia interfaccia" a meta' larghezza
+        mSwitchSpacer = new View(this);
+        mSwitchSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
+        r7.addView(mSwitchSpacer);
         refreshCards();
     }
 
@@ -991,6 +997,8 @@ public class MainActivity extends AppCompatActivity {
         if (mSCardsCard != null) mSCardsCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubSCards != null) mSubSCards.setText(SettingsCards.label(this, ThemePrefs.getSettingsCards()));
         if (mShadeCard != null) mShadeCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mSwitchCard != null) mSwitchCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
+        if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubNotifStyle != null) mSubNotifStyle.setText(NotifStyle.label(this, ThemePrefs.getNotifStyle()));
