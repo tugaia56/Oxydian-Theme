@@ -389,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
-    private View mSwitchCard, mSwitchSpacer;
+    private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
     private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle;
@@ -495,8 +495,13 @@ public class MainActivity extends AppCompatActivity {
         mSubActivity = s[0];
         r3.addView(makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinbg", "pindots", "pinnum"}, R.string.card_pin)));
         mSubPin = s[0];
-        r3.addView(makeCard(R.string.card_settings, s, () -> openStyles("settings")));
+        mIconPackCard = makeCard(R.string.card_settings, s, () -> openStyles("settings"));
+        r3.addView(mIconPackCard);
         mSubSettings = s[0];
+        // su Android puro (A17) i pack icone di Impostazioni non funzionano ancora: la scheda si nasconde (un posto libero tiene "Tastierino PIN" a meta' larghezza)
+        mIconPackSpacer = new View(this);
+        mIconPackSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
+        r3.addView(mIconPackSpacer);
         mSCardsCard = makeCard(R.string.card_scards, s, () -> SettingsCards.show(this, this::refreshCards));
         // le due card nuove (solo Android) stanno in una riga a parte, altrimenti la riga con Tasti PIN e Pack Icone diventa troppo stretta
         android.widget.LinearLayout r3b = new android.widget.LinearLayout(this);
@@ -997,6 +1002,8 @@ public class MainActivity extends AppCompatActivity {
         if (mSCardsCard != null) mSCardsCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubSCards != null) mSubSCards.setText(SettingsCards.label(this, ThemePrefs.getSettingsCards()));
         if (mShadeCard != null) mShadeCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mIconPackCard != null) mIconPackCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
+        if (mIconPackSpacer != null) mIconPackSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSwitchCard != null) mSwitchCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
         if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
