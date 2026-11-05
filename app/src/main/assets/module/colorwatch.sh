@@ -19,11 +19,18 @@ while true; do
     sleep 1
     n=$((n+1))
     top=$(cmd overlay list --user 0 android 2>/dev/null | grep '^\[x\]' | tail -1)
+    # i colori automatici del sistema (com.android.systemui:neutral/accent/dynamic) stanno davanti: si rimettono davanti quelli del Theme
     case "$top" in
-      *oxyfix*) ;;
-      *)
+      *com.android.systemui:*)
         echo "colorwatch: colori del sistema davanti a quelli del Theme ($top), li rimetto $(date)" >> "$LOG"
-        sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1;;
+        # Android puro e OxygenOS: gli overlay oxyfix del Theme
+        sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
+        # OxygenOS: i colori del Theme sono anche gli overlay ObsidianComponent* e DS_SYS (che stanno sopra gli oxyfix): spegni e riaccendi in ordine
+        obs=$(cmd overlay list --user 0 android 2>/dev/null | grep -o -E 'com.android.shell:ObsidianComponent[A-Za-z0-9_]*|OxydianThemeComponentDS_SYS.overlay')
+        if [ -n "$obs" ]; then
+          for o in $obs; do cmd overlay disable --user 0 "$o" >/dev/null 2>&1; done
+          for o in $obs; do cmd overlay enable --user 0 "$o" >/dev/null 2>&1; done
+        fi;;
     esac
   done
 done
