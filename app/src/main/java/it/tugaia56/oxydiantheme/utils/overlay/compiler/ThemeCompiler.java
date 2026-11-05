@@ -223,6 +223,21 @@ public final class ThemeCompiler {
             Shell.cmd("find \"" + source + "/res/drawable\" -type f -name '*.xml' -exec sed -i -E '" + expr + "' {} +").exec();
         }
 
+        if ("com.android.systemui".equals(targetPackage) && iconSizeDp > 0 && iconSizeDp != 15
+                && (assetDir.startsWith("WIFI_") || assetDir.startsWith("SIG_"))) {
+            // Android puro (Android 17): le icone Wi-Fi e segnale hanno una misura fissa decisa da SystemUI (in sp, 15 / 12), non dal
+            // disegno: si ridefiniscono qui (su OxygenOS questi nomi non esistono e l'overlay li ignora)
+            int h = Math.max(1, Math.round(iconSizeDp * 0.8f));
+            String dims = assetDir.startsWith("WIFI_")
+                    ? "<dimen name=\"status_bar_wifi_signal_size\">" + iconSizeDp + "dp</dimen>"
+                      + "<dimen name=\"status_bar_wifi_signal_height_updated\">" + h + "dp</dimen>"
+                    : "<dimen name=\"status_bar_mobile_signal_size\">" + iconSizeDp + "dp</dimen>"
+                      + "<dimen name=\"status_bar_mobile_signal_size_updated\">" + h + "dp</dimen>"
+                      + "<dimen name=\"signal_icon_size\">" + iconSizeDp + "dp</dimen>";
+            Shell.cmd("mkdir -p \"" + source + "/res/values\"; printf '%s\n' '<?xml version=\"1.0\" encoding=\"utf-8\"?>' '<resources>' '"
+                    + dims + "' '</resources>' > \"" + source + "/res/values/oxy_icon_size.xml\"").exec();
+        }
+
         if (iconColor != null) {
             // il nero dei disegni (anche con trasparenza: #66000000 = barre spente) diventa il colore scelto
             String rgb = String.format("%06X", iconColor & 0xFFFFFF);
