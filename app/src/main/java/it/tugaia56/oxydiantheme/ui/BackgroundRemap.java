@@ -36,6 +36,16 @@ public final class BackgroundRemap {
         return m;
     }
 
+    /** Colori della tavolozza di sfondo predefinita (Midnight_Slate), 24 bit, senza bianco e nero. */
+    public static java.util.Set<Integer> defaultPalette(Context ctx) {
+        java.util.Set<Integer> out = new java.util.HashSet<>();
+        try {
+            for (int c : rgbByName(CustomPalette.baseBody(ctx, "background", "Midnight_Slate", 0)).values())
+                if (c != 0xFFFFFF && c != 0x000000) out.add(c);
+        } catch (Throwable ignored) {}
+        return out;
+    }
+
     /** rgb (24 bit) del colore di Midnight_Slate -> rgb dello sfondo scelto; vuota se non serve. */
     public static Map<Integer, Integer> get(Context ctx) {
         Map<Integer, Integer> out = new LinkedHashMap<>();

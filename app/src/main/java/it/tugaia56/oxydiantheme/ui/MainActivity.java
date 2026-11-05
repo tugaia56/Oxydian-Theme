@@ -1666,13 +1666,14 @@ public class MainActivity extends AppCompatActivity {
                             if (have != null && Arrays.asList(have).contains(cand)) assetDir = cand;
                         } catch (Exception ignored) {}
                     }
-                    if ((active || known) && (signature + optsKey(this, e.pkg, e.ds) + "|var=" + variantTag).equals(e.builtSig())) continue;
+                    final String sigE = signatureFor(this, e);
+                    if ((active || known) && (sigE + optsKey(this, e.pkg, e.ds) + "|var=" + variantTag).equals(e.builtSig())) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
                         if (ThemeCompiler.buildNamedInBatch(e.pkg, assetDir, e.name, optionPaths(this, e.pkg), customValuesXml(this, e.pkg, e.ds))) {
                             failed++;
                         } else {
-                            e.setBuilt(signature + optsKey(this, e.pkg, e.ds) + "|var=" + variantTag);
+                            e.setBuilt(sigE + optsKey(this, e.pkg, e.ds) + "|var=" + variantTag);
                             if (active) refresh.add(e.overlay());
                         }
                     } catch (Throwable t) {
@@ -1810,12 +1811,11 @@ public class MainActivity extends AppCompatActivity {
             // cambiato l'accento dai colori di sistema: i temi delle app gia' accesi vanno rifatti con il nuovo
             // accento (ognuno ha l'accento scritto dentro quando viene costruito): lo si fa da soli
             if (autoRebuild) {
-                final String sigNow = signature();
                 List<AppEntry> stale = new ArrayList<>();
                 for (AppEntry e : mApps) {
                     if (!e.enabled || (e.ds && SystemColorsDialog.PKG.equals(e.pkg))) continue;
                     String b = e.builtSig();
-                    if (b != null && !b.isEmpty() && !b.startsWith(sigNow)) stale.add(e);
+                    if (b != null && !b.isEmpty() && !b.startsWith(signatureFor(this, e))) stale.add(e);
                 }
                 ThemePrefs.setUiRestartPending(true);
                 if (!stale.isEmpty()) {
@@ -1842,10 +1842,59 @@ public class MainActivity extends AppCompatActivity {
     }
 
     static String signature(Context ctx) {
-        long updated = 0;
+        return updatedTime(ctx) + ":" + String.format("%08X", ThemePrefs.accentColor()) + BackgroundRemap.key();
+    }
+
+    private static long updatedTime(Context ctx) {
         try {
-            updated = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).lastUpdateTime;
-        } catch (Exception ignored) {}
-        return updated + ":" + String.format("%08X", ThemePrefs.accentColor()) + BackgroundRemap.key();
+            return ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).lastUpdateTime;
+        } catch (Exception ignored) { return 0; }
+    }
+
+    /**
+     * Firma di compilazione di un tema: per le app che usano solo i colori del framework (la grande maggioranza) non dipende da
+     * accento e sfondo, che l'overlay del framework cambia da solo; cosi' cambiando accento o sfondo si rifanno solo i temi con
+     * colori fissi.
+     */
+    static String signatureFor(Context ctx, AppEntry e) {
+        if (e.ds || usesFixedColors(ctx, e.pkg)) return signature(ctx);
+        return updatedTime(ctx) + ":";
+    }
+
+    private static final java.util.Map<String, Boolean> FIXED_COLORS = new java.util.HashMap<>();
+
+    /** Il tema dell'app ha l'accento (#908dff) o i colori dello sfondo predefinito scritti fissi, oppure ha opzioni proprie? */
+    static synchronized boolean usesFixedColors(Context ctx, String pkg) {
+        Boolean c = FIXED_COLORS.get(pkg);
+        if (c != null) return c;
+        boolean fixed = false;
+        try {
+            if (!optionGroups(ctx, pkg).isEmpty()) fixed = true;   // opzioni: possono avere colori fissi, si resta prudenti
+            if (!fixed) {
+                java.util.Set<Integer> pal = BackgroundRemap.defaultPalette(ctx);
+                StringBuilder re = new StringBuilder("908dff");
+                for (int p : pal) re.append('|').append(String.format("%06x", p));
+                java.util.regex.Pattern pat = java.util.regex.Pattern.compile(re.toString(), java.util.regex.Pattern.CASE_INSENSITIVE);
+                fixed = scanFixed(ctx.getAssets(), "CompileOnDemand/" + pkg + "/APP", pat);
+            }
+        } catch (Throwable t) { fixed = true; }
+        FIXED_COLORS.put(pkg, fixed);
+        return fixed;
+    }
+
+    private static boolean scanFixed(android.content.res.AssetManager am, String path, java.util.regex.Pattern pat) throws java.io.IOException {
+        String[] kids = am.list(path);
+        if (kids == null || kids.length == 0) {
+            if (!path.endsWith(".xml")) return false;
+            try (java.io.InputStream in = am.open(path)) {
+                java.io.ByteArrayOutputStream bo = new java.io.ByteArrayOutputStream();
+                byte[] buf = new byte[8192];
+                int n;
+                while ((n = in.read(buf)) > 0) bo.write(buf, 0, n);
+                return pat.matcher(bo.toString("UTF-8")).find();
+            }
+        }
+        for (String k : kids) if (scanFixed(am, path + "/" + k, pat)) return true;
+        return false;
     }
 }

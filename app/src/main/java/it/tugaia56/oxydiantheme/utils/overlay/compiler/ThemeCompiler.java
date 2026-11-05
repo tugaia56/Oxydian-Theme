@@ -70,11 +70,18 @@ public final class ThemeCompiler {
     }
 
     /** Scrive l'accento scelto al posto di quello di sistema/predefinito scritto fisso nei sorgenti. */
-    private static void substituteAccent(String source) {
+    private static void substituteAccent(String source) { substituteAccent(source, true); }
+
+    /**
+     * @param bakeRefs false per i temi delle singole app: il riferimento @*android:color/accent_material_dark resta tale e segue
+     *                 l'overlay del framework (cambia subito con l'accento, senza ricostruire l'app); solo i colori scritti fissi
+     *                 (#908dff) vengono sostituiti
+     */
+    private static void substituteAccent(String source, boolean bakeRefs) {
         // @*android:color/accent_material_dark fuori dai processi hookati resta il teal di sistema:
         // si scrive l'accento reale scelto. Il prefisso "@*" puo' comparire doppio nei sorgenti.
         String accent = String.format("#%08X", ThemePrefs.accentColor());
-        Shell.cmd("find \"" + source + "/res\" -type f -name '*.xml'"
+        if (bakeRefs) Shell.cmd("find \"" + source + "/res\" -type f -name '*.xml'"
                 + " -exec sed -i -E 's|(@\\*)+android:color/accent_material_dark|" + accent + "|g' {} +").exec();
         // molti temi hanno l'accento predefinito (#908dff) scritto fisso, anche con trasparenza (#4d908dff):
         // se l'accento scelto e' un altro, lo si sostituisce (la trasparenza resta)
@@ -162,7 +169,9 @@ public final class ThemeCompiler {
         copyAssets("CompileOnDemand/" + targetPackage + "/" + assetDir);
         Shell.cmd("mkdir -p \"" + cacheRoot + "\"",
                 "mv -f \"" + ModuleConstants.DATA_DIR + "/CompileOnDemand/" + targetPackage + "/" + assetDir + "\" \"" + source + "\"").exec();
-        substituteAccent(source);
+        // temi delle singole app (cartella APP): l'accento resta un riferimento al framework (vedi substituteAccent)
+        final boolean perApp = ASSET_DIR.equals(assetDir);
+        substituteAccent(source, !perApp);
         substituteBackground(source);
 
         if (optionAssetPaths != null) {
@@ -182,7 +191,7 @@ public final class ThemeCompiler {
         }
 
         // anche i file delle opzioni (es. pacchetto icone) hanno l'accento predefinito scritto fisso
-        if (optionAssetPaths != null && !optionAssetPaths.isEmpty()) substituteAccent(source);
+        if (optionAssetPaths != null && !optionAssetPaths.isEmpty()) substituteAccent(source, !perApp);
 
         if ("com.android.systemui".equals(targetPackage) && assetDir.startsWith("WIFI_")) {
             // Android puro (verificato su crDroid, Android 17): SystemUI ha 4 livelli ic_wifi_0..3 (e ic_wifi_N_error) invece dei
