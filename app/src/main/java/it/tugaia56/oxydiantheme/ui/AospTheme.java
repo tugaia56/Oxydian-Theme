@@ -285,8 +285,10 @@ public final class AospTheme {
                 o.put(STYLE, old);
             }
             // Stessa impostazione di prima (a parte l'ora): non si riscrive, altrimenti il sistema rifa' i suoi colori e si rimette davanti
+            // (o e' partito dall'impostazione attuale: ha ancora la vecchia ora, va tolta anche da li')
             JSONObject prev = new JSONObject(current);
             prev.remove("_applied_timestamp");
+            o.remove("_applied_timestamp");
             final boolean same = prev.toString().equals(o.toString());
             it.tugaia56.oxydiantheme.utils.OxyLog.log("AospTheme: system colour setting " + (same ? "unchanged" : "changed"));
             if (!same) {

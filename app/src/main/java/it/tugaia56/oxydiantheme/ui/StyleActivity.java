@@ -528,7 +528,7 @@ public class StyleActivity extends AppCompatActivity {
         Map<String, String> before = states();
         List<String> refresh = new ArrayList<>();
         long updated = 0;
-        try { updated = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).lastUpdateTime; } catch (Exception ignored) {}
+        updated = MainActivity.updatedTime(ctx);
         String accent = String.format("%08X", ThemePrefs.accentColor()) + ":" + updated;
         boolean batchOpen = false;
         try {
@@ -579,7 +579,7 @@ public class StyleActivity extends AppCompatActivity {
             List<String> refresh = new ArrayList<>(), toEnable = new ArrayList<>(),
                     toDisable = new ArrayList<>(), toRemove = new ArrayList<>();
             long updated = 0;
-            try { updated = getPackageManager().getPackageInfo(getPackageName(), 0).lastUpdateTime; } catch (Exception ignored) {}
+            updated = MainActivity.updatedTime(this);
             String accent = String.format("%08X", ThemePrefs.accentColor()) + ":" + updated;
             boolean batchOpen = false;
             try {

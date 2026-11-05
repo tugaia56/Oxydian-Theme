@@ -198,6 +198,13 @@ public final class ThemePrefs {
     public static String getNotifStyle() { return sp().getString("notif_style", ""); }
     public static void setNotifStyle(String v) { sp().edit().putString("notif_style", v == null ? "" : v).commit(); }
 
+    /** Risultato (salvato) di "il tema di questa app ha colori fissi?" per la versione del Theme indicata: -1 = non noto. */
+    public static int getFixedColors(String pkg, long version) { return sp().getInt("fixedcol_" + version + "_" + pkg, -1); }
+
+    public static void setFixedColors(String pkg, long version, boolean fixed) {
+        sp().edit().putInt("fixedcol_" + version + "_" + pkg, fixed ? 1 : 0).apply();
+    }
+
     public static String getSystemVariant() { return sp().getString("system_variant", ""); }
     public static void setSystemVariant(String v) { sp().edit().putString("system_variant", v == null ? "" : v).commit(); }
 

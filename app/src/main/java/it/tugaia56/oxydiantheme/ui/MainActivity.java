@@ -1851,9 +1851,16 @@ public class MainActivity extends AppCompatActivity {
         return updatedTime(ctx) + ":" + String.format("%08X", ThemePrefs.accentColor()) + BackgroundRemap.key();
     }
 
-    private static long updatedTime(Context ctx) {
+    /**
+     * Versione di compilazione dei temi: cambia solo con un aggiornamento vero del Theme (numero di versione) o quando si alza
+     * ASSET_REV (da fare ogni volta che si cambiano i file dei temi o il modo di compilarli). Non e' piu' l'ora di installazione:
+     * reinstallare lo stesso Theme non fa rifare tutte le app.
+     */
+    static final int ASSET_REV = 1;
+
+    static long updatedTime(Context ctx) {
         try {
-            return ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).lastUpdateTime;
+            return ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).getLongVersionCode() * 1000L + ASSET_REV;
         } catch (Exception ignored) { return 0; }
     }
 
@@ -1873,6 +1880,10 @@ public class MainActivity extends AppCompatActivity {
     static synchronized boolean usesFixedColors(Context ctx, String pkg) {
         Boolean c = FIXED_COLORS.get(pkg);
         if (c != null) return c;
+        // la scansione dei file del tema (assets) e' lenta (decine di secondi per tutte le app): il risultato si salva per versione del Theme
+        final long ver = updatedTime(ctx);
+        int saved = ThemePrefs.getFixedColors(pkg, ver);
+        if (saved >= 0) { FIXED_COLORS.put(pkg, saved == 1); return saved == 1; }
         boolean fixed = false;
         try {
             if (!optionGroups(ctx, pkg).isEmpty()) fixed = true;   // opzioni: possono avere colori fissi, si resta prudenti
@@ -1885,6 +1896,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Throwable t) { fixed = true; }
         FIXED_COLORS.put(pkg, fixed);
+        ThemePrefs.setFixedColors(pkg, ver, fixed);
         return fixed;
     }
 
