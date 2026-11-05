@@ -4,6 +4,9 @@
 # in cima, sopra quelli scelti nel Theme (overlay "oxyfix"): l'accento sparisce dai tasti rapidi. Qui si controlla solo quando
 # cambia il processo di SystemUI e, se serve, si rimettono i colori del Theme davanti (spegne e riaccende i suoi colori: solo cosi' tornano in cima).
 MODDIR=${0%/*}
+# OxygenOS: i colori del Theme sono decine di overlay; riaccenderli da qui blocca SystemUI e puo' innescare un ciclo di riavvii: non si fa niente
+[ -n "$(getprop ro.build.version.oplusrom)" ] && exit 0
+lastfix=0
 LOG=/data/local/tmp/oxydian_theme.log
 last=$(pidof com.android.systemui)
 while true; do
@@ -19,18 +22,15 @@ while true; do
     sleep 1
     n=$((n+1))
     top=$(cmd overlay list --user 0 android 2>/dev/null | grep '^\[x\]' | tail -1)
-    # i colori automatici del sistema (com.android.systemui:neutral/accent/dynamic) stanno davanti: si rimettono davanti quelli del Theme
     case "$top" in
-      *com.android.systemui:*)
+      *oxyfix*) ;;
+      *)
+        # al massimo una riparazione ogni 90 secondi (un ciclo di riavvii di SystemUI non deve ripetersi all'infinito)
+        now=$(date +%s)
+        [ $((now - lastfix)) -lt 90 ] && continue
+        lastfix=$now
         echo "colorwatch: colori del sistema davanti a quelli del Theme ($top), li rimetto $(date)" >> "$LOG"
-        # Android puro e OxygenOS: gli overlay oxyfix del Theme
-        sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
-        # OxygenOS: i colori del Theme sono anche gli overlay ObsidianComponent* e DS_SYS (che stanno sopra gli oxyfix): spegni e riaccendi in ordine
-        obs=$(cmd overlay list --user 0 android 2>/dev/null | grep -o -E 'com.android.shell:ObsidianComponent[A-Za-z0-9_]*|OxydianThemeComponentDS_SYS.overlay')
-        if [ -n "$obs" ]; then
-          for o in $obs; do cmd overlay disable --user 0 "$o" >/dev/null 2>&1; done
-          for o in $obs; do cmd overlay enable --user 0 "$o" >/dev/null 2>&1; done
-        fi;;
+        sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1;;
     esac
   done
 done
