@@ -198,6 +198,25 @@ public final class ThemeCompiler {
                     + "[ -f \"$f\" ] && sed -i -E 's#<inset[^>]*>##; s#</inset>##' \"$f\"; done").exec();
         }
 
+        if ("com.android.systemui".equals(targetPackage) && assetDir.startsWith("SIG_")) {
+            // Android puro (verificato su crDroid, Android 17): il segnale mobile usa ic_mobile_N_4_bar e ic_mobile_N_5_bar (N = barre
+            // accese, anche con la variante _error) invece dei 5 stat_signal_signal_lte_single_0..4 di OxygenOS. I 5 livelli dello
+            // stile (0..4) si distribuiscono su quelli di Android: 4 barre = 0..4, 5 barre = 0..5 (livello ~ N*4/5).
+            // I file con i nomi di OxygenOS restano: dove i nomi non esistono l'overlay li ignora.
+            Shell.cmd("d=\"" + source + "/res/drawable\"; "
+                    + "for n in 0 1 2 3 4; do [ -f \"$d/stat_signal_signal_lte_single_$n.xml\" ] || continue; "
+                    + "cp -f \"$d/stat_signal_signal_lte_single_$n.xml\" \"$d/ic_mobile_${n}_4_bar.xml\"; "
+                    + "cp -f \"$d/stat_signal_signal_lte_single_$n.xml\" \"$d/ic_mobile_${n}_4_bar_error.xml\"; done; "
+                    + "for m in 0 1 2 3 4 5; do n=$(( (m*4+2)/5 )); [ -f \"$d/stat_signal_signal_lte_single_$n.xml\" ] || continue; "
+                    + "cp -f \"$d/stat_signal_signal_lte_single_$n.xml\" \"$d/ic_mobile_${m}_5_bar.xml\"; "
+                    + "cp -f \"$d/stat_signal_signal_lte_single_$n.xml\" \"$d/ic_mobile_${m}_5_bar_error.xml\"; done").exec();
+            // SystemUI accetta solo disegni che iniziano con <vector> (come per il Wi-Fi): si toglie l'<inset> dello stile
+            Shell.cmd("d=\"" + source + "/res/drawable\"; for f in \"$d\"/ic_mobile_[0-5]_[45]_bar.xml \"$d\"/ic_mobile_[0-5]_[45]_bar_error.xml; do "
+                    + "[ -f \"$f\" ] || continue; sed -i -z -E 's#<inset[^>]*>##; s#</inset>##' \"$f\"; "   // -z: il tag <inset> va su due righe
+                    // alcuni stili dichiarano xmlns:android solo sull'<inset>: tolto quello, va messo sul <vector>
+                    + "grep -q 'xmlns:android' \"$f\" || sed -i -z -E 's#<vector([[:space:]])#<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\\1#' \"$f\"; done").exec();
+        }
+
         if (iconSizeDp > 0 && iconSizeDp != 15) {
             // i vettori delle icone sono da 15dp: si riscrive larghezza e altezza della radice
             String expr = "s/(android:(width|height)=\")15(\\.0+)?(dp|dip)\"/\\1" + iconSizeDp + ".0dp\"/g";

@@ -976,7 +976,7 @@ public class MainActivity extends AppCompatActivity {
         mSubWifi.setText(w.isEmpty() ? def : pretty(w));
         mSubSignal.setText(sg.isEmpty() ? def : pretty(sg));
         // gli stili del segnale usano i nomi delle icone di OxygenOS: su Android puro (A17) non sono ancora adattati
-        if (mSignalCard != null) mSignalCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
+        if (mSignalCard != null) mSignalCard.setVisibility(View.VISIBLE);
         // le card di Impostazioni si scelgono solo su Android puro (su OxygenOS le gestisce il tema di sistema)
         if (mSCardsCard != null) mSCardsCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubSCards != null) mSubSCards.setText(SettingsCards.label(this, ThemePrefs.getSettingsCards()));
