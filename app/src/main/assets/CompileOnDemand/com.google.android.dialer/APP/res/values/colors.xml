@@ -98,7 +98,7 @@
     <color name="gm3_ref_palette_error20">@*android:color/accent_material_dark</color>
     <color name="gm3_ref_palette_error30">#ff8c1d18</color>
     <color name="gm3_ref_palette_error40">@*android:color/accent_material_dark</color>
-    <color name="gm3_ref_palette_error80">@*android:color/accent_material_dark</color>
+    <color name="gm3_ref_palette_error80">#ffe53935</color>
     <color name="gm3_ref_palette_error90">#fff9dedc</color>
     <color name="gm3_ref_palette_green20">#ff00381f</color>
     <color name="gm3_ref_palette_green30">#ff00522c</color>
@@ -250,7 +250,7 @@
     <color name="m3_ref_palette_error20">@*android:color/accent_material_dark</color>
     <color name="m3_ref_palette_error30">#ff8c1d18</color>
     <color name="m3_ref_palette_error40">@*android:color/accent_material_dark</color>
-    <color name="m3_ref_palette_error80">@*android:color/accent_material_dark</color>
+    <color name="m3_ref_palette_error80">#ffe53935</color>
     <color name="m3_ref_palette_error90">#fff9dedc</color>
     <color name="m3_ref_palette_neutral10">@*android:color/background_dark</color>
     <color name="m3_ref_palette_neutral100">#ffffffff</color>
