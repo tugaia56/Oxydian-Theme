@@ -217,6 +217,19 @@ public final class ThemeCompiler {
                     + "grep -q 'xmlns:android' \"$f\" || sed -i -z -E 's#<vector([[:space:]])#<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\\1#' \"$f\"; done").exec();
         }
 
+        if ("com.android.settings".equals(targetPackage) && assetDir.startsWith("ICP_")) {
+            // Android puro (Android 17): la pagina principale di Impostazioni usa icone con altri nomi (ic_homepage_*) rispetto a quelle
+            // di OxygenOS del pack: si copiano le icone del pack sui nomi di Android. I nomi di OxygenOS restano (dove non esistono si ignorano).
+            String map = "network:ic_settings_wireless connected_device:ic_devices_other notification:ic_notifications "
+                    + "sound:ic_volume_up_24dp display:ic_settings_display_white wallpaper:ic_settings_wallpaper_white apps:ic_apps "
+                    + "storage:ic_storage_white battery:ic_settings_battery_white privacy:ic_settings_privacy location:ic_settings_location "
+                    + "security:ic_settings_security_white safety_center:ic_settings_safety_center emergency:ic_settings_emergency "
+                    + "accounts:ic_settings_accounts accessibility:ic_settings_accessibility support:ic_support_tips "
+                    + "system_dashboard:ic_settings_system_dashboard_white about:ic_settings_about_device";
+            Shell.cmd("d=\"" + source + "/res/drawable\"; for m in " + map + "; do n=${m%%:*}; o=${m#*:}; "
+                    + "[ -f \"$d/$o.xml\" ] && cp -f \"$d/$o.xml\" \"$d/ic_homepage_$n.xml\"; done").exec();
+        }
+
         if (iconSizeDp > 0 && iconSizeDp != 15) {
             // i vettori delle icone sono da 15dp: si riscrive larghezza e altezza della radice
             String expr = "s/(android:(width|height)=\")15(\\.0+)?(dp|dip)\"/\\1" + iconSizeDp + ".0dp\"/g";
