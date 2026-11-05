@@ -1821,7 +1821,8 @@ public class MainActivity extends AppCompatActivity {
                 for (AppEntry e : mApps) {
                     if (!e.enabled || (e.ds && SystemColorsDialog.PKG.equals(e.pkg))) continue;
                     String b = e.builtSig();
-                    if (b != null && !b.isEmpty() && !b.startsWith(signatureFor(this, e))) stale.add(e);
+                    // confronto completo (la firma e' seguita da "|"): con lo sfondo predefinito la firma e' piu' corta e prima combaciava con qualsiasi sfondo
+                    if (b != null && !b.isEmpty() && !b.startsWith(signatureFor(this, e) + "|")) stale.add(e);
                 }
                 ThemePrefs.setUiRestartPending(true);
                 if (!stale.isEmpty()) {
