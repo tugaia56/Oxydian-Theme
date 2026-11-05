@@ -15,6 +15,11 @@ while true; do
   pid=$(pidof com.android.systemui)
   [ -n "$pid" ] && [ "$pid" != "$last" ] || continue
   last=$pid
+  # al massimo una riparazione ogni 60 secondi (un ciclo di riavvii di SystemUI non deve ripetersi all'infinito): se e' troppo presto si aspetta, senza saltarla
+  now=$(date +%s)
+  wait=$((60 - (now - lastfix)))
+  [ $wait -gt 0 ] && sleep $wait
+  pid=$(pidof com.android.systemui); [ -n "$pid" ] && last=$pid
   # SystemUI rifa' i suoi colori in pochi secondi: per una ventina di secondi si controlla ogni secondo e, appena quelli del
   # sistema stanno davanti, si rimettono i colori del Theme (cosi' il ritardo e' minimo)
   n=0
@@ -25,10 +30,7 @@ while true; do
     case "$top" in
       *oxyfix*) ;;
       *)
-        # al massimo una riparazione ogni 90 secondi (un ciclo di riavvii di SystemUI non deve ripetersi all'infinito)
-        now=$(date +%s)
-        [ $((now - lastfix)) -lt 90 ] && continue
-        lastfix=$now
+        lastfix=$(date +%s)
         echo "colorwatch: colori del sistema davanti a quelli del Theme ($top), li rimetto $(date)" >> "$LOG"
         sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1;;
     esac

@@ -111,7 +111,9 @@ public final class AospTheme {
             Integer cardAlpha = null;
             if ((SettingsCards.GLASS.equals(ThemePrefs.getSettingsCards()) || SettingsCards.GLASS_BORDER.equals(ThemePrefs.getSettingsCards())) && hasOxydianModule())
                 cardAlpha = ta != null ? ta : 0xB3;
-            m.put("system_surface_bright_dark", fade(mix(b, w, 0.15f), cardAlpha));
+            // card "Trasparenti con bordo": riempimento nel colore di sfondo del Theme (semitrasparente), non piu' chiaro
+            boolean glassBorder = SettingsCards.GLASS_BORDER.equals(ThemePrefs.getSettingsCards());
+            m.put("system_surface_bright_dark", fade(glassBorder ? b : mix(b, w, 0.15f), cardAlpha));
             m.put("system_surface_variant_dark", mix(b, w, 0.12f));
             m.put("system_shade_inactive_dark", mix(b, w, 0.10f));
             m.put("system_surface_effect_1_dark", mix(b, w, 0.10f));
