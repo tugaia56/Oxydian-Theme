@@ -126,7 +126,15 @@ public class StyleActivity extends AppCompatActivity {
             navColorBtn.setText(getString(R.string.color_nav_title) + "  \u00b7  " + IconColorDialog.summary(this, "nav"));
             // maniglia/pillola: overlay di SystemUI rifatto dalla pagina principale; tasti: Oxydian dopo il riavvio dell'interfaccia
             ThemePrefs.setNavPending(true);
-            finish();   // la pagina principale rifa l'overlay e riavvia l'interfaccia
+            final android.content.Context app = getApplicationContext();
+            new Thread(() -> {
+                // tasti nel launcher (Android puro): il colore e' dentro l'overlay NAV2
+                if (!ThemePrefs.getStyle("NAV2").isEmpty() || IconColorDialog.value("nav") != null) {
+                    if (ThemePrefs.getStyle("NAV2").isEmpty()) ThemePrefs.setStyle("NAV2", "none");
+                    rebuildStale(app);
+                }
+                runOnUiThread(this::finish);   // la pagina principale rifa l'overlay e riavvia l'interfaccia
+            }).start();
         }));
         android.widget.ImageButton back = findViewById(R.id.btn_back);
         back.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
@@ -521,8 +529,28 @@ public class StyleActivity extends AppCompatActivity {
 
     private static String sizeKey(int i) {
         if (i <= 1) return ":s" + ThemePrefs.getIconSize() + colorKey(i);
-        if (i == 2 || i == 5) return ":s" + ThemePrefs.getNavSize();
+        if (i == 2) return ":s" + ThemePrefs.getNavSize();
+        if (i == 5) {
+            Integer c = IconColorDialog.value("nav");
+            return ":s" + ThemePrefs.getNavSize() + (c == null ? "" : ":c" + Integer.toHexString(c));
+        }
         return "";
+    }
+
+    /** Valori extra dell'overlay dello slot: pack icone di Impostazioni (3, 4) oppure colore dei tasti nel launcher (5). */
+    private static String valuesFor(int i, String style) {
+        if (i == 3 || i == 4) return settingsValuesXml(style);
+        if (i == 5) {
+            Integer c = IconColorDialog.value("nav");
+            if (c == null) return null;
+            String hex = String.format("#FF%06X", c & 0xFFFFFF);
+            return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n"
+                    + "    <color name=\"taskbar_nav_icon_light_color\">" + hex + "</color>\n"
+                    + "    <color name=\"taskbar_nav_icon_dark_color\">" + hex + "</color>\n"
+                    + "    <color name=\"taskbar_nav_icon_light_color_on_home\">" + hex + "</color>\n"
+                    + "    <color name=\"taskbar_nav_icon_dark_color_on_home\">" + hex + "</color>\n</resources>";
+        }
+        return null;
     }
 
     /** Colore scelto per le icone di quello slot (0 = Wi-Fi, 1 = segnale), null = predefinito. */
@@ -565,7 +593,7 @@ public class StyleActivity extends AppCompatActivity {
                 if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                 try {
                     if (!ThemeCompiler.buildNamedInBatch(TARGET_PKG[i], PREFIXES[i] + style, slot, null,
-                            (i == 3 || i == 4) ? settingsValuesXml(style) : null,
+                            valuesFor(i, style),
                             sizeFor(i), slotColor(i))) {
                         ThemePrefs.setStyleBuilt(slot, sig);
                         if (active) refresh.add(ov);
@@ -590,6 +618,7 @@ public class StyleActivity extends AppCompatActivity {
         for (int k = 0; k <= 1; k++) if (!styleExists(k, choice[k])) choice[k] = "";
         choice[4] = choice[3];
         choice[5] = choice[2];
+        if (choice[5].isEmpty() && IconColorDialog.value("nav") != null) choice[5] = "none";   // solo il colore dei tasti
         new Thread(() -> {
             int failed = 0;
             boolean removed = false, notActive = false;
@@ -625,7 +654,7 @@ public class StyleActivity extends AppCompatActivity {
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
                         if (ThemeCompiler.buildNamedInBatch(TARGET_PKG[i], PREFIXES[i] + choice[i], slot, null,
-                                (i == 3 || i == 4) ? settingsValuesXml(choice[i]) : null,
+                                valuesFor(i, choice[i]),
                                 sizeFor(i), slotColor(i))) {
                             failed++;
                         } else {
