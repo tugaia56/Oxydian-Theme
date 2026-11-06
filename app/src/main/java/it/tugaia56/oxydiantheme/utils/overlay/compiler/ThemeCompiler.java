@@ -166,9 +166,11 @@ public final class ThemeCompiler {
         String cacheRoot = ModuleConstants.TEMP_CACHE_DIR + "/" + targetPackage;
         String source = cacheRoot + "/" + name;
 
-        copyAssets("CompileOnDemand/" + targetPackage + "/" + assetDir);
+        // i tasti della barra di navigazione nel launcher (com.android.launcher3) sono gli stessi file di SystemUI
+        final String assetPkg = "com.android.launcher3".equals(targetPackage) ? "com.android.systemui" : targetPackage;
+        copyAssets("CompileOnDemand/" + assetPkg + "/" + assetDir);
         Shell.cmd("mkdir -p \"" + cacheRoot + "\"",
-                "mv -f \"" + ModuleConstants.DATA_DIR + "/CompileOnDemand/" + targetPackage + "/" + assetDir + "\" \"" + source + "\"").exec();
+                "mv -f \"" + ModuleConstants.DATA_DIR + "/CompileOnDemand/" + assetPkg + "/" + assetDir + "\" \"" + source + "\"").exec();
         // temi delle singole app (cartella APP): l'accento resta un riferimento al framework (vedi substituteAccent)
         final boolean perApp = ASSET_DIR.equals(assetDir);
         substituteAccent(source, !perApp);

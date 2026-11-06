@@ -39,11 +39,13 @@ import it.tugaia56.oxydiantheme.utils.overlay.compiler.ThemeCompiler;
 public class StyleActivity extends AppCompatActivity {
     private static final String SYSTEMUI = "com.android.systemui";
     private static final String SETTINGS = "com.android.settings";
-    private static final String[] TARGET_PKG = {SYSTEMUI, SYSTEMUI, SYSTEMUI, SETTINGS, "it.tugaia56.oxydian"};
-    private static final String[] SLOTS = {"WIFI1", "SIG1", "NAV1", "ICON1", "ICON2"};
+    /** Barra di navigazione a 3 tasti su crDroid e simili: la disegna il Taskbar del launcher (com.android.launcher3), con gli stessi nomi di SystemUI. */
+    private static final String LAUNCHER3 = "com.android.launcher3";
+    private static final String[] TARGET_PKG = {SYSTEMUI, SYSTEMUI, SYSTEMUI, SETTINGS, "it.tugaia56.oxydian", LAUNCHER3};
+    private static final String[] SLOTS = {"WIFI1", "SIG1", "NAV1", "ICON1", "ICON2", "NAV2"};
     /** indice "insieme" (Wi-Fi + segnale) nelle sezioni */
     private static final int BOTH = 9;
-    private static final String[] PREFIXES = {"WIFI_", "SIG_", "NAV_", "ICP_", "ICP_"};
+    private static final String[] PREFIXES = {"WIFI_", "SIG_", "NAV_", "ICP_", "ICP_", "NAV_"};
 
     /** Riga: titolo di sezione (slot>=0, style==null e header) oppure stile. */
     private static class Row {
@@ -59,7 +61,7 @@ public class StyleActivity extends AppCompatActivity {
     private final List<Row> mRows = new ArrayList<>();
     private final List<Row> mShown = new ArrayList<>();
     private final boolean[] mOpen = new boolean[10]; // sezioni: Wi-Fi+segnale, Wi-Fi, segnale (indice = slot)
-    private final String[] mChoice = new String[5];
+    private final String[] mChoice = new String[6];
     private boolean mBusy = false;
     private String mMode = "wifi";
     private List<String> mAllDirs = new ArrayList<>();
@@ -161,7 +163,7 @@ public class StyleActivity extends AppCompatActivity {
         mAllDirs = Arrays.asList(dirs);
         int[] titles = {R.string.section_wifi, R.string.section_signal, R.string.section_nav, R.string.card_settings};
         for (int s = 0; s < SLOTS.length; s++) {
-            if (s == 4) continue; // ICON2 (icona di Oxydian in Impostazioni) segue ICON1
+            if (s == 4 || s == 5) continue; // ICON2 (icona di Oxydian in Impostazioni) segue ICON1, NAV2 (launcher) segue NAV1
             boolean inMode = s == 0 ? "wifi".equals(mMode) : s == 1 ? "signal".equals(mMode) : s == 2 ? "nav".equals(mMode) : "settings".equals(mMode);
             if (!inMode) continue;
             mRows.add(new Row(true, s, null, getString(titles[s])));
@@ -536,8 +538,8 @@ public class StyleActivity extends AppCompatActivity {
                 String slot = SLOTS[i], ov = ThemeCompiler.namedPackage(slot);
                 String style = ThemePrefs.getStyle(slot);
                 if (style.isEmpty()) continue;
-                if (i == 4) {
-                    try { ctx.getPackageManager().getPackageInfo(TARGET_PKG[4], 0); }
+                if (i == 4 || i == 5) {
+                    try { ctx.getPackageManager().getPackageInfo(TARGET_PKG[i], 0); }
                     catch (Exception notInstalled) { continue; }
                 }
                 String st = before.get(ov);
@@ -572,6 +574,7 @@ public class StyleActivity extends AppCompatActivity {
         // uno stile inesistente per quell'icona (non dovrebbe succedere) si ignora: resta quello di prima
         for (int k = 0; k <= 1; k++) if (!styleExists(k, choice[k])) choice[k] = "";
         choice[4] = choice[3];
+        choice[5] = choice[2];
         new Thread(() -> {
             int failed = 0;
             boolean removed = false, notActive = false;
@@ -585,9 +588,9 @@ public class StyleActivity extends AppCompatActivity {
             try {
                 ModuleSetup.ensure();
                 for (int i = 0; i < SLOTS.length; i++) {
-                    if (i == 4) {
-                        // l'icona di Oxydian dentro Impostazioni: solo se Oxydian e' installato
-                        try { getPackageManager().getPackageInfo(TARGET_PKG[4], 0); }
+                    if (i == 4 || i == 5) {
+                        // l'icona di Oxydian dentro Impostazioni / i tasti nel launcher: solo se quell'app e' installata
+                        try { getPackageManager().getPackageInfo(TARGET_PKG[i], 0); }
                         catch (Exception notInstalled) { continue; }
                     }
                     String slot = SLOTS[i], ov = ThemeCompiler.namedPackage(slot);
