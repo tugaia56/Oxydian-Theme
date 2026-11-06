@@ -36,9 +36,18 @@ while true; do
   while [ $n -lt $max ]; do
     sleep $step
     n=$((n+1))
-    top=$(cmd overlay list --user 0 android 2>/dev/null | grep '^\[x\]' | tail -1)
-    case "$top" in
-      *com.android.systemui:*)
+    list=$(cmd overlay list --user 0 android 2>/dev/null | grep '^\[x\]')
+    top=$(echo "$list" | tail -1)
+    bad=0
+    case "$top" in *com.android.systemui:*) bad=1;; esac
+    # OxygenOS: puo' stare in cima un oxyfix ma il tema di sistema (DS_SYS) sotto i colori del sistema: va rimesso sopra anche in quel caso
+    if [ "$bad" = 0 ] && [ -n "$OPLUS" ]; then
+      dsn=$(echo "$list" | grep -n 'OxydianThemeComponentDS_SYS' | head -1 | cut -d: -f1)
+      sun=$(echo "$list" | grep -n 'com.android.systemui:dynamic' | head -1 | cut -d: -f1)
+      [ -n "$dsn" ] && [ -n "$sun" ] && [ "$dsn" -lt "$sun" ] && bad=1
+    fi
+    case "$bad" in
+      1)
         lastfix=$(date +%s)
         echo "colorwatch: colori del sistema davanti a quelli del Theme ($top), li rimetto $(date)" >> "$LOG"
         if [ -n "$OPLUS" ]; then repair_oos >> "$LOG" 2>&1; else sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1; fi
