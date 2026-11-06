@@ -310,9 +310,15 @@ public final class ThemeCompiler {
                 // aspetta che il processo lo lasci; verra' riacceso a fine lavoro.
                 "[ -d " + ModuleConstants.LIVE_UPPER_DIR + " ] && { OV=" + namedPackage(name) + "; "
                         + "if cmd overlay list 2>/dev/null | grep -q \"^\\[x\\] $OV\\$\"; then "
-                        + "cmd overlay disable --user 0 $OV >/dev/null 2>&1; sleep "
-                        + (("com.android.systemui".equals(targetPackage) || "android".equals(targetPackage)) ? "3" : "1")
-                        + "; fi; cp -f " + signed + " " + inSystem + " 2>/dev/null; }",
+                        + "cmd overlay disable --user 0 $OV >/dev/null 2>&1; sleep 0.5; "
+                        // invece di un'attesa fissa (3 secondi per ogni overlay di sistema) si controlla che nessun processo
+                        // abbia ancora l'APK aperto; al massimo la stessa attesa di prima
+                        + "P=$(pidof " + (("com.android.systemui".equals(targetPackage) || "android".equals(targetPackage))
+                                ? "com.android.systemui system_server" : targetPackage) + " 2>/dev/null); i=0; "
+                        + "while [ $i -lt " + (("com.android.systemui".equals(targetPackage) || "android".equals(targetPackage)) ? "10" : "2") + " ]; do "
+                        + "h=0; for p in $P; do grep -q " + apkName + " /proc/$p/maps 2>/dev/null && h=1; done; "
+                        + "[ $h = 0 ] && break; sleep 0.25; i=$((i+1)); done; "
+                        + "fi; cp -f " + signed + " " + inSystem + " 2>/dev/null; }",
                 "chmod 644 " + inSystem + " 2>/dev/null").exec();
         return false;
     }
