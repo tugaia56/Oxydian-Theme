@@ -14,7 +14,8 @@ last=$(pidof com.android.systemui)
 
 # colori del Theme in cima (OxygenOS): solo DS_SYS e gli oxyfix
 repair_oos() {
-  L="OxydianThemeComponentDS_SYS.overlay $(cmd overlay list --user 0 android 2>/dev/null | grep -o 'com.android.shell:oxyfix[0-9]*' | tr '\n' ' ')"
+  # gli oxyfix hanno bersagli diversi (android e SystemUI): si prendono tutti
+  L="OxydianThemeComponentDS_SYS.overlay $(cmd overlay list --user 0 2>/dev/null | grep -o 'com.android.shell:oxyfix[0-9]*' | tr '\n' ' ')"
   for o in $L; do cmd overlay disable --user 0 "$o" >/dev/null 2>&1; done
   for o in $L; do cmd overlay enable --user 0 "$o" >/dev/null 2>&1; done
 }
@@ -45,6 +46,11 @@ while true; do
       dsn=$(echo "$list" | grep -n 'OxydianThemeComponentDS_SYS' | head -1 | cut -d: -f1)
       sun=$(echo "$list" | grep -n 'com.android.systemui:dynamic' | head -1 | cut -d: -f1)
       [ -n "$dsn" ] && [ -n "$sun" ] && [ "$dsn" -lt "$sun" ] && bad=1
+    fi
+    # anche tra gli overlay di SystemUI: il tema di SystemUI (DS_SUT) riacceso dopo gli oxyfix delle icone di stato li copre
+    if [ "$bad" = 0 ]; then
+      lsu=$(cmd overlay list --user 0 com.android.systemui 2>/dev/null | grep '^\[x\]')
+      if echo "$lsu" | grep -q oxyfix && ! echo "$lsu" | tail -1 | grep -q oxyfix; then bad=1; top=$(echo "$lsu" | tail -1); fi
     fi
     case "$bad" in
       1)

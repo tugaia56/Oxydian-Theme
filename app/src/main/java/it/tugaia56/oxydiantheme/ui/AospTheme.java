@@ -223,7 +223,11 @@ public final class AospTheme {
 
     /** L'ultimo overlay acceso di "android" e' uno dei nostri (oxyfix), cioe' stiamo davanti ai colori del sistema? */
     private static boolean topIsOurs() {
-        return firstLine("cmd overlay list --user 0 android 2>/dev/null | grep '^\\[x\\]' | tail -1").contains("oxyfix");
+        if (!firstLine("cmd overlay list --user 0 android 2>/dev/null | grep '^\\[x\\]' | tail -1").contains("oxyfix")) return false;
+        // anche tra gli overlay di SystemUI: se il tema di SystemUI (DS_SUT) e' stato riacceso dopo gli "oxyfix" dei colori delle icone
+        // di stato, sta sopra e ne copre i colori
+        return "ok".equals(firstLine("l=$(cmd overlay list --user 0 com.android.systemui 2>/dev/null | grep '^\\[x\\]'); "
+                + "if echo \"$l\" | grep -q oxyfix && ! echo \"$l\" | tail -1 | grep -q oxyfix; then echo bad; else echo ok; fi"));
     }
 
     /** Quanti overlay oxyfix sono accesi adesso (-1 se non si riesce a leggere). */
