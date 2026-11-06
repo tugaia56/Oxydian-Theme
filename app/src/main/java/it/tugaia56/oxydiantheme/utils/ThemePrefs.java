@@ -210,6 +210,11 @@ public final class ThemePrefs {
 
     public static void setNavSize(int dp) { sp().edit().putInt("nav_icon_size_dp", dp).commit(); }
 
+    /** Da cosa dipende un tema (bit 0 = accento, bit 1 = sfondo), salvato per versione del Theme: -1 = non noto. */
+    public static int getDependence(String key, long version) { return sp().getInt("dep_" + version + "_" + key, -1); }
+
+    public static void setDependence(String key, long version, int v) { sp().edit().putInt("dep_" + version + "_" + key, v).apply(); }
+
     public static String getSystemVariant() { return sp().getString("system_variant", ""); }
     public static void setSystemVariant(String v) { sp().edit().putString("system_variant", v == null ? "" : v).commit(); }
 

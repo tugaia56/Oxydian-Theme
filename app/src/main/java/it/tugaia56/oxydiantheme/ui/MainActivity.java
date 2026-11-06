@@ -1866,39 +1866,59 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Firma di compilazione di un tema: per le app che usano solo i colori del framework (la grande maggioranza) non dipende da
-     * accento e sfondo, che l'overlay del framework cambia da solo; cosi' cambiando accento o sfondo si rifanno solo i temi con
-     * colori fissi.
+     * Firma di compilazione di un tema: dipende solo da quello che il tema contiene davvero. Un tema che usa solo i colori del
+     * framework non dipende ne' dall'accento ne' dallo sfondo (li cambia l'overlay del framework da solo); uno con l'accento scritto
+     * fisso dipende dall'accento, uno con i colori dello sfondo predefinito scritti fissi dipende dallo sfondo. Cosi' cambiando accento
+     * o sfondo si rifanno solo quelli che servono. "Colori di sistema" (DS_SYS) si rifa' sempre.
      */
     static String signatureFor(Context ctx, AppEntry e) {
-        if (e.ds || usesFixedColors(ctx, e.pkg)) return signature(ctx);
-        return updatedTime(ctx) + ":";
+        if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) return signature(ctx);
+        int dep = colorDependence(ctx, e);
+        StringBuilder sb = new StringBuilder().append(updatedTime(ctx)).append(':');
+        if ((dep & 1) != 0) sb.append(String.format("%08X", ThemePrefs.accentColor()));
+        if ((dep & 2) != 0) sb.append(BackgroundRemap.key());
+        return sb.toString();
     }
 
-    private static final java.util.Map<String, Boolean> FIXED_COLORS = new java.util.HashMap<>();
+    private static final java.util.Map<String, Integer> DEPENDENCE = new java.util.HashMap<>();
 
-    /** Il tema dell'app ha l'accento (#908dff) o i colori dello sfondo predefinito scritti fissi, oppure ha opzioni proprie? */
-    static synchronized boolean usesFixedColors(Context ctx, String pkg) {
-        Boolean c = FIXED_COLORS.get(pkg);
+    /** Bit 0: dipende dall'accento, bit 1: dipende dallo sfondo. */
+    static synchronized int colorDependence(Context ctx, AppEntry e) {
+        List<String> opts = optionPaths(ctx, e.pkg);
+        final String key = e.pkg + "|" + (e.ds ? e.dir : "APP") + "|" + opts.hashCode();
+        Integer c = DEPENDENCE.get(key);
         if (c != null) return c;
-        // la scansione dei file del tema (assets) e' lenta (decine di secondi per tutte le app): il risultato si salva per versione del Theme
+        // la scansione dei file del tema (assets) e' lenta (decine di secondi per tutti): il risultato si salva per versione del Theme
         final long ver = updatedTime(ctx);
-        int saved = ThemePrefs.getFixedColors(pkg, ver);
-        if (saved >= 0) { FIXED_COLORS.put(pkg, saved == 1); return saved == 1; }
-        boolean fixed = false;
+        int saved = ThemePrefs.getDependence(key, ver);
+        if (saved >= 0) { DEPENDENCE.put(key, saved); return saved; }
+        int dep = 3;   // nel dubbio dipende da tutti e due
         try {
-            if (!optionGroups(ctx, pkg).isEmpty()) fixed = true;   // opzioni: possono avere colori fissi, si resta prudenti
-            if (!fixed) {
-                java.util.Set<Integer> pal = BackgroundRemap.defaultPalette(ctx);
-                StringBuilder re = new StringBuilder("908dff");
-                for (int p : pal) re.append('|').append(String.format("%06x", p));
-                java.util.regex.Pattern pat = java.util.regex.Pattern.compile(re.toString(), java.util.regex.Pattern.CASE_INSENSITIVE);
-                fixed = scanFixed(ctx.getAssets(), "CompileOnDemand/" + pkg + "/APP", pat);
+            java.util.regex.Pattern accent = java.util.regex.Pattern.compile("908dff", java.util.regex.Pattern.CASE_INSENSITIVE);
+            StringBuilder re = new StringBuilder();
+            for (int p : BackgroundRemap.defaultPalette(ctx)) re.append(re.length() == 0 ? "" : "|").append(String.format("%06x", p));
+            java.util.regex.Pattern bg = re.length() == 0 ? null : java.util.regex.Pattern.compile(re.toString(), java.util.regex.Pattern.CASE_INSENSITIVE);
+            // i temi di sistema (DS) hanno anche il riferimento al colore del framework "cotto" dentro: dipendono dall'accento
+            java.util.regex.Pattern ref = e.ds ? java.util.regex.Pattern.compile("accent_material_dark") : null;
+            List<String> paths = new ArrayList<>();
+            String root = "CompileOnDemand/" + e.pkg;
+            if (e.ds) {
+                String[] kids = ctx.getAssets().list(root);
+                if (kids != null) for (String k : kids) if (k.equals(e.dir) || k.startsWith(e.dir + "_")) paths.add(root + "/" + k);
+            } else {
+                paths.add(root + "/APP");
             }
-        } catch (Throwable t) { fixed = true; }
-        FIXED_COLORS.put(pkg, fixed);
-        ThemePrefs.setFixedColors(pkg, ver, fixed);
-        return fixed;
+            paths.addAll(opts);
+            dep = 0;
+            for (String p : paths) {
+                if ((dep & 1) == 0 && scanFixed(ctx.getAssets(), p, accent)) dep |= 1;
+                if ((dep & 1) == 0 && ref != null && scanFixed(ctx.getAssets(), p, ref)) dep |= 1;
+                if ((dep & 2) == 0 && bg != null && scanFixed(ctx.getAssets(), p, bg)) dep |= 2;
+            }
+        } catch (Throwable t) { dep = 3; }
+        DEPENDENCE.put(key, dep);
+        ThemePrefs.setDependence(key, ver, dep);
+        return dep;
     }
 
     private static boolean scanFixed(android.content.res.AssetManager am, String path, java.util.regex.Pattern pat) throws java.io.IOException {
