@@ -591,6 +591,7 @@ public class StyleActivity extends AppCompatActivity {
                         + sizeKey(i);
                 if (sig.equals(ThemePrefs.getStyleBuilt(slot))) continue;
                 if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
+                it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale: build " + slot + " (" + style + ")");
                 try {
                     if (!ThemeCompiler.buildNamedInBatch(TARGET_PKG[i], PREFIXES[i] + style, slot, null,
                             valuesFor(i, style),
@@ -604,7 +605,9 @@ public class StyleActivity extends AppCompatActivity {
             }
         } catch (Throwable ignored) {
         } finally {
+            it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale: endBatch refresh=" + refresh.size());
             if (batchOpen) ThemeCompiler.endBatch(refresh);
+            it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale: endBatch done");
         }
     }
 

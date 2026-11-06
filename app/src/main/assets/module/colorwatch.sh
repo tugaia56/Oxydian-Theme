@@ -34,6 +34,7 @@ while true; do
   # Android puro: si controlla ogni secondo per 20. Appena quelli del sistema stanno davanti, si rimettono quelli del Theme.
   if [ -n "$OPLUS" ]; then step=2; max=20; sleep 12; else step=1; max=20; [ -f "$MODDIR/fixedcolors.sh" ] || continue; fi
   n=0
+  fixes=0
   while [ $n -lt $max ]; do
     sleep $step
     n=$((n+1))
@@ -57,7 +58,10 @@ while true; do
         lastfix=$(date +%s)
         echo "colorwatch: colori del sistema davanti a quelli del Theme ($top), li rimetto $(date)" >> "$LOG"
         if [ -n "$OPLUS" ]; then repair_oos >> "$LOG" 2>&1; else sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1; fi
-        break;;
+        # il sistema puo' rifare i suoi colori ancora dopo: si continua a controllare per un altro giro (al massimo 3 riparazioni)
+        fixes=$((fixes+1))
+        [ $fixes -ge 3 ] && break
+        n=0;;
     esac
   done
 done

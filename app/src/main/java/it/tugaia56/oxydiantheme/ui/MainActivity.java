@@ -1899,7 +1899,7 @@ public class MainActivity extends AppCompatActivity {
             for (int p : BackgroundRemap.defaultPalette(ctx)) re.append(re.length() == 0 ? "" : "|").append(String.format("%06x", p));
             java.util.regex.Pattern bg = re.length() == 0 ? null : java.util.regex.Pattern.compile(re.toString(), java.util.regex.Pattern.CASE_INSENSITIVE);
             // i temi di sistema (DS) hanno anche il riferimento al colore del framework "cotto" dentro: dipendono dall'accento
-            java.util.regex.Pattern ref = e.ds ? java.util.regex.Pattern.compile("accent_material_dark") : null;
+            java.util.regex.Pattern ref = null;   // il riferimento al colore del framework resta tale anche nei temi di sistema (tranne DS_SYS)
             List<String> paths = new ArrayList<>();
             String root = "CompileOnDemand/" + e.pkg;
             if (e.ds) {

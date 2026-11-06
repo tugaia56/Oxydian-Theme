@@ -172,7 +172,7 @@ public final class ThemeCompiler {
         Shell.cmd("mkdir -p \"" + cacheRoot + "\"",
                 "mv -f \"" + ModuleConstants.DATA_DIR + "/CompileOnDemand/" + assetPkg + "/" + assetDir + "\" \"" + source + "\"").exec();
         // temi delle singole app (cartella APP): l'accento resta un riferimento al framework (vedi substituteAccent)
-        final boolean perApp = ASSET_DIR.equals(assetDir);
+        final boolean perApp = ASSET_DIR.equals(assetDir) || (name != null && name.startsWith("DS_") && !"DS_SYS".equals(name));
         substituteAccent(source, !perApp);
         substituteBackground(source);
 
