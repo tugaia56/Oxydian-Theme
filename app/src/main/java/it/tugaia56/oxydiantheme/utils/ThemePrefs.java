@@ -205,6 +205,11 @@ public final class ThemePrefs {
         sp().edit().putInt("fixedcol_" + version + "_" + pkg, fixed ? 1 : 0).apply();
     }
 
+    /** Dimensione (dp) delle icone della barra di navigazione; 24 = di serie. */
+    public static int getNavSize() { return sp().getInt("nav_icon_size_dp", 24); }
+
+    public static void setNavSize(int dp) { sp().edit().putInt("nav_icon_size_dp", dp).commit(); }
+
     public static String getSystemVariant() { return sp().getString("system_variant", ""); }
     public static void setSystemVariant(String v) { sp().edit().putString("system_variant", v == null ? "" : v).commit(); }
 

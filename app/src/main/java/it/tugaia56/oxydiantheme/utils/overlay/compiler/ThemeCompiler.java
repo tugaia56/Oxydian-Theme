@@ -241,9 +241,11 @@ public final class ThemeCompiler {
                     + "[ -f \"$d/$o.xml\" ] && cp -f \"$d/$o.xml\" \"$d/ic_homepage_$n.xml\"; done").exec();
         }
 
-        if (iconSizeDp > 0 && iconSizeDp != 15) {
-            // i vettori delle icone sono da 15dp: si riscrive larghezza e altezza della radice
-            String expr = "s/(android:(width|height)=\")15(\\.0+)?(dp|dip)\"/\\1" + iconSizeDp + ".0dp\"/g";
+        // i vettori delle icone sono da 15dp (Wi-Fi/segnale) o da 24dp (barra di navigazione): si riscrive larghezza e altezza della radice
+        // (il prefisso dello spazio dei nomi puo' avere un altro nome, es. "n1:")
+        final int baseSize = assetDir.startsWith("NAV_") ? 24 : 15;
+        if (iconSizeDp > 0 && iconSizeDp != baseSize) {
+            String expr = "s/([A-Za-z0-9]+:(width|height)=\")" + baseSize + "(\\.0+)?(dp|dip)\"/\\1" + iconSizeDp + ".0dp\"/g";
             Shell.cmd("find \"" + source + "/res/drawable\" -type f -name '*.xml' -exec sed -i -E '" + expr + "' {} +").exec();
         }
 

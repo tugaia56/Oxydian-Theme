@@ -103,7 +103,7 @@ public class StyleActivity extends AppCompatActivity {
             }
         });
         Button sizeBtn = findViewById(R.id.btn_icon_size);
-        sizeBtn.setVisibility("wifi".equals(mMode) || "signal".equals(mMode) ? View.VISIBLE : View.GONE);
+        sizeBtn.setVisibility("wifi".equals(mMode) || "signal".equals(mMode) || "nav".equals(mMode) ? View.VISIBLE : View.GONE);
         sizeBtn.setOnClickListener(v -> showIconSize());
         Button wifiColorBtn = findViewById(R.id.btn_color_wifi);
         Button mobileColorBtn = findViewById(R.id.btn_color_mobile);
@@ -479,16 +479,18 @@ public class StyleActivity extends AppCompatActivity {
         int pad = (int) (20 * getResources().getDisplayMetrics().density);
         box.setPadding(pad, pad / 2, pad, 0);
         android.widget.RadioGroup rg = new android.widget.RadioGroup(this);
-        int cur = ThemePrefs.getIconSize();
-        for (int dp = 12; dp <= 20; dp++) {
+        final boolean navSize = "nav".equals(mMode);
+        final int defDp = navSize ? 24 : 15;
+        int cur = navSize ? ThemePrefs.getNavSize() : ThemePrefs.getIconSize();
+        for (int dp = navSize ? 18 : 12; dp <= (navSize ? 36 : 20); dp++) {
             android.widget.RadioButton rb = new android.widget.RadioButton(this);
-            rb.setText(dp + " dp" + (dp == 15 ? " (" + getString(R.string.options_default).toLowerCase() + ")" : ""));
+            rb.setText(dp + " dp" + (dp == defDp ? " (" + getString(R.string.options_default).toLowerCase() + ")" : ""));
             rb.setId(View.generateViewId());
             rb.setChecked(dp == cur);
             rb.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
             final int v = dp;
             rb.setOnClickListener(x -> {
-                ThemePrefs.setIconSize(v);
+                if (navSize) ThemePrefs.setNavSize(v); else ThemePrefs.setIconSize(v);
                 for (int k = 0; k < rg.getChildCount(); k++) {
                     android.widget.RadioButton o = (android.widget.RadioButton) rg.getChildAt(k);
                     o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
@@ -508,6 +510,19 @@ public class StyleActivity extends AppCompatActivity {
                 .setView(sv)
                 .setPositiveButton(android.R.string.ok, null));
         Toast.makeText(this, R.string.icon_size_hint, Toast.LENGTH_LONG).show();
+    }
+
+    /** Dimensione da applicare allo slot (0 = di serie / non prevista). */
+    private static int sizeFor(int i) {
+        if (i <= 1) return ThemePrefs.getIconSize();
+        if (i == 2 || i == 5) return ThemePrefs.getNavSize() == 24 ? 0 : ThemePrefs.getNavSize();
+        return 0;
+    }
+
+    private static String sizeKey(int i) {
+        if (i <= 1) return ":s" + ThemePrefs.getIconSize() + colorKey(i);
+        if (i == 2 || i == 5) return ":s" + ThemePrefs.getNavSize();
+        return "";
     }
 
     /** Colore scelto per le icone di quello slot (0 = Wi-Fi, 1 = segnale), null = predefinito. */
@@ -545,13 +560,13 @@ public class StyleActivity extends AppCompatActivity {
                 String st = before.get(ov);
                 boolean active = "[x]".equals(st);
                 String sig = style + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey(style) : "")
-                        + ((i <= 1) ? ":s" + ThemePrefs.getIconSize() + colorKey(i) : "");
+                        + sizeKey(i);
                 if (sig.equals(ThemePrefs.getStyleBuilt(slot))) continue;
                 if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                 try {
                     if (!ThemeCompiler.buildNamedInBatch(TARGET_PKG[i], PREFIXES[i] + style, slot, null,
                             (i == 3 || i == 4) ? settingsValuesXml(style) : null,
-                            (i <= 1) ? ThemePrefs.getIconSize() : 0, slotColor(i))) {
+                            sizeFor(i), slotColor(i))) {
                         ThemePrefs.setStyleBuilt(slot, sig);
                         if (active) refresh.add(ov);
                     }
@@ -604,14 +619,14 @@ public class StyleActivity extends AppCompatActivity {
                         ThemePrefs.setStyleBuilt(slot, "");
                         continue;
                     }
-                    String sig = choice[i] + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey(choice[i]) : "") + ((i <= 1) ? ":s" + ThemePrefs.getIconSize() + colorKey(i) : "");
+                    String sig = choice[i] + ":" + accent + ((i == 3 || i == 4) ? ":" + iconOptsKey(choice[i]) : "") + sizeKey(i);
                     if ("[ ]".equals(st)) toEnable.add(ov);
                     if (active && sig.equals(ThemePrefs.getStyleBuilt(slot))) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     try {
                         if (ThemeCompiler.buildNamedInBatch(TARGET_PKG[i], PREFIXES[i] + choice[i], slot, null,
                                 (i == 3 || i == 4) ? settingsValuesXml(choice[i]) : null,
-                                (i <= 1) ? ThemePrefs.getIconSize() : 0, slotColor(i))) {
+                                sizeFor(i), slotColor(i))) {
                             failed++;
                         } else {
                             ThemePrefs.setStyleBuilt(slot, sig);
