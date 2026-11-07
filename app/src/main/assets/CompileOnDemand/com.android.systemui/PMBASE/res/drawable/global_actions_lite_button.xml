@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Menu di spegnimento (Android puro): pulsanti tondi. Riempimento (oxy_pm_btn_bg) e bordo (oxy_pm_btn_border) scelti nel Theme. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/oxy_pm_btn_bg" />
+    <stroke android:width="1.5dp" android:color="@color/oxy_pm_btn_border" />
+</shape>

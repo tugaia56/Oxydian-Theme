@@ -162,6 +162,7 @@
     <string name="card_batpctcolor">Colore % batteria</string>
     <string name="card_clockcolor">Colore orologio barra di stato</string>
     <string name="clock_same_as_icons">Come le icone</string>
+    <string name="card_powermenu">Menù di spegnimento</string>
     <string name="card_notifstyle">Stile notifiche</string>
     <string name="notif_style_default">Predefinito</string>
     <string name="variant_soon">prossimamente</string>

@@ -390,7 +390,8 @@ public class MainActivity extends AppCompatActivity {
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
-    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow;
+    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow;
+    private TextView mSubPowerMenu;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle;
     private android.widget.LinearLayout mClockColorRow;
@@ -525,6 +526,18 @@ public class MainActivity extends AppCompatActivity {
         notifSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
         r3c.addView(notifSpacer);
         mNotifStyleRow = r3c;
+        // menu di spegnimento (solo Android puro): sfondo e bordo, accanto un posto libero
+        android.widget.LinearLayout r3d = new android.widget.LinearLayout(this);
+        r3d.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        r3p.addView(r3d, r3p.indexOfChild(r3c) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        View pmCard = makeCard(R.string.card_powermenu, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pmbg", "pmborder", "pmbtnborder"}, R.string.card_powermenu));
+        mSubPowerMenu = s[0];
+        setCardHeight(pmCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r3d.addView(pmCard);
+        View pmSpacer = new View(this);
+        pmSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
+        r3d.addView(pmSpacer);
+        mPowerMenuRow = r3d;
         r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
         mSignalCard = makeCard(R.string.card_signal, s, () -> openStyles("signal"));
@@ -1008,6 +1021,8 @@ public class MainActivity extends AppCompatActivity {
         if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mPowerMenuRow != null) mPowerMenuRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mSubPowerMenu != null) mSubPowerMenu.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pmbg", "pmborder", "pmbtnborder"));
         if (mSubNotifStyle != null) mSubNotifStyle.setText(NotifStyle.label(this, ThemePrefs.getNotifStyle()));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
@@ -1326,6 +1341,8 @@ public class MainActivity extends AppCompatActivity {
             if (groups == null) return out;
             Arrays.sort(groups);
             for (String g : groups) {
+                // menu di spegnimento: esiste solo su Android puro
+                if (("pmbg".equals(g) || "pmborder".equals(g) || "pmbtnborder".equals(g)) && !SystemVariant.isPure()) continue;
                 String[] items = ctx.getAssets().list(base + "/" + g);
                 if (items == null) continue;
                 OptGroup og = new OptGroup();
@@ -1363,6 +1380,13 @@ public class MainActivity extends AppCompatActivity {
             if (OptionGroupsDialog.CUSTOM.equals(c)) sb.append(String.format("#%08X", ThemePrefs.getCustomColor(pkg + "_" + g.id)));
         }
         return sb.toString();
+    }
+
+    /** Colore del bordo del menu di spegnimento: "Accento", colore libero o nessuno (trasparente). */
+    private static String pmBorderValue(String pkg, String group, String sel) {
+        if (OptionGroupsDialog.CUSTOM.equals(sel)) return hex8(0xFF000000 | (ThemePrefs.getCustomColor(pkg + "_" + group) & 0xFFFFFF));
+        if ("Accento".equals(sel)) return "@*android:color/accent_material_dark";
+        return "#00000000";
     }
 
     private static String hex8(int c) { return String.format("#%08X", c); }
@@ -1436,6 +1460,37 @@ public class MainActivity extends AppCompatActivity {
                 sb.append("    <color name=\"").append(n).append("\">").append(hex8(0xFF000000 | rgb)).append("</color>\n");
             any = true;
         }
+        // Menu di spegnimento (solo Android puro): sfondo del riquadro, bordo del riquadro e bordo dei pulsanti, usati dai due disegni di PMBASE
+        String pmBg = ThemePrefs.getOption(pkg, "pmbg"), pmBorder = ThemePrefs.getOption(pkg, "pmborder"), pmBtn = ThemePrefs.getOption(pkg, "pmbtnborder");
+        if (SystemVariant.isPure() && (!pmBg.isEmpty() || !pmBorder.isEmpty() || !pmBtn.isEmpty())) {
+            // "Oxyt" = system_background_dark (il colore di sfondo del Theme): background_dark ha una variante notte del sistema che vince
+            String bgVal;
+            if (OptionGroupsDialog.CUSTOM.equals(pmBg)) bgVal = hex8(0xFF000000 | (ThemePrefs.getCustomColor(pkg + "_pmbg") & 0xFFFFFF));
+            else if ("Oxyt".equals(pmBg)) bgVal = "@*android:color/system_background_dark";
+            else if ("Accento".equals(pmBg)) bgVal = "@*android:color/accent_material_dark";
+            else if ("Nero".equals(pmBg)) bgVal = "#FF000000";
+            else bgVal = "@*android:color/system_surface_container_low_dark";   // di serie
+            sb.append("    <color name=\"oxy_pm_bg\">").append(bgVal).append("</color>\n");
+            if (!pmBg.isEmpty()) {
+                // il riquadro e' coperto da un colore "effetto" blu semitrasparente (system_surface_effect_0_dark): si cambiano
+                // anche i colori propri del menu
+                for (String n : new String[]{"global_actions_grid_background", "global_actions_grid_background_blur", "global_actions_grid_background_blur_fallback"})
+                    sb.append("    <color name=\"").append(n).append("\">").append(bgVal).append("</color>\n");
+            }
+            sb.append("    <color name=\"oxy_pm_border\">").append(pmBorderValue(pkg, "pmborder", pmBorder)).append("</color>\n");
+            sb.append("    <color name=\"oxy_pm_btn_border\">").append(pmBorderValue(pkg, "pmbtnborder", pmBtn)).append("</color>\n");
+            // pulsanti: colore oxyt quando hanno il bordo, altrimenti quello di serie di Android
+            sb.append("    <color name=\"oxy_pm_btn_bg\">").append(pmBtn.isEmpty() ? "@*android:color/button_material_dark" : "@*android:color/system_background_dark").append("</color>\n");
+            // Emergenza: colore di "Opacita' tocco" (accento con la sua opacita') e stella bianca
+            int rp = ThemePrefs.getRippleAlpha();
+            if (rp <= 0) rp = 50;   // 0 = preset: la finestra "Opacita' tocco" mostra 50%
+            Integer acc = SystemColorsDialog.effAccent(ctx);
+            int base = (acc != null ? acc : ThemePrefs.accentColor()) & 0xFFFFFF;
+            String emg = String.format("#%02X%06X", Math.round(rp * 2.55f), base);
+            sb.append("    <color name=\"global_actions_lite_emergency_background\">").append(emg).append("</color>\n");
+            sb.append("    <color name=\"global_actions_lite_emergency_icon\">#FFFFFFFF</color>\n");
+            any = true;
+        }
         Integer nav = IconColorDialog.value("nav");
         if (nav != null) {
             // pillola dei gesti e icona della barra; i tre tasti li colora Oxydian
@@ -1505,6 +1560,11 @@ public class MainActivity extends AppCompatActivity {
             String c = ThemePrefs.getOption(pkg, g.id);
             if (!c.isEmpty() && g.choices.contains(c)) out.add("CompileOnDemand/" + pkg + "/OPT/" + g.id + "/" + c);
         }
+        // menu di spegnimento: se sfondo o bordo sono scelti (anche a colore libero) servono i due disegni di base
+        if ("com.android.systemui".equals(pkg) && SystemVariant.isPure()
+                && (!ThemePrefs.getOption(pkg, "pmbg").isEmpty() || !ThemePrefs.getOption(pkg, "pmborder").isEmpty()
+                || !ThemePrefs.getOption(pkg, "pmbtnborder").isEmpty()))
+            out.add("CompileOnDemand/" + pkg + "/PMBASE");
         return out;
     }
 
@@ -1857,7 +1917,7 @@ public class MainActivity extends AppCompatActivity {
      * ASSET_REV (da fare ogni volta che si cambiano i file dei temi o il modo di compilarli). Non e' piu' l'ora di installazione:
      * reinstallare lo stesso Theme non fa rifare tutte le app.
      */
-    static final int ASSET_REV = 2;
+    static final int ASSET_REV = 5;
 
     static long updatedTime(Context ctx) {
         try {
