@@ -1,0 +1,15 @@
+Aggiunto:
+- Supporto ad Android 17 / crDroid (riconosciuto da solo) e, in "Scegli il tuo sistema", Android 17 e OxygenOS 17 (prossimamente). Su Android 17 Impostazioni trasparente, colori della barra di stato e stili delle notifiche richiedono il modulo "Oxydian-Android" (vedi le sue note)
+- Scheda Menù di spegnimento (solo Android): sfondo del riquadro (Oxydian Theme, Accento, Nero o un colore libero), bordo del riquadro e bordo dei pulsanti scelti a parte (Accento o un colore libero). I pulsanti hanno lo sfondo del Theme quando hanno il bordo. Il pulsante Emergenza usa il colore di Opacità tocco con la stella bianca
+- Colori della barra di stato: un solo colore per Wi-Fi, segnale e batteria, colore dell'orologio a parte e colore della percentuale della batteria (Android 17 e OxygenOS)
+- Android 17: stili e misura delle icone Wi-Fi e segnale, stili, colore e misura della barra di navigazione (a 3 tasti la disegna il launcher), scheda stili delle notifiche, card di Impostazioni (Piene / Trasparenti / Con bordo), sfondi trasparenti e opacità del pannello
+- Pagina Colori: pagine Accenti per categoria e Sfondi per categoria
+- Nuovi temi per le app: APKMirror, Duck Detector (traduzione in italiano), Telefono (icone chiamate spam in rosso, chip selezionati con l'accento), schermate iniziali di Claude, Garmin Connect e Dreo; gli interruttori di MacroDroid seguono la scelta Interruttori
+- Gli overlay seguono lo sfondo di sistema scelto (i colori della tavolozza scritti nei temi delle app si riscrivono alla compilazione)
+Aggiornato:
+- Cambio colori molto più veloce: si ricostruiscono solo i temi con accento o sfondo scritti nei loro file (circa 13 app invece di circa 90), niente attese fisse, gli overlay si installano appena nessun processo usa il vecchio file
+- Dopo Applica su Android il riavvio dell'interfaccia riavvia anche il launcher (Recenti, Indietro e gesti su crDroid continuavano a non rispondere)
+- Un controllo rimette in cima i colori del Theme quando SystemUI riparte (anche su OxygenOS, con una riparazione leggera di circa 15 overlay)
+- Reinstallare la stessa versione non ricostruisce più tutti gli overlay delle app
+Rimosso:
+- Su Android 17 sono nascosti perché lì non funzionano ancora: Interruttori, Pack icone di Impostazioni e gli overlay solo OxygenOS di Impostazioni, IntentResolver e Telecom

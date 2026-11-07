@@ -1,0 +1,15 @@
+Added:
+- Android 17 / crDroid support (detected automatically) and "Choose your system" entries for Android 17 and OxygenOS 17 (coming soon). On Android 17 the transparent Settings, status bar colours and notification styles need the Oxydian module "Oxydian-Android" (see its notes)
+- Power menu card (Android only): box background (Oxydian Theme, Accent, Black or a free colour), box border and button border chosen separately (Accent or a free colour). Buttons are filled with the Theme background when they have a border. The Emergency button uses the Touch opacity colour with a white star
+- Status bar colours: one colour for Wi-Fi, signal and battery, a separate clock colour and a battery percentage colour (Android 17 and OxygenOS)
+- Android 17: Wi-Fi and signal icon styles and icon size, navigation bar styles, colour and size (the 3-button bar is drawn by the launcher), notification styles card, Settings cards (Solid / Transparent / With border), transparent backgrounds and shade opacity
+- Colours page: Accents by category and Backgrounds by category pages
+- New app themes: APKMirror, Duck Detector (Italian translation), Dialer (spam call icons in red, selected chips in the accent), splash screens for Claude, Garmin Connect and Dreo; MacroDroid switches follow the Switches choice
+- Overlays follow the chosen system background (palette colours written in app themes are rewritten at build time)
+Changed:
+- Much faster colour changes: only the themes with the accent or background written in their files are rebuilt (about 13 apps instead of about 90), no fixed waits, overlays are installed as soon as no process uses the old file
+- After Apply on Android the interface restart also restarts the launcher (Recents, Back and gestures on crDroid kept working)
+- A watcher puts the Theme colours back on top when SystemUI restarts (also on OxygenOS, with a light repair of about 15 overlays)
+- Reinstalling the same version no longer rebuilds all app overlays
+Removed:
+- On Android 17 these are hidden because they do not work there yet: Switches, Settings icon pack, and the OxygenOS-only Settings, IntentResolver and Telecom overlays
