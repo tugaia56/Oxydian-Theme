@@ -30,6 +30,7 @@ final class OptionGroupsDialog {
 
     static String pretty(String n) {
         if (n == null || n.isEmpty()) return "";
+        if ("Oxyt".equals(n)) return "Oxydian Theme";   // scelta "sfondo del Theme" (menu di spegnimento): nome intero
         StringBuilder sb = new StringBuilder();
         for (String p : n.split("_")) {
             if (p.isEmpty()) continue;
@@ -161,7 +162,7 @@ final class OptionGroupsDialog {
                 TextView t = new TextView(ctx);
                 t.setText(title(ctx, pkg, g));
                 t.setTextColor(ThemePrefs.accentColor());
-                t.setTextSize(15);
+                t.setTextSize(g.startsWith("pm") ? 17 : 15);
                 t.setPadding(0, pad / 2, 0, pad / 4);
                 box.addView(t);
             }
@@ -177,6 +178,7 @@ final class OptionGroupsDialog {
                 rb.setText(c.isEmpty() ? ctx.getString(R.string.options_default)
                         : CUSTOM.equals(c) ? ctx.getString(R.string.opt_custom) : pretty(c));
                 rb.setId(View.generateViewId());
+                if (g.startsWith("pm")) rb.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 18);   // menu di spegnimento: testo un po' piu' grande
                 rb.setChecked(c.equals(cur));
                 rb.setButtonTintList(ColorStateList.valueOf(ThemePrefs.accentColor()));
                 if (withPreview) {
