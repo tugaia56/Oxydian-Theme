@@ -1373,7 +1373,7 @@ public class MainActivity extends AppCompatActivity {
                     .append(',').append(ThemePrefs.getBgLight());
         }
         if ((ds && !SystemColorsDialog.PKG.equals(pkg)) || usesRipple(pkg)) sb.append("|rpl=").append(ThemePrefs.getRippleAlpha());
-        if (ds && SYSTEMUI_PKG.equals(pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav"));
+        if (ds && SYSTEMUI_PKG.equals(pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav")).append("|pmv=2");   // pmv: versione dei colori del menu di spegnimento (Emergenza rosso fisso)
         for (OptGroup g : optionGroups(ctx, pkg)) {
             String c = ThemePrefs.getOption(pkg, g.id);
             sb.append('|').append(g.id).append('=').append(c);
@@ -1481,13 +1481,8 @@ public class MainActivity extends AppCompatActivity {
             sb.append("    <color name=\"oxy_pm_btn_border\">").append(pmBorderValue(pkg, "pmbtnborder", pmBtn)).append("</color>\n");
             // pulsanti: colore oxyt quando hanno il bordo, altrimenti quello di serie di Android
             sb.append("    <color name=\"oxy_pm_btn_bg\">").append(pmBtn.isEmpty() ? "@*android:color/button_material_dark" : "@*android:color/system_background_dark").append("</color>\n");
-            // Emergenza: colore di "Opacita' tocco" (accento con la sua opacita') e stella bianca
-            int rp = ThemePrefs.getRippleAlpha();
-            if (rp <= 0) rp = 50;   // 0 = preset: la finestra "Opacita' tocco" mostra 50%
-            Integer acc = SystemColorsDialog.effAccent(ctx);
-            int base = (acc != null ? acc : ThemePrefs.accentColor()) & 0xFFFFFF;
-            String emg = String.format("#%02X%06X", Math.round(rp * 2.55f), base);
-            sb.append("    <color name=\"global_actions_lite_emergency_background\">").append(emg).append("</color>\n");
+            // Emergenza: rosso fisso (holo_red_dark), non dipende da "Opacita' tocco" ne' dall'accento; stella bianca
+            sb.append("    <color name=\"global_actions_lite_emergency_background\">@*android:color/holo_red_dark</color>\n");
             sb.append("    <color name=\"global_actions_lite_emergency_icon\">#FFFFFFFF</color>\n");
             any = true;
         }
