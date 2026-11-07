@@ -53,15 +53,26 @@ public class StyleActivity extends AppCompatActivity {
         final int slot;
         final String style; // "" = predefinito
         final String label;
+        /** K_HEADER / K_STYLE (pagine barra di navigazione e Impostazioni) oppure K_OPT / K_SAME / K_APPLY (pagine Wi-Fi e Segnale) */
+        final int kind;
         Row(boolean header, int slot, String style, String label) {
             this.header = header; this.slot = slot; this.style = style; this.label = label;
+            this.kind = header ? K_HEADER : K_STYLE;
+        }
+        /** Riga di opzione: id = "icon", "size", "color" (kind K_OPT), "same" (K_SAME), "apply" (K_APPLY). */
+        Row(int kind, int slot, String id) {
+            this.header = false; this.slot = slot; this.style = id; this.label = ""; this.kind = kind;
         }
     }
+
+    private static final int K_HEADER = 0, K_STYLE = 1, K_OPT = 2, K_SAME = 3, K_APPLY = 4;
 
     private final List<Row> mRows = new ArrayList<>();
     private final List<Row> mShown = new ArrayList<>();
     private final boolean[] mOpen = new boolean[10]; // sezioni: Wi-Fi+segnale, Wi-Fi, segnale (indice = slot)
     private final String[] mChoice = new String[6];
+    /** Pagine Wi-Fi/Segnale: interruttore in alto spento = icone di serie (lo stile scelto resta ricordato in mChoice). */
+    private final boolean[] mOff = new boolean[2];
     private boolean mBusy = false;
     private String mMode = "wifi";
     private List<String> mAllDirs = new ArrayList<>();
@@ -84,41 +95,31 @@ public class StyleActivity extends AppCompatActivity {
         Button optBtn = findViewById(R.id.btn_icon_options);
         optBtn.setVisibility("settings".equals(mMode) ? View.VISIBLE : View.GONE);
         optBtn.setOnClickListener(v -> showIconOptions());
-        View sameRow = findViewById(R.id.row_same);
-        com.google.android.material.materialswitch.MaterialSwitch sameSw = findViewById(R.id.sw_same);
-        sameRow.setVisibility(isWifiOrSignal() ? View.VISIBLE : View.GONE);
-        sameSw.setChecked(ThemePrefs.isSameIcon());
-        sameSw.setOnCheckedChangeListener((b, on) -> {
-            ThemePrefs.setSameIcon(on);
-            if (on) {
-                // si parte dall'icona della pagina in cui ci si trova
-                int src = "signal".equals(mMode) ? 1 : 0;
-                if (styleExists(0, mChoice[src]) && styleExists(1, mChoice[src])) {
-                    mChoice[0] = mChoice[src];
-                    mChoice[1] = mChoice[src];
-                }
+        // pagine Wi-Fi e Segnale: tutto e' nell'elenco (opzioni, interruttore, Applica); qui restano solo i controlli di barra e Impostazioni
+        boolean ws = isWifiOrSignal();
+        for (int k = 0; k <= 1; k++) mOff[k] = ThemePrefs.getStyle(SLOTS[k]).isEmpty();
+        if (ws) ((TextView) findViewById(R.id.notice)).setText("signal".equals(mMode) ? R.string.styles_notice_signal : R.string.styles_notice_wifi);
+        findViewById(R.id.row_same).setVisibility(View.GONE);
+        mApply.setVisibility(ws ? View.GONE : View.VISIBLE);
+        Button sizeBtn = findViewById(R.id.btn_icon_size);
+        sizeBtn.setVisibility("nav".equals(mMode) ? View.VISIBLE : View.GONE);
+        sizeBtn.setOnClickListener(v -> showIconSize());
+        findViewById(R.id.btn_color_wifi).setVisibility(View.GONE);
+        findViewById(R.id.btn_color_mobile).setVisibility(View.GONE);
+        com.google.android.material.materialswitch.MaterialSwitch enableSw = findViewById(R.id.sw_enable);
+        enableSw.setVisibility(ws ? View.VISIBLE : View.GONE);
+        if (ws) {
+            final int es = "signal".equals(mMode) ? 1 : 0;
+            enableSw.setChecked(!mOff[es]);
+            enableSw.setOnCheckedChangeListener((bt, on) -> {
+                mOff[es] = !on;
+                // riacceso senza uno stile ricordato: si apre l'elenco per sceglierne uno
+                if (on && mChoice[es].isEmpty()) mOpen[es] = true;
                 refreshShown();
                 RecyclerView rv = findViewById(R.id.list);
                 if (rv.getAdapter() != null) rv.getAdapter().notifyDataSetChanged();
-            }
-        });
-        Button sizeBtn = findViewById(R.id.btn_icon_size);
-        sizeBtn.setVisibility("wifi".equals(mMode) || "signal".equals(mMode) || "nav".equals(mMode) ? View.VISIBLE : View.GONE);
-        sizeBtn.setOnClickListener(v -> showIconSize());
-        Button wifiColorBtn = findViewById(R.id.btn_color_wifi);
-        Button mobileColorBtn = findViewById(R.id.btn_color_mobile);
-        wifiColorBtn.setVisibility("wifi".equals(mMode) ? View.VISIBLE : View.GONE);
-        mobileColorBtn.setVisibility("signal".equals(mMode) ? View.VISIBLE : View.GONE);
-        wifiColorBtn.setText(getString(R.string.color_wifi_title) + "  ·  " + IconColorDialog.summary(this, "wifi"));
-        mobileColorBtn.setText(getString(R.string.color_mobile_title) + "  ·  " + IconColorDialog.summary(this, "mobile"));
-        wifiColorBtn.setOnClickListener(v -> IconColorDialog.show(this, "wifi", R.string.color_wifi_title, () -> {
-            wifiColorBtn.setText(getString(R.string.color_wifi_title) + "  ·  " + IconColorDialog.summary(this, "wifi"));
-            rebuildThenRestart();
-        }));
-        mobileColorBtn.setOnClickListener(v -> IconColorDialog.show(this, "mobile", R.string.color_mobile_title, () -> {
-            mobileColorBtn.setText(getString(R.string.color_mobile_title) + "  ·  " + IconColorDialog.summary(this, "mobile"));
-            rebuildThenRestart();
-        }));
+            });
+        }
         Button navColorBtn = findViewById(R.id.btn_color_nav);
         navColorBtn.setVisibility("nav".equals(mMode) ? View.VISIBLE : View.GONE);
         navColorBtn.setText(getString(R.string.color_nav_title) + "  \u00b7  " + IconColorDialog.summary(this, "nav"));
@@ -141,13 +142,13 @@ public class StyleActivity extends AppCompatActivity {
         back.setOnClickListener(v -> finish());
         ((TextView) findViewById(R.id.title)).setText("nav".equals(mMode) ? R.string.card_nav : "settings".equals(mMode) ? R.string.card_settings
                 : "signal".equals(mMode) ? R.string.card_signal : R.string.card_wifi);
-        if ("wifi".equals(mMode)) mOpen[0] = true;
-        if ("signal".equals(mMode)) mOpen[1] = true;
         if ("nav".equals(mMode)) mOpen[2] = true;
         if ("settings".equals(mMode)) mOpen[3] = true;
         RecyclerView list = findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(this));
         for (int i = 0; i < SLOTS.length; i++) mChoice[i] = ThemePrefs.getStyle(SLOTS[i]);
+        // icona spenta: si ricorda l'ultimo stile, cosi' riaccendendo si torna a quello
+        for (int k = 0; k <= 1; k++) if (mChoice[k].isEmpty()) mChoice[k] = ThemePrefs.getLastStyle(SLOTS[k]);
         buildRows();
         // scelte salvate per uno stile che non esiste per quell'icona (versioni precedenti): tornano a predefinito
         for (int k = 0; k <= 1; k++) if (!styleExists(k, mChoice[k])) mChoice[k] = "";
@@ -174,8 +175,12 @@ public class StyleActivity extends AppCompatActivity {
             if (s == 4 || s == 5) continue; // ICON2 (icona di Oxydian in Impostazioni) segue ICON1, NAV2 (launcher) segue NAV1
             boolean inMode = s == 0 ? "wifi".equals(mMode) : s == 1 ? "signal".equals(mMode) : s == 2 ? "nav".equals(mMode) : "settings".equals(mMode);
             if (!inMode) continue;
-            mRows.add(new Row(true, s, null, getString(titles[s])));
-            mRows.add(new Row(false, s, "", getString(R.string.style_none)));
+            boolean ws = s <= 1;
+            if (ws) mRows.add(new Row(K_OPT, s, "icon"));
+            else {
+                mRows.add(new Row(true, s, null, getString(titles[s])));
+                mRows.add(new Row(false, s, "", getString(R.string.style_none)));
+            }
             for (String d : dirs) {
                 if (!d.startsWith(PREFIXES[s])) continue;
                 String name = d.substring(PREFIXES[s].length());
@@ -185,13 +190,23 @@ public class StyleActivity extends AppCompatActivity {
                     label += "  ·  " + getString(s == 0 ? R.string.only_wifi : R.string.only_signal);
                 mRows.add(new Row(false, s, name, label));
             }
+            if (ws) {
+                mRows.add(new Row(K_OPT, s, "size"));
+                mRows.add(new Row(K_OPT, s, "color"));
+                mRows.add(new Row(K_SAME, s, "same"));
+                mRows.add(new Row(K_APPLY, s, "apply"));
+            }
         }
     }
 
     /** Solo le righe delle sezioni aperte (le intestazioni si vedono sempre). */
     private void refreshShown() {
         mShown.clear();
-        for (Row r : mRows) if (r.header || mOpen[r.slot]) mShown.add(r);
+        for (Row r : mRows) {
+            if (r.kind == K_STYLE) {
+                if (mOpen[r.slot] && !(r.slot <= 1 && mOff[r.slot])) mShown.add(r);
+            } else mShown.add(r);
+        }
     }
 
     private String currentLabel(int slot) {
@@ -223,7 +238,10 @@ public class StyleActivity extends AppCompatActivity {
     }
 
     private class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        @Override public int getItemViewType(int pos) { return mShown.get(pos).header ? 0 : 1; }
+        @Override public int getItemViewType(int pos) {
+            Row r = mShown.get(pos);
+            return r.kind == K_HEADER ? 0 : r.kind == K_STYLE ? 1 : r.kind == K_APPLY ? 4 : 2;
+        }
 
         @NonNull @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int type) {
@@ -236,6 +254,15 @@ public class StyleActivity extends AppCompatActivity {
                 t.setTextColor(it.tugaia56.oxydiantheme.utils.ThemePrefs.accentColor());
                 return new RecyclerView.ViewHolder(t) {};
             }
+            if (type == 2) {
+                return new RecyclerView.ViewHolder(LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_option, parent, false)) {};
+            }
+            if (type == 4) {
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_apply, parent, false);
+                Tint.tree(v);
+                return new RecyclerView.ViewHolder(v) {};
+            }
             return new RecyclerView.ViewHolder(LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_style, parent, false)) {};
         }
@@ -243,6 +270,16 @@ public class StyleActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, int pos) {
             Row r = mShown.get(pos);
+            if (r.kind == K_APPLY) {
+                Button b = h.itemView.findViewById(R.id.btn_apply);
+                b.setEnabled(!mBusy);
+                b.setOnClickListener(v -> onApply());
+                return;
+            }
+            if (r.kind == K_OPT || r.kind == K_SAME) {
+                bindOption(h.itemView, r);
+                return;
+            }
             if (r.header) {
                 String cur = currentLabel(r.slot);
                 ((TextView) h.itemView).setText((mOpen[r.slot] ? "▾  " : "▸  ") + r.label
@@ -281,6 +318,80 @@ public class StyleActivity extends AppCompatActivity {
         }
 
         @Override public int getItemCount() { return mShown.size(); }
+    }
+
+    private void refreshList() {
+        refreshShown();
+        RecyclerView rv = findViewById(R.id.list);
+        if (rv.getAdapter() != null) rv.getAdapter().notifyDataSetChanged();
+    }
+
+    /** Righe di opzione delle pagine Wi-Fi e Segnale: titolo, riassunto della scelta attuale e, per l'icona, le anteprime. */
+    private void bindOption(View v, Row r) {
+        final int s = r.slot;
+        final boolean off = mOff[s];
+        TextView title = v.findViewById(R.id.opt_title);
+        TextView summary = v.findViewById(R.id.opt_summary);
+        android.widget.LinearLayout previews = v.findViewById(R.id.opt_previews);
+        com.google.android.material.materialswitch.MaterialSwitch sw = v.findViewById(R.id.opt_switch);
+        sw.setOnCheckedChangeListener(null);
+        sw.setVisibility(View.GONE);
+        previews.removeAllViews();
+        previews.setVisibility(View.GONE);
+        v.setOnClickListener(null);
+        v.setAlpha(1f);
+        if (r.kind == K_SAME) {
+            title.setText(R.string.section_both);
+            summary.setVisibility(View.GONE);
+            sw.setVisibility(View.VISIBLE);
+            sw.setChecked(ThemePrefs.isSameIcon());
+            Tint.sw(sw);
+            sw.setOnCheckedChangeListener((bt, on) -> {
+                ThemePrefs.setSameIcon(on);
+                if (on) {
+                    // si parte dall'icona della pagina in cui ci si trova
+                    int src = s;
+                    if (styleExists(0, mChoice[src]) && styleExists(1, mChoice[src])) {
+                        mChoice[0] = mChoice[src];
+                        mChoice[1] = mChoice[src];
+                    }
+                    refreshList();
+                }
+            });
+            v.setOnClickListener(x -> sw.toggle());
+            v.setAlpha(off ? 0.4f : 1f);
+            sw.setEnabled(!off);
+            if (off) v.setOnClickListener(null);
+            return;
+        }
+        summary.setVisibility(View.VISIBLE);
+        v.setAlpha(off ? 0.4f : 1f);
+        if ("icon".equals(r.style)) {
+            title.setText(s == 0 ? R.string.section_wifi : R.string.section_signal);
+            String cur = mChoice[s].isEmpty() ? getString(R.string.style_none) : pretty(mChoice[s]);
+            summary.setText((mOpen[s] && !off ? "▾  " : "▸  ") + cur);
+            if (!mChoice[s].isEmpty()) {
+                previews.setVisibility(View.VISIBLE);
+                fillPreviews(previews, new Row(false, s, mChoice[s], ""), false);
+            }
+            if (!off) v.setOnClickListener(x -> {
+                mOpen[s] = !mOpen[s];
+                refreshList();
+            });
+        } else if ("size".equals(r.style)) {
+            title.setText(R.string.icon_size_title);
+            summary.setText(ThemePrefs.getIconSize() + " dp");
+            if (!off) v.setOnClickListener(x -> showIconSize());
+        } else {
+            final String kind = s == 0 ? "wifi" : "mobile";
+            final int titleRes = s == 0 ? R.string.color_wifi_title : R.string.color_mobile_title;
+            title.setText(titleRes);
+            summary.setText(IconColorDialog.summary(this, kind));
+            if (!off) v.setOnClickListener(x -> IconColorDialog.show(this, kind, titleRes, () -> {
+                refreshList();
+                rebuildThenRestart();
+            }));
+        }
     }
 
     /** Anteprima: le icone dello stile (stesse risorse che finiscono nell'overlay), colorate come la barra. */
@@ -516,6 +627,7 @@ public class StyleActivity extends AppCompatActivity {
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.icon_size_title)
                 .setView(sv)
+                .setOnDismissListener(d -> refreshList())
                 .setPositiveButton(android.R.string.ok, null));
         Toast.makeText(this, R.string.icon_size_hint, Toast.LENGTH_LONG).show();
     }
@@ -617,6 +729,11 @@ public class StyleActivity extends AppCompatActivity {
         mApply.setEnabled(false);
         Toast.makeText(this, R.string.working, Toast.LENGTH_SHORT).show();
         final String[] choice = mChoice.clone();
+        for (int k = 0; k <= 1; k++) {
+            if (!choice[k].isEmpty()) ThemePrefs.setLastStyle(SLOTS[k], choice[k]);
+            if (mOff[k]) choice[k] = "";
+        }
+        if (isWifiOrSignal()) refreshList();
         // uno stile inesistente per quell'icona (non dovrebbe succedere) si ignora: resta quello di prima
         for (int k = 0; k <= 1; k++) if (!styleExists(k, choice[k])) choice[k] = "";
         choice[4] = choice[3];
@@ -684,6 +801,7 @@ public class StyleActivity extends AppCompatActivity {
             new Handler(Looper.getMainLooper()).post(() -> {
                 mBusy = false;
                 mApply.setEnabled(true);
+                if (isWifiOrSignal()) refreshList();
                 String msg;
                 if (f > 0) msg = getString(R.string.failed_n, f);
                 else if (fNeedReboot) msg = getString(R.string.applied_reboot);

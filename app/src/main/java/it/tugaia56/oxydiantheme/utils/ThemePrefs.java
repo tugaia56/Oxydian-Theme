@@ -42,6 +42,11 @@ public final class ThemePrefs {
 
     public static void setStyle(String slot, String style) { sp().edit().putString("style_" + slot, style == null ? "" : style).commit(); }
 
+    /** Ultimo stile scelto per un'icona, ricordato quando l'interruttore della pagina la spegne (stile vuoto). */
+    public static String getLastStyle(String slot) { return sp().getString("last_style_" + slot, ""); }
+
+    public static void setLastStyle(String slot, String style) { sp().edit().putString("last_style_" + slot, style == null ? "" : style).commit(); }
+
     public static boolean isPinSplitDone() { return sp().getBoolean("pin_split_done", false); }
     public static void setPinSplitDone() { sp().edit().putBoolean("pin_split_done", true).commit(); }
     public static boolean isUiRestartPending() { return sp().getBoolean("ui_restart_pending", false); }
