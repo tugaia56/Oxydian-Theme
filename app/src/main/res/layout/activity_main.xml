@@ -242,12 +242,22 @@
         </ScrollView>
     </FrameLayout>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
+    <!-- La barra sta dentro un contenitore e 3 dp sopra il fondo della finestra: alcune ROM (RisingOS: LiquidTabBars) trasformano
+         in "pillola di vetro" fluttuante ogni barra di navigazione appoggiata sul fondo, che copre la fine delle pagine e
+         cambia i colori scelti. Staccata di 3 dp la ROM la lascia com'e'. -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/card"
-        app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_nav"
-        xmlns:app="http://schemas.android.com/apk/res-auto" />
+        android:background="@color/card">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:background="@color/card"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav"
+            xmlns:app="http://schemas.android.com/apk/res-auto" />
+    </FrameLayout>
 </LinearLayout>
