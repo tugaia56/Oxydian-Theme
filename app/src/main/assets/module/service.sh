@@ -40,7 +40,8 @@ echo "=== fine ==="
 # carico scenda, cosi' non peggiorano i blocchi alla schermata di avvio/PIN.
 wait_idle() {
   i=0
-  while [ $i -lt 30 ]; do
+  MAXI=${1:-30}
+  while [ $i -lt $MAXI ]; do
     l=$(cut -d' ' -f1 /proc/loadavg 2>/dev/null)
     [ "${l%%.*}" -lt 8 ] 2>/dev/null && break
     sleep 5
@@ -59,9 +60,12 @@ fi
 if [ -f "$MODDIR/fixedcolors.sh" ]; then
   (
     # si riprova finche' i colori non risultano creati (all'avvio il sistema a volte non e' ancora pronto)
-    for t in 45 45 60 90; do
+    # Android puro (niente OxygenOS): prima passata presto (12 s, al massimo 20 s di attesa del carico), cosi' l'accento torna subito;
+    # OxygenOS: attese lunghe di sempre (blocchi al PIN dopo l'avvio)
+    if [ -z "$(getprop ro.build.version.oplusrom)" ]; then DELAYS="12 20 40 60"; IDLEMAX=4; else DELAYS="45 45 60 90"; IDLEMAX=30; fi
+    for t in $DELAYS; do
       sleep $t
-      wait_idle
+      wait_idle $IDLEMAX
       sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
       n=$(cmd overlay list 2>/dev/null | grep -c "^\[x\] com.android.shell:oxyfix")
       [ "${n:-0}" -ge 1 ] && break
