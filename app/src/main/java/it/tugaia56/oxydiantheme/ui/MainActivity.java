@@ -1021,7 +1021,11 @@ public class MainActivity extends AppCompatActivity {
         if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
-        if (mPowerMenuRow != null) mPowerMenuRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        // Il menu di spegnimento in Compose (RisingOS: impostazione secure global_actions_use_compose_dialog=1) non usa questi
+        // overlay: la scheda si nasconde e le scelte per quel menu stanno nel modulo Oxydian (Varie)
+        boolean composeMenu = false;
+        try { composeMenu = android.provider.Settings.Secure.getInt(getContentResolver(), "global_actions_use_compose_dialog", 0) == 1; } catch (Throwable ignored) {}
+        if (mPowerMenuRow != null) mPowerMenuRow.setVisibility(SystemVariant.isPure() && !composeMenu ? View.VISIBLE : View.GONE);
         if (mSubPowerMenu != null) mSubPowerMenu.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pmbg", "pmborder", "pmbtnborder"));
         if (mSubNotifStyle != null) mSubNotifStyle.setText(NotifStyle.label(this, ThemePrefs.getNotifStyle()));
         String nv = ThemePrefs.getStyle("NAV1");
