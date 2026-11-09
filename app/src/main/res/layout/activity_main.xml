@@ -168,15 +168,15 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" />
                 <LinearLayout
-                    android:id="@+id/cards_row6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" />
-                <LinearLayout
                     android:id="@+id/cards_cats"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
+                <LinearLayout
+                    android:id="@+id/cards_row6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
             </LinearLayout>
         </ScrollView>
 

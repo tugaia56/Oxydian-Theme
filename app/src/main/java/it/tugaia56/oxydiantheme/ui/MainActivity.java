@@ -474,7 +474,7 @@ public class MainActivity extends AppCompatActivity {
         r6.addView(mSbColorCard);
         mSubSbColor = s[0];
         setupCategoryCards(s);
-        // riga sotto le categorie: orologio (solo Android puro) e, accanto, un posto libero per una card futura
+        // riga sotto le icone della barra di stato: orologio (solo Android puro) e, accanto, un posto libero per una card futura
         mClockColorCard = makeCard(R.string.card_clockcolor, s, this::clockColorDialog);
         mSubClockColor = s[0];
         android.widget.LinearLayout clockRow = new android.widget.LinearLayout(this);
@@ -482,7 +482,7 @@ public class MainActivity extends AppCompatActivity {
         mBatPctCard = makeCard(R.string.card_batpctcolor, s, this::batPctColorDialog);
         mSubBatPct = s[0];
         ViewGroup catsParent = (ViewGroup) findViewById(R.id.cards_cats).getParent();
-        catsParent.addView(clockRow, catsParent.indexOfChild(findViewById(R.id.cards_cats)) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        catsParent.addView(clockRow, catsParent.indexOfChild(findViewById(R.id.cards_row6)) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         mClockColorRow = clockRow;
         mStatusRowsPure = null;
         // Pagina Mods
