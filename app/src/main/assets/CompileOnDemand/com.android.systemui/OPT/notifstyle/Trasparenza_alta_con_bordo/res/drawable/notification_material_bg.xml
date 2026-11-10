@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stile notifiche del Theme (come i preset del modulo Oxydian): 3 strati, il secondo resta vuoto perche' il sistema
+     ci applica la tinta (NotificationBackgroundView legge lo strato 1) -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <solid android:color="#40000000" />
+            <stroke android:width="2dp" android:color="@*android:color/accent_material_dark" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <solid android:color="#00000000" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <solid android:color="#40000000" />
+            <stroke android:width="2dp" android:color="@*android:color/accent_material_dark" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -518,7 +518,7 @@ public class MainActivity extends AppCompatActivity {
         android.widget.LinearLayout r3c = new android.widget.LinearLayout(this);
         r3c.setOrientation(android.widget.LinearLayout.HORIZONTAL);
         r3p.addView(r3c, r3p.indexOfChild(r3b) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        View notifCard = makeCard(R.string.card_notifstyle, s, () -> NotifStyle.show(this, this::refreshCards));
+        View notifCard = makeCard(R.string.card_notifstyle, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"notifstyle"}, R.string.card_notifstyle));
         mSubNotifStyle = s[0];
         setCardHeight(notifCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3c.addView(notifCard);
@@ -1027,7 +1027,7 @@ public class MainActivity extends AppCompatActivity {
         try { composeMenu = android.provider.Settings.Secure.getInt(getContentResolver(), "global_actions_use_compose_dialog", 0) == 1; } catch (Throwable ignored) {}
         if (mPowerMenuRow != null) mPowerMenuRow.setVisibility(SystemVariant.isPure() && !composeMenu ? View.VISIBLE : View.GONE);
         if (mSubPowerMenu != null) mSubPowerMenu.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pmbg", "pmborder", "pmbtnborder"));
-        if (mSubNotifStyle != null) mSubNotifStyle.setText(NotifStyle.label(this, ThemePrefs.getNotifStyle()));
+        if (mSubNotifStyle != null) mSubNotifStyle.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "notifstyle"));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
