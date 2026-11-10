@@ -391,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
-    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow, mDialogStyleRow;
+    private View mWifiCard, mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow, mDialogStyleRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder;
@@ -555,7 +555,8 @@ public class MainActivity extends AppCompatActivity {
         pmSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
         r3d.addView(pmSpacer);
         mPowerMenuRow = r3d;
-        r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
+        mWifiCard = makeCard(R.string.card_wifi, s, () -> openStyles("wifi"));
+        r4.addView(mWifiCard);
         mSubWifi = s[0];
         mSignalCard = makeCard(R.string.card_signal, s, () -> openStyles("signal"));
         r4.addView(mSignalCard);
@@ -1028,7 +1029,10 @@ public class MainActivity extends AppCompatActivity {
         mSubWifi.setText(w.isEmpty() ? def : pretty(w));
         mSubSignal.setText(sg.isEmpty() ? def : pretty(sg));
         // gli stili del segnale usano i nomi delle icone di OxygenOS: su Android puro (A17) non sono ancora adattati
-        if (mSignalCard != null) mSignalCard.setVisibility(View.VISIBLE);
+        // RisingOS ha i suoi stili per le icone Wi-Fi e segnale: nel Theme restano per OxygenOS e Android puro (crDroid, ecc.)
+        int wifiSigVis = SystemVariant.isRising() ? View.GONE : View.VISIBLE;
+        if (mWifiCard != null) mWifiCard.setVisibility(wifiSigVis);
+        if (mSignalCard != null) mSignalCard.setVisibility(wifiSigVis);
         // le card di Impostazioni si scelgono solo su Android puro (su OxygenOS le gestisce il tema di sistema)
         if (mSCardsCard != null) mSCardsCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubSCards != null) mSubSCards.setText(SettingsCards.label(this, ThemePrefs.getSettingsCards()));

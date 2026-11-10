@@ -118,7 +118,7 @@ final class CardStylePreviewDrawable extends Drawable {
             case "Accento_pieno": rr(c, x, y, w, h, rad, mAcc, 0, 0); break;
             case "Sfondo_del_tema_con_bordo_sfumato": gradBorder(c, x, y, w, h, rad, mBg); break;
             case "Nero_con_bordo_sfumato": gradBorder(c, x, y, w, h, rad, 0xFF000000); break;
-            default: rr(c, x, y, w, h, rad, 0x30FFFFFF, 0, 0); break;   // predefinito / trasparente: solo un velo leggero
+            default: if (!notifMore(c, x, y, w, h, rad)) rr(c, x, y, w, h, rad, 0x30FFFFFF, 0, 0); break;   // predefinito / trasparente: solo un velo leggero
         }
     }
 
@@ -135,6 +135,117 @@ final class CardStylePreviewDrawable extends Drawable {
             case "Scuro_con_bordo_sfumato": gradBorder(c, x, y, w, h, rad, mBg); break;
             default: rr(c, x, y, w, h, rad, 0x30FFFFFF, 0, 0); break;
         }
+    }
+
+    /** Gli altri stili delle notifiche (forme e texture). Vero se la variante e' stata disegnata. */
+    private boolean notifMore(Canvas c, float x, float y, float w, float h, float rad) {
+        int dark = darken(mBg, 0.85f);
+        switch (mVariant) {
+            case "Livelli": rr(c, x, y, w, h, rad, dark, 0, 0); rr(c, x + 4 * d, y + 4 * d, w - 8 * d, h - 8 * d, Math.max(0, rad - 4 * d), mBg, 0, 0); return true;
+            case "Bordo_sottile": rr(c, x, y, w, h, rad, mBg, 2 * d, mAcc); return true;
+            case "Bordo_spesso": rr(c, x, y, w, h, rad, mBg, 4 * d, mAcc); return true;
+            case "Bordo_inferiore": rr(c, x, y, w, h, rad, mAcc, 0, 0); rr(c, x, y, w, h - 4 * d, rad, mBg, 0, 0); return true;
+            case "Stack": rr(c, x, y, w, h, rad, mAcc, 0, 0); rr(c, x, y + 8 * d, w, h - 8 * d, rad, mBg, 0, 0); return true;
+            case "Stack_laterale": rr(c, x, y, w - 8 * d, h - 8 * d, rad, mAcc, 0, 0); rr(c, x + 8 * d, y + 8 * d, w - 8 * d, h - 8 * d, rad, mBg, 0, 0); return true;
+            case "Neumorph": vgrad(c, x, y, w, h, rad, mBg, dark, false); return true;
+            case "Neumorph_con_bordo": case "Manubrio": hgrad(c, x, y, w, h, rad); return true;
+            case "Doppia_linea": vgrad3(c, x, y, w, h, rad); return true;
+            case "Dissolvenza": vgrad(c, x, y, w, h, rad, mBg, alpha(mBg, 0), false); return true;
+            case "Vetro": rr(c, x, y, w, h, rad, 0x40000000, 2 * d, 0xB3FFFFFF); return true;
+            case "Vetro_v2": case "Vetro_v3": rr(c, x, y, w, h, rad, 0x80000000, 2 * d, 0xCCFFFFFF); return true;
+            case "Cyberponk":
+                rr(c, x, y, w, h, rad, mBg, 0, 0);
+                rr(c, x + w - 34 * d, y + 2.5f * d, 28 * d, 1.5f * d, d, mAcc, 0, 0);
+                rr(c, x + w - 34 * d, y + h - 4 * d, 28 * d, 1.5f * d, d, mAcc, 0, 0);
+                return true;
+            case "Cyberponk_v2": rr(c, x, y, w, h, rad, mAcc, 0, 0); rr(c, x, y + 1.5f * d, w - 22 * d, h - 3 * d, rad, mBg, 0, 0); rr(c, x + 22 * d, y + 1.5f * d, w - 22 * d, h - 3 * d, rad, mBg, 0, 0); return true;
+            case "Linea_sottile": rr(c, x, y, w, h, rad, mBg, 0, 0); rr(c, x + w / 2 - 30 * d, y + h / 2 - d, 60 * d, 2 * d, d, mAcc, 0, 0); return true;
+            case "iOS": vgrad(c, x, y, w, h, rad, 0xF2888888, 0xF2707070, false); return true;
+            case "Semi_trasparente": rr(c, x, y, w, h, rad, 0x801B2029, 0, 0); return true;
+            case "Puntini": case "Righe": case "Rumore": case "Cuori": case "Quadri": case "Fiori": case "Picche": case "Scacchiera": case "Onde": case "Intreccio":
+                rr(c, x, y, w, h, rad, mBg, 0, 0);
+                texture(c, x + 5 * d, y + 5 * d, w - 10 * d, h - 10 * d);
+                return true;
+            default: return false;
+        }
+    }
+
+    private void vgrad(Canvas c, float x, float y, float w, float h, float rad, int from, int to, boolean unused) {
+        p.setStyle(Paint.Style.FILL);
+        p.setShader(new LinearGradient(x, y, x, y + h, from, to, Shader.TileMode.CLAMP));
+        r.set(x, y, x + w, y + h);
+        c.drawRoundRect(r, rad, rad, p);
+        p.setShader(null);
+    }
+
+    private void hgrad(Canvas c, float x, float y, float w, float h, float rad) {
+        p.setStyle(Paint.Style.FILL);
+        p.setShader(new LinearGradient(x, y, x + w, y, new int[]{mAcc, mBg, mAcc}, null, Shader.TileMode.CLAMP));
+        r.set(x, y, x + w, y + h);
+        c.drawRoundRect(r, rad, rad, p);
+        p.setShader(null);
+    }
+
+    private void vgrad3(Canvas c, float x, float y, float w, float h, float rad) {
+        p.setStyle(Paint.Style.FILL);
+        p.setShader(new LinearGradient(x, y, x, y + h, new int[]{mAcc, mBg, mAcc}, null, Shader.TileMode.CLAMP));
+        r.set(x, y, x + w, y + h);
+        c.drawRoundRect(r, rad, rad, p);
+        p.setShader(null);
+    }
+
+    /** Texture dell'anteprima: stessi motivi dei file overlay, ripetuti nel riquadro. */
+    private void texture(Canvas c, float x, float y, float w, float h) {
+        int a = alpha(mAcc, 0x70);
+        c.save();
+        c.clipRect(x, y, x + w, y + h);
+        p.setStyle(Paint.Style.FILL);
+        p.setColor(a);
+        switch (mVariant) {
+            case "Puntini":
+                for (float yy = y + 7 * d; yy < y + h; yy += 14 * d * 0.7f) for (float xx = x + 7 * d; xx < x + w; xx += 14 * d * 0.7f) c.drawCircle(xx, yy, d * 0.9f, p);
+                break;
+            case "Righe": case "Intreccio":
+                p.setStrokeWidth(d * 0.9f);
+                p.setColor(a);
+                for (float k = -h; k < w; k += 7 * d * 0.9f) {
+                    c.drawLine(x + k, y + h, x + k + h, y, p);
+                    if ("Intreccio".equals(mVariant)) c.drawLine(x + k, y, x + k + h, y + h, p);
+                }
+                break;
+            case "Rumore": {
+                java.util.Random rnd = new java.util.Random(7);
+                for (int i = 0; i < 90; i++) c.drawCircle(x + rnd.nextFloat() * w, y + rnd.nextFloat() * h, d * (0.4f + rnd.nextFloat() * 0.6f), p);
+                break;
+            }
+            case "Scacchiera": {
+                float q = 5 * d;
+                for (int i = 0; i * q < w; i++) for (int j = 0; j * q < h; j++) if ((i + j) % 2 == 0) c.drawRect(x + i * q, y + j * q, x + (i + 1) * q, y + (j + 1) * q, p);
+                break;
+            }
+            case "Onde": {
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(d * 0.9f);
+                for (float yy = y + 4 * d; yy < y + h + 3 * d; yy += 6 * d) {
+                    Path path = new Path();
+                    for (float xx = 0; xx <= w; xx += 2) {
+                        float wy = yy + 1.6f * d * (float) Math.sin(2 * Math.PI * xx / (10 * d));
+                        if (xx == 0) path.moveTo(x + xx, wy); else path.lineTo(x + xx, wy);
+                    }
+                    c.drawPath(path, p);
+                }
+                p.setStyle(Paint.Style.FILL);
+                break;
+            }
+            default: {   // semi delle carte
+                String g = "Cuori".equals(mVariant) ? "♥" : "Quadri".equals(mVariant) ? "♦" : "Fiori".equals(mVariant) ? "♣" : "♠";
+                p.setTextSize(7 * d);
+                p.setTextAlign(Paint.Align.CENTER);
+                for (float yy = y + 8 * d; yy < y + h + 8 * d; yy += 10 * d) for (float xx = x + 6 * d; xx < x + w; xx += 10 * d) c.drawText(g, xx, yy, p);
+                break;
+            }
+        }
+        c.restore();
     }
 
     private void toast(Canvas c, float x, float y, float w, float h, float rad) {
