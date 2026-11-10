@@ -2,4 +2,6 @@
 <resources>
     <string name="quicksettings_title">Pannello QS</string>
     <string name="qs_settings_title">Pannello QS</string>
+    <string name="theme_customization_icon_shape_title">Forma icone</string>
+    <string name="sound_title">Suoni</string>
 </resources>
