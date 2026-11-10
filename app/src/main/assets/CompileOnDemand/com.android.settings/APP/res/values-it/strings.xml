@@ -916,6 +916,10 @@
     <string name="settings_ui_title">Aspetto delle Impostazioni</string>
     <string name="storage_available">Disponibili</string>
     <string name="storage_card_used">usati</string>
+    <string name="string_disabled">Disattivato</string>
+    <string name="default_value">Predefinito</string>
+    <string name="bottom">In basso</string>
+    <string name="top">In alto</string>
     <string name="status_bar_am_pm_hidden">Nascosto</string>
     <string name="status_bar_am_pm_info">È attivo l\'orologio a 24 ore</string>
     <string name="status_bar_am_pm_normal">Normale</string>
