@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- RisingOS: nella pagina "Impostazioni risingOS" lo sfondo usava il grigio "contenitore" (piu' chiaro delle card).
+         Sfondo = sfondo del Theme, card = colore card del Theme (come nelle altre pagine) -->
+    <color name="settingslib_materialColorSurfaceContainer">@*android:color/background_dark</color>
+    <color name="settingslib_materialColorSurfaceBright">@*android:color/button_material_dark</color>
+</resources>
