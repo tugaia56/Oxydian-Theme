@@ -1705,6 +1705,11 @@ public class MainActivity extends AppCompatActivity {
                 it.tugaia56.oxydiantheme.utils.OxyLog.log("runAction: thread started, ensuring module");
                 ModuleSetup.ensure();
                 it.tugaia56.oxydiantheme.utils.OxyLog.log("runAction: module ready");
+                // KernelSU: le app con un overlay del Theme devono vedere i file dei moduli (Smonta moduli spento)
+                if (action == ACT_ACTIVATE) {
+                    java.util.Set<String> seen = new java.util.HashSet<>();
+                    for (AppEntry e : targets) if (seen.add(e.pkg)) it.tugaia56.oxydiantheme.utils.KsuProfile.allowOverlays(e.pkg);
+                }
                 int step = 0;
                 for (AppEntry e : targets) {
                     step++;
