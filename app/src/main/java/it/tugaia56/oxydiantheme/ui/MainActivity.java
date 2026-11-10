@@ -1217,6 +1217,8 @@ public class MainActivity extends AppCompatActivity {
                 if (SystemVariant.isPure() && PURE_UNSUPPORTED.contains(pkg)) continue;
                 // traduzione delle Impostazioni di RisingOS: solo su RisingOS (altrove le sue scritte non esistono)
                 if ("com.android.settings".equals(pkg) && !SystemVariant.isRising()) continue;
+                // su RisingOS la voce "UI di sistema" non serve (menu di spegnimento e icone hanno le loro mod): nascosta
+                if ("com.android.systemui".equals(pkg) && SystemVariant.isRising()) continue;
                 try {
                     ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
                     mApps.add(new AppEntry(pkg, String.valueOf(pm.getApplicationLabel(ai)), ThemePrefs.isAppEnabled(pkg)));
