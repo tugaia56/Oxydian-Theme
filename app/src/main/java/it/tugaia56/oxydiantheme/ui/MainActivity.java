@@ -1215,6 +1215,8 @@ public class MainActivity extends AppCompatActivity {
                 // su Android puro (verificato su crDroid, A17) il sistema li rifiuta ("non valido"): IntentResolver non ha le
                 // risorse dichiarate modificabili, Telecom ha spostato le sue in un altro pacchetto
                 if (SystemVariant.isPure() && PURE_UNSUPPORTED.contains(pkg)) continue;
+                // traduzione delle Impostazioni di RisingOS: solo su RisingOS (altrove le sue scritte non esistono)
+                if ("com.android.settings".equals(pkg) && !SystemVariant.isRising()) continue;
                 try {
                     ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
                     mApps.add(new AppEntry(pkg, String.valueOf(pm.getApplicationLabel(ai)), ThemePrefs.isAppEnabled(pkg)));
@@ -1916,7 +1918,7 @@ public class MainActivity extends AppCompatActivity {
      * ASSET_REV (da fare ogni volta che si cambiano i file dei temi o il modo di compilarli). Non e' piu' l'ora di installazione:
      * reinstallare lo stesso Theme non fa rifare tutte le app.
      */
-    static final int ASSET_REV = 6;
+    static final int ASSET_REV = 7;
 
     static long updatedTime(Context ctx) {
         try {

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_rising">Informazioni su risingOS</string>
+    <string name="about_rising_device">Dispositivo Rising</string>
+    <string name="changelog_rising_error">Impossibile caricare le novità</string>
+    <string name="changelog_rising_summary">Scopri gli ultimi miglioramenti e aggiornamenti di questa versione.</string>
+    <string name="changelog_rising_title">Novità</string>
+    <string name="donate_rising_summary">Dona per sostenere lo sviluppo</string>
+    <string name="donate_rising_title">Sostienici</string>
+    <string name="rising_buildserversponsor_summary">Ti consigliamo i loro server, se ti interessano</string>
+    <string name="rising_buildserversponsor_title">InterServer</string>
+    <string name="rising_license_title">Note legali di risingOS</string>
+    <string name="rising_settings_summary">Cambia icone, temi e altro</string>
+    <string name="rising_settings_title">Personalizza</string>
+    <string name="rising_source_summary">Amiamo il software libero, guarda il nostro codice</string>
+    <string name="rising_source_title">GitHub</string>
+    <string name="rising_sponsor_summary">Visita il sito del nostro partner di hosting</string>
+    <string name="rising_sponsor_title">ScopeHosts</string>
+    <string name="rising_style">Stile predefinito di Android</string>
+    <string name="rising_telegram_channel_summary">Ricevi una notifica per ogni nuova versione su Telegram</string>
+    <string name="rising_telegram_channel_title">Canale degli aggiornamenti</string>
+    <string name="rising_telegram_summary">Siamo su Telegram. Unisciti a noi!</string>
+    <string name="rising_telegram_title">Comunità di risingOS</string>
+    <string name="rising_translate_summary">Aiuta a tradurre la ROM nella tua lingua!</string>
+    <string name="rising_translate_title">Traduzioni</string>
+    <string name="rising_update_summary">Cerca e scarica l\'ultimo aggiornamento</string>
+    <string name="rising_update_title">Aggiornamenti</string>
+    <string name="rising_website_summary">Visita il nostro sito ufficiale</string>
+    <string name="rising_website_title">Sito ufficiale</string>
+    <string name="settings_style_rising_ui_one">RisingUI 1.0</string>
+    <string name="settings_style_rising_ui_two">RisingUI 2.0</string>
+    <string name="share_rising_summary">Fai conoscere risingOS agli altri</string>
+    <string name="share_rising_title">Condividi risingOS</string>
+    <string name="status_bar_logo_style_rising">risingOS</string>
+</resources>

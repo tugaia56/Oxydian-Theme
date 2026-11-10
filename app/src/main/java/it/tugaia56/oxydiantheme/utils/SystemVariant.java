@@ -17,6 +17,8 @@ public final class SystemVariant {
     public static final String A17 = "a17", OOS17 = "oos17";
 
     private static String sAuto;
+    /** RisingOS (proprieta' ro.rising.build.version): per le traduzioni delle sue Impostazioni. */
+    private static volatile boolean sRising = false, sRisingChecked = false;
 
     private SystemVariant() {}
 
@@ -36,6 +38,12 @@ public final class SystemVariant {
 
     /** Variante riconosciuta dal telefono (chiamare fuori dal thread principale). */
     public static synchronized String detect() {
+        if (!sRisingChecked) {
+            try {
+                sRising = !String.join("", Shell.cmd("getprop ro.rising.build.version").exec().getOut()).trim().isEmpty();
+                sRisingChecked = true;
+            } catch (Throwable ignored) {}
+        }
         if (sAuto != null) return sAuto;
         int sdk = android.os.Build.VERSION.SDK_INT;
         boolean oplus = false;
@@ -51,6 +59,11 @@ public final class SystemVariant {
         return sAuto;
     }
 
+    /** Il sistema e' RisingOS? (vale dopo il riconoscimento della variante). */
+    public static boolean isRising() {
+        return sRising;
+    }
+
     /** Variante da usare davvero: la scelta salvata, oppure quella riconosciuta (fuori dal thread principale). */
     public static String effective() {
         String saved = ThemePrefs.getSystemVariant();
@@ -59,7 +72,7 @@ public final class SystemVariant {
 
     /** Serve ancora riconoscere la variante (nessuna scelta salvata e nessun riconoscimento in memoria)? */
     public static boolean needsDetect() {
-        return ThemePrefs.getSystemVariant().isEmpty() && sAuto == null;
+        return (ThemePrefs.getSystemVariant().isEmpty() && sAuto == null) || !sRisingChecked;
     }
 
     /** Android puro (non OxygenOS)? Non usa la shell: se la variante non e' ancora nota risponde false. */
