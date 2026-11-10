@@ -30,6 +30,8 @@ public final class ModuleSetup {
                 "chmod 755 " + ModuleConstants.MODULE_DIR + "/post-fs-data.sh " + ModuleConstants.MODULE_DIR + "/service.sh " + ModuleConstants.MODULE_DIR + "/uxcolor.sh " + ModuleConstants.MODULE_DIR + "/colorwatch.sh",
                 "chown -R 0:0 " + ModuleConstants.MODULE_DIR
         ).exec();
+        // KernelSU: SystemUI e Impostazioni usano overlay a file (icone, colori, traduzioni): devono vedere i moduli
+        for (String pkg : new String[]{"com.android.systemui", "com.android.settings"}) KsuProfile.allowOverlays(pkg);
         return !existed;
     }
 
