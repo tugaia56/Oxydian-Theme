@@ -394,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
     private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
-    private TextView mSubNotifStyle, mSubToastStyle;
+    private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle;
     private android.widget.LinearLayout mClockColorRow;
     private Boolean mStatusRowsPure = null;
     private TextView mSubSCards, mSubShade, mSubClockColor;
@@ -537,9 +537,11 @@ public class MainActivity extends AppCompatActivity {
         mSubPowerMenu = s[0];
         setCardHeight(pmCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3d.addView(pmCard);
-        View pmSpacer = new View(this);
-        pmSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
-        r3d.addView(pmSpacer);
+        // stile delle finestre di dialogo (accanto): overlay del sistema
+        View dlgCard = makeCard(R.string.card_dialogstyle, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"dialogstyle"}, R.string.card_dialogstyle));
+        mSubDialogStyle = s[0];
+        setCardHeight(dlgCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r3d.addView(dlgCard);
         mPowerMenuRow = r3d;
         r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
@@ -777,7 +779,7 @@ public class MainActivity extends AppCompatActivity {
         if (SystemColorsDialog.PKG.equals(pkg)) {
             any = !ThemePrefs.getOption(pkg, "accent").isEmpty() || !ThemePrefs.getOption(pkg, "background").isEmpty()
                     || !ThemePrefs.getOption(pkg, "progress").isEmpty() || !ThemePrefs.getOption(pkg, "switch").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "toaststyle").isEmpty()
+                    || !ThemePrefs.getOption(pkg, "toaststyle").isEmpty() || !ThemePrefs.getOption(pkg, "dialogstyle").isEmpty()
                     || ThemePrefs.getRippleAlpha() > 0;
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
@@ -1033,6 +1035,7 @@ public class MainActivity extends AppCompatActivity {
         if (mSubPowerMenu != null) mSubPowerMenu.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pmbg", "pmborder", "pmbtnborder"));
         if (mSubNotifStyle != null) mSubNotifStyle.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "notifstyle"));
         if (mSubToastStyle != null) mSubToastStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "toaststyle"));
+        if (mSubDialogStyle != null) mSubDialogStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "dialogstyle"));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));

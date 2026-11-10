@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stile finestre di dialogo del Theme (stessi preset del modulo Oxydian); il margine di 16dp e' quello di serie -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android" android:inset="16dp">
+    <shape android:shape="rectangle">
+        <solid android:color="#331B2029" />
+        <stroke android:width="1.5dp" android:color="@*android:color/accent_material_dark" />
+        <corners android:radius="14dp" />
+    </shape>
+</inset>

@@ -54,7 +54,9 @@ final class CardStylePreviewDrawable extends Drawable {
         // la card (a sinistra e a destra un po' di sfondo)
         float cx = x + 6 * d, cy = y + 6 * d, cw = w - 12 * d, ch = h - 12 * d;
         float rad = Math.min(ch / 2f, ("toaststyle".equals(mGroup) ? 12 : 9) * d);
-        if ("toaststyle".equals(mGroup)) toast(c, cx, cy, cw, ch, rad); else notif(c, cx, cy, cw, ch, rad);
+        if ("toaststyle".equals(mGroup)) toast(c, cx, cy, cw, ch, rad);
+        else if ("dialogstyle".equals(mGroup)) dialog(c, cx, cy, cw, ch, Math.min(ch / 2f, 6 * d));
+        else notif(c, cx, cy, cw, ch, rad);
         // due righe finte di testo
         p.setStyle(Paint.Style.FILL);
         p.setColor(0xFFFFFFFF);
@@ -104,6 +106,20 @@ final class CardStylePreviewDrawable extends Drawable {
             case "Nero_pieno": rr(c, x, y, w, h, rad, 0xFF000000, 0, 0); break;
             case "Accento_pieno": rr(c, x, y, w, h, rad, mAcc, 0, 0); break;
             default: rr(c, x, y, w, h, rad, 0x30FFFFFF, 0, 0); break;   // predefinito / trasparente: solo un velo leggero
+        }
+    }
+
+    private void dialog(Canvas c, float x, float y, float w, float h, float rad) {
+        switch (mVariant) {
+            case "Alta_trasparenza": rr(c, x, y, w, h, rad, 0x331B2029, 0, 0); break;
+            case "Alta_trasparenza_con_bordo": rr(c, x, y, w, h, rad, 0x331B2029, 1.5f * d, mAcc); break;
+            case "Bassa_trasparenza": rr(c, x, y, w, h, rad, 0xCC1B2029, 0, 0); break;
+            case "Bassa_trasparenza_con_bordo": rr(c, x, y, w, h, rad, 0xCC1B2029, 1.5f * d, mAcc); break;
+            case "Media_trasparenza": rr(c, x, y, w, h, rad, 0x801B2029, 0, 0); break;
+            case "Media_trasparenza_con_bordo": rr(c, x, y, w, h, rad, 0x80000000, 1.5f * d, mAcc); break;
+            case "Scuro": rr(c, x, y, w, h, rad, 0xFF000000 | Math.min(0xFFFFFF, mBg + 0x090A0D), 0, 0); break;
+            case "Scuro_con_bordo": rr(c, x, y, w, h, rad, mBg, 1.5f * d, mAcc); break;
+            default: rr(c, x, y, w, h, rad, 0x30FFFFFF, 0, 0); break;
         }
     }
 

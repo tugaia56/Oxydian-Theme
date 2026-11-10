@@ -173,7 +173,7 @@ final class OptionGroupsDialog {
             all.addAll(ch);
             if (allowsCustom(pkg, g)) all.add(CUSTOM);
             for (String c : all) {
-                final boolean cardStyle = "notifstyle".equals(g) || "toaststyle".equals(g);
+                final boolean cardStyle = "notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g);
                 final boolean withPreview = ("switch".equals(g) || cardStyle) && !CUSTOM.equals(c);
                 RadioButton rb = withPreview ? new PreviewRadio(ctx, cardStyle ? new CardStylePreviewDrawable(ctx, g, c) : new SwitchPreviewDrawable(ctx, c)) : new RadioButton(ctx);
                 rb.setText(c.isEmpty() ? ctx.getString(R.string.options_default)
