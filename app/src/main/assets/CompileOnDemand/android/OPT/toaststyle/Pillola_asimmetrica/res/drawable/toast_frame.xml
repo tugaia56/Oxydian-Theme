@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stile toast del Theme (stessi preset del modulo Oxydian) -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <solid android:color="@*android:color/accent_material_dark" />
+            <corners android:topLeftRadius="24dp" android:topRightRadius="14.4dp" android:bottomRightRadius="24dp" android:bottomLeftRadius="14.4dp" />
+        </shape>
+    </item>
+    <item android:left="4dp" android:top="4dp" android:right="4dp" android:bottom="4dp">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <solid android:color="@*android:color/system_background_dark" />
+            <corners android:topLeftRadius="20dp" android:topRightRadius="10.4dp" android:bottomRightRadius="20dp" android:bottomLeftRadius="10.4dp" />
+        </shape>
+    </item>
+</layer-list>

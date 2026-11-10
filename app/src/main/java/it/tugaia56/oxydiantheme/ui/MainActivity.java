@@ -23,6 +23,7 @@ import com.topjohnwu.superuser.Shell;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -393,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
     private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
-    private TextView mSubNotifStyle;
+    private TextView mSubNotifStyle, mSubToastStyle;
     private android.widget.LinearLayout mClockColorRow;
     private Boolean mStatusRowsPure = null;
     private TextView mSubSCards, mSubShade, mSubClockColor;
@@ -522,9 +523,11 @@ public class MainActivity extends AppCompatActivity {
         mSubNotifStyle = s[0];
         setCardHeight(notifCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3c.addView(notifCard);
-        View notifSpacer = new View(this);
-        notifSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
-        r3c.addView(notifSpacer);
+        // stile dei toast (accanto): overlay del sistema, come le notifiche
+        View toastCard = makeCard(R.string.card_toaststyle, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"toaststyle"}, R.string.card_toaststyle));
+        mSubToastStyle = s[0];
+        setCardHeight(toastCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r3c.addView(toastCard);
         mNotifStyleRow = r3c;
         // menu di spegnimento (solo Android puro): sfondo e bordo, accanto un posto libero
         android.widget.LinearLayout r3d = new android.widget.LinearLayout(this);
@@ -774,6 +777,7 @@ public class MainActivity extends AppCompatActivity {
         if (SystemColorsDialog.PKG.equals(pkg)) {
             any = !ThemePrefs.getOption(pkg, "accent").isEmpty() || !ThemePrefs.getOption(pkg, "background").isEmpty()
                     || !ThemePrefs.getOption(pkg, "progress").isEmpty() || !ThemePrefs.getOption(pkg, "switch").isEmpty()
+                    || !ThemePrefs.getOption(pkg, "toaststyle").isEmpty()
                     || ThemePrefs.getRippleAlpha() > 0;
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
@@ -1028,6 +1032,7 @@ public class MainActivity extends AppCompatActivity {
         if (mPowerMenuRow != null) mPowerMenuRow.setVisibility(SystemVariant.isPure() && !composeMenu ? View.VISIBLE : View.GONE);
         if (mSubPowerMenu != null) mSubPowerMenu.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pmbg", "pmborder", "pmbtnborder"));
         if (mSubNotifStyle != null) mSubNotifStyle.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "notifstyle"));
+        if (mSubToastStyle != null) mSubToastStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "toaststyle"));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
@@ -1675,6 +1680,11 @@ public class MainActivity extends AppCompatActivity {
     private void onApply(String onlyPkg, boolean ignored) {
         List<AppEntry> t = new ArrayList<>();
         for (AppEntry e : mApps) if (e.ds && onlyPkg.equals(e.pkg)) t.add(e);
+        // RisingOS: SystemUI non ha la riga Dark Shadow, le scelte (stile notifiche, ecc.) viaggiano nella riga nascosta
+        if (t.isEmpty()) for (AppEntry e : mApps) if (isHiddenSysUi(e) && onlyPkg.equals(e.pkg)) {
+            runAction(Collections.singletonList(e), ACT_ACTIVATE);
+            return;
+        }
         if (t.isEmpty()) return;
         runAction(t, t.get(0).enabled ? ACT_ACTIVATE : ACT_DISABLE);
     }

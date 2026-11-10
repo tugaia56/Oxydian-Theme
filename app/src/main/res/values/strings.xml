@@ -87,6 +87,7 @@
     <string name="switch_in_use">In use: %1$s</string>
     <string name="card_switch_sub">The on/off switches, like the Wi-Fi or Airplane mode ones</string>
     <string name="card_switch">Switches</string>
+    <string name="card_toaststyle">Toast style</string>
     <string name="card_progress">Circular progress bar</string>
     <string name="card_pin">PIN keypad</string>
     <string name="card_activity">Network activity icons</string>

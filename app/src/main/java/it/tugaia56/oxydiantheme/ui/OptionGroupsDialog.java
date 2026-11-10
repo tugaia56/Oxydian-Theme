@@ -173,8 +173,9 @@ final class OptionGroupsDialog {
             all.addAll(ch);
             if (allowsCustom(pkg, g)) all.add(CUSTOM);
             for (String c : all) {
-                final boolean withPreview = "switch".equals(g) && !CUSTOM.equals(c);
-                RadioButton rb = withPreview ? new PreviewRadio(ctx, new SwitchPreviewDrawable(ctx, c)) : new RadioButton(ctx);
+                final boolean cardStyle = "notifstyle".equals(g) || "toaststyle".equals(g);
+                final boolean withPreview = ("switch".equals(g) || cardStyle) && !CUSTOM.equals(c);
+                RadioButton rb = withPreview ? new PreviewRadio(ctx, cardStyle ? new CardStylePreviewDrawable(ctx, g, c) : new SwitchPreviewDrawable(ctx, c)) : new RadioButton(ctx);
                 rb.setText(c.isEmpty() ? ctx.getString(R.string.options_default)
                         : CUSTOM.equals(c) ? ctx.getString(R.string.opt_custom) : pretty(c));
                 rb.setId(View.generateViewId());
@@ -185,6 +186,7 @@ final class OptionGroupsDialog {
                     // anteprima dello stile (spento / acceso) a destra, senza doverlo applicare
                     rb.setLayoutParams(new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     rb.setPadding(rb.getPaddingLeft(), pad / 3, rb.getPaddingRight(), pad / 3);   // piu' spazio tra le righe
+                    if (cardStyle) rb.setMinHeight((int) (58 * d));   // anteprime delle card: un po' di aria tra una e l'altra
                 }
                 rb.setOnClickListener(v -> {
                     if (CUSTOM.equals(c)) {
