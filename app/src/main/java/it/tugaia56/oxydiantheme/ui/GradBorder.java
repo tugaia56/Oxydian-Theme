@@ -47,6 +47,31 @@ final class GradBorder {
         return c == null ? null : (c | 0xFF000000);
     }
 
+    /** Colori della sfumatura per gli overlay (stile "con bordo sfumato"): riferimento all'accento o esadecimale. */
+    static String[] overlayValues() {
+        final String acc = "@*android:color/accent_material_dark";
+        String c1 = valueOf(prop("persist.obsidian.grad_c1"), acc);
+        String c2 = valueOf(prop("persist.obsidian.grad_c2"), "#FF7C4DFF");
+        String c3 = valueOf(prop("persist.obsidian.grad_c3"), c2);
+        return new String[]{c1, c2, c3};
+    }
+
+    private static String valueOf(String v, String def) {
+        if ("accent".equals(v)) return "@*android:color/accent_material_dark";
+        Integer c = parse(v);
+        return c == null ? def : String.format("#%08X", c | 0xFF000000);
+    }
+
+    /** Colori in ARGB per le anteprime (accento gia' risolto). */
+    static int[] previewColors(int accent) {
+        String[] v = overlayValues();
+        int[] out = new int[3];
+        for (int i = 0; i < 3; i++) {
+            if (v[i].startsWith("#")) out[i] = (int) Long.parseLong(v[i].substring(1), 16); else out[i] = accent | 0xFF000000;
+        }
+        return out;
+    }
+
     /** Sfondo della scheda con bordo sfumato, oppure null se l'opzione e' spenta. */
     static Drawable card(int fill, float radius, float density, int accent) {
         if (!"1".equals(prop("persist.obsidian.grad_on"))) return null;

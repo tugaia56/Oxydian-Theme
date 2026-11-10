@@ -88,6 +88,14 @@
     <string name="card_switch_sub">The on/off switches, like the Wi-Fi or Airplane mode ones</string>
     <string name="card_switch">Switches</string>
     <string name="card_dialogstyle">Dialog style</string>
+    <string name="card_gradborder">Gradient border</string>
+    <string name="gb_on">On</string>
+    <string name="gb_off">Off</string>
+    <string name="gb_switch">Gradient border on</string>
+    <string name="gb_hint">The first colour is the accent. Used by the \"with gradient border\" styles of notifications, toasts and dialogs (solid background).</string>
+    <string name="gb_c2">Second colour</string>
+    <string name="gb_c3">Third colour (optional)</string>
+    <string name="gb_none">none</string>
     <string name="card_toaststyle">Toast style</string>
     <string name="card_progress">Circular progress bar</string>
     <string name="card_pin">PIN keypad</string>

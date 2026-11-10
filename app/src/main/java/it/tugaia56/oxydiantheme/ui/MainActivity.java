@@ -394,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
     private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow, mDialogStyleRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
-    private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle;
+    private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder;
     private android.widget.LinearLayout mClockColorRow;
     private Boolean mStatusRowsPure = null;
     private TextView mSubSCards, mSubShade, mSubClockColor;
@@ -537,9 +537,11 @@ public class MainActivity extends AppCompatActivity {
         mSubDialogStyle = s[0];
         setCardHeight(dlgCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3e.addView(dlgCard);
-        View dlgSpacer = new View(this);
-        dlgSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
-        r3e.addView(dlgSpacer);
+        // bordo sfumato (accanto): colori della sfumatura, usati dagli stili "con bordo sfumato"
+        View gbCard = makeCard(R.string.card_gradborder, s, () -> GradBorderDialog.show(this, this::applySysStyles));
+        mSubGradBorder = s[0];
+        setCardHeight(gbCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r3e.addView(gbCard);
         mDialogStyleRow = r3e;
         // menu di spegnimento (solo Android puro): sfondo e bordo, accanto un posto libero
         android.widget.LinearLayout r3d = new android.widget.LinearLayout(this);
@@ -1046,6 +1048,7 @@ public class MainActivity extends AppCompatActivity {
         if (mSubPowerMenu != null) mSubPowerMenu.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pmbg", "pmborder", "pmbtnborder"));
         if (mSubNotifStyle != null) mSubNotifStyle.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "notifstyle"));
         if (mSubToastStyle != null) mSubToastStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "toaststyle"));
+        if (mSubGradBorder != null) mSubGradBorder.setText(GradBorderDialog.summary(this));
         if (mSubDialogStyle != null) mSubDialogStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "dialogstyle"));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
@@ -1408,6 +1411,7 @@ public class MainActivity extends AppCompatActivity {
             sb.append('|').append(g.id).append('=').append(c);
             if (OptionGroupsDialog.CUSTOM.equals(c)) sb.append(String.format("#%08X", ThemePrefs.getCustomColor(pkg + "_" + g.id)));
         }
+        if (usesGrad(pkg)) sb.append("|grad=").append(String.join(",", GradBorder.overlayValues()));
         return sb.toString();
     }
 
@@ -1421,6 +1425,22 @@ public class MainActivity extends AppCompatActivity {
     private static String hex8(int c) { return String.format("#%08X", c); }
 
     /** Colori a scelta libera del PIN (stesse risorse che creava Oxydian), o null se non servono. */
+    /** Uno stile scelto di questo pacchetto usa il bordo sfumato (nome che finisce in "sfumato")? */
+    static boolean usesGrad(String pkg) {
+        for (String g : new String[]{"notifstyle", "toaststyle", "dialogstyle"})
+            if (ThemePrefs.getOption(pkg, g).endsWith("sfumato")) return true;
+        return false;
+    }
+
+    /** Colori del bordo sfumato per gli stili "con bordo sfumato" (solo se servono). */
+    static String gradColors(String pkg) {
+        if (!usesGrad(pkg)) return "";
+        String[] v = GradBorder.overlayValues();
+        return "    <color name=\"oxy_grad_c1\">" + v[0] + "</color>\n"
+                + "    <color name=\"oxy_grad_c2\">" + v[1] + "</color>\n"
+                + "    <color name=\"oxy_grad_c3\">" + v[2] + "</color>\n";
+    }
+
     static String customValuesXml(Context ctx, String pkg, boolean ds) {
         if (ds && SystemColorsDialog.PKG.equals(pkg)) {
             StringBuilder body = new StringBuilder();
@@ -1451,9 +1471,10 @@ public class MainActivity extends AppCompatActivity {
                 body.append("<color name=\"ripple_material_dark\">").append(hex).append("</color>")
                     .append("<color name=\"ripple_material_light\">").append(hex).append("</color>");
             }
+            body.append(gradColors(pkg));
             return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
         }
-        String rpl = (ds || usesRipple(pkg)) ? rippleColors(ctx, pkg) : "";
+        String rpl = ((ds || usesRipple(pkg)) ? rippleColors(ctx, pkg) : "") + gradColors(pkg);
         if (!ds || !"com.android.systemui".equals(pkg))
             return rpl.isEmpty() ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n" + rpl + "</resources>";
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n");
@@ -1691,6 +1712,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Per le schede (colori, PIN, icone...): applica solo la voce Dark Shadow indicata secondo il suo stato. */
+    /** Rifa gli overlay di sistema (notifiche, toast, dialog) dopo un cambio dei colori del bordo sfumato. */
+    private void applySysStyles() {
+        refreshCards();
+        List<AppEntry> t = new ArrayList<>();
+        for (AppEntry e : mApps) if ((e.ds && SystemColorsDialog.PKG.equals(e.pkg)) || isHiddenSysUi(e)) t.add(e);
+        if (!t.isEmpty()) runAction(t, ACT_ACTIVATE);
+    }
+
     private void onApply(String onlyPkg, boolean ignored) {
         List<AppEntry> t = new ArrayList<>();
         for (AppEntry e : mApps) if (e.ds && onlyPkg.equals(e.pkg)) t.add(e);

@@ -55,6 +55,14 @@ public final class ThemeProps {
         Shell.cmd("resetprop persist.oxytheme.notif_style \"" + (id == null ? "" : id) + "\"").submit();
     }
 
+    /** Bordo sfumato (stesse proprieta' di Oxydian: persist.obsidian.grad_*): acceso, colore 2 e 3 (null = vuoto). */
+    public static void publishGradBorder(boolean on, Integer c2, Integer c3) {
+        Shell.cmd("resetprop persist.obsidian.grad_on " + (on ? "1" : "0"),
+                "resetprop persist.obsidian.grad_c1 \"\"",
+                "resetprop persist.obsidian.grad_c2 \"" + (c2 == null ? "" : String.valueOf(c2)) + "\"",
+                "resetprop persist.obsidian.grad_c3 \"" + (c3 == null ? "" : String.valueOf(c3)) + "\"").submit();
+    }
+
     /** Colore del numero della batteria (null = come le icone): lo applica il modulo Oxydian. */
     public static void publishBatteryPctColor(Integer c) {
         String v = c == null ? "" : String.format("%08x", c);

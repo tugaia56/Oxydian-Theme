@@ -95,6 +95,17 @@ final class CardStylePreviewDrawable extends Drawable {
         p.setShader(null);
     }
 
+    /** Bordo sfumato: anello con i colori scelti nel Theme e riempimento pieno. */
+    private void gradBorder(Canvas c, float x, float y, float w, float h, float rad, int fill) {
+        int[] g = GradBorder.previewColors(mAcc);
+        p.setStyle(Paint.Style.FILL);
+        p.setShader(new LinearGradient(x, y, x + w, y + h, g, null, Shader.TileMode.CLAMP));
+        r.set(x, y, x + w, y + h);
+        c.drawRoundRect(r, rad, rad, p);
+        p.setShader(null);
+        rr(c, x + 2 * d, y + 2 * d, w - 4 * d, h - 4 * d, Math.max(0, rad - 2 * d), fill, 0, 0);
+    }
+
     private void notif(Canvas c, float x, float y, float w, float h, float rad) {
         switch (mVariant) {
             case "Trasparente_con_bordo_sottile": rr(c, x, y, w, h, rad, 0, d, mAcc); break;
@@ -105,6 +116,8 @@ final class CardStylePreviewDrawable extends Drawable {
             case "Sfondo_del_tema": rr(c, x, y, w, h, rad, mBg, 0, 0); break;
             case "Nero_pieno": rr(c, x, y, w, h, rad, 0xFF000000, 0, 0); break;
             case "Accento_pieno": rr(c, x, y, w, h, rad, mAcc, 0, 0); break;
+            case "Sfondo_del_tema_con_bordo_sfumato": gradBorder(c, x, y, w, h, rad, mBg); break;
+            case "Nero_con_bordo_sfumato": gradBorder(c, x, y, w, h, rad, 0xFF000000); break;
             default: rr(c, x, y, w, h, rad, 0x30FFFFFF, 0, 0); break;   // predefinito / trasparente: solo un velo leggero
         }
     }
@@ -119,6 +132,7 @@ final class CardStylePreviewDrawable extends Drawable {
             case "Media_trasparenza_con_bordo": rr(c, x, y, w, h, rad, 0x80000000, 1.5f * d, mAcc); break;
             case "Scuro": rr(c, x, y, w, h, rad, 0xFF000000 | Math.min(0xFFFFFF, mBg + 0x090A0D), 0, 0); break;
             case "Scuro_con_bordo": rr(c, x, y, w, h, rad, mBg, 1.5f * d, mAcc); break;
+            case "Scuro_con_bordo_sfumato": gradBorder(c, x, y, w, h, rad, mBg); break;
             default: rr(c, x, y, w, h, rad, 0x30FFFFFF, 0, 0); break;
         }
     }
@@ -126,6 +140,7 @@ final class CardStylePreviewDrawable extends Drawable {
     private void toast(Canvas c, float x, float y, float w, float h, float rad) {
         switch (mVariant) {
             case "Solido": rr(c, x, y, w, h, rad, mBg, 0, 0); break;
+            case "Solido_con_bordo_sfumato": gradBorder(c, x, y, w, h, rad, mBg); break;
             case "Bordo_sottile": rr(c, x, y, w, h, rad, mBg, 1.5f * d, mAcc); break;
             case "Bordo_spesso": rr(c, x, y, w, h, rad, mBg, 4 * d, mAcc); break;
             case "Accento_pieno": rr(c, x, y, w, h, rad, mAcc, 0, 0); break;

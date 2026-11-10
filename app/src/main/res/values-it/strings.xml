@@ -87,6 +87,14 @@
     <string name="card_switch_sub">Gli interruttori on/off, come quelli del Wi-Fi o della Modalità aereo</string>
     <string name="card_switch">Interruttori</string>
     <string name="card_dialogstyle">Stile dei dialog</string>
+    <string name="card_gradborder">Bordo sfumato</string>
+    <string name="gb_on">Acceso</string>
+    <string name="gb_off">Spento</string>
+    <string name="gb_switch">Bordo sfumato acceso</string>
+    <string name="gb_hint">Il primo colore è l\'accento. Lo usano gli stili \"con bordo sfumato\" di notifiche, toast e dialog (sfondo pieno).</string>
+    <string name="gb_c2">Secondo colore</string>
+    <string name="gb_c3">Terzo colore (facoltativo)</string>
+    <string name="gb_none">nessuno</string>
     <string name="card_toaststyle">Stile dei toast</string>
     <string name="card_progress">Barra di progresso circolare</string>
     <string name="card_pin">Tastierino PIN</string>
