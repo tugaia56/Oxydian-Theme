@@ -1217,8 +1217,8 @@ public class MainActivity extends AppCompatActivity {
                 if (SystemVariant.isPure() && PURE_UNSUPPORTED.contains(pkg)) continue;
                 // traduzione delle Impostazioni di RisingOS: solo su RisingOS (altrove le sue scritte non esistono)
                 if ("com.android.settings".equals(pkg) && !SystemVariant.isRising()) continue;
-                // su RisingOS la voce "UI di sistema" non serve (menu di spegnimento e icone hanno le loro mod): nascosta
-                if ("com.android.systemui".equals(pkg) && SystemVariant.isRising()) continue;
+                // traduzione di SystemUI: solo su RisingOS e senza riga propria (si fa insieme a quella delle Impostazioni)
+                if (SYSTEMUI_PKG.equals(pkg) && !SystemVariant.isRising()) continue;
                 try {
                     ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
                     mApps.add(new AppEntry(pkg, String.valueOf(pm.getApplicationLabel(ai)), ThemePrefs.isAppEnabled(pkg)));
@@ -1246,7 +1246,7 @@ public class MainActivity extends AppCompatActivity {
         mApps.addAll(dsList);
         mApps.sort(Comparator.comparing(e -> e.label.toLowerCase(Locale.ROOT)));
         mVisible.clear();
-        for (AppEntry e : mApps) if (!(e.ds && SystemColorsDialog.PKG.equals(e.pkg))) mVisible.add(e);
+        for (AppEntry e : mApps) if (!(e.ds && SystemColorsDialog.PKG.equals(e.pkg)) && !isHiddenSysUi(e)) mVisible.add(e);
         mList.getAdapter().notifyDataSetChanged();
         updateNotice();
     }
@@ -1685,7 +1685,19 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_remove).setEnabled(on);
     }
 
-    private void runAction(final List<AppEntry> targets, final int action) {
+    /** La traduzione di SystemUI (solo RisingOS) non ha riga: segue quella delle Impostazioni. */
+    private static boolean isHiddenSysUi(AppEntry e) { return !e.ds && SYSTEMUI_PKG.equals(e.pkg); }
+
+    private List<AppEntry> withHiddenSysUi(List<AppEntry> in) {
+        boolean settings = false;
+        for (AppEntry e : in) if (!e.ds && "com.android.settings".equals(e.pkg)) settings = true;
+        List<AppEntry> out = new ArrayList<>(in);
+        if (settings) for (AppEntry e : mApps) if (isHiddenSysUi(e) && !out.contains(e)) out.add(e);
+        return out;
+    }
+
+    private void runAction(final List<AppEntry> targetsIn, final int action) {
+        final List<AppEntry> targets = withHiddenSysUi(targetsIn);
         it.tugaia56.oxydiantheme.utils.OxyLog.log("runAction action=" + action + " targets=" + targets.size());
         if (mBusy) return;
         mBusy = true;
