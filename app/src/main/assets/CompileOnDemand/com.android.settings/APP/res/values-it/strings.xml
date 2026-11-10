@@ -1038,6 +1038,12 @@
     <string name="status_bar_toggle_brightness_title">Controllo della luminosità</string>
     <string name="status_header_purpose">Riepilogo dei dati mobili usati nel ciclo di fatturazione attuale.</string>
     <string name="status_sleep_time">Sospensione profonda</string>
+    <string name="qqs_show_brightness_slider_summary">Mostra il cursore della luminosità nel pannello rapido chiuso</string>
+    <string name="qqs_show_brightness_slider_title">Cursore luminosità nel pannello rapido</string>
+    <string name="qqs_show_media_summary">Mostra il lettore multimediale nel pannello rapido chiuso</string>
+    <string name="qqs_show_media_title">Lettore multimediale nel pannello rapido</string>
+    <string name="quick_settings_secure_lock_screen_summary">Permette di scorrere verso il basso dalla schermata di blocco per aprire le impostazioni rapide</string>
+    <string name="quick_settings_secure_lock_screen_title">Pannello rapido con schermo bloccato</string>
     <string name="qs_apply_change_button_title">Applica la modifica</string>
     <string name="qs_apply_change_failed">Impossibile applicare la modifica</string>
     <string name="qs_battery_location_qs_panel">Pannello rapido</string>
