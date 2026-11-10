@@ -391,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
-    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow;
+    private View mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow, mDialogStyleRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle;
@@ -529,6 +529,18 @@ public class MainActivity extends AppCompatActivity {
         setCardHeight(toastCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3c.addView(toastCard);
         mNotifStyleRow = r3c;
+        // stile delle finestre di dialogo (solo Android): riga propria, visibile come quella delle notifiche
+        android.widget.LinearLayout r3e = new android.widget.LinearLayout(this);
+        r3e.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        r3p.addView(r3e, r3p.indexOfChild(r3c) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        View dlgCard = makeCard(R.string.card_dialogstyle, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"dialogstyle"}, R.string.card_dialogstyle));
+        mSubDialogStyle = s[0];
+        setCardHeight(dlgCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r3e.addView(dlgCard);
+        View dlgSpacer = new View(this);
+        dlgSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
+        r3e.addView(dlgSpacer);
+        mDialogStyleRow = r3e;
         // menu di spegnimento (solo Android puro): sfondo e bordo, accanto un posto libero
         android.widget.LinearLayout r3d = new android.widget.LinearLayout(this);
         r3d.setOrientation(android.widget.LinearLayout.HORIZONTAL);
@@ -537,11 +549,9 @@ public class MainActivity extends AppCompatActivity {
         mSubPowerMenu = s[0];
         setCardHeight(pmCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3d.addView(pmCard);
-        // stile delle finestre di dialogo (accanto): overlay del sistema
-        View dlgCard = makeCard(R.string.card_dialogstyle, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"dialogstyle"}, R.string.card_dialogstyle));
-        mSubDialogStyle = s[0];
-        setCardHeight(dlgCard, ViewGroup.LayoutParams.WRAP_CONTENT);
-        r3d.addView(dlgCard);
+        View pmSpacer = new View(this);
+        pmSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
+        r3d.addView(pmSpacer);
         mPowerMenuRow = r3d;
         r4.addView(makeCard(R.string.card_wifi, s, () -> openStyles("wifi")));
         mSubWifi = s[0];
@@ -1027,6 +1037,7 @@ public class MainActivity extends AppCompatActivity {
         if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         // Il menu di spegnimento in Compose (RisingOS: impostazione secure global_actions_use_compose_dialog=1) non usa questi
         // overlay: la scheda si nasconde e le scelte per quel menu stanno nel modulo Oxydian (Varie)
         boolean composeMenu = false;
