@@ -1468,16 +1468,11 @@ public class MainActivity extends AppCompatActivity {
         boolean border = !bdSel.isEmpty();
         String stroke = "Accento_spesso".equals(bdSel) ? "3dp" : border ? "1.5dp" : "0dp";
         String radius = "Tondi".equals(shSel) ? "100dp" : "10dp";
-        return "    <color name=\"oxy_pinkey_bg\">" + bg + "</color>
-"
-                + "    <color name=\"oxy_pinkey_border\">" + (border ? "@*android:color/accent_material_dark" : "#00000000") + "</color>
-"
-                + "    <color name=\"numpad_key_color_secondary\">" + bg + "</color>
-"
-                + "    <dimen name=\"oxy_pinkey_stroke\">" + stroke + "</dimen>
-"
-                + "    <dimen name=\"oxy_pinkey_radius\">" + radius + "</dimen>
-";
+        return "    <color name=\"oxy_pinkey_bg\">" + bg + "</color>\n"
+                + "    <color name=\"oxy_pinkey_border\">" + (border ? "@*android:color/accent_material_dark" : "#00000000") + "</color>\n"
+                + "    <color name=\"numpad_key_color_secondary\">" + bg + "</color>\n"
+                + "    <dimen name=\"oxy_pinkey_stroke\">" + stroke + "</dimen>\n"
+                + "    <dimen name=\"oxy_pinkey_radius\">" + radius + "</dimen>\n";
     }
 
     /** Uno stile scelto di questo pacchetto usa il bordo sfumato (nome che finisce in "sfumato")? */
