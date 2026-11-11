@@ -125,7 +125,13 @@ public final class AospTheme {
             m.put("system_surface_bright_dark", fade(glassBorder ? b : mix(b, w, 0.15f), cardAlpha));
             m.put("system_surface_variant_dark", mix(b, w, 0.12f));
             m.put("system_shade_inactive_dark", mix(b, w, 0.10f));
-            m.put("system_surface_effect_1_dark", mix(b, w, 0.10f));
+            // colore dei tasti del tastierino PIN di sistema (e di altre superfici di SystemUI): di serie lo sfondo un po' schiarito
+            int keyBg = mix(b, w, 0.10f);
+            String kb = ThemePrefs.getOption("com.android.systemui", "pinkeybg");
+            if ("Sfondo_del_tema".equals(kb)) keyBg = b;
+            else if ("Nero".equals(kb)) keyBg = 0xFF000000;
+            else if ("Accento".equals(kb) && accent != null) keyBg = 0xFF000000 | accent;
+            m.put("system_surface_effect_1_dark", keyBg);
         }
         // Colore scelto per le icone della barra di stato (comando unico): la percentuale della batteria e le altre icone a un
         // solo colore leggono questi colori di SystemUI (verificato su OxygenOS 16); Wi-Fi e segnale li fa lo stile (WIFI1/SIG1)

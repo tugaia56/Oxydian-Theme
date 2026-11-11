@@ -799,7 +799,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
                     || !ThemePrefs.getOption(pkg, "pindots").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty() || usesPinKeys(pkg);
+                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty() || usesPinKeys(pkg) || !ThemePrefs.getOption(pkg, "pinkeybg").isEmpty();
             if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
         }
         for (AppEntry e : mApps) if (e.ds && e.pkg.equals(pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(pkg);
@@ -908,7 +908,7 @@ public class MainActivity extends AppCompatActivity {
 
     /** Gruppi del tastierino PIN: OxygenOS (tastierino OnePlus) o Android puro (tastierino di sistema). */
     private static String[] pinGroups() {
-        return SystemVariant.isPure() ? new String[]{"pinkeyborder"} : new String[]{"pinbg", "pindots", "pinnum"};
+        return SystemVariant.isPure() ? new String[]{"pinkeybg", "pinkeyborder"} : new String[]{"pinbg", "pindots", "pinnum"};
     }
 
     private static void setCardHeight(View card, int h) {
