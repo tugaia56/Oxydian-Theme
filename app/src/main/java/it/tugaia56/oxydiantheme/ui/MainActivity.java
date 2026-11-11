@@ -908,7 +908,7 @@ public class MainActivity extends AppCompatActivity {
 
     /** Gruppi del tastierino PIN: OxygenOS (tastierino OnePlus) o Android puro (tastierino di sistema). */
     private static String[] pinGroups() {
-        return SystemVariant.isPure() ? new String[]{"pinkeybg", "pinkeyborder", "pinkeyshape"} : new String[]{"pinbg", "pindots", "pinnum"};
+        return SystemVariant.isPure() ? new String[]{"pinkeyborder"} : new String[]{"pinbg", "pindots", "pinnum"};
     }
 
     private static void setCardHeight(View card, int h) {
@@ -1452,30 +1452,18 @@ public class MainActivity extends AppCompatActivity {
     /** Una scelta del tastierino PIN di sistema (Android puro) e' attiva? */
     static boolean usesPinKeys(String pkg) {
         if (!SYSTEMUI_PKG.equals(pkg) || !SystemVariant.isPure()) return false;
-        return !ThemePrefs.getOption(pkg, "pinkeybg").isEmpty() || !ThemePrefs.getOption(pkg, "pinkeyborder").isEmpty()
-                || !ThemePrefs.getOption(pkg, "pinkeyshape").isEmpty();
+        return !ThemePrefs.getOption(pkg, "pinkeyborder").isEmpty();
     }
 
-    /** Colori e misure dei tasti del tastierino PIN di sistema. */
+    /** Bordo dei tasti del tastierino PIN di sistema (colore e forma dei tasti li anima il codice di SystemUI: restano quelli di sistema). */
     static String pinKeyValues(String pkg) {
         if (!usesPinKeys(pkg)) return "";
-        String bgSel = ThemePrefs.getOption(pkg, "pinkeybg"), bdSel = ThemePrefs.getOption(pkg, "pinkeyborder"), shSel = ThemePrefs.getOption(pkg, "pinkeyshape");
-        String bg;
-        switch (bgSel) {
-            case "Accento": bg = "@*android:color/accent_material_dark"; break;
-            case "Sfondo_del_tema": bg = "@*android:color/system_background_dark"; break;
-            case "Nero": bg = "#FF000000"; break;
-            case "Trasparente": bg = "#00000000"; break;
-            default: bg = "@*android:color/system_surface_container_highest_dark"; break;
-        }
-        boolean border = !bdSel.isEmpty();
-        String stroke = "Accento_spesso".equals(bdSel) ? "3dp" : border ? "1.5dp" : "0dp";
-        String radius = "Tondi".equals(shSel) ? "100dp" : "10dp";
-        return "    <color name=\"oxy_pinkey_bg\">" + bg + "</color>\n"
-                + "    <color name=\"oxy_pinkey_border\">" + (border ? "@*android:color/accent_material_dark" : "#00000000") + "</color>\n"
-                + "    <color name=\"numpad_key_color_secondary\">" + bg + "</color>\n"
+        String bdSel = ThemePrefs.getOption(pkg, "pinkeyborder");
+        String stroke = "Accento_spesso".equals(bdSel) ? "3dp" : "1.5dp";
+        return "    <color name=\"oxy_pinkey_bg\">@*android:color/system_surface_effect_1_dark</color>\n"
+                + "    <color name=\"oxy_pinkey_border\">@*android:color/accent_material_dark</color>\n"
                 + "    <dimen name=\"oxy_pinkey_stroke\">" + stroke + "</dimen>\n"
-                + "    <dimen name=\"oxy_pinkey_radius\">" + radius + "</dimen>\n";
+                + "    <dimen name=\"oxy_pinkey_radius\">10dp</dimen>\n";
     }
 
     /** Uno stile scelto di questo pacchetto usa il bordo sfumato (nome che finisce in "sfumato")? */
