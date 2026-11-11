@@ -392,13 +392,13 @@ public class MainActivity extends AppCompatActivity {
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
     private android.widget.LinearLayout mRow3, mRow3b;
-    private View mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow;
+    private View mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder;
     private android.widget.LinearLayout mClockColorRow;
     private Boolean mStatusRowsPure = null;
-    private TextView mSubSCards, mSubShade, mSubClockColor;
+    private TextView mSubSCards, mSubClockColor;
     private TextView mSubPin, mSubRipple, mSubDefaultTab, mSubSbColor;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
@@ -516,9 +516,6 @@ public class MainActivity extends AppCompatActivity {
         mRow3 = r3;
         mRow3b = r3b;
         mSubSCards = s[0];
-        mShadeCard = makeCard(R.string.card_shade, s, () -> ShadeAlpha.show(this, this::refreshCards));
-        r3b.addView(mShadeCard);
-        mSubShade = s[0];
         // stile delle notifiche (solo Android): riga sotto, con un posto libero accanto
         android.widget.LinearLayout r3c = new android.widget.LinearLayout(this);
         r3c.setOrientation(android.widget.LinearLayout.HORIZONTAL);
@@ -1049,14 +1046,11 @@ public class MainActivity extends AppCompatActivity {
         // le card di Impostazioni si scelgono solo su Android puro (su OxygenOS le gestisce il tema di sistema)
         if (mSCardsCard != null) mSCardsCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubSCards != null) mSubSCards.setText(SettingsCards.label(this, ThemePrefs.getSettingsCards()));
-        // le scelte trasparenti le applica il modulo Oxydian (senza modulo non servirebbe a niente) e su RisingOS non cambiano nulla (sfocatura della ROM)
-        if (mShadeCard != null) mShadeCard.setVisibility(SystemVariant.isPure() && !SystemVariant.isRising() && moduleInstalled() ? View.VISIBLE : View.GONE);
         // su Android puro la scheda accanto (Pack Icone) e' nascosta: senza altezza propria la riga si schiaccia e il tastierino sparisce
         if (mPinCard != null) setCardHeight(mPinCard, SystemVariant.isPure() ? ViewGroup.LayoutParams.WRAP_CONTENT : ViewGroup.LayoutParams.MATCH_PARENT);
         if (mIconPackCard != null) mIconPackCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
         if (mSwitchCard != null) mSwitchCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
         if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
-        if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
         // notifiche, toast, dialog e bordo sfumato come overlay: solo su Android puro (RisingOS, crDroid, ecc.); su OxygenOS li fa il modulo Oxydian
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
