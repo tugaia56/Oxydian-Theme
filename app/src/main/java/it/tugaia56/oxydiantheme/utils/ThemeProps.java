@@ -69,11 +69,6 @@ public final class ThemeProps {
         Shell.cmd("resetprop persist.oxytheme.battery_pct_color \"" + v + "\"").submit();
     }
 
-    /** Sfondo del pannello con il colore dell'accento (lo applica il modulo Oxydian). */
-    public static void publishShadeTint(boolean on) {
-        Shell.cmd("resetprop persist.oxytheme.shade_tint " + (on ? "1" : "0")).submit();
-    }
-
     /** Opacita' del pannello rapido/notifiche su Android puro in percentuale (100 = di serie): la applica il modulo Oxydian. */
     public static void publishShadeAlpha(int percent) {
         Shell.cmd("resetprop persist.oxytheme.shade_alpha " + percent).submit();

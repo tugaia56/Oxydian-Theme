@@ -198,9 +198,6 @@ public final class ThemePrefs {
     /** Opacita' (percentuale di quella di serie) dello sfondo del pannello rapido e delle notifiche su Android puro; 100 = di serie. */
     public static int getShadeAlpha() { return sp().getInt("shade_alpha", 100); }
     public static void setShadeAlpha(int v) { sp().edit().putInt("shade_alpha", v).commit(); }
-    /** Sfondo del pannello con il colore dell'accento (opacita' = shade_alpha). */
-    public static boolean getShadeTint() { return sp().getBoolean("shade_tint", false); }
-    public static void setShadeTint(boolean v) { sp().edit().putBoolean("shade_tint", v).commit(); }
 
     /** Stile delle notifiche su Android puro (id di Oxydian, es. DSTNFNO50); vuoto = di serie. */
     public static String getNotifStyle() { return sp().getString("notif_style", ""); }
