@@ -495,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
         mSubProgress = s[0];
         r2.addView(makeCard(R.string.card_activity, s, this::toggleHideActivity));
         mSubActivity = s[0];
-        r3.addView(makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pinbg", "pindots", "pinnum"}, R.string.card_pin)));
+        r3.addView(makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, pinGroups(), R.string.card_pin)));
         mSubPin = s[0];
         mIconPackCard = makeCard(R.string.card_settings, s, () -> openStyles("settings"));
         r3.addView(mIconPackCard);
@@ -798,7 +798,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
                     || !ThemePrefs.getOption(pkg, "pindots").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty();
+                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty() || usesPinKeys(pkg);
             if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
         }
         for (AppEntry e : mApps) if (e.ds && e.pkg.equals(pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(pkg);
@@ -903,6 +903,11 @@ public class MainActivity extends AppCompatActivity {
         mClockColorRow.addView(mRippleCard);
         mClockColorRow.addView(mBatPctCard);
         mClockColorRow.setVisibility(View.VISIBLE);
+    }
+
+    /** Gruppi del tastierino PIN: OxygenOS (tastierino OnePlus) o Android puro (tastierino di sistema). */
+    private static String[] pinGroups() {
+        return SystemVariant.isPure() ? new String[]{"pinkeybg", "pinkeyborder", "pinkeyshape"} : new String[]{"pinbg", "pindots", "pinnum"};
     }
 
     private static void setCardHeight(View card, int h) {
@@ -1089,7 +1094,7 @@ public class MainActivity extends AppCompatActivity {
             if (st >= 0) sb.setSpan(new android.text.style.ForegroundColorSpan(ThemePrefs.accentColor()), st, line.length(), 0);
             mSubSwitch.setText(sb);
         }
-        mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pinbg", "pindots", "pinnum"));
+        mSubPin.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, pinGroups()));
         boolean hideOn = !ThemePrefs.getOption(SYSTEMUI_PKG, "icons").isEmpty();
         mSubActivity.setText(hideOn ? getString(R.string.state_on_full) : getString(R.string.state_off));
         mSubActivity.setTextColor(hideOn ? ThemePrefs.accentColor() : getColor(R.color.text_dim));
@@ -1385,6 +1390,9 @@ public class MainActivity extends AppCompatActivity {
             for (String g : groups) {
                 // menu di spegnimento: esiste solo su Android puro
                 if (("pmbg".equals(g) || "pmborder".equals(g) || "pmbtnborder".equals(g)) && !SystemVariant.isPure()) continue;
+                // tastierino PIN: OxygenOS ha le sue scelte (pinbg, pindots, pinnum), Android puro quelle dei tasti di sistema (pinkey*)
+                if (("pinbg".equals(g) || "pindots".equals(g) || "pinnum".equals(g)) && SystemVariant.isPure()) continue;
+                if (g.startsWith("pinkey") && !SystemVariant.isPure()) continue;
                 // stili di notifiche, toast e dialog: solo Android puro (su OxygenOS li fa il modulo)
                 if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g)) && !SystemVariant.isPure()) continue;
                 String[] items = ctx.getAssets().list(base + "/" + g);
@@ -1424,6 +1432,7 @@ public class MainActivity extends AppCompatActivity {
             if (OptionGroupsDialog.CUSTOM.equals(c)) sb.append(String.format("#%08X", ThemePrefs.getCustomColor(pkg + "_" + g.id)));
         }
         if (usesGrad(pkg)) sb.append("|grad=").append(String.join(",", GradBorder.overlayValues()));
+        if (usesPinKeys(pkg)) sb.append("|pk=v1");
         return sb.toString();
     }
 
@@ -1437,6 +1446,40 @@ public class MainActivity extends AppCompatActivity {
     private static String hex8(int c) { return String.format("#%08X", c); }
 
     /** Colori a scelta libera del PIN (stesse risorse che creava Oxydian), o null se non servono. */
+    /** Una scelta del tastierino PIN di sistema (Android puro) e' attiva? */
+    static boolean usesPinKeys(String pkg) {
+        if (!SYSTEMUI_PKG.equals(pkg) || !SystemVariant.isPure()) return false;
+        return !ThemePrefs.getOption(pkg, "pinkeybg").isEmpty() || !ThemePrefs.getOption(pkg, "pinkeyborder").isEmpty()
+                || !ThemePrefs.getOption(pkg, "pinkeyshape").isEmpty();
+    }
+
+    /** Colori e misure dei tasti del tastierino PIN di sistema. */
+    static String pinKeyValues(String pkg) {
+        if (!usesPinKeys(pkg)) return "";
+        String bgSel = ThemePrefs.getOption(pkg, "pinkeybg"), bdSel = ThemePrefs.getOption(pkg, "pinkeyborder"), shSel = ThemePrefs.getOption(pkg, "pinkeyshape");
+        String bg;
+        switch (bgSel) {
+            case "Accento": bg = "@*android:color/accent_material_dark"; break;
+            case "Sfondo_del_tema": bg = "@*android:color/system_background_dark"; break;
+            case "Nero": bg = "#FF000000"; break;
+            case "Trasparente": bg = "#00000000"; break;
+            default: bg = "@*android:color/system_surface_container_highest_dark"; break;
+        }
+        boolean border = !bdSel.isEmpty();
+        String stroke = "Accento_spesso".equals(bdSel) ? "3dp" : border ? "1.5dp" : "0dp";
+        String radius = "Tondi".equals(shSel) ? "100dp" : "10dp";
+        return "    <color name=\"oxy_pinkey_bg\">" + bg + "</color>
+"
+                + "    <color name=\"oxy_pinkey_border\">" + (border ? "@*android:color/accent_material_dark" : "#00000000") + "</color>
+"
+                + "    <color name=\"numpad_key_color_secondary\">" + bg + "</color>
+"
+                + "    <dimen name=\"oxy_pinkey_stroke\">" + stroke + "</dimen>
+"
+                + "    <dimen name=\"oxy_pinkey_radius\">" + radius + "</dimen>
+";
+    }
+
     /** Uno stile scelto di questo pacchetto usa il bordo sfumato (nome che finisce in "sfumato")? */
     static boolean usesGrad(String pkg) {
         for (String g : new String[]{"notifstyle", "toaststyle", "dialogstyle"})
@@ -1486,7 +1529,7 @@ public class MainActivity extends AppCompatActivity {
             body.append(gradColors(pkg));
             return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
         }
-        String rpl = ((ds || usesRipple(pkg)) ? rippleColors(ctx, pkg) : "") + gradColors(pkg);
+        String rpl = ((ds || usesRipple(pkg)) ? rippleColors(ctx, pkg) : "") + gradColors(pkg) + pinKeyValues(pkg);
         if (!ds || !"com.android.systemui".equals(pkg))
             return rpl.isEmpty() ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n" + rpl + "</resources>";
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n");
@@ -1622,6 +1665,8 @@ public class MainActivity extends AppCompatActivity {
                 && (!ThemePrefs.getOption(pkg, "pmbg").isEmpty() || !ThemePrefs.getOption(pkg, "pmborder").isEmpty()
                 || !ThemePrefs.getOption(pkg, "pmbtnborder").isEmpty()))
             out.add("CompileOnDemand/" + pkg + "/PMBASE");
+        // tastierino PIN di sistema: il disegno dei tasti (colori, bordo e raggio sono nei values generati)
+        if (usesPinKeys(pkg)) out.add("CompileOnDemand/" + pkg + "/PINKEYBASE");
         return out;
     }
 

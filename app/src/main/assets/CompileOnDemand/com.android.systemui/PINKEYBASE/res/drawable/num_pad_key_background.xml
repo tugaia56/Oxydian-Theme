@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tasti del tastierino PIN (Android puro): colori, bordo e raggio vengono dal Theme (values oxy_pinkey_*) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/oxy_pinkey_bg" />
+    <stroke android:width="@dimen/oxy_pinkey_stroke" android:color="@color/oxy_pinkey_border" />
+    <corners android:radius="@dimen/oxy_pinkey_radius" />
+</shape>
