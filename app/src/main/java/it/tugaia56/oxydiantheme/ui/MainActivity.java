@@ -900,6 +900,16 @@ public class MainActivity extends AppCompatActivity {
         mClockColorRow.setVisibility(View.VISIBLE);
     }
 
+    /** Il modulo Oxydian e' installato? (senza root: basta il gestore dei pacchetti) */
+    private boolean moduleInstalled() {
+        try {
+            getPackageManager().getPackageInfo("it.tugaia56.oxydian", 0);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /** Gruppi del tastierino PIN: OxygenOS (tastierino OnePlus) o Android puro (tastierino di sistema). */
     private static String[] pinGroups() {
         return SystemVariant.isPure() ? new String[]{"pinkeybg", "pinkeyaction", "pinkeyborder"} : new String[]{"pinbg", "pindots", "pinnum"};
@@ -1036,7 +1046,8 @@ public class MainActivity extends AppCompatActivity {
         // le card di Impostazioni si scelgono solo su Android puro (su OxygenOS le gestisce il tema di sistema)
         if (mSCardsCard != null) mSCardsCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubSCards != null) mSubSCards.setText(SettingsCards.label(this, ThemePrefs.getSettingsCards()));
-        if (mShadeCard != null) mShadeCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        // le scelte trasparenti le applica il modulo Oxydian: senza il modulo la scheda non servirebbe a niente
+        if (mShadeCard != null) mShadeCard.setVisibility(SystemVariant.isPure() && moduleInstalled() ? View.VISIBLE : View.GONE);
         // su Android puro la scheda accanto (Pack Icone) e' nascosta: senza altezza propria la riga si schiaccia e il tastierino sparisce
         if (mPinCard != null) setCardHeight(mPinCard, SystemVariant.isPure() ? ViewGroup.LayoutParams.WRAP_CONTENT : ViewGroup.LayoutParams.MATCH_PARENT);
         if (mIconPackCard != null) mIconPackCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);

@@ -186,7 +186,7 @@
     <string name="scards_border">With border</string>
     <string name="scards_glassborder">Transparent with border</string>
     <string name="card_shade">QS and notifications panel</string>
-    <string name="shade_solid">Solid</string>
+    <string name="shade_solid">Default (system)</string>
     <string name="shade_light">Transparent</string>
     <string name="shade_strong">Very transparent</string>
     <string name="shade_need_module">Needs the Oxydian module (Android version) with SystemUI in the LSPosed scope</string>
