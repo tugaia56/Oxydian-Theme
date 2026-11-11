@@ -131,6 +131,7 @@ public final class AospTheme {
             if ("Sfondo_del_tema".equals(kb)) keyBg = b;
             else if ("Nero".equals(kb)) keyBg = 0xFF000000;
             else if ("Accento".equals(kb) && accent != null) keyBg = 0xFF000000 | accent;
+            else if (OptionGroupsDialog.CUSTOM.equals(kb)) keyBg = 0xFF000000 | (ThemePrefs.getCustomColor("com.android.systemui_pinkeybg") & 0xFFFFFF);
             m.put("system_surface_effect_1_dark", keyBg);
         }
         // Colore scelto per le icone della barra di stato (comando unico): la percentuale della batteria e le altre icone a un

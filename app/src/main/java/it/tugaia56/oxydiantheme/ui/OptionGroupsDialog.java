@@ -67,7 +67,7 @@ final class OptionGroupsDialog {
     /** Gruppi che accettano anche un colore a scelta libera. */
     static boolean allowsCustom(String pkg, String group) {
         return "com.android.systemui".equals(pkg) && ("pinbg".equals(group) || "pinnum".equals(group) || "pindots".equals(group)
-                || "pmbg".equals(group) || "pmborder".equals(group) || "pmbtnborder".equals(group));
+                || "pmbg".equals(group) || "pmborder".equals(group) || "pmbtnborder".equals(group) || "pinkeybg".equals(group));
     }
 
     /**
