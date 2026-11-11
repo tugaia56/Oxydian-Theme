@@ -12,6 +12,15 @@ lastfix=0
 LOG=/data/local/tmp/oxydian_theme.log
 last=$(pidof com.android.systemui)
 
+# Android puro: vero se i colori del sistema (com.android.systemui:neutral/accent/dynamic) stanno sopra l'ultimo oxyfix del Theme.
+# Non basta guardare l'ultimo overlay in lista: in cima possono esserci gli stili delle icone (wifibar_a, signalbar_a).
+sys_in_front() {
+  l=$(cmd overlay list --user 0 android 2>/dev/null | grep '^\[x\]')
+  a=$(echo "$l" | grep -n 'com.android.shell:oxyfix' | tail -1 | cut -d: -f1)
+  b=$(echo "$l" | grep -n 'com.android.systemui:' | tail -1 | cut -d: -f1)
+  [ -n "$a" ] && [ -n "$b" ] && [ "$b" -gt "$a" ]
+}
+
 # colori del Theme in cima (OxygenOS): solo DS_SYS e gli oxyfix
 repair_oos() {
   # gli oxyfix hanno bersagli diversi (android e SystemUI): si prendono tutti
@@ -28,13 +37,11 @@ if [ -z "$OPLUS" ] && [ -f "$MODDIR/fixedcolors.sh" ]; then
       sleep 30
       now=$(date +%s)
       [ $((now - lastfix)) -lt 60 ] && continue
-      top=$(cmd overlay list --user 0 android 2>/dev/null | grep '^\[x\]' | tail -1)
-      case "$top" in
-        *com.android.systemui:*)
-          echo "colorwatch: controllo periodico, colori del sistema davanti ($top), li rimetto $(date)" >> "$LOG"
-          sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
-          lastfix=$(date +%s);;
-      esac
+      if sys_in_front; then
+        echo "colorwatch: controllo periodico, colori del sistema sopra quelli del Theme, li rimetto $(date)" >> "$LOG"
+        sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
+        lastfix=$(date +%s)
+      fi
     done
   ) &
 fi
@@ -62,6 +69,8 @@ while true; do
     top=$(echo "$list" | tail -1)
     bad=0
     case "$top" in *com.android.systemui:*) bad=1;; esac
+    # Android puro: i colori del sistema possono stare sopra gli oxyfix anche con gli stili delle icone in cima alla lista
+    if [ "$bad" = 0 ] && [ -z "$OPLUS" ] && sys_in_front; then bad=1; top="com.android.systemui:* sopra gli oxyfix"; fi
     # OxygenOS: puo' stare in cima un oxyfix ma il tema di sistema (DS_SYS) sotto i colori del sistema: va rimesso sopra anche in quel caso
     if [ "$bad" = 0 ] && [ -n "$OPLUS" ]; then
       dsn=$(echo "$list" | grep -n 'OxydianThemeComponentDS_SYS' | head -1 | cut -d: -f1)
