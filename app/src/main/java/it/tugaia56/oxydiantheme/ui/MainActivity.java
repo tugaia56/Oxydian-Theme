@@ -392,13 +392,13 @@ public class MainActivity extends AppCompatActivity {
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
     private android.widget.LinearLayout mRow3, mRow3b;
-    private View mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow;
+    private View mBlurCard, mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder;
     private android.widget.LinearLayout mClockColorRow;
     private Boolean mStatusRowsPure = null;
-    private TextView mSubSCards, mSubClockColor;
+    private TextView mSubSCards, mSubClockColor, mSubBlur;
     private TextView mSubPin, mSubRipple, mSubDefaultTab, mSubSbColor;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
@@ -516,6 +516,11 @@ public class MainActivity extends AppCompatActivity {
         mRow3 = r3;
         mRow3b = r3b;
         mSubSCards = s[0];
+        // sfocatura delle finestre (solo Android puro): interruttore dell'impostazione di sistema disable_window_blurs
+        mBlurCard = makeCard(R.string.card_blur, s, this::toggleBlur);
+        mSubBlur = s[0];
+        setCardHeight(mBlurCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r3b.addView(mBlurCard);
         // stile delle notifiche (solo Android): riga sotto, con un posto libero accanto
         android.widget.LinearLayout r3c = new android.widget.LinearLayout(this);
         r3c.setOrientation(android.widget.LinearLayout.HORIZONTAL);
@@ -900,6 +905,26 @@ public class MainActivity extends AppCompatActivity {
         mClockColorRow.setVisibility(View.VISIBLE);
     }
 
+    /** Sfocatura delle finestre accesa? (impostazione di sistema: 0 = accesa) */
+    private boolean blurOn() {
+        try {
+            return android.provider.Settings.Global.getInt(getContentResolver(), "disable_window_blurs", 0) == 0;
+        } catch (Throwable t) {
+            return true;
+        }
+    }
+
+    private void toggleBlur() {
+        final boolean turnOff = blurOn();
+        new Thread(() -> {
+            com.topjohnwu.superuser.Shell.cmd("settings put global disable_window_blurs " + (turnOff ? 1 : 0)).exec();
+            runOnUiThread(() -> {
+                refreshCards();
+                Toast.makeText(this, turnOff ? R.string.blur_now_off : R.string.blur_now_on, Toast.LENGTH_SHORT).show();
+            });
+        }).start();
+    }
+
     /** Il modulo Oxydian e' installato? (senza root: basta il gestore dei pacchetti) */
     private boolean moduleInstalled() {
         try {
@@ -1051,6 +1076,8 @@ public class MainActivity extends AppCompatActivity {
         if (mIconPackCard != null) mIconPackCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
         if (mSwitchCard != null) mSwitchCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
         if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mBlurCard != null) mBlurCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mSubBlur != null) mSubBlur.setText(blurOn() ? R.string.gb_on : R.string.gb_off);
         // notifiche, toast, dialog e bordo sfumato come overlay: solo su Android puro (RisingOS, crDroid, ecc.); su OxygenOS li fa il modulo Oxydian
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);

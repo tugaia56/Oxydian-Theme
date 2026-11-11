@@ -96,6 +96,9 @@
     <string name="gb_c2">Second colour</string>
     <string name="gb_c3">Third colour (optional)</string>
     <string name="gb_none">none</string>
+    <string name="card_blur">Window blur</string>
+    <string name="blur_now_off">Window blur off</string>
+    <string name="blur_now_on">Window blur on</string>
     <string name="card_toaststyle">Toast style</string>
     <string name="card_progress">Circular progress bar</string>
     <string name="card_pin">PIN keypad</string>
