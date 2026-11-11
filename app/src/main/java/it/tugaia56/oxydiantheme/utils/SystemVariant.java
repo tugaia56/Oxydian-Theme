@@ -75,6 +75,16 @@ public final class SystemVariant {
         return (ThemePrefs.getSystemVariant().isEmpty() && sAuto == null) || !sRisingChecked;
     }
 
+    /** La variante e' gia' stata riconosciuta (o scelta a mano)? */
+    public static boolean isKnown() {
+        return !ThemePrefs.getSystemVariant().isEmpty() || (sAuto != null && !sAuto.isEmpty());
+    }
+
+    /** Sicuramente OxygenOS: variante nota e non Android puro. Prima del riconoscimento risponde false (non si decide niente). */
+    public static boolean isOos() {
+        return isKnown() && !isPure();
+    }
+
     /** Android puro (non OxygenOS)? Non usa la shell: se la variante non e' ancora nota risponde false. */
     public static boolean isPure() {
         String saved = ThemePrefs.getSystemVariant();

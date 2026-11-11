@@ -1046,7 +1046,7 @@ public class MainActivity extends AppCompatActivity {
         // notifiche, toast, dialog e bordo sfumato come overlay: solo su Android puro (RisingOS, crDroid, ecc.); su OxygenOS li fa il modulo Oxydian
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
-        if (!SystemVariant.isPure()) {
+        if (SystemVariant.isOos()) {
             // scelte fatte in prove precedenti: via, cosi' al prossimo "Installa" gli overlay si rifanno senza questi stili
             for (String g : new String[]{"notifstyle"}) if (!ThemePrefs.getOption(SYSTEMUI_PKG, g).isEmpty()) ThemePrefs.setOption(SYSTEMUI_PKG, g, "");
             for (String g : new String[]{"toaststyle", "dialogstyle"}) if (!ThemePrefs.getOption(SystemColorsDialog.PKG, g).isEmpty()) ThemePrefs.setOption(SystemColorsDialog.PKG, g, "");
@@ -1380,7 +1380,8 @@ public class MainActivity extends AppCompatActivity {
         List<OptGroup> cached = mOptCache.get(pkg);
         if (cached != null) return cached;
         List<OptGroup> out = new ArrayList<>();
-        mOptCache.put(pkg, out);
+        // la variante non e' ancora nota: l'elenco non si tiene in memoria (dipende da OxygenOS / Android puro)
+        if (SystemVariant.isKnown()) mOptCache.put(pkg, out);
         try {
             String base = "CompileOnDemand/" + pkg + "/OPT";
             String[] groups = ctx.getAssets().list(base);
@@ -1388,12 +1389,12 @@ public class MainActivity extends AppCompatActivity {
             Arrays.sort(groups);
             for (String g : groups) {
                 // menu di spegnimento: esiste solo su Android puro
-                if (("pmbg".equals(g) || "pmborder".equals(g) || "pmbtnborder".equals(g)) && !SystemVariant.isPure()) continue;
+                if (("pmbg".equals(g) || "pmborder".equals(g) || "pmbtnborder".equals(g)) && SystemVariant.isOos()) continue;
                 // tastierino PIN: OxygenOS ha le sue scelte (pinbg, pindots, pinnum), Android puro quelle dei tasti di sistema (pinkey*)
                 if (("pinbg".equals(g) || "pindots".equals(g) || "pinnum".equals(g)) && SystemVariant.isPure()) continue;
-                if (g.startsWith("pinkey") && !SystemVariant.isPure()) continue;
+                if (g.startsWith("pinkey") && SystemVariant.isOos()) continue;
                 // stili di notifiche, toast e dialog: solo Android puro (su OxygenOS li fa il modulo)
-                if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g)) && !SystemVariant.isPure()) continue;
+                if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g)) && SystemVariant.isOos()) continue;
                 String[] items = ctx.getAssets().list(base + "/" + g);
                 if (items == null) continue;
                 OptGroup og = new OptGroup();
