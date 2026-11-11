@@ -391,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
-    private View mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow, mDialogStyleRow;
+    private View mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder;
@@ -544,18 +544,12 @@ public class MainActivity extends AppCompatActivity {
         setCardHeight(gbCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3e.addView(gbCard);
         mDialogStyleRow = r3e;
-        // menu di spegnimento (solo Android puro): sfondo e bordo, accanto un posto libero
-        android.widget.LinearLayout r3d = new android.widget.LinearLayout(this);
-        r3d.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-        r3p.addView(r3d, r3p.indexOfChild(r3c) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        // menu di spegnimento (solo Android puro): sfondo e bordo, nella riga del tastierino PIN (al posto del posto libero)
         View pmCard = makeCard(R.string.card_powermenu, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pmbg", "pmborder", "pmbtnborder"}, R.string.card_powermenu));
         mSubPowerMenu = s[0];
         setCardHeight(pmCard, ViewGroup.LayoutParams.WRAP_CONTENT);
-        r3d.addView(pmCard);
-        View pmSpacer = new View(this);
-        pmSpacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
-        r3d.addView(pmSpacer);
-        mPowerMenuRow = r3d;
+        r3.addView(pmCard, r3.indexOfChild(mIconPackSpacer));
+        mPowerMenuCard = pmCard;
         mWifiCard = makeCard(R.string.card_wifi, s, () -> openStyles("wifi"));
         r4.addView(mWifiCard);
         mSubWifi = s[0];
@@ -1035,8 +1029,8 @@ public class MainActivity extends AppCompatActivity {
         mSubWifi.setText(w.isEmpty() ? def : pretty(w));
         mSubSignal.setText(sg.isEmpty() ? def : pretty(sg));
         // gli stili del segnale usano i nomi delle icone di OxygenOS: su Android puro (A17) non sono ancora adattati
-        // RisingOS ha i suoi stili per le icone Wi-Fi e segnale: nel Theme restano per OxygenOS e Android puro (crDroid, ecc.)
-        int wifiSigVis = SystemVariant.isRising() ? View.GONE : View.VISIBLE;
+        // RisingOS e crDroid hanno i loro stili per le icone Wi-Fi e segnale (Impostazioni): nel Theme restano solo per OxygenOS
+        int wifiSigVis = SystemVariant.isPure() ? View.GONE : View.VISIBLE;
         if (mWifiCard != null) mWifiCard.setVisibility(wifiSigVis);
         if (mSignalCard != null) mSignalCard.setVisibility(wifiSigVis);
         // le card di Impostazioni si scelgono solo su Android puro (su OxygenOS le gestisce il tema di sistema)
@@ -1046,7 +1040,6 @@ public class MainActivity extends AppCompatActivity {
         // su Android puro la scheda accanto (Pack Icone) e' nascosta: senza altezza propria la riga si schiaccia e il tastierino sparisce
         if (mPinCard != null) setCardHeight(mPinCard, SystemVariant.isPure() ? ViewGroup.LayoutParams.WRAP_CONTENT : ViewGroup.LayoutParams.MATCH_PARENT);
         if (mIconPackCard != null) mIconPackCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
-        if (mIconPackSpacer != null) mIconPackSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSwitchCard != null) mSwitchCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
         if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
@@ -1062,7 +1055,10 @@ public class MainActivity extends AppCompatActivity {
         // overlay: la scheda si nasconde e le scelte per quel menu stanno nel modulo Oxydian (Varie)
         boolean composeMenu = false;
         try { composeMenu = android.provider.Settings.Secure.getInt(getContentResolver(), "global_actions_use_compose_dialog", 0) == 1; } catch (Throwable ignored) {}
-        if (mPowerMenuRow != null) mPowerMenuRow.setVisibility(SystemVariant.isPure() && !composeMenu ? View.VISIBLE : View.GONE);
+        boolean pmShown = SystemVariant.isPure() && !composeMenu;
+        if (mPowerMenuCard != null) mPowerMenuCard.setVisibility(pmShown ? View.VISIBLE : View.GONE);
+        // nella riga del tastierino PIN: il posto libero serve solo quando non ci sono altre schede accanto
+        if (mIconPackSpacer != null) mIconPackSpacer.setVisibility(SystemVariant.isPure() && !pmShown ? View.VISIBLE : View.GONE);
         if (mSubPowerMenu != null) mSubPowerMenu.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pmbg", "pmborder", "pmbtnborder"));
         if (mSubNotifStyle != null) mSubNotifStyle.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "notifstyle"));
         if (mSubToastStyle != null) mSubToastStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "toaststyle"));
