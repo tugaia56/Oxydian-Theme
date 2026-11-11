@@ -12,11 +12,12 @@ import it.tugaia56.oxydiantheme.utils.ThemeProps;
 
 /** Sfondo del pannello rapido e delle notifiche su Android puro: pieno, trasparente o molto trasparente (lo fa il modulo Oxydian). */
 final class ShadeAlpha {
-    private static final int[] LEVELS = {100, 65, 40};
+    private static final int[] LEVELS = {100, 65, 30, 5};
 
     private ShadeAlpha() {}
 
     static String label(Context ctx, int percent) {
+        if (percent <= 10) return ctx.getString(R.string.shade_glass);
         if (percent <= 40) return ctx.getString(R.string.shade_strong);
         if (percent < 100) return ctx.getString(R.string.shade_light);
         return ctx.getString(R.string.shade_solid);
@@ -29,8 +30,8 @@ final class ShadeAlpha {
 
     static void show(Activity act, Runnable onDone) {
         int cur = ThemePrefs.getShadeAlpha();
-        int checked = cur <= 40 ? 2 : cur < 100 ? 1 : 0;
-        CharSequence[] names = {act.getString(R.string.shade_solid), act.getString(R.string.shade_light), act.getString(R.string.shade_strong)};
+        int checked = cur <= 10 ? 3 : cur <= 40 ? 2 : cur < 100 ? 1 : 0;
+        CharSequence[] names = {act.getString(R.string.shade_solid), act.getString(R.string.shade_light), act.getString(R.string.shade_strong), act.getString(R.string.shade_glass)};
         Dialogs.show(act, new MaterialAlertDialogBuilder(act)
                 .setTitle(R.string.card_shade)
                 .setSingleChoiceItems(names, checked, (d, which) -> {

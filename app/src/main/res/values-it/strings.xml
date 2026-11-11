@@ -188,6 +188,7 @@
     <string name="shade_solid">Predefinito (di sistema)</string>
     <string name="shade_light">Trasparente</string>
     <string name="shade_strong">Molto trasparente</string>
+    <string name="shade_glass">Vetro (quasi trasparente)</string>
     <string name="shade_need_module">Serve il modulo Oxydian (versione Android) con SystemUI nell\'ambito di LSPosed</string>
     <string name="scards_reboot">Riavvia il telefono una volta per attivare questo stile</string>
     <string name="ripple_hint">L\'onda colorata che compare quando premi un pulsante o una voce della lista. Più alta è l\'opacità, più si vede.</string>

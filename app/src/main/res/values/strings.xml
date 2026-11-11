@@ -189,6 +189,7 @@
     <string name="shade_solid">Default (system)</string>
     <string name="shade_light">Transparent</string>
     <string name="shade_strong">Very transparent</string>
+    <string name="shade_glass">Glass (almost transparent)</string>
     <string name="shade_need_module">Needs the Oxydian module (Android version) with SystemUI in the LSPosed scope</string>
     <string name="scards_reboot">Restart the phone once to activate this style</string>
     <string name="ripple_hint">The colored wave that appears when you press a button or a list item. The higher the opacity, the stronger it looks.</string>
