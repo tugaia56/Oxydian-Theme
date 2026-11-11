@@ -391,6 +391,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
+    private android.widget.LinearLayout mRow3, mRow3b;
     private View mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
@@ -512,6 +513,8 @@ public class MainActivity extends AppCompatActivity {
         ViewGroup r3p = (ViewGroup) r3.getParent();
         r3p.addView(r3b, r3p.indexOfChild(r3) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         r3b.addView(mSCardsCard);
+        mRow3 = r3;
+        mRow3b = r3b;
         mSubSCards = s[0];
         mShadeCard = makeCard(R.string.card_shade, s, () -> ShadeAlpha.show(this, this::refreshCards));
         r3b.addView(mShadeCard);
@@ -1068,8 +1071,22 @@ public class MainActivity extends AppCompatActivity {
         try { composeMenu = android.provider.Settings.Secure.getInt(getContentResolver(), "global_actions_use_compose_dialog", 0) == 1; } catch (Throwable ignored) {}
         boolean pmShown = SystemVariant.isPure() && !composeMenu;
         if (mPowerMenuCard != null) mPowerMenuCard.setVisibility(pmShown ? View.VISIBLE : View.GONE);
+        // RisingOS: senza il menu di spegnimento nel Theme, la Card di Impostazioni sale nella riga del tastierino PIN; altrove resta nella sua riga
+        boolean cardsInPinRow = SystemVariant.isRising() && !pmShown;
+        if (mSCardsCard != null && mRow3 != null && mRow3b != null) {
+            ViewGroup want = cardsInPinRow ? mRow3 : mRow3b;
+            if (mSCardsCard.getParent() != want) {
+                if (mSCardsCard.getParent() instanceof ViewGroup) ((ViewGroup) mSCardsCard.getParent()).removeView(mSCardsCard);
+                if (cardsInPinRow) {
+                    setCardHeight(mSCardsCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    mRow3.addView(mSCardsCard, mRow3.indexOfChild(mIconPackSpacer));
+                } else {
+                    mRow3b.addView(mSCardsCard, 0);
+                }
+            }
+        }
         // nella riga del tastierino PIN: il posto libero serve solo quando non ci sono altre schede accanto
-        if (mIconPackSpacer != null) mIconPackSpacer.setVisibility(SystemVariant.isPure() && !pmShown ? View.VISIBLE : View.GONE);
+        if (mIconPackSpacer != null) mIconPackSpacer.setVisibility(SystemVariant.isPure() && !pmShown && !cardsInPinRow ? View.VISIBLE : View.GONE);
         if (mSubPowerMenu != null) mSubPowerMenu.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pmbg", "pmborder", "pmbtnborder"));
         if (mSubNotifStyle != null) mSubNotifStyle.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "notifstyle"));
         if (mSubToastStyle != null) mSubToastStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "toaststyle"));
