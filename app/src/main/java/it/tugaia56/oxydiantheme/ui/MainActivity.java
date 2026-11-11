@@ -799,7 +799,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
                     || !ThemePrefs.getOption(pkg, "pindots").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty() || usesPinKeys(pkg) || !ThemePrefs.getOption(pkg, "pinkeybg").isEmpty();
+                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty() || usesPinKeys(pkg) || !ThemePrefs.getOption(pkg, "pinkeybg").isEmpty() || !ThemePrefs.getOption(pkg, "pinkeyaction").isEmpty();
             if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
         }
         for (AppEntry e : mApps) if (e.ds && e.pkg.equals(pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(pkg);
@@ -908,7 +908,7 @@ public class MainActivity extends AppCompatActivity {
 
     /** Gruppi del tastierino PIN: OxygenOS (tastierino OnePlus) o Android puro (tastierino di sistema). */
     private static String[] pinGroups() {
-        return SystemVariant.isPure() ? new String[]{"pinkeybg", "pinkeyborder"} : new String[]{"pinbg", "pindots", "pinnum"};
+        return SystemVariant.isPure() ? new String[]{"pinkeybg", "pinkeyaction", "pinkeyborder"} : new String[]{"pinbg", "pindots", "pinnum"};
     }
 
     private static void setCardHeight(View card, int h) {
@@ -1457,10 +1457,22 @@ public class MainActivity extends AppCompatActivity {
 
     /** Bordo dei tasti del tastierino PIN di sistema (colore e forma dei tasti li anima il codice di SystemUI: restano quelli di sistema). */
     static String pinKeyValues(String pkg) {
-        if (!usesPinKeys(pkg)) return "";
+        if (!SYSTEMUI_PKG.equals(pkg) || !SystemVariant.isPure()) return "";
+        StringBuilder out = new StringBuilder();
+        // tasti Indietro e Invio: colore di sfondo proprio di SystemUI (di serie semitrasparente)
+        String act = ThemePrefs.getOption(pkg, "pinkeyaction");
+        if (!act.isEmpty()) {
+            String v;
+            if (OptionGroupsDialog.CUSTOM.equals(act)) v = hex8(0xFF000000 | (ThemePrefs.getCustomColor(pkg + "_pinkeyaction") & 0xFFFFFF));
+            else if ("Nero".equals(act)) v = "#FF000000";
+            else if ("Accento".equals(act)) v = "@*android:color/accent_material_dark";
+            else v = "@*android:color/system_background_dark";
+            out.append("    <color name=\"pin_bouncer_action_button_bg\">").append(v).append("</color>\n");
+        }
+        if (!usesPinKeys(pkg)) return out.toString();
         String bdSel = ThemePrefs.getOption(pkg, "pinkeyborder");
         String stroke = "Accento_spesso".equals(bdSel) ? "3dp" : "1.5dp";
-        return "    <color name=\"oxy_pinkey_bg\">@*android:color/system_surface_effect_1_dark</color>\n"
+        return out + "    <color name=\"oxy_pinkey_bg\">@*android:color/system_surface_effect_1_dark</color>\n"
                 + "    <color name=\"oxy_pinkey_border\">@*android:color/accent_material_dark</color>\n"
                 + "    <dimen name=\"oxy_pinkey_stroke\">" + stroke + "</dimen>\n"
                 + "    <dimen name=\"oxy_pinkey_radius\">10dp</dimen>\n";
