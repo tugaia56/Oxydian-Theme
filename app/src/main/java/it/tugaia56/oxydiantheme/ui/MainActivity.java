@@ -391,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
-    private View mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow, mDialogStyleRow;
+    private View mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow, mDialogStyleRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder;
@@ -495,7 +495,8 @@ public class MainActivity extends AppCompatActivity {
         mSubProgress = s[0];
         r2.addView(makeCard(R.string.card_activity, s, this::toggleHideActivity));
         mSubActivity = s[0];
-        r3.addView(makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, pinGroups(), R.string.card_pin)));
+        mPinCard = makeCard(R.string.card_pin, s, () -> openGroups(SYSTEMUI_PKG, pinGroups(), R.string.card_pin));
+        r3.addView(mPinCard);
         mSubPin = s[0];
         mIconPackCard = makeCard(R.string.card_settings, s, () -> openStyles("settings"));
         r3.addView(mIconPackCard);
@@ -1042,6 +1043,8 @@ public class MainActivity extends AppCompatActivity {
         if (mSCardsCard != null) mSCardsCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubSCards != null) mSubSCards.setText(SettingsCards.label(this, ThemePrefs.getSettingsCards()));
         if (mShadeCard != null) mShadeCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        // su Android puro la scheda accanto (Pack Icone) e' nascosta: senza altezza propria la riga si schiaccia e il tastierino sparisce
+        if (mPinCard != null) setCardHeight(mPinCard, SystemVariant.isPure() ? ViewGroup.LayoutParams.WRAP_CONTENT : ViewGroup.LayoutParams.MATCH_PARENT);
         if (mIconPackCard != null) mIconPackCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
         if (mIconPackSpacer != null) mIconPackSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSwitchCard != null) mSwitchCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
