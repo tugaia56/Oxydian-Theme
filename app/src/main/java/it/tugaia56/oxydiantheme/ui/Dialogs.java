@@ -45,6 +45,11 @@ final class Dialogs {
                 try { dialog.dismiss(); } catch (Throwable ignored) {}
             });
         }
+
+        /** La finestra e' ancora mostrata dentro questa attivita'? */
+        boolean isShowingOn(android.content.Context ctx) {
+            try { return dialog.isShowing() && dialog.getContext() != null && dialog.getOwnerActivity() == ctx; } catch (Throwable e) { return false; }
+        }
     }
 
     static Busy showBusy(Context ctx, int title, int message) {

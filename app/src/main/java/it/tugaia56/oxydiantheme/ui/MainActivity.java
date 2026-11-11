@@ -1111,7 +1111,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         sActivity = this;
         if (mBusy) busyShow();
-        else showRestartDialogIfPending();
+        else { busyHide(); showRestartDialogIfPending(); }
         if (mSubAccent != null) refreshCards();
         refreshStates();
         if (ThemePrefs.isNavPending() && !mBusy) {
@@ -1910,10 +1910,16 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    /** Tutte le finestre di attesa create finora: se l'app viene ricreata mentre lavora ne puo' restare una orfana, che va chiusa comunque. */
+    private static final java.util.List<Dialogs.Busy> sBusyAll = new java.util.ArrayList<>();
+
     private static void busyShow() {
         MainActivity a = sActivity;
-        if (a == null || sBusyDialog != null) return;
+        if (a == null) return;
+        if (sBusyDialog != null && sActivity != null && sBusyAll.contains(sBusyDialog) && sBusyDialog.isShowingOn(a)) return;
+        busyHide();   // niente finestre doppie o rimaste dell'attivita' di prima
         sBusyDialog = Dialogs.showBusy(a, R.string.busy_title, R.string.busy_message);
+        sBusyAll.add(sBusyDialog);
         sBusyDialog.update(sBusyText);
     }
 
@@ -1923,9 +1929,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static void busyHide() {
-        final Dialogs.Busy d = sBusyDialog;
         sBusyDialog = null;
-        if (d != null) d.dismiss();
+        for (Dialogs.Busy d : new java.util.ArrayList<>(sBusyAll)) d.dismiss();
+        sBusyAll.clear();
     }
 
     /** Dopo aver rifatto i temi: il nuovo accento in SystemUI si vede solo riavviando l'interfaccia. */
