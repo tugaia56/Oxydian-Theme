@@ -20,6 +20,25 @@ repair_oos() {
   for o in $L; do cmd overlay enable --user 0 "$o" >/dev/null 2>&1; done
 }
 
+# Android puro: controllo periodico leggero (ogni 30 secondi) oltre a quello dopo ogni riavvio di SystemUI: se i colori del sistema
+# stanno davanti a quelli del Theme (il sistema li rimette anche molto dopo l'avvio) si riportano davanti, al massimo una volta al minuto
+if [ -z "$OPLUS" ] && [ -f "$MODDIR/fixedcolors.sh" ]; then
+  (
+    while true; do
+      sleep 30
+      now=$(date +%s)
+      [ $((now - lastfix)) -lt 60 ] && continue
+      top=$(cmd overlay list --user 0 android 2>/dev/null | grep '^\[x\]' | tail -1)
+      case "$top" in
+        *com.android.systemui:*)
+          echo "colorwatch: controllo periodico, colori del sistema davanti ($top), li rimetto $(date)" >> "$LOG"
+          sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
+          lastfix=$(date +%s);;
+      esac
+    done
+  ) &
+fi
+
 while true; do
   sleep 2
   pid=$(pidof com.android.systemui)
@@ -32,7 +51,8 @@ while true; do
   pid=$(pidof com.android.systemui); [ -n "$pid" ] && last=$pid
   # SystemUI rifa' i suoi colori in pochi secondi. OxygenOS: si lascia prima finire l'avvio (12 s) e poi si controlla ogni 2 secondi per 40;
   # Android puro: si controlla ogni secondo per 20. Appena quelli del sistema stanno davanti, si rimettono quelli del Theme.
-  if [ -n "$OPLUS" ]; then step=2; max=20; sleep 12; else step=1; max=20; [ -f "$MODDIR/fixedcolors.sh" ] || continue; fi
+  # Android puro: il sistema a volte rimette i suoi colori piu' tardi di 20 secondi (verificato su RisingOS): si controlla per 60
+  if [ -n "$OPLUS" ]; then step=2; max=20; sleep 12; else step=1; max=60; [ -f "$MODDIR/fixedcolors.sh" ] || continue; fi
   n=0
   fixes=0
   while [ $n -lt $max ]; do
