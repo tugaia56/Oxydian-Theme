@@ -1042,9 +1042,9 @@ public class MainActivity extends AppCompatActivity {
         if (mSwitchCard != null) mSwitchCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
         if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
-        // toast, dialog e bordo sfumato sono overlay del framework: su tutte le versioni; lo stile delle notifiche per ora solo su Android puro (su OxygenOS va provato)
+        // toast, dialog, notifiche e bordo sfumato: overlay, su tutte le versioni (notifiche su OxygenOS: da provare)
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(View.VISIBLE);
-        if (mNotifCard != null) mNotifCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mNotifCard != null) mNotifCard.setVisibility(View.VISIBLE);
         if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(View.VISIBLE);
         // Il menu di spegnimento in Compose (RisingOS: impostazione secure global_actions_use_compose_dialog=1) non usa questi
         // overlay: la scheda si nasconde e le scelte per quel menu stanno nel modulo Oxydian (Varie)
