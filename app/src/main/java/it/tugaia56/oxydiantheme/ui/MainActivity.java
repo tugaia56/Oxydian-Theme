@@ -391,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<View> mCards = new ArrayList<>();
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
-    private View mWifiCard, mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow, mDialogStyleRow;
+    private View mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mShadeCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuRow, mDialogStyleRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder;
@@ -519,10 +519,10 @@ public class MainActivity extends AppCompatActivity {
         android.widget.LinearLayout r3c = new android.widget.LinearLayout(this);
         r3c.setOrientation(android.widget.LinearLayout.HORIZONTAL);
         r3p.addView(r3c, r3p.indexOfChild(r3b) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        View notifCard = makeCard(R.string.card_notifstyle, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"notifstyle"}, R.string.card_notifstyle));
+        mNotifCard = makeCard(R.string.card_notifstyle, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"notifstyle"}, R.string.card_notifstyle));
         mSubNotifStyle = s[0];
-        setCardHeight(notifCard, ViewGroup.LayoutParams.WRAP_CONTENT);
-        r3c.addView(notifCard);
+        setCardHeight(mNotifCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r3c.addView(mNotifCard);
         // stile dei toast (accanto): overlay del sistema, come le notifiche
         View toastCard = makeCard(R.string.card_toaststyle, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"toaststyle"}, R.string.card_toaststyle));
         mSubToastStyle = s[0];
@@ -1042,8 +1042,10 @@ public class MainActivity extends AppCompatActivity {
         if (mSwitchCard != null) mSwitchCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
         if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubShade != null) mSubShade.setText(ShadeAlpha.label(this, ThemePrefs.getShadeAlpha()));
-        if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
-        if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        // toast, dialog e bordo sfumato sono overlay del framework: su tutte le versioni; lo stile delle notifiche per ora solo su Android puro (su OxygenOS va provato)
+        if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(View.VISIBLE);
+        if (mNotifCard != null) mNotifCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(View.VISIBLE);
         // Il menu di spegnimento in Compose (RisingOS: impostazione secure global_actions_use_compose_dialog=1) non usa questi
         // overlay: la scheda si nasconde e le scelte per quel menu stanno nel modulo Oxydian (Varie)
         boolean composeMenu = false;
