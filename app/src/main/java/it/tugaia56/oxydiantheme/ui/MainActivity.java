@@ -2100,7 +2100,7 @@ public class MainActivity extends AppCompatActivity {
      * ASSET_REV (da fare ogni volta che si cambiano i file dei temi o il modo di compilarli). Non e' piu' l'ora di installazione:
      * reinstallare lo stesso Theme non fa rifare tutte le app.
      */
-    static final int ASSET_REV = 19;
+    static final int ASSET_REV = 20;
 
     static long updatedTime(Context ctx) {
         try {

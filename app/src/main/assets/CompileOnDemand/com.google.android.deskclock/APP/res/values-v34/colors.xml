@@ -15,8 +15,9 @@
     <color name="settingslib_materialColorSurfaceContainerHighest">#ff9e80</color>
     <color name="settingslib_materialColorSurfaceVariant">#fff000</color>
     <color name="gm3_sys_color_dynamic_dark_background">@*android:color/background_dark</color>
-    <color name="gm3_sys_color_dynamic_dark_inverse_on_surface">#ffe57f</color>
+    <color name="gm3_sys_color_dynamic_dark_inverse_on_surface">@*android:color/white</color>
     <color name="gm3_sys_color_dynamic_dark_inverse_surface">#ff6f00</color>
+    <color name="gm3_sys_color_dynamic_dark_inverse_primary">@*android:color/white</color>
     <color name="gm3_sys_color_dynamic_dark_on_background">#ffffffff</color>
     <color name="gm3_sys_color_dynamic_dark_on_primary">#ffffffff</color>
     <color name="gm3_sys_color_dynamic_dark_on_primary_container">#ffffffff</color>
