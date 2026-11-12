@@ -5,6 +5,17 @@
 MODDIR=${0%/*}
 SRC=$MODDIR/store
 LOG=/data/local/tmp/oxydian_theme.log
+# Android puro: i colori del Theme (creati al volo, spariscono ad ogni riavvio) si accendono appena il servizio overlay risponde,
+# senza aspettare la fine dell'avvio: cosi' l'accento c'e' gia' al PIN iniziale (prima arrivavano dopo 1-3 minuti). Versione veloce.
+if [ -z "$(getprop ro.build.version.oplusrom)" ] && [ -f "$MODDIR/fixedcolors_fast.sh" ]; then
+  (
+    i=0
+    until cmd overlay list --user 0 >/dev/null 2>&1 || [ $i -ge 90 ]; do sleep 1; i=$((i+1)); done
+    echo "=== fixedcolors_fast $(date) (attesa ${i}s) ===" >> "$LOG"
+    sh "$MODDIR/fixedcolors_fast.sh" >> "$LOG" 2>&1
+    echo "=== fixedcolors_fast fine $(date) ===" >> "$LOG"
+  ) &
+fi
 until [ "$(getprop sys.boot_completed)" = "1" ]; do sleep 2; done
 sleep 10
 {
@@ -65,6 +76,8 @@ if [ -f "$MODDIR/fixedcolors.sh" ]; then
     if [ -z "$(getprop ro.build.version.oplusrom)" ]; then DELAYS="12 20 40 60"; IDLEMAX=4; else DELAYS="45 45 60 90"; IDLEMAX=30; fi
     for t in $DELAYS; do
       sleep $t
+      # gia' creati dal giro veloce (all'avvio): si salta il primo giro completo
+      [ "$(cmd overlay list 2>/dev/null | grep -c "^\[x\] com.android.shell:oxyfix")" -ge 1 ] && break
       wait_idle $IDLEMAX
       sh "$MODDIR/fixedcolors.sh" >> "$LOG" 2>&1
       n=$(cmd overlay list 2>/dev/null | grep -c "^\[x\] com.android.shell:oxyfix")

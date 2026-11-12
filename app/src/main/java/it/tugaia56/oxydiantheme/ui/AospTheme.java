@@ -153,13 +153,18 @@ public final class AospTheme {
         // fino a 14 overlay, poi ripetuto due volte in background) fa ridisegnare tutte le app aperte e blocca il
         // telefono per un minuto; succedeva anche cambiando solo lo stile degli interruttori o installando un'altra app.
         final String sigFile = it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/fixedcolors.sig";
+        final String fastFile = it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/fixedcolors_fast.sh";
         final String sig = (rolesOnly ? "r" : "a") + m.size() + ":" + m.toString().hashCode();
         final boolean valuesSame = sig.equals(firstLine("cat " + sigFile + " 2>/dev/null")) && enabledFix() == m.size();
-        if (valuesSame && topIsOurs()) { it.tugaia56.oxydiantheme.utils.OxyLog.log("applyFixedColors: unchanged, skipped"); return; }
+        if (valuesSame && topIsOurs() && "yes".equals(firstLine("[ -f " + fastFile + " ] && echo yes"))) { it.tugaia56.oxydiantheme.utils.OxyLog.log("applyFixedColors: unchanged, skipped"); return; }
         it.tugaia56.oxydiantheme.utils.OxyLog.log("applyFixedColors: " + m.size() + " colours, valuesSame=" + valuesSame);
         // "cmds" va nello script di avvio (crea gli overlay), "run" e' quello che si esegue adesso: se i valori sono gli stessi non si
         // ricreano (ogni comando fa ridisegnare le app), si rimette solo in ordine
         java.util.List<String> run = new java.util.ArrayList<>();
+        // versione "veloce" per l'avvio: crea gli overlay (spariscono ad ogni riavvio), poi legge l'elenco UNA volta e li accende
+        // con 2 comandi ciascuno (niente spegni/riaccendi: sono appena nati); parte appena il servizio overlay risponde, cosi'
+        // l'accento c'e' gia' quando compare il PIN iniziale
+        java.util.List<String> fast = new java.util.ArrayList<>(), fastOn = new java.util.ArrayList<>();
         int i = 0;
         for (java.util.Map.Entry<String, Integer> e : m.entrySet()) {
             long v = e.getValue() & 0xFFFFFFFFL;
@@ -169,6 +174,9 @@ public final class AospTheme {
             if (key.startsWith("systemui:")) { target = "com.android.systemui"; res = "com.android.systemui:color/" + key.substring(9); }
             final String fab = "cmd overlay fabricate --target " + target + " --name oxyfix" + i + " " + res + " 0x1c " + v;
             cmds.add(fab);
+            fast.add(fab);
+            fastOn.add("P=$(echo \"$L\" | grep -o \"[A-Za-z0-9_.]*:oxyfix" + i + "$\" | head -1); [ -n \"$P\" ] || P=com.android.shell:oxyfix" + i
+                    + "; cmd overlay enable --user 0 $P; cmd overlay set-priority $P highest");
             if (!valuesSame) run.add(fab);
             final int cmdStart = cmds.size();
             // l'identificativo dell'overlay creato dipende da chi lancia il comando (da "adb shell" e' com.android.shell,
@@ -195,8 +203,14 @@ public final class AospTheme {
         // dopo un riavvio gli overlay creati al volo spariscono: il modulo rilancia questo elenco ad ogni avvio
         String file = it.tugaia56.oxydiantheme.utils.ModuleConstants.MODULE_DIR + "/fixedcolors.sh";
         if (m.isEmpty()) {
-            Shell.cmd("rm -f " + file).exec();
+            Shell.cmd("rm -f " + file + " " + fastFile).exec();
         } else {
+            StringBuilder fb = new StringBuilder("printf '%s\n'");
+            for (String c : fast) fb.append(" '").append(c).append("'");
+            fb.append(" 'L=$(cmd overlay list 2>/dev/null)'");
+            for (String c : fastOn) fb.append(" '").append(c).append("'");
+            fb.append(" > ").append(fastFile);
+            Shell.cmd(fb.toString(), "chmod 755 " + fastFile).exec();
             StringBuilder sb = new StringBuilder("printf '%s\n'");
             for (String c : cmds) sb.append(" '").append(c).append("'");
             sb.append(" > ").append(file);
