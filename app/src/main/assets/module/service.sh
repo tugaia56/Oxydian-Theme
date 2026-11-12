@@ -22,6 +22,16 @@ if [ -z "$(getprop ro.build.version.oplusrom)" ] && [ -f "$MODDIR/fixedcolors_fa
       k=$((k+1)); sleep 2
     done
     echo "=== fixedcolors_fast fine $(date) ===" >> "$LOG"
+    # Orologio (per le sveglie), Contatti e Messaggi partono durante l'avvio, prima dei colori del Theme, e li tengono finche' il processo
+    # vive (sfondo blu di serie). "am kill" chiude solo i processi in secondo piano e NON cancella le sveglie (a differenza di force-stop):
+    # alla prossima apertura ripartono gia' coi colori giusti. Si ripete dopo il controllo qui sotto.
+    close_early_apps() {
+      for p in com.google.android.deskclock com.google.android.contacts com.google.android.apps.messaging; do
+        am kill "$p" >/dev/null 2>&1
+      done
+      echo "fixedcolors_fast: app d'avvio chiuse (am kill), uptime $(cut -d' ' -f1 /proc/uptime)" >> "$LOG"
+    }
+    close_early_apps
     # subito dopo SystemUI rifa' i suoi colori e li mette davanti ai nostri (prima ci pensava colorwatch, ma solo dopo circa 1 minuto,
     # a PIN iniziale gia' mostrato): si controlla ogni secondo per 2 minuti e, appena stanno davanti, si rifa il giro veloce
     w=0; fx=0
@@ -36,6 +46,7 @@ if [ -z "$(getprop ro.build.version.oplusrom)" ] && [ -f "$MODDIR/fixedcolors_fa
         fx=$((fx+1))
       fi
     done
+    close_early_apps
   ) &
 fi
 until [ "$(getprop sys.boot_completed)" = "1" ]; do sleep 2; done
