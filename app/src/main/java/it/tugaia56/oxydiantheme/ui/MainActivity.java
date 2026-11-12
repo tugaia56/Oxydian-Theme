@@ -2047,6 +2047,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void completeRun(final int f, final int n, final int removedCount, final boolean autoRebuild) {
             mBusy = false;
+            busyHide();   // l'attivita' ricreata a fine lavoro puo' aver rimostrato la finestra di attesa: va chiusa qui
             setButtonsEnabled(true);
             mSelected.clear();
             String msg;
