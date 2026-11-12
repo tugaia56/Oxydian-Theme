@@ -160,6 +160,4 @@
     <color name="m3_sys_color_dynamic_light_on_error_container">#5e35b1</color>
     <color name="settingslib_thumb_on_color">#673ab7</color>
     <color name="sud_system_neutral2_600">#7e57c2</color>
-    <color name="m3_sys_color_dynamic_dark_tertiary">@*android:color/accent_material_dark</color>
-    <color name="m3_sys_color_dynamic_dark_on_tertiary">@*android:color/background_dark</color>
 </resources>

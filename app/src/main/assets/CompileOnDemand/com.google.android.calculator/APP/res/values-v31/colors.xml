@@ -159,6 +159,4 @@
     <color name="m3_sys_color_dynamic_light_surface_variant">#ffffffff</color>
     <color name="m3_sys_color_dynamic_light_tertiary">#3d5afe</color>
     <color name="m3_sys_color_dynamic_light_tertiary_container">@*android:color/holo_red_dark</color>
-    <color name="m3_sys_color_dynamic_dark_tertiary">@*android:color/accent_material_dark</color>
-    <color name="m3_sys_color_dynamic_dark_on_tertiary">@*android:color/background_dark</color>
 </resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="m3_sys_color_dynamic_dark_tertiary">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_tertiary">@*android:color/white</color>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- attributi dell'app, dichiarati qui perche' lo stile li usa (l'overlay li lega per nome) -->
+    <attr name="imageScalePercent" format="float" />
+    <attr name="layout_constraintTag" format="string" />
+    <attr name="roundPercent" format="float" />
+    <style name="KeypadButtonStyle.Equals" parent="">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/oxy_equals_bg</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:tint">@*android:color/white</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="imageScalePercent">0.6</item>
+        <item name="layout_constraintTag">button_basic_equals</item>
+        <item name="roundPercent">1</item>
+    </style>
+</resources>
