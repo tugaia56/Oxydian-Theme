@@ -11,8 +11,16 @@ if [ -z "$(getprop ro.build.version.oplusrom)" ] && [ -f "$MODDIR/fixedcolors_fa
   (
     i=0
     until cmd overlay list --user 0 >/dev/null 2>&1 || [ $i -ge 90 ]; do sleep 1; i=$((i+1)); done
-    echo "=== fixedcolors_fast $(date) (attesa ${i}s) ===" >> "$LOG"
-    sh "$MODDIR/fixedcolors_fast.sh" >> "$LOG" 2>&1
+    echo "=== fixedcolors_fast $(date) (attesa ${i}s, uptime $(cut -d' ' -f1 /proc/uptime)) ===" >> "$LOG"
+    # presto nell'avvio il sistema rifiuta ancora i comandi (overlay non trovato): si riprova ogni 2 secondi finche' risultano accesi
+    k=0
+    while [ $k -lt 60 ]; do
+      sh "$MODDIR/fixedcolors_fast.sh" >> "$LOG" 2>&1
+      n=$(cmd overlay list --user 0 2>/dev/null | grep -c "^\[x\] com.android.shell:oxyfix")
+      echo "fixedcolors_fast: giro $k, accesi $n, uptime $(cut -d' ' -f1 /proc/uptime)" >> "$LOG"
+      [ "${n:-0}" -ge 5 ] && break
+      k=$((k+1)); sleep 2
+    done
     echo "=== fixedcolors_fast fine $(date) ===" >> "$LOG"
   ) &
 fi
