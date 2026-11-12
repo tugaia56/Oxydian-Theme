@@ -98,11 +98,11 @@
     <color name="gm3_ref_palette_secondary90">#ffc2e7ff</color>
     <color name="gm3_ref_palette_tertiary10">#ff072711</color>
     <color name="gm3_ref_palette_tertiary100">#ffffffff</color>
-    <color name="gm3_ref_palette_tertiary20">#ff0a3818</color>
-    <color name="gm3_ref_palette_tertiary30">#ff0f5223</color>
+    <color name="gm3_ref_palette_tertiary20">@*android:color/background_dark</color>
+    <color name="gm3_ref_palette_tertiary30">@*android:color/accent_material_dark</color>
     <color name="gm3_ref_palette_tertiary40">#ff146c2e</color>
-    <color name="gm3_ref_palette_tertiary80">#ff6dd58c</color>
-    <color name="gm3_ref_palette_tertiary90">#ffc4eed0</color>
+    <color name="gm3_ref_palette_tertiary80">@*android:color/accent_material_dark</color>
+    <color name="gm3_ref_palette_tertiary90">@*android:color/white</color>
     <color name="gm3_ref_palette_white">#ffffffff</color>
     <color name="gm3_ref_palette_yellow80">#fffcbd00</color>
     <color name="gm3_sys_color_dark_surface_bright">#ff37393b</color>
