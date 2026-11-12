@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Aperture (Fotocamera): colori dinamici scuri sui colori del Theme (sfondo, accento) -->
+    <color name="m3_sys_color_dynamic_dark_background">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_dim">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container_lowest">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container_low">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container">@*android:color/system_surface_container_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container_high">@*android:color/system_surface_container_high_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container_highest">@*android:color/system_surface_container_highest_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_bright">@*android:color/system_surface_bright_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_variant">@*android:color/system_surface_variant_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_background">@*android:color/white</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface">@*android:color/white</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface_variant">@*android:color/system_on_surface_variant_dark</color>
+    <color name="m3_sys_color_dynamic_dark_outline">#ff8d919a</color>
+    <color name="m3_sys_color_dynamic_dark_outline_variant">@*android:color/system_surface_container_highest_dark</color>
+    <color name="m3_sys_color_dynamic_dark_primary">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary">@*android:color/white</color>
+    <color name="m3_sys_color_dynamic_dark_primary_container">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary_container">@*android:color/white</color>
+    <color name="m3_sys_color_dynamic_dark_secondary">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_secondary">@*android:color/white</color>
+    <color name="m3_sys_color_dynamic_dark_secondary_container">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_secondary_container">@*android:color/white</color>
+    <color name="m3_sys_color_dynamic_dark_tertiary">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_tertiary">@*android:color/white</color>
+    <color name="m3_sys_color_dynamic_dark_tertiary_container">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_tertiary_container">@*android:color/white</color>
+    <color name="m3_sys_color_dynamic_dark_inverse_surface">@*android:color/white</color>
+    <color name="m3_sys_color_dynamic_dark_inverse_on_surface">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_inverse_primary">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_error">#ffffb4ab</color>
+    <color name="m3_sys_color_dynamic_dark_on_error">#ff690005</color>
+    <color name="m3_sys_color_dynamic_dark_error_container">#ff93000a</color>
+    <color name="m3_sys_color_dynamic_dark_on_error_container">#ffffdad6</color>
+    <!-- pulsante di registrazione video -->
+    <color name="rec_red">@*android:color/accent_material_dark</color>
+</resources>
