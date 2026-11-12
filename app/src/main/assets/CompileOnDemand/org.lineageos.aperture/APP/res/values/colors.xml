@@ -35,6 +35,8 @@
     <color name="m3_sys_color_dynamic_dark_on_error">#ff690005</color>
     <color name="m3_sys_color_dynamic_dark_error_container">#ff93000a</color>
     <color name="m3_sys_color_dynamic_dark_on_error_container">#ffffdad6</color>
+    <!-- scritte spente (di serie #444444) -->
+    <color name="dark_grey">#ff9e9e9e</color>
     <!-- pulsante di registrazione video -->
     <color name="rec_red">@*android:color/accent_material_dark</color>
 </resources>
