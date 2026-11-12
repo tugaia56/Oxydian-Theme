@@ -1282,6 +1282,17 @@ public class MainActivity extends AppCompatActivity {
 
     // ── Elenco ───────────────────────────────────────────────────────────────
 
+    /** App di sistema che il PackageManager dell'app non vede (pacchetto -> nome da mostrare). */
+    private static final java.util.Map<String, String> PM_BLIND = new java.util.HashMap<>();
+    static { PM_BLIND.put("org.lineageos.aperture", "Fotocamera (Aperture)"); }
+
+    private static boolean rootHasPackage(String pkg) {
+        try {
+            for (String l : com.topjohnwu.superuser.Shell.cmd("pm list packages " + pkg).exec().getOut()) if (l.trim().equals("package:" + pkg)) return true;
+        } catch (Throwable ignored) {}
+        return false;
+    }
+
     private void loadApps() {
         if (SystemVariant.needsDetect()) {
             // il riconoscimento usa la shell: fuori dal thread principale, poi si ricarica l'elenco
@@ -1309,6 +1320,13 @@ public class MainActivity extends AppCompatActivity {
                     mApps.add(new AppEntry(pkg, String.valueOf(pm.getApplicationLabel(ai)), ThemePrefs.isAppEnabled(pkg)));
                 } catch (PackageManager.NameNotFoundException ignored) {
                     // app non installata: nessuna riga
+                    // alcune app di sistema (Fotocamera/Aperture su RisingOS) non sono visibili al PackageManager dell'app anche con
+                    // QUERY_ALL_PACKAGES: si controlla con root e si usa un nome fisso
+                    String alt = PM_BLIND.get(pkg);
+                    if (alt != null && rootHasPackage(pkg)) {
+                        mApps.add(new AppEntry(pkg, alt, ThemePrefs.isAppEnabled(pkg)));
+                        it.tugaia56.oxydiantheme.utils.OxyLog.log("loadApps: " + pkg + " aggiunta con root come " + alt);
+                    }
                 }
             }
         } catch (Exception ignored) {}
