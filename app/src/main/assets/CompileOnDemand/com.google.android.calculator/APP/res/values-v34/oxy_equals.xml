@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="gm3_sys_color_dynamic_dark_on_tertiary">#ff3d00</color>
+    <color name="gm3_sys_color_dynamic_dark_tertiary">#ff8f00</color>
+</resources>

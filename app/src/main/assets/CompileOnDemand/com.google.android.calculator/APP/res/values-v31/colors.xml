@@ -54,13 +54,11 @@
     <color name="gm3_sys_color_dynamic_dark_on_surface">#ff9800</color>
     <color name="gm3_sys_color_dynamic_dark_on_surface_state_content">#ffa726</color>
     <color name="gm3_sys_color_dynamic_dark_on_surface_variant_state_content">#ffcc80</color>
-    <color name="gm3_sys_color_dynamic_dark_on_tertiary">#ffe0b2</color>
     <color name="gm3_sys_color_dynamic_dark_outline">#ffc400</color>
     <color name="gm3_sys_color_dynamic_dark_primary_state_layer">@*android:color/background_dark</color>
     <color name="gm3_sys_color_dynamic_dark_secondary">#ff8f00</color>
     <color name="gm3_sys_color_dynamic_dark_secondary_state_layer">#ffb300</color>
     <color name="gm3_sys_color_dynamic_dark_surface_variant">#ffca28</color>
-    <color name="gm3_sys_color_dynamic_dark_tertiary">#ffd54f</color>
     <color name="gm3_sys_color_dynamic_light_background">#ffd600</color>
     <color name="gm3_sys_color_dynamic_light_inverse_on_surface">#ffea00</color>
     <color name="gm3_sys_color_dynamic_light_inverse_surface">#ffff00</color>
