@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- orologio analogico (e widget): lancetta delle ore e pallino in accento, lancetta dei minuti bianca, quadrante nel colore "contenitore" del Theme -->
-    <color name="analog_appwidget_hour_hand_color">@*android:color/accent_material_dark</color>
-    <color name="analog_appwidget_minute_hand_color">@*android:color/white</color>
-    <color name="analog_appwidget_second_hand_color">@*android:color/accent_material_dark</color>
-    <color name="appwidget_background_color">@*android:color/system_surface_container_dark</color>
-</resources>
