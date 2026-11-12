@@ -78,14 +78,6 @@ public final class AospTheme {
             m.put("system_secondary_container_dark", mix(a, 0xFF000000, 0.35f));
             m.put("system_on_secondary_container_dark", w);
             if (!rolesOnly) {
-                // ruolo "terziario" (es. tasto "=" della Calcolatrice, pulsanti secondari delle app Google): di serie e' una lavanda che
-                // non c'entra con il tema; toni chiari dell'accento, con il testo scuro sopra
-                m.put("system_tertiary_dark", mix(a, w, 0.72f));
-                m.put("system_on_tertiary_dark", mix(a, 0xFF000000, 0.75f));
-                m.put("system_tertiary_container_dark", mix(a, w, 0.80f));
-                m.put("system_on_tertiary_container_dark", mix(a, 0xFF000000, 0.70f));
-            }
-            if (!rolesOnly) {
                 m.put("system_surface_tint_dark", a);
                 m.put("system_control_activated_dark", a);
                 m.put("system_shade_active_dark", a);
