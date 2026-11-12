@@ -5,6 +5,10 @@
     <attr name="layout_constraintTag" format="string" />
     <attr name="roundPercent" format="float" />
     <style name="KeypadButtonStyle.Equals" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/oxy_equals_bg</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
