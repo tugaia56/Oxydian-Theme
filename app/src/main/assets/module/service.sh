@@ -22,6 +22,20 @@ if [ -z "$(getprop ro.build.version.oplusrom)" ] && [ -f "$MODDIR/fixedcolors_fa
       k=$((k+1)); sleep 2
     done
     echo "=== fixedcolors_fast fine $(date) ===" >> "$LOG"
+    # subito dopo SystemUI rifa' i suoi colori e li mette davanti ai nostri (prima ci pensava colorwatch, ma solo dopo circa 1 minuto,
+    # a PIN iniziale gia' mostrato): si controlla ogni secondo per 2 minuti e, appena stanno davanti, si rifa il giro veloce
+    w=0; fx=0
+    while [ $w -lt 120 ] && [ $fx -lt 4 ]; do
+      sleep 1; w=$((w+1))
+      l=$(cmd overlay list --user 0 android 2>/dev/null | grep '^\[x\]')
+      a=$(echo "$l" | grep -n 'com.android.shell:oxyfix' | tail -1 | cut -d: -f1)
+      b=$(echo "$l" | grep -n 'com.android.systemui:' | tail -1 | cut -d: -f1)
+      if [ -n "$a" ] && [ -n "$b" ] && [ "$b" -gt "$a" ]; then
+        echo "fixedcolors_fast: colori del sistema davanti, li rimetto, uptime $(cut -d' ' -f1 /proc/uptime)" >> "$LOG"
+        sh "$MODDIR/fixedcolors_fast.sh" >> "$LOG" 2>&1
+        fx=$((fx+1))
+      fi
+    done
   ) &
 fi
 until [ "$(getprop sys.boot_completed)" = "1" ]; do sleep 2; done
