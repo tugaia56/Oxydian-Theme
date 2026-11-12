@@ -13,7 +13,7 @@
     <color name="m3_sys_color_dynamic_dark_surface_variant">@*android:color/system_surface_variant_dark</color>
     <color name="m3_sys_color_dynamic_dark_on_background">@*android:color/white</color>
     <color name="m3_sys_color_dynamic_dark_on_surface">@*android:color/white</color>
-    <color name="m3_sys_color_dynamic_dark_on_surface_variant">@*android:color/system_on_surface_variant_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface_variant">#ffd0d3dc</color>
     <color name="m3_sys_color_dynamic_dark_outline">#ff8d919a</color>
     <color name="m3_sys_color_dynamic_dark_outline_variant">@*android:color/system_surface_container_highest_dark</color>
     <color name="m3_sys_color_dynamic_dark_primary">@*android:color/accent_material_dark</color>
