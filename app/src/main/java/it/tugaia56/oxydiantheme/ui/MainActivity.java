@@ -777,7 +777,7 @@ public class MainActivity extends AppCompatActivity {
         menu.addView(gap);
         addFabRow(menu, R.string.btn_remove, R.drawable.ic_fab_delete, false, () -> runSelected(ACT_REMOVE));
         addFabRow(menu, R.string.btn_disable, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
-        addFabRow(menu, R.string.btn_activate, R.drawable.ic_fab_check, true, () -> runSelected(ACT_ACTIVATE));
+        addFabRow(menu, R.string.btn_activate, R.drawable.ic_fab_check, false, () -> runSelected(ACT_ACTIVATE));
     }
 
     /** Una riga del menu: etichetta a pillola e cerchio con l'icona; "main" = cerchio pieno in accento. */
