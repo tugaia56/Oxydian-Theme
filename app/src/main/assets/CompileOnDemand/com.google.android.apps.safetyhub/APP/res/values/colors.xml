@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="gm3_ref_palette_neutral6">@*android:color/background_dark</color>
+    <color name="gm3_sys_color_dark_surface_dim">@*android:color/background_dark</color>
+    <color name="gm3_sys_color_dark_surface_container_low">@*android:color/background_dark</color>
+    <color name="gm3_sys_color_dark_surface_container_lowest">@*android:color/background_dark</color>
+    <color name="gm3_sys_color_dark_surface_container">@*android:color/button_material_dark</color>
+    <color name="gm3_sys_color_dark_surface_container_high">@*android:color/button_material_dark</color>
+    <color name="gm3_sys_color_dark_surface_container_highest">@*android:color/button_material_dark</color>
+    <color name="gm3_sys_color_dark_surface_bright">@*android:color/button_material_dark</color>
+    <color name="gm_ref_palette_blue400">@*android:color/accent_material_dark</color>
+    <color name="gm3_ref_palette_secondary30">@*android:color/accent_material_dark</color>
+    <color name="gm3_sys_color_dark_on_secondary_container">@*android:color/white</color>
+</resources>
