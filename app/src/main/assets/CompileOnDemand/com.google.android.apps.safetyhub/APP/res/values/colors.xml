@@ -15,4 +15,6 @@
     <color name="semanticRedContainer">@*android:color/accent_material_dark</color>
     <color name="semanticRedContainerHigh">@*android:color/accent_material_dark</color>
     <color name="semanticRedOnContainerHigh">@*android:color/white</color>
+    <color name="gm3_ref_palette_primary80">@*android:color/accent_material_dark</color>
+    <color name="gm3_sys_color_dark_on_primary">@*android:color/white</color>
 </resources>
