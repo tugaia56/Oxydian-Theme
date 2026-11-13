@@ -268,4 +268,8 @@ Rimuovere i loro temi? Serve un riavvio.</item>
     <string name="backup_delete_confirm">Eliminare %1$d file di backup dalla cartella scelta? Si tolgono solo i backup del Theme.</string>
     <string name="backup_delete_done">Eliminati: %1$d</string>
     <string name="backup_delete_button">Elimina</string>
+    <string name="fab_menu">Azioni</string>
+    <string name="fab_reboot">Riavvia telefono</string>
+    <string name="fab_reboot_msg">Riavviare il telefono ora?</string>
+    <string name="master_check_desc">Seleziona tutte o nessuna</string>
 </resources>

@@ -89,7 +89,12 @@ public class MainActivity extends AppCompatActivity {
     private TextView mStatus;
     private android.widget.ImageButton mWarn;
     private int mWarnCount = 0;
-    private Button mApply;
+    private android.widget.CheckBox mMaster;
+    private boolean mSyncMaster;
+    private boolean mFabOpen;
+    private final androidx.activity.OnBackPressedCallback mFabBack = new androidx.activity.OnBackPressedCallback(false) {
+        @Override public void handleOnBackPressed() { closeFab(); }
+    };
     // stato del lavoro in corso: statico, perche' l'attivita' viene ricreata quando gli overlay cambiano le risorse
     private static boolean mBusy = false;
     private static MainActivity sActivity;
@@ -357,29 +362,24 @@ public class MainActivity extends AppCompatActivity {
         mWarn = findViewById(R.id.btn_warn);
         mWarn.setImageTintList(android.content.res.ColorStateList.valueOf(0xFFFFC107));
         mWarn.setOnClickListener(v -> showWarning());
-        mApply = findViewById(R.id.btn_apply);
         mList.setLayoutManager(new LinearLayoutManager(this));
         mList.setAdapter(new Adapter());
-
-        mApply.setOnClickListener(v -> runSelected(ACT_ACTIVATE));
-        findViewById(R.id.btn_disable).setOnClickListener(v -> runSelected(ACT_DISABLE));
-        findViewById(R.id.btn_remove).setOnClickListener(v -> runSelected(ACT_REMOVE));
-        android.widget.ImageButton restart = findViewById(R.id.btn_restart_ui);
-        restart.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
-        restart.setOnClickListener(v -> {
-            Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
-            new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
+        // check generale in alto: seleziona tutte / nessuna (come il check di ogni overlay)
+        mMaster = findViewById(R.id.master_check);
+        mMaster.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+        mMaster.setOnCheckedChangeListener((b, c) -> { if (!mSyncMaster) setAll(c); });
+        mList.getAdapter().registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override public void onChanged() { syncMaster(); }
         });
         setupCards();
         if (savedInstanceState == null) mTab = TAB_IDS[Math.max(0, Math.min(3, ThemePrefs.getDefaultTab()))];
         else mTab = savedInstanceState.getInt("tab", mTab);
         setupBottomNav();
+        setupFab();
         buildInfoPage();
         SystemColorsDialog.republish(this);
         IconColorDialog.republish();
         NotifStyle.republish();
-        ((Button) findViewById(R.id.btn_all)).setOnClickListener(v -> setAll(true));
-        ((Button) findViewById(R.id.btn_none)).setOnClickListener(v -> setAll(false));
 
         loadApps();
         setupModuleAsync();
@@ -704,6 +704,124 @@ public class MainActivity extends AppCompatActivity {
                 }));
     }
 
+    // ── FAB con le azioni (solo nella pagina Overlay) ────────────────────────
+
+    private void setupFab() {
+        getOnBackPressedDispatcher().addCallback(this, mFabBack);
+        findViewById(R.id.fab).setOnClickListener(v -> { if (mFabOpen) closeFab(); else openFab(); });
+        findViewById(R.id.fab_scrim).setOnClickListener(v -> closeFab());
+        tintFab();
+        findViewById(R.id.fab).setVisibility(mTab == R.id.nav_themes ? View.VISIBLE : View.GONE);
+    }
+
+    private void tintFab() {
+        com.google.android.material.floatingactionbutton.FloatingActionButton fab = findViewById(R.id.fab);
+        if (fab == null) return;
+        fab.setBackgroundTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+        fab.setImageTintList(android.content.res.ColorStateList.valueOf(0xFFFFFFFF));
+    }
+
+    private void openFab() {
+        if (mBusy) return;
+        mFabOpen = true;
+        mFabBack.setEnabled(true);
+        buildFabMenu();
+        View scrim = findViewById(R.id.fab_scrim);
+        android.widget.LinearLayout menu = findViewById(R.id.fab_menu);
+        scrim.animate().cancel();
+        menu.animate().cancel();
+        scrim.setAlpha(0f);
+        scrim.setVisibility(View.VISIBLE);
+        scrim.animate().alpha(1f).setDuration(150).start();
+        menu.setAlpha(1f);
+        menu.setVisibility(View.VISIBLE);
+        float d = getResources().getDisplayMetrics().density;
+        int n = menu.getChildCount();
+        for (int i = 0; i < n; i++) {
+            View r = menu.getChildAt(n - 1 - i);   // prima le voci vicine al FAB
+            r.setAlpha(0f);
+            r.setTranslationY(16 * d);
+            r.animate().alpha(1f).translationY(0f).setStartDelay(i * 25L).setDuration(160).start();
+        }
+        ((com.google.android.material.floatingactionbutton.FloatingActionButton) findViewById(R.id.fab)).setImageResource(R.drawable.ic_fab_close);
+    }
+
+    private void closeFab() {
+        if (!mFabOpen) return;
+        mFabOpen = false;
+        mFabBack.setEnabled(false);
+        final View scrim = findViewById(R.id.fab_scrim);
+        final android.widget.LinearLayout menu = findViewById(R.id.fab_menu);
+        scrim.animate().alpha(0f).setDuration(120).withEndAction(() -> { if (!mFabOpen) scrim.setVisibility(View.GONE); }).start();
+        menu.animate().alpha(0f).setDuration(120).withEndAction(() -> { if (!mFabOpen) menu.setVisibility(View.GONE); }).start();
+        ((com.google.android.material.floatingactionbutton.FloatingActionButton) findViewById(R.id.fab)).setImageResource(R.drawable.ic_fab_menu);
+    }
+
+    private void buildFabMenu() {
+        android.widget.LinearLayout menu = findViewById(R.id.fab_menu);
+        menu.removeAllViews();
+        float d = getResources().getDisplayMetrics().density;
+        // dall'alto in basso; in fondo (vicino al FAB) le azioni sugli overlay spuntati
+        addFabRow(menu, R.string.fab_reboot, R.drawable.ic_fab_power, false, () ->
+                Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                        .setTitle(R.string.fab_reboot)
+                        .setMessage(R.string.fab_reboot_msg)
+                        .setNegativeButton(R.string.btn_cancel, null)
+                        .setPositiveButton(android.R.string.ok, (dd, w) -> new Thread(() -> Shell.cmd("svc power reboot").exec()).start())));
+        addFabRow(menu, R.string.restart_ui, R.drawable.ic_restart_thin, false, () -> {
+            Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
+            new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
+        });
+        View gap = new View(this);
+        gap.setLayoutParams(new android.widget.LinearLayout.LayoutParams(1, (int) (18 * d)));
+        menu.addView(gap);
+        addFabRow(menu, R.string.btn_remove, R.drawable.ic_fab_delete, false, () -> runSelected(ACT_REMOVE));
+        addFabRow(menu, R.string.btn_disable, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
+        addFabRow(menu, R.string.btn_activate, R.drawable.ic_fab_check, true, () -> runSelected(ACT_ACTIVATE));
+    }
+
+    /** Una riga del menu: etichetta a pillola e cerchio con l'icona; "main" = cerchio pieno in accento. */
+    private void addFabRow(android.widget.LinearLayout menu, int label, int icon, boolean main, Runnable action) {
+        float d = getResources().getDisplayMetrics().density;
+        int acc = ThemePrefs.accentColor();
+        android.widget.LinearLayout row = new android.widget.LinearLayout(this);
+        row.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.topMargin = (int) (14 * d);
+        lp.gravity = android.view.Gravity.END;
+        row.setLayoutParams(lp);
+
+        TextView t = new TextView(this);
+        t.setText(label);
+        t.setTextColor(getColor(R.color.text));
+        t.setTextSize(18);
+        t.setPadding((int) (20 * d), (int) (12 * d), (int) (20 * d), (int) (12 * d));
+        android.graphics.drawable.GradientDrawable tb = new android.graphics.drawable.GradientDrawable();
+        tb.setColor(getColor(R.color.card));
+        tb.setCornerRadius(24 * d);
+        t.setBackground(tb);
+        row.addView(t);
+
+        android.widget.ImageView ic = new android.widget.ImageView(this);
+        int size = (int) (56 * d), pad = (int) (14 * d);
+        android.widget.LinearLayout.LayoutParams ilp = new android.widget.LinearLayout.LayoutParams(size, size);
+        ilp.setMarginStart((int) (12 * d));
+        ic.setLayoutParams(ilp);
+        ic.setPadding(pad, pad, pad, pad);
+        ic.setImageResource(icon);
+        android.graphics.drawable.GradientDrawable cb = new android.graphics.drawable.GradientDrawable();
+        cb.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+        cb.setColor(main ? acc : getColor(R.color.card));
+        ic.setBackground(cb);
+        ic.setImageTintList(android.content.res.ColorStateList.valueOf(main ? 0xFFFFFFFF : acc));
+        row.addView(ic);
+
+        row.setOnClickListener(v -> { closeFab(); action.run(); });
+        menu.addView(row);
+    }
+
     private void setupBottomNav() {
         com.google.android.material.bottomnavigation.BottomNavigationView nav = findViewById(R.id.bottom_nav);
         nav.setOnItemSelectedListener(item -> {
@@ -725,6 +843,11 @@ public class MainActivity extends AppCompatActivity {
                 : id == R.id.nav_info ? R.string.tab_info : R.string.title_apps;
         ((TextView) findViewById(R.id.title)).setText(title);
         updateNotice();
+        View fabView = findViewById(R.id.fab);
+        if (fabView != null) {
+            if (id != R.id.nav_themes) closeFab();
+            fabView.setVisibility(id == R.id.nav_themes ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void tintBottomNav() {
@@ -1032,6 +1155,8 @@ public class MainActivity extends AppCompatActivity {
     private void refreshCards() {
         if (mStatus != null) mStatus.setTextColor(ThemePrefs.accentColor());
         tintBottomNav();
+        tintFab();
+        if (mMaster != null) mMaster.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
         float d = getResources().getDisplayMetrics().density;
         for (View c : mCards) {
             android.graphics.drawable.Drawable grad = GradBorder.card(getColor(R.color.card), 14 * d, d, ThemePrefs.accentColor());
@@ -1372,10 +1497,20 @@ public class MainActivity extends AppCompatActivity {
     private final Set<String> mSelected = new HashSet<>();
 
     private void setAll(boolean on) {
-        if (mBusy) return;
+        if (mBusy) { syncMaster(); return; }
         mSelected.clear();
         if (on) for (AppEntry e : mVisible) mSelected.add(e.name);
         mList.getAdapter().notifyDataSetChanged();
+    }
+
+    /** Il check generale e' spuntato solo se tutte le voci visibili sono spuntate. */
+    private void syncMaster() {
+        if (mMaster == null) return;
+        boolean all = !mVisible.isEmpty();
+        for (AppEntry e : mVisible) if (!mSelected.contains(e.name)) { all = false; break; }
+        mSyncMaster = true;
+        mMaster.setChecked(all);
+        mSyncMaster = false;
     }
 
     private class Adapter extends RecyclerView.Adapter<Adapter.VH> {
@@ -1421,6 +1556,7 @@ public class MainActivity extends AppCompatActivity {
             h.sw.setChecked(mSelected.contains(e.name));
             h.sw.setOnCheckedChangeListener((b, checked) -> {
                 if (checked) mSelected.add(e.name); else mSelected.remove(e.name);
+                syncMaster();
             });
             boolean hasOpt = !e.ds && !optionGroups(MainActivity.this, e.pkg).isEmpty();
             h.opt.setVisibility(hasOpt ? View.VISIBLE : View.GONE);
@@ -1852,9 +1988,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setButtonsEnabled(boolean on) {
-        mApply.setEnabled(on);
-        findViewById(R.id.btn_disable).setEnabled(on);
-        findViewById(R.id.btn_remove).setEnabled(on);
+        View fab = findViewById(R.id.fab);
+        if (fab == null) return;
+        fab.setEnabled(on);
+        fab.setAlpha(on ? 1f : 0.5f);
+        if (!on && mFabOpen) closeFab();
     }
 
     /** La traduzione di SystemUI (solo RisingOS) non ha riga: segue quella delle Impostazioni. */

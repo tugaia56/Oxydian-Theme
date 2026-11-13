@@ -269,4 +269,8 @@ Remove their themes? A reboot is needed.</item>
     <string name="backup_delete_confirm">Delete %1$d backup files from the chosen folder? Only the Theme backups are removed.</string>
     <string name="backup_delete_done">Deleted: %1$d</string>
     <string name="backup_delete_button">Delete</string>
+    <string name="fab_menu">Actions</string>
+    <string name="fab_reboot">Restart phone</string>
+    <string name="fab_reboot_msg">Restart the phone now?</string>
+    <string name="master_check_desc">Select all or none</string>
 </resources>

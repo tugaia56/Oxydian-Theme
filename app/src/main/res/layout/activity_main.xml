@@ -25,14 +25,6 @@
             android:textStyle="bold" />
 
         <ImageButton
-            android:id="@+id/btn_restart_ui"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/restart_ui"
-            android:src="@drawable/ic_restart_thin" />
-
-        <ImageButton
             android:id="@+id/btn_warn"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -53,61 +45,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal="12dp">
-
-                <Button
-                    android:id="@+id/btn_apply"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/btn_activate" />
-
-                <Button
-                    android:id="@+id/btn_disable"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="@string/btn_disable" />
-
-                <Button
-                    android:id="@+id/btn_remove"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="@string/btn_remove" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal="12dp">
-
-                <Button
-                    android:id="@+id/btn_all"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/btn_select_all" />
-
-                <Button
-                    android:id="@+id/btn_none"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/btn_clear_all" />
-            </LinearLayout>
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -136,6 +73,13 @@
                             android:textColor="@color/accent"
                             android:textSize="13sp" />
 
+                        <CheckBox
+                            android:id="@+id/master_check"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:contentDescription="@string/master_check_desc" />
+
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -144,7 +88,8 @@
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"
                         android:nestedScrollingEnabled="false"
-                        android:padding="8dp" />
+                        android:padding="8dp"
+                        android:paddingBottom="96dp" />
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
         </LinearLayout>
@@ -161,7 +106,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="6dp"
-                android:paddingVertical="8dp">
+                android:paddingVertical="8dp"
+                android:paddingBottom="96dp">
                 <LinearLayout
                     android:id="@+id/cards_row1"
                     android:layout_width="match_parent"
@@ -192,7 +138,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="6dp"
-                android:paddingVertical="8dp">
+                android:paddingVertical="8dp"
+                android:paddingBottom="96dp">
                 <LinearLayout
                     android:id="@+id/cards_row0"
                     android:layout_width="match_parent"
@@ -238,8 +185,41 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp" />
+                android:paddingStart="20dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="100dp" />
         </ScrollView>
+
+        <!-- FAB con le azioni: il menu cambia secondo la pagina aperta -->
+        <View
+            android:id="@+id/fab_scrim"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#B3000000"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/fab_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="96dp"
+            android:gravity="end"
+            android:orientation="vertical"
+            android:visibility="gone" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/fab_menu"
+            android:src="@drawable/ic_fab_menu" />
     </FrameLayout>
 
     <!-- La barra sta dentro un contenitore e 3 dp sopra il fondo della finestra: alcune ROM (RisingOS: LiquidTabBars) trasformano
