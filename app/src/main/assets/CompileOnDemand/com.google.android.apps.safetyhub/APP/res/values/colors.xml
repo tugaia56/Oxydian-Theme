@@ -20,4 +20,6 @@
     <color name="gm3_ref_palette_secondary80">@*android:color/accent_material_dark</color>
     <color name="settingslib_materialColorSurfaceContainerHigh">@*android:color/background_dark</color>
     <color name="settingslib_materialColorSurfaceContainerLowest">@*android:color/button_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container_high">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container_lowest">@*android:color/button_material_dark</color>
 </resources>
