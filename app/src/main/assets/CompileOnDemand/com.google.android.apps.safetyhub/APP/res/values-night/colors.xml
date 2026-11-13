@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="emergency_dialer_background">@*android:color/background_dark</color>
-    <color name="semanticRedSurfaceContainerHigh">@*android:color/button_material_dark</color>
+    <color name="semanticRedSurfaceContainerHigh">@*android:color/ripple_material_dark</color>
+    <color name="semanticRedSurfaceContainer">@*android:color/ripple_material_dark</color>
+    <color name="semanticRedOnSurface">@*android:color/white</color>
+    <color name="semanticRedOnSurfaceVariant">@*android:color/white</color>
 </resources>
