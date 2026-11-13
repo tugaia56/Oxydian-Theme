@@ -9,4 +9,6 @@
     <color name="semanticRedContainer">@*android:color/accent_material_dark</color>
     <color name="semanticRedContainerHigh">@*android:color/accent_material_dark</color>
     <color name="semanticRedOnContainerHigh">@*android:color/white</color>
+    <color name="settingslib_materialColorSurfaceContainerHigh">@*android:color/background_dark</color>
+    <color name="settingslib_materialColorSurfaceContainerLowest">@*android:color/button_material_dark</color>
 </resources>
