@@ -5,4 +5,5 @@
     <color name="semanticRedSurfaceContainer">@*android:color/ripple_material_dark</color>
     <color name="semanticRedOnSurface">@*android:color/white</color>
     <color name="semanticRedOnSurfaceVariant">@*android:color/white</color>
+    <color name="navbar_selected_highlight">@*android:color/accent_material_dark</color>
 </resources>

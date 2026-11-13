@@ -11,4 +11,5 @@
     <color name="gm_ref_palette_blue400">@*android:color/accent_material_dark</color>
     <color name="gm3_ref_palette_secondary30">@*android:color/accent_material_dark</color>
     <color name="gm3_sys_color_dark_on_secondary_container">@*android:color/white</color>
+    <color name="navbar_selected_highlight">@*android:color/accent_material_dark</color>
 </resources>
