@@ -22,4 +22,8 @@
     <color name="settingslib_materialColorSurfaceContainerLowest">@*android:color/button_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_surface_container_high">@*android:color/background_dark</color>
     <color name="m3_sys_color_dynamic_dark_surface_container_lowest">@*android:color/button_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary">@*android:color/white</color>
+    <color name="m3_sys_color_dark_on_primary">@*android:color/white</color>
+    <color name="gm_sys_color_dark_on_primary">@*android:color/white</color>
+    <color name="gm3_sys_color_dynamic_dark_on_primary">@*android:color/white</color>
 </resources>
