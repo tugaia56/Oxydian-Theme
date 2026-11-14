@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         final boolean ds;
         final String key;   // chiave delle scelte salvate: il pacchetto, oppure pacchetto#N per le varianti
         final int vid;      // 0 = app normale, da 2 in su = variante
+        final String baseLabel;   // nome dell'app senza il nome della variante
         boolean enabled;
         AppEntry(String pkg, String label, boolean enabled) {
             this(pkg, label, "APP", ThemeCompiler.overlayName(pkg), false, enabled, pkg, 0);
@@ -61,12 +62,15 @@ public class MainActivity extends AppCompatActivity {
             this(pkg, label, dir, "DS_" + dir, true, enabled, pkg, 0);
         }
         /** Variante di un'app: stesso tema di base, overlay e scelte tutti suoi. */
-        AppEntry(String pkg, String label, int vid, boolean enabled) {
-            this(pkg, label, "APP", ThemeCompiler.overlayName(pkg) + "_v" + vid, false, enabled, pkg + "#" + vid, vid);
+        AppEntry(String pkg, String label, String baseLabel, int vid, boolean enabled) {
+            this(pkg, label, "APP", ThemeCompiler.overlayName(pkg) + "_v" + vid, false, enabled, pkg + "#" + vid, vid, baseLabel);
         }
         private AppEntry(String pkg, String label, String dir, String name, boolean ds, boolean enabled, String key, int vid) {
+            this(pkg, label, dir, name, ds, enabled, key, vid, label);
+        }
+        private AppEntry(String pkg, String label, String dir, String name, boolean ds, boolean enabled, String key, int vid, String baseLabel) {
             this.pkg = pkg; this.label = label; this.dir = dir; this.name = name; this.ds = ds; this.enabled = enabled;
-            this.key = key; this.vid = vid;
+            this.key = key; this.vid = vid; this.baseLabel = baseLabel;
         }
         String overlay() { return ThemeCompiler.namedPackage(name); }
         void saveEnabled() { if (ds) ThemePrefs.setDarkShadowEnabled(pkg, enabled); else ThemePrefs.setAppEnabled(key, enabled); }
@@ -1513,7 +1517,7 @@ public class MainActivity extends AppCompatActivity {
         for (AppEntry b : mApps) {
             if (b.ds) continue;
             for (int id : ThemePrefs.getVariantIds(b.pkg))
-                variants.add(new AppEntry(b.pkg, b.label + " \u00b7 " + variantDisplay(b.pkg, id), id, ThemePrefs.isAppEnabled(b.pkg + "#" + id)));
+                variants.add(new AppEntry(b.pkg, b.label + " \u00b7 " + variantDisplay(b.pkg, id), b.label, id, ThemePrefs.isAppEnabled(b.pkg + "#" + id)));
         }
         mApps.addAll(variants);
         mApps.sort(Comparator.comparing(e -> e.label.toLowerCase(Locale.ROOT)));
@@ -1612,7 +1616,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull VH h, int pos) {
             AppEntry e = mVisible.get(pos);
-            h.name.setText(e.label);
+            h.name.setText(rowLabel(e));
             h.pkg.setText(e.pkg);
             Integer stObj = mState.get(e.name);
             int stv = stObj == null ? ST_NONE : stObj;
@@ -1949,19 +1953,35 @@ public class MainActivity extends AppCompatActivity {
         return out;
     }
 
+    /** Nomi delle opzioni scelte (per esempio lo sfondo), separati da virgola; vuoto se non c'e' nessuna scelta. */
+    private String optionSummary(String pkg, String key) {
+        StringBuilder sb = new StringBuilder();
+        for (OptGroup g : optionGroups(this, pkg)) {
+            String ch = ThemePrefs.getOption(key, g.id);
+            if (ch.isEmpty()) continue;
+            if (sb.length() > 0) sb.append(", ");
+            sb.append(ch.replace('_', ' '));
+        }
+        return sb.toString();
+    }
+
     /** Nome mostrato per una variante: quello scelto dall'utente, oppure (se e' rimasto quello automatico) il nome delle opzioni scelte, per esempio lo sfondo. */
     private String variantDisplay(String pkg, int id) {
         String name = ThemePrefs.getVariantName(pkg, id);
         boolean auto = name.equals(getString(R.string.variant_default_name, id)) || name.equals(String.valueOf(id));
         if (!auto) return name;
-        StringBuilder sb = new StringBuilder();
-        for (OptGroup g : optionGroups(this, pkg)) {
-            String ch = ThemePrefs.getOption(pkg + "#" + id, g.id);
-            if (ch.isEmpty()) continue;
-            if (sb.length() > 0) sb.append(", ");
-            sb.append(ch.replace('_', ' '));
-        }
-        return sb.length() > 0 ? sb.toString() : getString(R.string.variant_default_name, id);
+        String ch = optionSummary(pkg, pkg + "#" + id);
+        return ch.isEmpty() ? getString(R.string.variant_default_name, id) : ch;
+    }
+
+    /** Nome della riga: app normale = nome + opzioni scelte (se ha varianti e nessuna scelta, "Predefinito"); variante = nome + suo nome. */
+    private String rowLabel(AppEntry e) {
+        if (e.ds) return e.label;
+        if (e.vid != 0) return e.baseLabel + " \u00b7 " + variantDisplay(e.pkg, e.vid);
+        String ch = optionSummary(e.pkg, e.pkg);
+        if (!ch.isEmpty()) return e.label + " \u00b7 " + ch;
+        if (!ThemePrefs.getVariantIds(e.pkg).isEmpty()) return e.label + " \u00b7 " + getString(R.string.options_default);
+        return e.label;
     }
 
     /** Crea una variante dell'app: un secondo overlay con le sue opzioni. */
@@ -2016,7 +2036,7 @@ public class MainActivity extends AppCompatActivity {
         if (mBusy) return;
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.variant_delete)
-                .setMessage(getString(R.string.variant_delete_confirm, e.label))
+                .setMessage(getString(R.string.variant_delete_confirm, e.baseLabel + " \u00b7 " + variantDisplay(e.pkg, e.vid)))
                 .setNegativeButton(R.string.btn_cancel, null)
                 .setPositiveButton(R.string.variant_delete, (d, w) -> {
                     ThemePrefs.removeVariant(e.pkg, e.vid);
@@ -2055,6 +2075,7 @@ public class MainActivity extends AppCompatActivity {
                 final String choice = c;
                 rb.setOnClickListener(v -> {
                     ThemePrefs.setOption(e.key, g.id, choice);
+                    if (!e.ds) mList.getAdapter().notifyDataSetChanged();   // il nome della riga segue le opzioni scelte
                     for (int i = 0; i < rg.getChildCount(); i++) {
                         android.widget.RadioButton o = (android.widget.RadioButton) rg.getChildAt(i);
                         o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
