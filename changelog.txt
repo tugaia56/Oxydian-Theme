@@ -1,0 +1,14 @@
+Aggiunto:
+- Pagina Overlay: un pulsante tondo con le azioni sulle app spuntate: Installa, Attiva, Cambia stato (attivo <-> disattivato), Disattiva e Disinstalla, più Riavvia interfaccia e Riavvia telefono. Il pulsante mostra quante app hai spuntato, un check rotondo in alto spunta tutte o nessuna, e l'icona (i) apre la legenda dei colori
+- Varianti: nelle Opzioni di un'app, "+ Variante" crea un altro overlay della stessa app con le sue opzioni (per esempio due sfondi). Si costruiscono una volta sola, poi se ne accende uno alla volta senza ricostruire (la prima volta serve un riavvio). Il nome segue l'opzione scelta, e accendendone una si spengono le altre di quell'app
+- Finestra di benvenuto con una breve spiegazione dell'app (spenta di default: Impostazioni > Come funziona)
+- Nuovi temi per le app: Sicurezza personale, Aperture (fotocamera), Orologio e Calcolatrice di Google (tasto uguale: Accento pieno / Sfondo del tema), Pixolor 2.1 (italiano)
+- Android (RisingOS, crDroid): stili di notifiche, toast e finestre con tanti modelli e bordo sfumato, opzioni del tastierino PIN, interruttore sfocatura finestre e livello "Vetro" per il pannello, anteprime delle card delle Impostazioni, traduzione italiana delle Impostazioni di RisingOS (circa 1.240 testi) e di SystemUI (248 testi)
+- Scheda Interruttori anche su Android puro: funziona nelle app dove il modulo Oxydian è attivo, non nelle app di sistema
+- Avvio più veloce: i colori del Theme tornano molto prima (l'accento c'è già alla prima schermata del PIN), le app che partono presto (Orologio, Messaggi) ripartono con i colori del Theme, e su KernelSU "Smonta moduli" si spegne da solo per le app che ricevono un overlay
+Aggiornato:
+- RisingOS: niente pillola di vetro sulla barra in basso del Theme
+- Pagina Colori: le card delle categorie stanno subito sotto Accento e Sfondo
+- Card Wi-Fi / Segnale solo su OxygenOS (RisingOS e crDroid hanno le loro opzioni)
+Rimosso:
+- Overlay che non possono più funzionare: Digital Wellbeing (nomi delle risorse cifrati), Contatti di Google (lo fa il modulo Oxydian), Solid Explorer 3.6.4 (due pacchetti di risorse: lo fa il modulo) e l'opzione "Con bordo" della Calcolatrice

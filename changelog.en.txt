@@ -1,0 +1,14 @@
+Added:
+- Overlay page: a round button with the actions on the ticked apps: Install, Enable, Switch state (active <-> disabled), Disable and Uninstall, plus Restart UI and Restart phone. The button shows how many apps are ticked, one round check at the top ticks all or none, and an (i) icon opens the colour legend
+- Variants: in an app's Options, "+ Variant" creates another overlay of the same app with its own options (for example two backgrounds). Build them once, then turn on one at a time without rebuilding (the first time needs one reboot). The name follows the chosen option, and turning one on turns the others of that app off
+- Welcome window with a short explanation of the app (off by default: Settings > How it works)
+- New app themes: Personal Safety, Aperture (camera), Google Clock and Calculator (equals key: Full accent / Theme background), Pixolor 2.1 (Italian)
+- Android (RisingOS, crDroid): notification, toast and dialog styles with many presets and gradient border, PIN keypad options, window blur switch and a "Glass" level for the shade, previews for the Settings cards, Italian translation of the RisingOS Settings (about 1,240 texts) and SystemUI (248 texts)
+- Switches card also on pure Android: it works in apps where the Oxydian module is active, not in system apps
+- Faster boot: the Theme colours are back much earlier (the accent is there at the first PIN screen), apps that start early (Clock, Messages) restart with the Theme colours, and on KernelSU "Umount modules" is turned off for the apps that get an overlay
+Changed:
+- RisingOS: no glass pill on the Theme's bottom bar
+- Colours page: the category cards sit right under Accent and Background
+- Wi-Fi / Signal cards only on OxygenOS (RisingOS and crDroid have their own options)
+Removed:
+- Overlays that can no longer work: Digital Wellbeing (obfuscated resource names), Google Contacts (the Oxydian module does it), Solid Explorer 3.6.4 (two resource packages: the module does it) and the Calculator "With border" option
