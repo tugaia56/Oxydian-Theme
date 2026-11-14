@@ -292,4 +292,9 @@ Riattivare i loro temi?</item>
         <item quantity="one">%d selezionata</item>
         <item quantity="other">%d selezionate</item>
     </plurals>
+    <string name="fab_toggle_sel">Cambia stato selezionate</string>
+    <string name="btn_toggle">Cambia stato</string>
+    <string name="toggle_none">Spunta overlay attivi o disattivati</string>
+    <string name="toggle_confirm">%1$d si accendono, %2$d si spengono.
+Continuare?</string>
 </resources>

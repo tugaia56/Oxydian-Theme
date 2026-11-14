@@ -783,6 +783,8 @@ public class MainActivity extends AppCompatActivity {
         menu.addView(gap);
         addFabRow(menu, R.string.fab_remove_sel, R.drawable.ic_fab_delete, false, () -> runSelected(ACT_REMOVE));
         addFabRow(menu, R.string.fab_disable_sel, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
+        // Cambia stato: gli attivi si spengono e i spenti si accendono
+        addFabRow(menu, R.string.fab_toggle_sel, R.drawable.ic_fab_swap, false, () -> runSelected(ACT_TOGGLE));
         // Attiva = riaccendere un overlay gia' costruito; Installa = costruirne uno che ancora non c'e' (la procedura e' la stessa)
         addFabRow(menu, R.string.fab_enable_sel, R.drawable.ic_fab_play, false, () -> runSelected(ACT_ACTIVATE, true));
         addFabRow(menu, R.string.fab_install_sel, R.drawable.ic_fab_check, false, () -> runSelected(ACT_ACTIVATE, false));
@@ -2002,7 +2004,7 @@ public class MainActivity extends AppCompatActivity {
         return out;
     }
 
-    private static final int ACT_ACTIVATE = 0, ACT_DISABLE = 1, ACT_REMOVE = 2;
+    private static final int ACT_ACTIVATE = 0, ACT_DISABLE = 1, ACT_REMOVE = 2, ACT_TOGGLE = 3;
     private boolean mRestartUiAfter;
 
     /** Azione sulle voci spuntate nella lista. */
@@ -2014,6 +2016,26 @@ public class MainActivity extends AppCompatActivity {
         for (AppEntry e : mVisible) if (mSelected.contains(e.name)) targets.add(e);
         if (targets.isEmpty()) {
             Toast.makeText(this, R.string.select_first, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (action == ACT_TOGGLE) {
+            List<AppEntry> eligible = new ArrayList<>();
+            int on = 0, off = 0;
+            for (AppEntry e : targets) {
+                Integer st = mState.get(e.name);
+                if (st == null) continue;
+                if (st == ST_ACTIVE) { on++; eligible.add(e); }
+                else if (st == ST_DISABLED) { off++; eligible.add(e); }
+            }
+            if (eligible.isEmpty()) {
+                Toast.makeText(this, R.string.toggle_none, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.btn_toggle)
+                    .setMessage(getString(R.string.toggle_confirm, off, on))
+                    .setPositiveButton(R.string.btn_toggle, (d, w) -> runAction(eligible, ACT_TOGGLE))
+                    .setNegativeButton(R.string.btn_cancel, null));
             return;
         }
         final int n = targets.size();
@@ -2075,8 +2097,30 @@ public class MainActivity extends AppCompatActivity {
         setButtonsEnabled(false);
         sBusyText = "";
         busyShow();
+        // "Cambia stato": ogni overlay fa il contrario di com'e' ora (attivo -> spento, spento -> acceso)
+        final Map<String, Integer> actMap = new HashMap<>();
+        int firstAct = action;
+        if (action == ACT_TOGGLE) {
+            firstAct = -1;
+            for (AppEntry e : targetsIn) {
+                Integer st = mState.get(e.name);
+                int a = (st != null && st == ST_ACTIVE) ? ACT_DISABLE : ACT_ACTIVATE;
+                actMap.put(e.name, a);
+                if (firstAct < 0) firstAct = a;
+            }
+        }
+        final int dfltAct = firstAct;
+        final java.util.function.ToIntFunction<AppEntry> actFor = e -> {
+            if (actMap.isEmpty()) return action;
+            Integer a = actMap.get(e.name);
+            return a != null ? a : dfltAct;
+        };
+        boolean anyAct = false;
+        for (AppEntry e : targets) if (actFor.applyAsInt(e) == ACT_ACTIVATE) { anyAct = true; break; }
+        final boolean anyActivate = anyAct;
+        final int groupAction = action == ACT_TOGGLE ? (anyActivate ? ACT_ACTIVATE : ACT_DISABLE) : action;
         for (AppEntry e : targets) {
-            e.enabled = action == ACT_ACTIVATE;   // stato voluto: acceso solo dopo Attiva
+            e.enabled = actFor.applyAsInt(e) == ACT_ACTIVATE;   // stato voluto: acceso solo dopo Attiva
             e.saveEnabled();
         }
         final List<AppEntry> all = new ArrayList<>(mApps);
@@ -2093,18 +2137,19 @@ public class MainActivity extends AppCompatActivity {
                 ModuleSetup.ensure();
                 it.tugaia56.oxydiantheme.utils.OxyLog.log("runAction: module ready");
                 // KernelSU: le app con un overlay del Theme devono vedere i file dei moduli (Smonta moduli spento)
-                if (action == ACT_ACTIVATE) {
+                if (anyActivate) {
                     java.util.Set<String> seen = new java.util.HashSet<>();
-                    for (AppEntry e : targets) if (seen.add(e.pkg)) it.tugaia56.oxydiantheme.utils.KsuProfile.allowOverlays(e.pkg);
+                    for (AppEntry e : targets) if (actFor.applyAsInt(e) == ACT_ACTIVATE && seen.add(e.pkg)) it.tugaia56.oxydiantheme.utils.KsuProfile.allowOverlays(e.pkg);
                 }
                 int step = 0;
                 for (AppEntry e : targets) {
                     step++;
                     busyUpdate(getString(R.string.busy_progress, step, targets.size(), e.name));
                     boolean active = before.contains(e.overlay());
-                    if (action != ACT_ACTIVATE) {
+                    final int ea = actFor.applyAsInt(e);
+                    if (ea != ACT_ACTIVATE) {
                         if (active) toDisable.add(e.overlay());
-                        if (action == ACT_REMOVE) {
+                        if (ea == ACT_REMOVE) {
                             toRemove.add(e.name);
                             e.clearBuilt();
                         }
@@ -2156,22 +2201,22 @@ public class MainActivity extends AppCompatActivity {
             // Android puro: l'accento va dato anche al sistema (colore di partenza)
             boolean sysTarget = false;
             for (AppEntry e : targets) if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) { sysTarget = true; break; }
-            if (sysTarget && action == ACT_ACTIVATE) ThemePrefs.setUiRestartPending(true);
-            if (sysTarget) AospTheme.apply(MainActivity.this, action == ACT_ACTIVATE);
+            if (sysTarget && groupAction == ACT_ACTIVATE) ThemePrefs.setUiRestartPending(true);
+            if (sysTarget) AospTheme.apply(MainActivity.this, groupAction == ACT_ACTIVATE);
             // icone Wi-Fi/segnale e pack icone Impostazioni hanno l'accento scritto dentro: si rifanno anche loro
-            if (sysTarget && action == ACT_ACTIVATE) { busyUpdate(getString(R.string.busy_styles)); it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale start"); StyleActivity.rebuildStale(MainActivity.this); it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale end"); }
+            if (sysTarget && groupAction == ACT_ACTIVATE) { busyUpdate(getString(R.string.busy_styles)); it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale start"); StyleActivity.rebuildStale(MainActivity.this); it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale end"); }
             // Oxydian "cuoce" l'accento nel colore del pulsante Recenti del launcher: si rifa' col colore nuovo
-            if (sysTarget && action == ACT_ACTIVATE) { it.tugaia56.oxydiantheme.utils.OxyLog.log("refreshRecentsButton"); it.tugaia56.oxydiantheme.utils.OxydianLink.refreshRecentsButton(ThemePrefs.accentColor()); }
+            if (sysTarget && groupAction == ACT_ACTIVATE) { it.tugaia56.oxydiantheme.utils.OxyLog.log("refreshRecentsButton"); it.tugaia56.oxydiantheme.utils.OxydianLink.refreshRecentsButton(ThemePrefs.accentColor()); }
             // colori di sistema gia' scelti: si riapplicano anche quando si installa un'altra app
-            else if (action == ACT_ACTIVATE && ThemePrefs.isDarkShadowEnabled(SystemColorsDialog.PKG)) AospTheme.apply(MainActivity.this, true);
+            else if (anyActivate && ThemePrefs.isDarkShadowEnabled(SystemColorsDialog.PKG)) AospTheme.apply(MainActivity.this, true);
 
             Set<String> after = enabledOverlays();
             int notYetActive = 0;
-            if (action == ACT_ACTIVATE) for (AppEntry e : targets) if (!after.contains(e.overlay())) notYetActive++;
+            for (AppEntry e : targets) if (actFor.applyAsInt(e) == ACT_ACTIVATE && !after.contains(e.overlay())) notYetActive++;
             it.tugaia56.oxydiantheme.utils.OxyLog.log("action thread finished");
             busyHide();
             final int f = failed, n = notYetActive, removedCount = toRemove.size();
-            final boolean autoRebuild = sysTarget && action == ACT_ACTIVATE;
+            final boolean autoRebuild = sysTarget && groupAction == ACT_ACTIVATE;
             new Handler(Looper.getMainLooper()).post(() -> {
                 // l'attivita' puo' essere stata ricreata mentre si lavorava (gli overlay cambiano le risorse): si usa quella viva
                 MainActivity act = sActivity;

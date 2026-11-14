@@ -293,4 +293,9 @@ Enable their themes again?</item>
         <item quantity="one">%d selected</item>
         <item quantity="other">%d selected</item>
     </plurals>
+    <string name="fab_toggle_sel">Switch state of selected</string>
+    <string name="btn_toggle">Switch state</string>
+    <string name="toggle_none">Tick active or disabled overlays</string>
+    <string name="toggle_confirm">%1$d turn on, %2$d turn off.
+Continue?</string>
 </resources>
