@@ -17,7 +17,7 @@
     <color name="sud_color_on_surface">@*android:color/accent_material_dark</color>
     <color name="sud_system_background_dark">#ff5722</color>
     <color name="sud_system_background_light">#ff7043</color>
-    <color name="sud_system_error_container_dark">#ff8a65</color>
+    <color name="sud_system_error_container_dark">@*android:color/button_material_dark</color>
     <color name="sud_system_error_container_light">#ffab91</color>
     <color name="sud_system_error_dark">#ffccbc</color>
     <color name="sud_system_error_light">#aeea00</color>
@@ -126,7 +126,7 @@
     <color name="gm3_sys_color_dynamic_dark_secondary">@*android:color/accent_material_dark</color>
     <color name="gm3_sys_color_dynamic_dark_secondary_container">@*android:color/accent_material_dark</color>
     <color name="gm3_sys_color_dynamic_dark_surface">@*android:color/background_dark</color>
-    <color name="gm3_sys_color_dynamic_dark_surface_bright">#ff8a65</color>
+    <color name="gm3_sys_color_dynamic_dark_surface_bright">@*android:color/button_material_dark</color>
     <color name="gm3_sys_color_dynamic_dark_surface_container">@*android:color/background_dark</color>
     <color name="gm3_sys_color_dynamic_dark_surface_container_high">@*android:color/holo_primary</color>
     <color name="gm3_sys_color_dynamic_dark_surface_container_highest">@*android:color/background_dark</color>
