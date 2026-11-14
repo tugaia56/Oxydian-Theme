@@ -273,4 +273,18 @@ Remove their themes? A reboot is needed.</item>
     <string name="fab_reboot">Restart phone</string>
     <string name="fab_reboot_msg">Restart the phone now?</string>
     <string name="master_check_desc">Select all or none</string>
+    <string name="fab_install_sel">Install selected</string>
+    <string name="fab_enable_sel">Enable selected</string>
+    <string name="fab_disable_sel">Disable selected</string>
+    <string name="fab_remove_sel">Remove selected</string>
+    <string name="btn_enable">Enable</string>
+    <plurals name="confirm_enable">
+        <item quantity="one">%d app selected.
+Enable its theme again?</item>
+        <item quantity="other">%d apps selected.
+Enable their themes again?</item>
+    </plurals>
+    <string name="welcome_title">Welcome to Oxydian Theme</string>
+    <string name="welcome_body">Oxydian Theme gives your phones uniform colours and style, without complicated tools.\n\nOverlay: tick the apps, then use the round button at the bottom right to install, enable, disable or remove their themes. The check at the top ticks all items or none, and the number on the button tells you how many you picked.\n\nColors: choose accent, background and system colours.\n\nMods: icons, styles, navigation bar and other customisations.\n\nSettings: updates, backup, start page and guide.\n\nAfter the first new overlay a reboot is needed. The colour of each app name shows its state: tap the (i) icon at the top for the legend.</string>
+    <string name="welcome_ok">Got it</string>
 </resources>

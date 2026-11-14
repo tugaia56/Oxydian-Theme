@@ -25,6 +25,14 @@
             android:textStyle="bold" />
 
         <ImageButton
+            android:id="@+id/btn_info"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/btn_legend"
+            android:src="@drawable/ic_info_thin" />
+
+        <ImageButton
             android:id="@+id/btn_warn"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -212,14 +220,18 @@
             android:orientation="vertical"
             android:visibility="gone" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:contentDescription="@string/fab_menu"
-            android:src="@drawable/ic_fab_menu" />
+            android:textColor="#FFFFFFFF"
+            android:textSize="18sp"
+            app:icon="@drawable/ic_fab_menu"
+            app:iconTint="#FFFFFFFF" />
     </FrameLayout>
 
     <!-- La barra sta dentro un contenitore e 3 dp sopra il fondo della finestra: alcune ROM (RisingOS: LiquidTabBars) trasformano

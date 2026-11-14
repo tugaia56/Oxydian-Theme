@@ -169,6 +169,9 @@ public final class ThemePrefs {
     public static void setRippleAlpha(int pct) { sp().edit().putInt("ripple_alpha", pct).commit(); }
 
     /** Pagina che si apre all'avvio: 0 Overlay, 1 Colori, 2 Mods, 3 Impostazioni. */
+    public static boolean isWelcomeSeen() { return sp().getBoolean("welcome_seen", false); }
+    public static void setWelcomeSeen() { sp().edit().putBoolean("welcome_seen", true).apply(); }
+
     public static int getDefaultTab() { return sp().getInt("default_tab", 0); }
 
     public static void setDefaultTab(int tab) { sp().edit().putInt("default_tab", tab).commit(); }

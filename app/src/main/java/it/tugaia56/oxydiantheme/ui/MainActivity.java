@@ -362,6 +362,9 @@ public class MainActivity extends AppCompatActivity {
         mWarn = findViewById(R.id.btn_warn);
         mWarn.setImageTintList(android.content.res.ColorStateList.valueOf(0xFFFFC107));
         mWarn.setOnClickListener(v -> showWarning());
+        android.widget.ImageButton infoBtn0 = findViewById(R.id.btn_info);
+        infoBtn0.setImageTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+        infoBtn0.setOnClickListener(v -> showLegend());
         mList.setLayoutManager(new LinearLayoutManager(this));
         mList.setAdapter(new Adapter());
         // check generale in alto: seleziona tutte / nessuna (come il check di ogni overlay)
@@ -376,6 +379,7 @@ public class MainActivity extends AppCompatActivity {
         else mTab = savedInstanceState.getInt("tab", mTab);
         setupBottomNav();
         setupFab();
+        if (savedInstanceState == null && !ThemePrefs.isWelcomeSeen()) findViewById(R.id.title).post(this::showWelcome);
         buildInfoPage();
         SystemColorsDialog.republish(this);
         IconColorDialog.republish();
@@ -715,10 +719,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void tintFab() {
-        com.google.android.material.floatingactionbutton.FloatingActionButton fab = findViewById(R.id.fab);
+        com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fab = findViewById(R.id.fab);
         if (fab == null) return;
         fab.setBackgroundTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
-        fab.setImageTintList(android.content.res.ColorStateList.valueOf(0xFFFFFFFF));
+        fab.setIconTint(android.content.res.ColorStateList.valueOf(0xFFFFFFFF));
+        fab.setTextColor(0xFFFFFFFF);
+        updateFabCount();
     }
 
     private void openFab() {
@@ -743,7 +749,7 @@ public class MainActivity extends AppCompatActivity {
             r.setTranslationY(16 * d);
             r.animate().alpha(1f).translationY(0f).setStartDelay(i * 25L).setDuration(160).start();
         }
-        ((com.google.android.material.floatingactionbutton.FloatingActionButton) findViewById(R.id.fab)).setImageResource(R.drawable.ic_fab_close);
+        ((com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton) findViewById(R.id.fab)).setIconResource(R.drawable.ic_fab_close);
     }
 
     private void closeFab() {
@@ -754,7 +760,7 @@ public class MainActivity extends AppCompatActivity {
         final android.widget.LinearLayout menu = findViewById(R.id.fab_menu);
         scrim.animate().alpha(0f).setDuration(120).withEndAction(() -> { if (!mFabOpen) scrim.setVisibility(View.GONE); }).start();
         menu.animate().alpha(0f).setDuration(120).withEndAction(() -> { if (!mFabOpen) menu.setVisibility(View.GONE); }).start();
-        ((com.google.android.material.floatingactionbutton.FloatingActionButton) findViewById(R.id.fab)).setImageResource(R.drawable.ic_fab_menu);
+        ((com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton) findViewById(R.id.fab)).setIconResource(R.drawable.ic_fab_menu);
     }
 
     private void buildFabMenu() {
@@ -775,9 +781,17 @@ public class MainActivity extends AppCompatActivity {
         View gap = new View(this);
         gap.setLayoutParams(new android.widget.LinearLayout.LayoutParams(1, (int) (18 * d)));
         menu.addView(gap);
-        addFabRow(menu, R.string.btn_remove, R.drawable.ic_fab_delete, false, () -> runSelected(ACT_REMOVE));
-        addFabRow(menu, R.string.btn_disable, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
-        addFabRow(menu, R.string.btn_activate, R.drawable.ic_fab_check, false, () -> runSelected(ACT_ACTIVATE));
+        int sel = 0, off = 0;
+        for (AppEntry e : mVisible) {
+            if (!mSelected.contains(e.name)) continue;
+            sel++;
+            Integer st = mState.get(e.name);
+            if (st != null && st == ST_DISABLED) off++;
+        }
+        boolean allOff = sel > 0 && off == sel;   // tutte spente: "Attiva" (stessa azione di Installa, ma dice meglio cosa succede)
+        addFabRow(menu, R.string.fab_remove_sel, R.drawable.ic_fab_delete, false, () -> runSelected(ACT_REMOVE));
+        addFabRow(menu, R.string.fab_disable_sel, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
+        addFabRow(menu, allOff ? R.string.fab_enable_sel : R.string.fab_install_sel, R.drawable.ic_fab_check, false, () -> runSelected(ACT_ACTIVATE));
     }
 
     /** Una riga del menu: etichetta a pillola e cerchio con l'icona; "main" = cerchio pieno in accento. */
@@ -843,6 +857,8 @@ public class MainActivity extends AppCompatActivity {
                 : id == R.id.nav_info ? R.string.tab_info : R.string.title_apps;
         ((TextView) findViewById(R.id.title)).setText(title);
         updateNotice();
+        View infoBtn = findViewById(R.id.btn_info);
+        if (infoBtn != null) infoBtn.setVisibility(id == R.id.nav_themes ? View.VISIBLE : View.GONE);
         View fabView = findViewById(R.id.fab);
         if (fabView != null) {
             if (id != R.id.nav_themes) closeFab();
@@ -1331,6 +1347,23 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    /** Avviso di benvenuto: si mostra una volta sola, con una breve spiegazione di cosa fa l'app. */
+    private void showWelcome() {
+        if (isFinishing()) return;
+        TextView body = new TextView(this);
+        body.setText(getString(R.string.welcome_body).replace("\\n", "\n"));
+        body.setTextColor(getColor(R.color.text));
+        body.setTextSize(15);
+        int pad = (int) (22 * getResources().getDisplayMetrics().density);
+        body.setPadding(pad, pad / 2, pad, 0);
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.welcome_title)
+                .setView(scroll(body))
+                .setNeutralButton(R.string.btn_legend, (d, w) -> showLegend())
+                .setPositiveButton(R.string.welcome_ok, null)
+                .setOnDismissListener(d -> ThemePrefs.setWelcomeSeen()));
+    }
+
     // ── Legenda dei colori ───────────────────────────────────────────────────
 
     private android.widget.ScrollView scroll(View v) {
@@ -1503,8 +1536,23 @@ public class MainActivity extends AppCompatActivity {
         mList.getAdapter().notifyDataSetChanged();
     }
 
+    /** Numero delle voci spuntate nel FAB: a pillola con il numero quando ce n'e' almeno una. */
+    private void updateFabCount() {
+        com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fab = findViewById(R.id.fab);
+        if (fab == null) return;
+        int n = 0;
+        for (AppEntry e : mVisible) if (mSelected.contains(e.name)) n++;
+        if (n > 0) {
+            fab.setText(String.valueOf(n));
+            fab.extend();
+        } else {
+            fab.shrink();
+        }
+    }
+
     /** Il check generale e' spuntato solo se tutte le voci visibili sono spuntate. */
     private void syncMaster() {
+        updateFabCount();
         if (mMaster == null) return;
         boolean all = !mVisible.isEmpty();
         for (AppEntry e : mVisible) if (!mSelected.contains(e.name)) { all = false; break; }
@@ -1957,8 +2005,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         final int n = targets.size();
-        final int title = action == ACT_ACTIVATE ? R.string.btn_activate : action == ACT_DISABLE ? R.string.btn_disable : R.string.btn_remove;
-        final int msg = action == ACT_ACTIVATE ? R.plurals.confirm_install : action == ACT_DISABLE ? R.plurals.confirm_disable : R.plurals.confirm_remove;
+        boolean allOff = true;
+        for (AppEntry e : targets) { Integer st = mState.get(e.name); if (st == null || st != ST_DISABLED) { allOff = false; break; } }
+        final boolean enableOnly = action == ACT_ACTIVATE && allOff;
+        final int title = action == ACT_ACTIVATE ? (enableOnly ? R.string.btn_enable : R.string.btn_activate) : action == ACT_DISABLE ? R.string.btn_disable : R.string.btn_remove;
+        final int msg = action == ACT_ACTIVATE ? (enableOnly ? R.plurals.confirm_enable : R.plurals.confirm_install) : action == ACT_DISABLE ? R.plurals.confirm_disable : R.plurals.confirm_remove;
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(title)
                 .setMessage(getResources().getQuantityString(msg, n, n))

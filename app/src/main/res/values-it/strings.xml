@@ -272,4 +272,18 @@ Rimuovere i loro temi? Serve un riavvio.</item>
     <string name="fab_reboot">Riavvia telefono</string>
     <string name="fab_reboot_msg">Riavviare il telefono ora?</string>
     <string name="master_check_desc">Seleziona tutte o nessuna</string>
+    <string name="fab_install_sel">Installa selezionate</string>
+    <string name="fab_enable_sel">Attiva selezionate</string>
+    <string name="fab_disable_sel">Disattiva selezionate</string>
+    <string name="fab_remove_sel">Rimuovi selezionate</string>
+    <string name="btn_enable">Attiva</string>
+    <plurals name="confirm_enable">
+        <item quantity="one">%d app selezionata.
+Riattivare il suo tema?</item>
+        <item quantity="other">%d app selezionate.
+Riattivare i loro temi?</item>
+    </plurals>
+    <string name="welcome_title">Benvenuto in Oxydian Theme</string>
+    <string name="welcome_body">Con Oxydian Theme dai ai tuoi telefoni colori e stile uniformi, senza programmi complicati.\n\nOverlay: spunta le app, poi usa il pulsante tondo in basso a destra per installare, attivare, disattivare o rimuovere i loro temi. Il check in alto spunta tutte le voci o nessuna, e il numero nel pulsante dice quante ne hai scelte.\n\nColori: scegli accento, sfondo e colori di sistema.\n\nMods: icone, stili, barra di navigazione e altre personalizzazioni.\n\nImpostazioni: aggiornamenti, backup, pagina iniziale e guida.\n\nDopo il primo overlay nuovo serve un riavvio. Il colore del nome di ogni app ne dice lo stato: tocca l\'icona (i) in alto per la legenda.</string>
+    <string name="welcome_ok">Ho capito</string>
 </resources>
