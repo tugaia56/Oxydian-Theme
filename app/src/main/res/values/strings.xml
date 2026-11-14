@@ -4,7 +4,7 @@
     <string name="status_no_root">Root access is required. Grant root to Oxydian Theme in your root manager.</string>
     <string name="status_reboot">Module created. Reboot once to activate it, then apply your themes.</string>
     <string name="status_ok">Module ready.</string>
-    <string name="notice">Tick the items you want, then tap the round button at the bottom right and choose Install (builds and turns on), Enable (turns a disabled theme back on), Disable (turns off but stays installed, turn it back on without a reboot) or Remove (deletes it, needs a reboot). The boxes clear after every action; the real state is shown by the color. The first time you enable a new item a reboot is needed. In an app\'s Options you can create several variants (for example two backgrounds): build them once, then turn on only one at a time without rebuilding.</string>
+    <string name="notice">Tick the items you want, then tap the round button at the bottom right and choose Install (builds and turns on), Enable (turns a disabled theme back on), Disable (turns off but stays installed, turn it back on without a reboot) or Uninstall (deletes it, needs a reboot). The boxes clear after every action; the real state is shown by the color. The first time you enable a new item a reboot is needed. In an app\'s Options you can create several variants (for example two backgrounds): build them once, then turn on only one at a time without rebuilding.</string>
     <string name="many_warning">Warning: %1$d apps selected. More than about 10 themed apps slow down the phone at every boot.</string>
     <string name="btn_apply">Apply</string>
     <string name="btn_select_all">All</string>
@@ -304,7 +304,7 @@ Continue?</string>
     <string name="variant_name_hint">Name (for example: Light background)</string>
     <string name="variant_default_name">Variant %d</string>
     <string name="variant_create">Create</string>
-    <string name="variant_created">Variant created: choose its options, then Install.</string>
+    <string name="variant_created">Variant created with your current choices. Now tap Install.</string>
     <string name="variant_delete_confirm">Delete the variant %s? Its overlay is removed.</string>
     <string name="one_variant">Pick only one variant per app</string>
     <string name="fab_uninstall_sel">Uninstall selected</string>

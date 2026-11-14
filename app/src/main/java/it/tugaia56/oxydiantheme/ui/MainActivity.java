@@ -792,13 +792,12 @@ public class MainActivity extends AppCompatActivity {
         View gap = new View(this);
         gap.setLayoutParams(new android.widget.LinearLayout.LayoutParams(1, (int) (18 * d)));
         menu.addView(gap);
-        addFabRow(menu, R.string.fab_uninstall_sel, R.drawable.ic_fab_uninstall, false, this::uninstallSelected);
-        addFabRow(menu, R.string.fab_remove_sel, R.drawable.ic_fab_delete, false, () -> runSelected(ACT_REMOVE));
         addFabRow(menu, R.string.fab_disable_sel, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
         // Cambia stato: gli attivi si spengono e i spenti si accendono
         addFabRow(menu, R.string.fab_toggle_sel, R.drawable.ic_fab_swap, false, () -> runSelected(ACT_TOGGLE));
         // Attiva = riaccendere un overlay gia' costruito; Installa = costruirne uno che ancora non c'e' (la procedura e' la stessa)
         addFabRow(menu, R.string.fab_enable_sel, R.drawable.ic_fab_play, false, () -> runSelected(ACT_ACTIVATE, true));
+        addFabRow(menu, R.string.fab_uninstall_sel, R.drawable.ic_fab_delete, false, this::uninstallSelected);
         addFabRow(menu, R.string.fab_install_sel, R.drawable.ic_fab_check, false, () -> runSelected(ACT_ACTIVATE, false));
     }
 
@@ -1968,7 +1967,7 @@ public class MainActivity extends AppCompatActivity {
     /** Nome mostrato per una variante: quello scelto dall'utente, oppure (se e' rimasto quello automatico) il nome delle opzioni scelte, per esempio lo sfondo. */
     private String variantDisplay(String pkg, int id) {
         String name = ThemePrefs.getVariantName(pkg, id);
-        boolean auto = name.equals(getString(R.string.variant_default_name, id)) || name.equals(String.valueOf(id));
+        boolean auto = name.isEmpty() || name.equals(getString(R.string.variant_default_name, id)) || name.equals(String.valueOf(id));
         if (!auto) return name;
         String ch = optionSummary(pkg, pkg + "#" + id);
         return ch.isEmpty() ? getString(R.string.variant_default_name, id) : ch;
@@ -1990,8 +1989,12 @@ public class MainActivity extends AppCompatActivity {
         android.widget.EditText in = new android.widget.EditText(this);
         int nextId = 2;
         for (int i : ThemePrefs.getVariantIds(e.pkg)) if (i >= nextId) nextId = i + 1;
+        final int shownId = nextId;
+        // il nome proposto e' quello dello sfondo (o delle opzioni) scelto adesso; senza scelte "Variante N"
+        final String sum = optionSummary(e.pkg, e.key);
+        final String proposed = sum.isEmpty() ? getString(R.string.variant_default_name, shownId) : sum;
         in.setHint(R.string.variant_name_hint);
-        in.setText(getString(R.string.variant_default_name, nextId));
+        in.setText(proposed);
         in.setSelectAllOnFocus(true);
         in.setTextColor(getColor(R.color.text));
         int pad = (int) (20 * getResources().getDisplayMetrics().density);
@@ -2004,8 +2007,17 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.btn_cancel, null)
                 .setPositiveButton(R.string.variant_create, (d, w) -> {
                     String name = in.getText().toString().trim();
-                    if (name.isEmpty()) name = getString(R.string.variant_default_name, ThemePrefs.getVariantIds(e.pkg).size() + 2);
-                    ThemePrefs.addVariant(e.pkg, name);
+                    // nome lasciato com'era proposto: resta "automatico" e segue le opzioni della variante
+                    boolean auto = name.isEmpty() || name.equals(proposed) || name.equals(getString(R.string.variant_default_name, shownId));
+                    int id = ThemePrefs.addVariant(e.pkg, auto ? "" : name);
+                    // la variante nasce con le scelte fatte adesso
+                    String newKey = e.pkg + "#" + id;
+                    for (OptGroup g : optionGroups(this, e.pkg)) {
+                        String ch = ThemePrefs.getOption(e.key, g.id);
+                        if (ch.isEmpty()) continue;
+                        ThemePrefs.setOption(newKey, g.id, ch);
+                        if (OptionGroupsDialog.CUSTOM.equals(ch)) ThemePrefs.setCustomColor(newKey + "_" + g.id, ThemePrefs.getCustomColor(e.key + "_" + g.id));
+                    }
                     loadApps();
                     Toast.makeText(this, R.string.variant_created, Toast.LENGTH_LONG).show();
                 }));
