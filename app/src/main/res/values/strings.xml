@@ -4,7 +4,7 @@
     <string name="status_no_root">Root access is required. Grant root to Oxydian Theme in your root manager.</string>
     <string name="status_reboot">Module created. Reboot once to activate it, then apply your themes.</string>
     <string name="status_ok">Module ready.</string>
-    <string name="notice">Tick the items you want, then tap Install (builds and turns on), Disable (turns off but stays installed, turn it back on without a reboot) or Remove (deletes it, needs a reboot). The boxes clear after every action; the real state is shown by the color. The first time you enable a new item a reboot is needed.</string>
+    <string name="notice">Tick the items you want, then tap the round button at the bottom right and choose Install (builds and turns on), Enable (turns a disabled theme back on), Disable (turns off but stays installed, turn it back on without a reboot) or Remove (deletes it, needs a reboot). The boxes clear after every action; the real state is shown by the color. The first time you enable a new item a reboot is needed.</string>
     <string name="many_warning">Warning: %1$d apps selected. More than about 10 themed apps slow down the phone at every boot.</string>
     <string name="btn_apply">Apply</string>
     <string name="btn_select_all">All</string>
@@ -287,4 +287,6 @@ Enable their themes again?</item>
     <string name="welcome_title">Welcome to Oxydian Theme</string>
     <string name="welcome_body">Oxydian Theme gives your phones uniform colours and style, without complicated tools.\n\nOverlay: tick the apps, then use the round button at the bottom right to install, enable, disable or remove their themes. The check at the top ticks all items or none, and the number on the button tells you how many you picked.\n\nColors: choose accent, background and system colours.\n\nMods: icons, styles, navigation bar and other customisations.\n\nSettings: updates, backup, start page and guide.\n\nAfter the first new overlay a reboot is needed. The colour of each app name shows its state: tap the (i) icon at the top for the legend.</string>
     <string name="welcome_ok">Got it</string>
+    <string name="welcome_option">Show the welcome at start</string>
+    <string name="welcome_show_now">Show the welcome now</string>
 </resources>

@@ -3,7 +3,7 @@
     <string name="status_no_root">Serve l\'accesso root. Concedilo a Oxydian Theme nel gestore del root.</string>
     <string name="status_reboot">Modulo creato. Riavvia una volta per attivarlo, poi applica i temi.</string>
     <string name="status_ok">Modulo pronto.</string>
-    <string name="notice">Spunta le voci che vuoi, poi tocca Installa (compila e accende), Disattiva (spegne ma resta installato, si riaccende senza riavvio) o Rimuovi (toglie del tutto, serve un riavvio). Le caselle si svuotano dopo ogni azione; lo stato vero si legge dal colore. La prima volta che attivi una nuova voce serve un riavvio.</string>
+    <string name="notice">Spunta le voci che vuoi, poi tocca il pulsante tondo in basso a destra e scegli Installa (compila e accende), Attiva (riaccende un tema spento), Disattiva (spegne ma resta installato, si riaccende senza riavvio) o Rimuovi (toglie del tutto, serve un riavvio). Le caselle si svuotano dopo ogni azione; lo stato vero si legge dal colore. La prima volta che attivi una nuova voce serve un riavvio.</string>
     <string name="many_warning">Attenzione: %1$d app selezionate. Più di circa 10 app con il tema rallentano l\'avvio del telefono a ogni riavvio.</string>
     <string name="btn_apply">Applica</string>
     <string name="btn_select_all">Tutte</string>
@@ -286,4 +286,6 @@ Riattivare i loro temi?</item>
     <string name="welcome_title">Benvenuto in Oxydian Theme</string>
     <string name="welcome_body">Con Oxydian Theme dai ai tuoi telefoni colori e stile uniformi, senza programmi complicati.\n\nOverlay: spunta le app, poi usa il pulsante tondo in basso a destra per installare, attivare, disattivare o rimuovere i loro temi. Il check in alto spunta tutte le voci o nessuna, e il numero nel pulsante dice quante ne hai scelte.\n\nColori: scegli accento, sfondo e colori di sistema.\n\nMods: icone, stili, barra di navigazione e altre personalizzazioni.\n\nImpostazioni: aggiornamenti, backup, pagina iniziale e guida.\n\nDopo il primo overlay nuovo serve un riavvio. Il colore del nome di ogni app ne dice lo stato: tocca l\'icona (i) in alto per la legenda.</string>
     <string name="welcome_ok">Ho capito</string>
+    <string name="welcome_option">Mostra il benvenuto all\'avvio</string>
+    <string name="welcome_show_now">Mostra il benvenuto adesso</string>
 </resources>

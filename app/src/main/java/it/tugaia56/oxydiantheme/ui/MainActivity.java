@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
         else mTab = savedInstanceState.getInt("tab", mTab);
         setupBottomNav();
         setupFab();
-        if (savedInstanceState == null && !ThemePrefs.isWelcomeSeen()) findViewById(R.id.title).post(this::showWelcome);
+        if (savedInstanceState == null && ThemePrefs.isWelcomeOnStart()) findViewById(R.id.title).post(this::showWelcome);
         buildInfoPage();
         SystemColorsDialog.republish(this);
         IconColorDialog.republish();
@@ -1360,8 +1360,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(R.string.welcome_title)
                 .setView(scroll(body))
                 .setNeutralButton(R.string.btn_legend, (d, w) -> showLegend())
-                .setPositiveButton(R.string.welcome_ok, null)
-                .setOnDismissListener(d -> ThemePrefs.setWelcomeSeen()));
+                .setPositiveButton(R.string.welcome_ok, null));
     }
 
     // ── Legenda dei colori ───────────────────────────────────────────────────
@@ -1389,6 +1388,23 @@ public class MainActivity extends AppCompatActivity {
         how.setTextColor(getColor(R.color.text));
         how.setTextSize(14);
         box.addView(how);
+        // benvenuto: interruttore sempre qui, e pulsante per rivederlo subito
+        android.widget.CheckBox welcomeCb = new android.widget.CheckBox(this);
+        welcomeCb.setText(R.string.welcome_option);
+        welcomeCb.setTextColor(getColor(R.color.text));
+        welcomeCb.setTextSize(15);
+        welcomeCb.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+        welcomeCb.setChecked(ThemePrefs.isWelcomeOnStart());
+        welcomeCb.setOnCheckedChangeListener((b, on) -> ThemePrefs.setWelcomeOnStart(on));
+        welcomeCb.setPadding(0, pad / 2, 0, 0);
+        box.addView(welcomeCb);
+        TextView welcomeNow = new TextView(this);
+        welcomeNow.setText(R.string.welcome_show_now);
+        welcomeNow.setTextColor(ThemePrefs.accentColor());
+        welcomeNow.setTextSize(15);
+        welcomeNow.setPadding(0, pad / 2, 0, pad / 4);
+        welcomeNow.setOnClickListener(v -> showWelcome());
+        box.addView(welcomeNow);
         TextView legendTitle = new TextView(this);
         legendTitle.setText(R.string.legend_title);
         legendTitle.setTextColor(ThemePrefs.accentColor());
