@@ -169,6 +169,51 @@ public final class ThemePrefs {
     public static void setRippleAlpha(int pct) { sp().edit().putInt("ripple_alpha", pct).commit(); }
 
     /** Pagina che si apre all'avvio: 0 Overlay, 1 Colori, 2 Mods, 3 Impostazioni. */
+    // ── Varianti di un'app: piu' overlay della stessa app, ognuno con le sue opzioni (chiave "pacchetto#N") ──
+    public static java.util.List<Integer> getVariantIds(String pkg) {
+        java.util.List<Integer> out = new java.util.ArrayList<>();
+        String s = sp().getString("variants_" + pkg, "");
+        for (String x : s.split(",")) {
+            try { if (!x.trim().isEmpty()) out.add(Integer.parseInt(x.trim())); } catch (NumberFormatException ignored) {}
+        }
+        return out;
+    }
+
+    private static void putVariantIds(String pkg, java.util.List<Integer> ids) {
+        StringBuilder sb = new StringBuilder();
+        for (int i : ids) { if (sb.length() > 0) sb.append(','); sb.append(i); }
+        sp().edit().putString("variants_" + pkg, sb.toString()).commit();
+    }
+
+    /** Crea una variante nuova e ne restituisce il numero (da 2 in su). */
+    public static int addVariant(String pkg, String name) {
+        java.util.List<Integer> ids = getVariantIds(pkg);
+        int id = 2;
+        for (int i : ids) if (i >= id) id = i + 1;
+        ids.add(id);
+        putVariantIds(pkg, ids);
+        sp().edit().putString("varname_" + pkg + "#" + id, name).commit();
+        return id;
+    }
+
+    public static String getVariantName(String pkg, int id) {
+        return sp().getString("varname_" + pkg + "#" + id, String.valueOf(id));
+    }
+
+    /** Toglie una variante e tutte le sue scelte salvate. */
+    public static void removeVariant(String pkg, int id) {
+        java.util.List<Integer> ids = getVariantIds(pkg);
+        ids.remove(Integer.valueOf(id));
+        putVariantIds(pkg, ids);
+        String key = pkg + "#" + id;
+        android.content.SharedPreferences.Editor ed = sp().edit();
+        ed.remove("varname_" + key);
+        for (String k : new java.util.ArrayList<>(sp().getAll().keySet())) {
+            if (k.startsWith("opt_" + key + "_") || k.startsWith("custom_" + key + "_") || k.endsWith(key)) ed.remove(k);
+        }
+        ed.commit();
+    }
+
     public static boolean isWelcomeOnStart() { return sp().getBoolean("welcome_on_start", false); }
     public static void setWelcomeOnStart(boolean on) { sp().edit().putBoolean("welcome_on_start", on).apply(); }
 

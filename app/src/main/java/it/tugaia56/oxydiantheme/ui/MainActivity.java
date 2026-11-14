@@ -51,21 +51,28 @@ public class MainActivity extends AppCompatActivity {
         final String dir;
         final String name;
         final boolean ds;
+        final String key;   // chiave delle scelte salvate: il pacchetto, oppure pacchetto#N per le varianti
+        final int vid;      // 0 = app normale, da 2 in su = variante
         boolean enabled;
         AppEntry(String pkg, String label, boolean enabled) {
-            this(pkg, label, "APP", ThemeCompiler.overlayName(pkg), false, enabled);
+            this(pkg, label, "APP", ThemeCompiler.overlayName(pkg), false, enabled, pkg, 0);
         }
         AppEntry(String pkg, String label, String dir, boolean enabled) {
-            this(pkg, label, dir, "DS_" + dir, true, enabled);
+            this(pkg, label, dir, "DS_" + dir, true, enabled, pkg, 0);
         }
-        private AppEntry(String pkg, String label, String dir, String name, boolean ds, boolean enabled) {
+        /** Variante di un'app: stesso tema di base, overlay e scelte tutti suoi. */
+        AppEntry(String pkg, String label, int vid, boolean enabled) {
+            this(pkg, label, "APP", ThemeCompiler.overlayName(pkg) + "_v" + vid, false, enabled, pkg + "#" + vid, vid);
+        }
+        private AppEntry(String pkg, String label, String dir, String name, boolean ds, boolean enabled, String key, int vid) {
             this.pkg = pkg; this.label = label; this.dir = dir; this.name = name; this.ds = ds; this.enabled = enabled;
+            this.key = key; this.vid = vid;
         }
         String overlay() { return ThemeCompiler.namedPackage(name); }
-        void saveEnabled() { if (ds) ThemePrefs.setDarkShadowEnabled(pkg, enabled); else ThemePrefs.setAppEnabled(pkg, enabled); }
-        String builtSig() { return ds ? ThemePrefs.getDarkShadowBuilt(pkg) : ThemePrefs.getBuiltSignature(pkg); }
-        void setBuilt(String sig) { if (ds) ThemePrefs.setDarkShadowBuilt(pkg, sig); else ThemePrefs.setBuiltSignature(pkg, sig); }
-        void clearBuilt() { if (ds) ThemePrefs.setDarkShadowBuilt(pkg, ""); else ThemePrefs.clearBuiltSignature(pkg); }
+        void saveEnabled() { if (ds) ThemePrefs.setDarkShadowEnabled(pkg, enabled); else ThemePrefs.setAppEnabled(key, enabled); }
+        String builtSig() { return ds ? ThemePrefs.getDarkShadowBuilt(pkg) : ThemePrefs.getBuiltSignature(key); }
+        void setBuilt(String sig) { if (ds) ThemePrefs.setDarkShadowBuilt(pkg, sig); else ThemePrefs.setBuiltSignature(key, sig); }
+        void clearBuilt() { if (ds) ThemePrefs.setDarkShadowBuilt(pkg, ""); else ThemePrefs.clearBuiltSignature(key); }
     }
 
     /** App che su Android puro non si possono tematizzare (overlay "non valido"). */
@@ -781,6 +788,7 @@ public class MainActivity extends AppCompatActivity {
         View gap = new View(this);
         gap.setLayoutParams(new android.widget.LinearLayout.LayoutParams(1, (int) (18 * d)));
         menu.addView(gap);
+        addFabRow(menu, R.string.fab_uninstall_sel, R.drawable.ic_fab_uninstall, false, this::uninstallSelected);
         addFabRow(menu, R.string.fab_remove_sel, R.drawable.ic_fab_delete, false, () -> runSelected(ACT_REMOVE));
         addFabRow(menu, R.string.fab_disable_sel, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
         // Cambia stato: gli attivi si spengono e i spenti si accendono
@@ -1500,6 +1508,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } catch (Exception ignored) {}
+        // varianti create dall'utente: una riga in piu' per ognuna, accanto all'app
+        List<AppEntry> variants = new ArrayList<>();
+        for (AppEntry b : mApps) {
+            if (b.ds) continue;
+            for (int id : ThemePrefs.getVariantIds(b.pkg))
+                variants.add(new AppEntry(b.pkg, b.label + " \u00b7 " + variantDisplay(b.pkg, id), id, ThemePrefs.isAppEnabled(b.pkg + "#" + id)));
+        }
+        mApps.addAll(variants);
         mApps.sort(Comparator.comparing(e -> e.label.toLowerCase(Locale.ROOT)));
         List<AppEntry> dsList = new ArrayList<>();
         for (String[] t : DS_TARGETS) {
@@ -1680,7 +1696,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Scelte attuali sotto forma di testo (entra nella firma: se cambiano, il tema va rifatto). */
-    static String optsKey(Context ctx, String pkg, boolean ds) {
+    static String optsKey(Context ctx, String pkg, boolean ds) { return optsKey(ctx, pkg, ds, pkg); }
+
+    static String optsKey(Context ctx, String pkg, boolean ds, String key) {
         StringBuilder sb = new StringBuilder();
         if (ds && SystemColorsDialog.PKG.equals(pkg)) {
             sb.append("|ripple=").append(ThemePrefs.getRippleAlpha());
@@ -1690,9 +1708,9 @@ public class MainActivity extends AppCompatActivity {
         if ((ds && !SystemColorsDialog.PKG.equals(pkg)) || usesRipple(pkg)) sb.append("|rpl=").append(ThemePrefs.getRippleAlpha());
         if (ds && SYSTEMUI_PKG.equals(pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav")).append("|pmv=2");   // pmv: versione dei colori del menu di spegnimento (Emergenza rosso fisso)
         for (OptGroup g : optionGroups(ctx, pkg)) {
-            String c = ThemePrefs.getOption(pkg, g.id);
+            String c = ThemePrefs.getOption(key, g.id);
             sb.append('|').append(g.id).append('=').append(c);
-            if (OptionGroupsDialog.CUSTOM.equals(c)) sb.append(String.format("#%08X", ThemePrefs.getCustomColor(pkg + "_" + g.id)));
+            if (OptionGroupsDialog.CUSTOM.equals(c)) sb.append(String.format("#%08X", ThemePrefs.getCustomColor(key + "_" + g.id)));
         }
         if (usesGrad(pkg)) sb.append("|grad=").append(String.join(",", GradBorder.overlayValues()));
         if (usesPinKeys(pkg)) sb.append("|pk=v1");
@@ -1912,10 +1930,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Percorsi negli asset delle scelte da sovrapporre alla base. */
-    static List<String> optionPaths(Context ctx, String pkg) {
+    static List<String> optionPaths(Context ctx, String pkg) { return optionPaths(ctx, pkg, pkg); }
+
+    /** key = dove sono salvate le scelte (il pacchetto, o pacchetto#N per una variante). */
+    static List<String> optionPaths(Context ctx, String pkg, String key) {
         List<String> out = new ArrayList<>();
         for (OptGroup g : optionGroups(ctx, pkg)) {
-            String c = ThemePrefs.getOption(pkg, g.id);
+            String c = ThemePrefs.getOption(key, g.id);
             if (!c.isEmpty() && g.choices.contains(c)) out.add("CompileOnDemand/" + pkg + "/OPT/" + g.id + "/" + c);
         }
         // menu di spegnimento: se sfondo o bordo sono scelti (anche a colore libero) servono i due disegni di base
@@ -1926,6 +1947,84 @@ public class MainActivity extends AppCompatActivity {
         // tastierino PIN di sistema: il disegno dei tasti (colori, bordo e raggio sono nei values generati)
         if (usesPinKeys(pkg)) out.add("CompileOnDemand/" + pkg + "/PINKEYBASE");
         return out;
+    }
+
+    /** Nome mostrato per una variante: quello scelto dall'utente, oppure (se e' rimasto quello automatico) il nome delle opzioni scelte, per esempio lo sfondo. */
+    private String variantDisplay(String pkg, int id) {
+        String name = ThemePrefs.getVariantName(pkg, id);
+        boolean auto = name.equals(getString(R.string.variant_default_name, id)) || name.equals(String.valueOf(id));
+        if (!auto) return name;
+        StringBuilder sb = new StringBuilder();
+        for (OptGroup g : optionGroups(this, pkg)) {
+            String ch = ThemePrefs.getOption(pkg + "#" + id, g.id);
+            if (ch.isEmpty()) continue;
+            if (sb.length() > 0) sb.append(", ");
+            sb.append(ch.replace('_', ' '));
+        }
+        return sb.length() > 0 ? sb.toString() : getString(R.string.variant_default_name, id);
+    }
+
+    /** Crea una variante dell'app: un secondo overlay con le sue opzioni. */
+    private void variantAddDialog(AppEntry e) {
+        if (mBusy) return;
+        android.widget.EditText in = new android.widget.EditText(this);
+        int nextId = 2;
+        for (int i : ThemePrefs.getVariantIds(e.pkg)) if (i >= nextId) nextId = i + 1;
+        in.setHint(R.string.variant_name_hint);
+        in.setText(getString(R.string.variant_default_name, nextId));
+        in.setSelectAllOnFocus(true);
+        in.setTextColor(getColor(R.color.text));
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        android.widget.FrameLayout box = new android.widget.FrameLayout(this);
+        box.setPadding(pad, pad / 2, pad, 0);
+        box.addView(in);
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.variant_name_title)
+                .setView(box)
+                .setNegativeButton(R.string.btn_cancel, null)
+                .setPositiveButton(R.string.variant_create, (d, w) -> {
+                    String name = in.getText().toString().trim();
+                    if (name.isEmpty()) name = getString(R.string.variant_default_name, ThemePrefs.getVariantIds(e.pkg).size() + 2);
+                    ThemePrefs.addVariant(e.pkg, name);
+                    loadApps();
+                    Toast.makeText(this, R.string.variant_created, Toast.LENGTH_LONG).show();
+                }));
+    }
+
+    /** Disinstalla: toglie gli overlay spuntati; le varianti spariscono anche dalla lista (le app di base restano, come con Rimuovi). */
+    private void uninstallSelected() {
+        if (mBusy) return;
+        final List<AppEntry> targets = new ArrayList<>();
+        for (AppEntry e : mVisible) if (mSelected.contains(e.name)) targets.add(e);
+        if (targets.isEmpty()) {
+            Toast.makeText(this, R.string.select_first, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.btn_uninstall)
+                .setMessage(getString(R.string.uninstall_confirm, targets.size()))
+                .setNegativeButton(R.string.btn_cancel, null)
+                .setPositiveButton(R.string.btn_uninstall, (d, w) -> {
+                    for (AppEntry e : targets) if (e.vid != 0) ThemePrefs.removeVariant(e.pkg, e.vid);
+                    loadApps();   // le righe delle varianti spariscono subito
+                    runAction(targets, ACT_REMOVE);
+                }));
+    }
+
+    /** Toglie una variante: si toglie il suo overlay e tutte le sue scelte. */
+    private void variantDeleteDialog(AppEntry e) {
+        if (mBusy) return;
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.variant_delete)
+                .setMessage(getString(R.string.variant_delete_confirm, e.label))
+                .setNegativeButton(R.string.btn_cancel, null)
+                .setPositiveButton(R.string.variant_delete, (d, w) -> {
+                    ThemePrefs.removeVariant(e.pkg, e.vid);
+                    loadApps();   // la riga sparisce subito
+                    List<AppEntry> one = new ArrayList<>();
+                    one.add(e);
+                    runAction(one, ACT_REMOVE);
+                }));
     }
 
     private void showOptions(AppEntry e) {
@@ -1943,7 +2042,7 @@ public class MainActivity extends AppCompatActivity {
             t.setPadding(0, pad / 2, 0, pad / 4);
             box.addView(t);
             android.widget.RadioGroup rg = new android.widget.RadioGroup(this);
-            String cur = ThemePrefs.getOption(e.pkg, g.id);
+            String cur = ThemePrefs.getOption(e.key, g.id);
             List<String> all = new ArrayList<>();
             all.add("");
             all.addAll(g.choices);
@@ -1955,7 +2054,7 @@ public class MainActivity extends AppCompatActivity {
                 rb.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
                 final String choice = c;
                 rb.setOnClickListener(v -> {
-                    ThemePrefs.setOption(e.pkg, g.id, choice);
+                    ThemePrefs.setOption(e.key, g.id, choice);
                     for (int i = 0; i < rg.getChildCount(); i++) {
                         android.widget.RadioButton o = (android.widget.RadioButton) rg.getChildAt(i);
                         o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
@@ -1971,10 +2070,15 @@ public class MainActivity extends AppCompatActivity {
         }
         android.widget.ScrollView sv = new android.widget.ScrollView(this);
         sv.addView(box);
-        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+        com.google.android.material.dialog.MaterialAlertDialogBuilder ob = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.options_title) + " – " + e.label)
                 .setView(sv)
-                .setPositiveButton(android.R.string.ok, null));
+                .setPositiveButton(android.R.string.ok, null)
+                .setNeutralButton(R.string.variant_add, (d, w) -> variantAddDialog(e));
+        if (e.vid != 0) ob.setNegativeButton(R.string.variant_delete, (d, w) -> variantDeleteDialog(e));
+        // il nome di una variante segue le opzioni scelte: a finestra chiusa la riga si aggiorna
+        ob.setOnDismissListener(d -> { if (e.vid != 0) loadApps(); });
+        Dialogs.show(this, ob);
         Toast.makeText(this, R.string.options_note, Toast.LENGTH_SHORT).show();
     }
 
@@ -2010,12 +2114,23 @@ public class MainActivity extends AppCompatActivity {
     /** Azione sulle voci spuntate nella lista. */
     private void runSelected(int action) { runSelected(action, false); }
 
+    /** Due varianti della stessa app da accendere insieme non hanno senso: ne vince una sola. */
+    private static boolean twoOfSameApp(List<AppEntry> list) {
+        Set<String> seen = new HashSet<>();
+        for (AppEntry e : list) if (!e.ds && !seen.add(e.pkg)) return true;
+        return false;
+    }
+
     private void runSelected(int action, boolean enableLabel) {
         if (mBusy) return;
         List<AppEntry> targets = new ArrayList<>();
         for (AppEntry e : mVisible) if (mSelected.contains(e.name)) targets.add(e);
         if (targets.isEmpty()) {
             Toast.makeText(this, R.string.select_first, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (action == ACT_ACTIVATE && twoOfSameApp(targets)) {
+            Toast.makeText(this, R.string.one_variant, Toast.LENGTH_LONG).show();
             return;
         }
         if (action == ACT_TOGGLE) {
@@ -2029,6 +2144,12 @@ public class MainActivity extends AppCompatActivity {
             }
             if (eligible.isEmpty()) {
                 Toast.makeText(this, R.string.toggle_none, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            List<AppEntry> turningOn = new ArrayList<>();
+            for (AppEntry e : eligible) { Integer st = mState.get(e.name); if (st != null && st == ST_DISABLED) turningOn.add(e); }
+            if (twoOfSameApp(turningOn)) {
+                Toast.makeText(this, R.string.one_variant, Toast.LENGTH_LONG).show();
                 return;
             }
             Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
@@ -2123,6 +2244,17 @@ public class MainActivity extends AppCompatActivity {
             e.enabled = actFor.applyAsInt(e) == ACT_ACTIVATE;   // stato voluto: acceso solo dopo Attiva
             e.saveEnabled();
         }
+        // accendendo una variante si spengono le altre della stessa app (e l'app di base)
+        // (se la nuova variante non e' ancora nota al sistema, l'altra resta accesa finche' non si riavvia: dopo il riavvio vale l'elenco)
+        final Map<String, String> siblingOff = new HashMap<>();   // overlay da spegnere -> overlay che si accende
+        for (AppEntry e : targets) {
+            if (e.ds || actFor.applyAsInt(e) != ACT_ACTIVATE) continue;
+            for (AppEntry s : mApps) {
+                if (s.ds || s == e || !s.pkg.equals(e.pkg) || targets.contains(s)) continue;
+                siblingOff.put(s.overlay(), e.overlay());
+                if (s.enabled) { s.enabled = false; s.saveEnabled(); }
+            }
+        }
         final List<AppEntry> all = new ArrayList<>(mApps);
         new Thread(() -> {
             int failed = 0;
@@ -2168,14 +2300,14 @@ public class MainActivity extends AppCompatActivity {
                         } catch (Exception ignored) {}
                     }
                     final String sigE = signatureFor(this, e);
-                    if ((active || known) && (sigE + optsKey(this, e.pkg, e.ds) + "|var=" + variantTag).equals(e.builtSig())) continue;
+                    if ((active || known) && (sigE + optsKey(this, e.pkg, e.ds, e.key) + "|var=" + variantTag).equals(e.builtSig())) continue;
                     if (!batchOpen) { ThemeCompiler.beginBatch(); batchOpen = true; }
                     it.tugaia56.oxydiantheme.utils.OxyLog.log("build " + e.name);
                     try {
-                        if (ThemeCompiler.buildNamedInBatch(e.pkg, assetDir, e.name, optionPaths(this, e.pkg), customValuesXml(this, e.pkg, e.ds))) {
+                        if (ThemeCompiler.buildNamedInBatch(e.pkg, assetDir, e.name, optionPaths(this, e.pkg, e.key), customValuesXml(this, e.pkg, e.ds))) {
                             failed++;
                         } else {
-                            e.setBuilt(sigE + optsKey(this, e.pkg, e.ds) + "|var=" + variantTag);
+                            e.setBuilt(sigE + optsKey(this, e.pkg, e.ds, e.key) + "|var=" + variantTag);
                             if (active) refresh.add(e.overlay());
                         }
                     } catch (Throwable t) {
@@ -2189,6 +2321,10 @@ public class MainActivity extends AppCompatActivity {
                 if (batchOpen) ThemeCompiler.endBatch(refresh);
             }
             it.tugaia56.oxydiantheme.utils.OxyLog.log("builds done (failed=" + failed + "), enabling/finishing");
+            for (Map.Entry<String, String> so : siblingOff.entrySet()) {
+                boolean newKnown = stateBefore.get(so.getValue()) != null;   // la variante che si accende esiste gia' per il sistema
+                if (newKnown && before.contains(so.getKey()) && !toDisable.contains(so.getKey())) toDisable.add(so.getKey());
+            }
             ThemeCompiler.disable(toDisable);
             if (!toEnable.isEmpty())
                 it.tugaia56.oxydiantheme.utils.overlay.OverlayUtil.enableOverlays(toEnable.toArray(new String[0]));
@@ -2389,7 +2525,7 @@ public class MainActivity extends AppCompatActivity {
 
     /** Bit 0: dipende dall'accento, bit 1: dipende dallo sfondo. */
     static synchronized int colorDependence(Context ctx, AppEntry e) {
-        List<String> opts = optionPaths(ctx, e.pkg);
+        List<String> opts = optionPaths(ctx, e.pkg, e.key);
         final String key = e.pkg + "|" + (e.ds ? e.dir : "APP") + "|" + opts.hashCode();
         Integer c = DEPENDENCE.get(key);
         if (c != null) return c;

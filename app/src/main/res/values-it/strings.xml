@@ -3,7 +3,7 @@
     <string name="status_no_root">Serve l\'accesso root. Concedilo a Oxydian Theme nel gestore del root.</string>
     <string name="status_reboot">Modulo creato. Riavvia una volta per attivarlo, poi applica i temi.</string>
     <string name="status_ok">Modulo pronto.</string>
-    <string name="notice">Spunta le voci che vuoi, poi tocca il pulsante tondo in basso a destra e scegli Installa (compila e accende), Attiva (riaccende un tema spento), Disattiva (spegne ma resta installato, si riaccende senza riavvio) o Rimuovi (toglie del tutto, serve un riavvio). Le caselle si svuotano dopo ogni azione; lo stato vero si legge dal colore. La prima volta che attivi una nuova voce serve un riavvio.</string>
+    <string name="notice">Spunta le voci che vuoi, poi tocca il pulsante tondo in basso a destra e scegli Installa (compila e accende), Attiva (riaccende un tema spento), Disattiva (spegne ma resta installato, si riaccende senza riavvio) o Rimuovi (toglie del tutto, serve un riavvio). Le caselle si svuotano dopo ogni azione; lo stato vero si legge dal colore. La prima volta che attivi una nuova voce serve un riavvio. Nelle Opzioni di un\'app puoi creare più varianti (per esempio due sfondi): le costruisci una volta, poi ne accendi una sola alla volta senza ricostruire.</string>
     <string name="many_warning">Attenzione: %1$d app selezionate. Più di circa 10 app con il tema rallentano l\'avvio del telefono a ogni riavvio.</string>
     <string name="btn_apply">Applica</string>
     <string name="btn_select_all">Tutte</string>
@@ -45,7 +45,7 @@
     <string name="options">Opzioni ›</string>
     <string name="options_title">Opzioni</string>
     <string name="options_default">Predefinito</string>
-    <string name="options_note">Tocca Applica per usare le scelte.</string>
+    <string name="options_note">Tocca Installa per usare le scelte.</string>
     <string name="btn_accent">Accento</string>
     <string name="accent_title">Colore accento</string>
     <string name="accent_custom">Colore a scelta (esadecimale)</string>
@@ -297,4 +297,17 @@ Riattivare i loro temi?</item>
     <string name="toggle_none">Spunta overlay attivi o disattivati</string>
     <string name="toggle_confirm">%1$d si accendono, %2$d si spengono.
 Continuare?</string>
+    <string name="variant_add">+ Variante</string>
+    <string name="variant_delete">Elimina variante</string>
+    <string name="variant_name_title">Nuova variante</string>
+    <string name="variant_name_hint">Nome (per esempio: Sfondo chiaro)</string>
+    <string name="variant_default_name">Variante %d</string>
+    <string name="variant_create">Crea</string>
+    <string name="variant_created">Variante creata: scegli le opzioni, poi Installa.</string>
+    <string name="variant_delete_confirm">Eliminare la variante %s? Il suo overlay viene tolto.</string>
+    <string name="one_variant">Scegli una sola variante per app</string>
+    <string name="fab_uninstall_sel">Disinstalla selezionate</string>
+    <string name="btn_uninstall">Disinstalla</string>
+    <string name="uninstall_confirm">%d selezionate.
+Gli overlay vengono tolti e le varianti spariscono dalla lista. Per toglierli del tutto serve un riavvio.</string>
 </resources>

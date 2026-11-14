@@ -4,7 +4,7 @@
     <string name="status_no_root">Root access is required. Grant root to Oxydian Theme in your root manager.</string>
     <string name="status_reboot">Module created. Reboot once to activate it, then apply your themes.</string>
     <string name="status_ok">Module ready.</string>
-    <string name="notice">Tick the items you want, then tap the round button at the bottom right and choose Install (builds and turns on), Enable (turns a disabled theme back on), Disable (turns off but stays installed, turn it back on without a reboot) or Remove (deletes it, needs a reboot). The boxes clear after every action; the real state is shown by the color. The first time you enable a new item a reboot is needed.</string>
+    <string name="notice">Tick the items you want, then tap the round button at the bottom right and choose Install (builds and turns on), Enable (turns a disabled theme back on), Disable (turns off but stays installed, turn it back on without a reboot) or Remove (deletes it, needs a reboot). The boxes clear after every action; the real state is shown by the color. The first time you enable a new item a reboot is needed. In an app\'s Options you can create several variants (for example two backgrounds): build them once, then turn on only one at a time without rebuilding.</string>
     <string name="many_warning">Warning: %1$d apps selected. More than about 10 themed apps slow down the phone at every boot.</string>
     <string name="btn_apply">Apply</string>
     <string name="btn_select_all">All</string>
@@ -46,7 +46,7 @@
     <string name="options">Options ›</string>
     <string name="options_title">Options</string>
     <string name="options_default">Default</string>
-    <string name="options_note">Tap Apply to use your choices.</string>
+    <string name="options_note">Tap Install to use your choices.</string>
     <string name="btn_accent">Accent</string>
     <string name="accent_title">Accent color</string>
     <string name="accent_custom">Custom color (hex)</string>
@@ -298,4 +298,17 @@ Enable their themes again?</item>
     <string name="toggle_none">Tick active or disabled overlays</string>
     <string name="toggle_confirm">%1$d turn on, %2$d turn off.
 Continue?</string>
+    <string name="variant_add">+ Variant</string>
+    <string name="variant_delete">Delete variant</string>
+    <string name="variant_name_title">New variant</string>
+    <string name="variant_name_hint">Name (for example: Light background)</string>
+    <string name="variant_default_name">Variant %d</string>
+    <string name="variant_create">Create</string>
+    <string name="variant_created">Variant created: choose its options, then Install.</string>
+    <string name="variant_delete_confirm">Delete the variant %s? Its overlay is removed.</string>
+    <string name="one_variant">Pick only one variant per app</string>
+    <string name="fab_uninstall_sel">Uninstall selected</string>
+    <string name="btn_uninstall">Uninstall</string>
+    <string name="uninstall_confirm">%d selected.
+Overlays are removed and variants disappear from the list. A reboot is needed to remove them completely.</string>
 </resources>
