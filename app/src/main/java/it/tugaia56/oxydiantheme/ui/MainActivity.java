@@ -781,17 +781,11 @@ public class MainActivity extends AppCompatActivity {
         View gap = new View(this);
         gap.setLayoutParams(new android.widget.LinearLayout.LayoutParams(1, (int) (18 * d)));
         menu.addView(gap);
-        int sel = 0, off = 0;
-        for (AppEntry e : mVisible) {
-            if (!mSelected.contains(e.name)) continue;
-            sel++;
-            Integer st = mState.get(e.name);
-            if (st != null && st == ST_DISABLED) off++;
-        }
-        boolean allOff = sel > 0 && off == sel;   // tutte spente: "Attiva" (stessa azione di Installa, ma dice meglio cosa succede)
         addFabRow(menu, R.string.fab_remove_sel, R.drawable.ic_fab_delete, false, () -> runSelected(ACT_REMOVE));
         addFabRow(menu, R.string.fab_disable_sel, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
-        addFabRow(menu, allOff ? R.string.fab_enable_sel : R.string.fab_install_sel, R.drawable.ic_fab_check, false, () -> runSelected(ACT_ACTIVATE));
+        // Attiva = riaccendere un overlay gia' costruito; Installa = costruirne uno che ancora non c'e' (la procedura e' la stessa)
+        addFabRow(menu, R.string.fab_enable_sel, R.drawable.ic_fab_play, false, () -> runSelected(ACT_ACTIVATE, true));
+        addFabRow(menu, R.string.fab_install_sel, R.drawable.ic_fab_check, false, () -> runSelected(ACT_ACTIVATE, false));
     }
 
     /** Una riga del menu: etichetta a pillola e cerchio con l'icona; "main" = cerchio pieno in accento. */
@@ -2012,7 +2006,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean mRestartUiAfter;
 
     /** Azione sulle voci spuntate nella lista. */
-    private void runSelected(int action) {
+    private void runSelected(int action) { runSelected(action, false); }
+
+    private void runSelected(int action, boolean enableLabel) {
         if (mBusy) return;
         List<AppEntry> targets = new ArrayList<>();
         for (AppEntry e : mVisible) if (mSelected.contains(e.name)) targets.add(e);
@@ -2021,9 +2017,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         final int n = targets.size();
-        boolean allOff = true;
-        for (AppEntry e : targets) { Integer st = mState.get(e.name); if (st == null || st != ST_DISABLED) { allOff = false; break; } }
-        final boolean enableOnly = action == ACT_ACTIVATE && allOff;
+        final boolean enableOnly = action == ACT_ACTIVATE && enableLabel;
         final int title = action == ACT_ACTIVATE ? (enableOnly ? R.string.btn_enable : R.string.btn_activate) : action == ACT_DISABLE ? R.string.btn_disable : R.string.btn_remove;
         final int msg = action == ACT_ACTIVATE ? (enableOnly ? R.plurals.confirm_enable : R.plurals.confirm_install) : action == ACT_DISABLE ? R.plurals.confirm_disable : R.plurals.confirm_remove;
         Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
