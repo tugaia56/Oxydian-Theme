@@ -288,4 +288,8 @@ Riattivare i loro temi?</item>
     <string name="welcome_ok">Ho capito</string>
     <string name="welcome_option">Mostra il benvenuto all\'avvio</string>
     <string name="welcome_show_now">Mostra il benvenuto adesso</string>
+    <plurals name="fab_count">
+        <item quantity="one">%d selezionata</item>
+        <item quantity="other">%d selezionate</item>
+    </plurals>
 </resources>

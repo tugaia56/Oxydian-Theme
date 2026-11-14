@@ -1559,7 +1559,7 @@ public class MainActivity extends AppCompatActivity {
         int n = 0;
         for (AppEntry e : mVisible) if (mSelected.contains(e.name)) n++;
         if (n > 0) {
-            fab.setText(String.valueOf(n));
+            fab.setText(getResources().getQuantityString(R.plurals.fab_count, n, n));
             fab.extend();
         } else {
             fab.shrink();

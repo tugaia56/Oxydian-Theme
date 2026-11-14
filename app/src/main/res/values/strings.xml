@@ -289,4 +289,8 @@ Enable their themes again?</item>
     <string name="welcome_ok">Got it</string>
     <string name="welcome_option">Show the welcome at start</string>
     <string name="welcome_show_now">Show the welcome now</string>
+    <plurals name="fab_count">
+        <item quantity="one">%d selected</item>
+        <item quantity="other">%d selected</item>
+    </plurals>
 </resources>
