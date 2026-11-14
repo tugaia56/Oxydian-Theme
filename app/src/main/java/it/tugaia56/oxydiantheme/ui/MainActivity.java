@@ -1222,8 +1222,9 @@ public class MainActivity extends AppCompatActivity {
         // su Android puro la scheda accanto (Pack Icone) e' nascosta: senza altezza propria la riga si schiaccia e il tastierino sparisce
         if (mPinCard != null) setCardHeight(mPinCard, SystemVariant.isPure() ? ViewGroup.LayoutParams.WRAP_CONTENT : ViewGroup.LayoutParams.MATCH_PARENT);
         if (mIconPackCard != null) mIconPackCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
-        if (mSwitchCard != null) mSwitchCard.setVisibility(SystemVariant.isPure() ? View.GONE : View.VISIBLE);
-        if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        // la scheda Interruttori c'e' su tutte le ROM; su Android puro vale solo per le altre app (le app di sistema hanno interruttori di un altro tipo)
+        if (mSwitchCard != null) mSwitchCard.setVisibility(View.VISIBLE);
+        if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(View.GONE);
         if (mBlurCard != null) mBlurCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mSubBlur != null) mSubBlur.setText(blurOn() ? R.string.gb_on : R.string.gb_off);
         // notifiche, toast, dialog e bordo sfumato come overlay: solo su Android puro (RisingOS, crDroid, ecc.); su OxygenOS li fa il modulo Oxydian
@@ -1284,7 +1285,8 @@ public class MainActivity extends AppCompatActivity {
             // "In uso: nome" subito sotto il titolo (nome nel colore dell'accento), poi la descrizione
             String name = OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "switch");
             String line = getString(R.string.switch_in_use, name);
-            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder(line + "\n" + getString(R.string.card_switch_sub));
+            String extra = SystemVariant.isPure() ? "\n" + getString(R.string.card_switch_pure_note) : "";
+            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder(line + "\n" + getString(R.string.card_switch_sub) + extra);
             sb.setSpan(new android.text.style.ForegroundColorSpan(getColor(R.color.text)), 0, line.length(), 0);   // "In uso:" bianco
             int st = line.length() - name.length();
             if (st >= 0) sb.setSpan(new android.text.style.ForegroundColorSpan(ThemePrefs.accentColor()), st, line.length(), 0);

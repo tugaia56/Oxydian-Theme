@@ -310,4 +310,5 @@ Continuare?</string>
     <string name="btn_uninstall">Disinstalla</string>
     <string name="uninstall_confirm">%d selezionate.
 Gli overlay vengono tolti e le varianti spariscono dalla lista. Per toglierli del tutto serve un riavvio.</string>
+    <string name="card_switch_pure_note">Non vale per le app di sistema, solo per le altre app</string>
 </resources>
