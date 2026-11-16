@@ -134,6 +134,12 @@ public final class AospTheme {
             else if (OptionGroupsDialog.CUSTOM.equals(kb)) keyBg = 0xFF000000 | (ThemePrefs.getCustomColor("com.android.systemui_pinkeybg") & 0xFFFFFF);
             m.put("system_surface_effect_1_dark", keyBg);
         }
+        // Stile del volume: il fondo delle barre del volume (Compose) usa questi due ruoli di superficie; con uno stile scelto
+        // prendono background_leanback_dark (#3e424d), un po' piu' chiaro del solito
+        if ("Leanback".equals(ThemePrefs.getOption(SystemColorsDialog.PKG, "volumetrack"))) {
+            m.put("system_surface_container_highest_dark", 0xFF3E424D);
+            m.put("system_surface_variant_dark", 0xFF3E424D);
+        }
         // Colore scelto per le icone della barra di stato (comando unico): la percentuale della batteria e le altre icone a un
         // solo colore leggono questi colori di SystemUI (verificato su OxygenOS 16); Wi-Fi e segnale li fa lo stile (WIFI1/SIG1)
         Integer barColor = rolesOnly ? IconColorDialog.value("all") : null;
