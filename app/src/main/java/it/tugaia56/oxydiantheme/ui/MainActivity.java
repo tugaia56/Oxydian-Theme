@@ -410,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
     private View mBlurCard, mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow, mRoundnessRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
-    private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder, mSubRoundness;
+    private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder, mSubRoundness, mSubVolume;
     private android.widget.LinearLayout mClockColorRow;
     private Boolean mStatusRowsPure = null;
     private TextView mSubSCards, mSubClockColor, mSubBlur;
@@ -572,6 +572,11 @@ public class MainActivity extends AppCompatActivity {
         mSubRoundness = s[0];
         setCardHeight(roundCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3f.addView(roundCard);
+        // stile del pannello del volume (accanto): sfondo e bordo del Theme, solo Android puro
+        View volCard = makeCard(R.string.card_volumestyle, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"volumestyle"}, R.string.card_volumestyle));
+        mSubVolume = s[0];
+        setCardHeight(volCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r3f.addView(volCard);
         mRoundnessRow = r3f;
         // menu di spegnimento (solo Android puro): sfondo e bordo, nella riga del tastierino PIN (al posto del posto libero)
         View pmCard = makeCard(R.string.card_powermenu, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pmbg", "pmborder", "pmbtnborder"}, R.string.card_powermenu));
@@ -953,7 +958,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
                     || !ThemePrefs.getOption(pkg, "pindots").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty() || usesPinKeys(pkg) || !ThemePrefs.getOption(pkg, "pinkeybg").isEmpty() || !ThemePrefs.getOption(pkg, "pinkeyaction").isEmpty() || !ThemePrefs.getOption(pkg, "roundness").isEmpty();
+                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty() || usesPinKeys(pkg) || !ThemePrefs.getOption(pkg, "pinkeybg").isEmpty() || !ThemePrefs.getOption(pkg, "pinkeyaction").isEmpty() || !ThemePrefs.getOption(pkg, "roundness").isEmpty() || !ThemePrefs.getOption(pkg, "volumestyle").isEmpty();
             if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
         }
         for (AppEntry e : mApps) if (e.ds && e.pkg.equals(pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(pkg);
@@ -1256,7 +1261,7 @@ public class MainActivity extends AppCompatActivity {
         if (mRoundnessRow != null) mRoundnessRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (SystemVariant.isOos()) {
             // scelte fatte in prove precedenti: via, cosi' al prossimo "Installa" gli overlay si rifanno senza questi stili
-            for (String g : new String[]{"notifstyle"}) if (!ThemePrefs.getOption(SYSTEMUI_PKG, g).isEmpty()) ThemePrefs.setOption(SYSTEMUI_PKG, g, "");
+            for (String g : new String[]{"notifstyle", "volumestyle", "roundness"}) if (!ThemePrefs.getOption(SYSTEMUI_PKG, g).isEmpty()) ThemePrefs.setOption(SYSTEMUI_PKG, g, "");
             for (String g : new String[]{"toaststyle", "dialogstyle", "roundness"}) if (!ThemePrefs.getOption(SystemColorsDialog.PKG, g).isEmpty()) ThemePrefs.setOption(SystemColorsDialog.PKG, g, "");
         }
         // Il menu di spegnimento in Compose (RisingOS: impostazione secure global_actions_use_compose_dialog=1) non usa questi
@@ -1283,6 +1288,7 @@ public class MainActivity extends AppCompatActivity {
         if (mIconPackSpacer != null) mIconPackSpacer.setVisibility(SystemVariant.isPure() && !pmShown && !cardsInPinRow ? View.VISIBLE : View.GONE);
         if (mSubPowerMenu != null) mSubPowerMenu.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "pmbg", "pmborder", "pmbtnborder"));
         if (mSubNotifStyle != null) mSubNotifStyle.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "notifstyle"));
+        if (mSubVolume != null) mSubVolume.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "volumestyle"));
         if (mSubToastStyle != null) mSubToastStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "toaststyle"));
         if (mSubGradBorder != null) mSubGradBorder.setText(GradBorderDialog.summary(this));
         if (mSubDialogStyle != null) mSubDialogStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "dialogstyle"));
@@ -1703,7 +1709,7 @@ public class MainActivity extends AppCompatActivity {
                 if (("pinbg".equals(g) || "pindots".equals(g) || "pinnum".equals(g)) && SystemVariant.isPure()) continue;
                 if (g.startsWith("pinkey") && SystemVariant.isOos()) continue;
                 // stili di notifiche, toast e dialog: solo Android puro (su OxygenOS li fa il modulo)
-                if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g) || "roundness".equals(g)) && SystemVariant.isOos()) continue;
+                if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g) || "roundness".equals(g) || "volumestyle".equals(g)) && SystemVariant.isOos()) continue;
                 String[] items = ctx.getAssets().list(base + "/" + g);
                 if (items == null) continue;
                 OptGroup og = new OptGroup();

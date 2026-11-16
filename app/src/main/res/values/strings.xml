@@ -313,4 +313,5 @@ Continue?</string>
 Overlays are removed and variants disappear from the list. A reboot is needed to remove them completely.</string>
     <string name="card_switch_pure_note">Does not apply to system apps, only to other apps</string>
     <string name="card_roundness">Corner roundness</string>
+    <string name="card_volumestyle">Volume panel style</string>
 </resources>
