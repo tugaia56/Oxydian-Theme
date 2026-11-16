@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fondo della barra del volume (Compose): usa i ruoli "superficie piu alta" e "variante di superficie" -->
+    <color name="system_surface_container_highest_dark">@*android:color/background_leanback_dark</color>
+    <color name="system_surface_variant_dark">@*android:color/background_leanback_dark</color>
+</resources>

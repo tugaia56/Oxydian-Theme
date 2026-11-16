@@ -573,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
         setCardHeight(roundCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3f.addView(roundCard);
         // stile del pannello del volume (accanto): sfondo e bordo del Theme, solo Android puro
-        View volCard = makeCard(R.string.card_volumestyle, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"volumestyle"}, R.string.card_volumestyle));
+        View volCard = makeCard(R.string.card_volumestyle, s, () -> OptionGroupsDialog.show(this, SYSTEMUI_PKG, new String[]{"volumestyle"}, R.string.card_volumestyle, this::applyVolumeStyle));
         mSubVolume = s[0];
         setCardHeight(volCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3f.addView(volCard);
@@ -952,7 +952,7 @@ public class MainActivity extends AppCompatActivity {
         if (SystemColorsDialog.PKG.equals(pkg)) {
             any = !ThemePrefs.getOption(pkg, "accent").isEmpty() || !ThemePrefs.getOption(pkg, "background").isEmpty()
                     || !ThemePrefs.getOption(pkg, "progress").isEmpty() || !ThemePrefs.getOption(pkg, "switch").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "toaststyle").isEmpty() || !ThemePrefs.getOption(pkg, "dialogstyle").isEmpty() || !ThemePrefs.getOption(pkg, "roundness").isEmpty()
+                    || !ThemePrefs.getOption(pkg, "toaststyle").isEmpty() || !ThemePrefs.getOption(pkg, "dialogstyle").isEmpty() || !ThemePrefs.getOption(pkg, "roundness").isEmpty() || !ThemePrefs.getOption(pkg, "volumetrack").isEmpty()
                     || ThemePrefs.getRippleAlpha() > 0;
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
@@ -993,6 +993,20 @@ public class MainActivity extends AppCompatActivity {
         List<AppEntry> t = new ArrayList<>();
         for (AppEntry e : mApps) if (e.ds && (pkg.equals(e.pkg) || (sysUi && SYSTEMUI_PKG.equals(e.pkg)))) t.add(e);
         if (!t.isEmpty()) runAction(t, t.get(0).enabled ? ACT_ACTIVATE : ACT_DISABLE);
+    }
+
+    /** Stile del volume: lo sfondo e' di SystemUI, il fondo della barra e' un colore di sistema (framework): la scelta vale per tutti e due. */
+    private void applyVolumeStyle() {
+        String choice = ThemePrefs.getOption(SYSTEMUI_PKG, "volumestyle");
+        ThemePrefs.setOption(SystemColorsDialog.PKG, "volumetrack", choice.isEmpty() ? "" : "Leanback");
+        syncEnabled(SYSTEMUI_PKG);
+        syncEnabled(SystemColorsDialog.PKG);
+        refreshCards();
+        mList.getAdapter().notifyDataSetChanged();
+        List<AppEntry> t = new ArrayList<>();
+        for (AppEntry e : mApps) if (e.ds && (SystemColorsDialog.PKG.equals(e.pkg) || SYSTEMUI_PKG.equals(e.pkg))) t.add(e);
+        if (t.isEmpty()) { onApply(SYSTEMUI_PKG, false); return; }
+        runAction(t, t.get(0).enabled ? ACT_ACTIVATE : ACT_DISABLE);
     }
 
     /** Pallino del colore a sinistra del testo. */
@@ -1262,7 +1276,7 @@ public class MainActivity extends AppCompatActivity {
         if (SystemVariant.isOos()) {
             // scelte fatte in prove precedenti: via, cosi' al prossimo "Installa" gli overlay si rifanno senza questi stili
             for (String g : new String[]{"notifstyle", "volumestyle", "roundness"}) if (!ThemePrefs.getOption(SYSTEMUI_PKG, g).isEmpty()) ThemePrefs.setOption(SYSTEMUI_PKG, g, "");
-            for (String g : new String[]{"toaststyle", "dialogstyle", "roundness"}) if (!ThemePrefs.getOption(SystemColorsDialog.PKG, g).isEmpty()) ThemePrefs.setOption(SystemColorsDialog.PKG, g, "");
+            for (String g : new String[]{"toaststyle", "dialogstyle", "roundness", "volumetrack"}) if (!ThemePrefs.getOption(SystemColorsDialog.PKG, g).isEmpty()) ThemePrefs.setOption(SystemColorsDialog.PKG, g, "");
         }
         // Il menu di spegnimento in Compose (RisingOS: impostazione secure global_actions_use_compose_dialog=1) non usa questi
         // overlay: la scheda si nasconde e le scelte per quel menu stanno nel modulo Oxydian (Varie)
@@ -1709,7 +1723,7 @@ public class MainActivity extends AppCompatActivity {
                 if (("pinbg".equals(g) || "pindots".equals(g) || "pinnum".equals(g)) && SystemVariant.isPure()) continue;
                 if (g.startsWith("pinkey") && SystemVariant.isOos()) continue;
                 // stili di notifiche, toast e dialog: solo Android puro (su OxygenOS li fa il modulo)
-                if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g) || "roundness".equals(g) || "volumestyle".equals(g)) && SystemVariant.isOos()) continue;
+                if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g) || "roundness".equals(g) || "volumestyle".equals(g) || "volumetrack".equals(g)) && SystemVariant.isOos()) continue;
                 String[] items = ctx.getAssets().list(base + "/" + g);
                 if (items == null) continue;
                 OptGroup og = new OptGroup();
