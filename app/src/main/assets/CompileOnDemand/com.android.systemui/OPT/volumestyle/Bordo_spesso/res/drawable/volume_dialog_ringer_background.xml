@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Sfondo del pulsante della suoneria (Bordo_spesso): trasparente, cosi il bordo del pannello si vede anche in alto -->
+<!-- Sfondo del riquadro della suoneria (Bordo_spesso): come il pannello, con il bordo anche quando il menu si apre -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="#00000000" />
+    <solid android:color="@*android:color/system_surface_dark" />
+    <stroke android:width="4dp" android:color="@*android:color/accent_material_dark" />
     <corners android:radius="28dp" />
 </shape>
