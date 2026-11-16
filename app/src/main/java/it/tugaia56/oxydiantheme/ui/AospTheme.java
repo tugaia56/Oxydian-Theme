@@ -138,10 +138,10 @@ public final class AospTheme {
         // prendono background_leanback_dark (#3e424d), un po' piu' chiaro del solito
         String vtrack = ThemePrefs.getOption(SystemColorsDialog.PKG, "volumetrack");
         if ("Leanback".equals(vtrack)) {
-            // barre del pannello laterale (ruoli "piu' alta" e "variante") e del foglio grande + pillola dei sottotitoli ("alta"): holo_primary
-            m.put("system_surface_container_highest_dark", 0xFF282C36);
-            m.put("system_surface_variant_dark", 0xFF282C36);
-            m.put("system_surface_container_high_dark", 0xFF282C36);
+            // barre del pannello laterale (ruoli "piu' alta" e "variante") e del foglio grande + pillola dei sottotitoli ("alta"): button_material_light
+            m.put("system_surface_container_highest_dark", 0xFF30353F);
+            m.put("system_surface_variant_dark", 0xFF30353F);
+            m.put("system_surface_container_high_dark", 0xFF30353F);
             // sfondo del foglio grande del volume (verificato con una prova a colori): ruolo "effetto 0", di serie un azzurro a meta' trasparenza
             Integer tb = m.get("system_surface_dark");
             if (tb == null && bg != null) tb = 0xFF000000 | bg;
