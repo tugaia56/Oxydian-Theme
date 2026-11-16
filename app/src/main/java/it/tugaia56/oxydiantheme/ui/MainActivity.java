@@ -1268,7 +1268,11 @@ public class MainActivity extends AppCompatActivity {
         if (mSwitchCard != null) mSwitchCard.setVisibility(View.VISIBLE);
         if (mSwitchSpacer != null) mSwitchSpacer.setVisibility(View.GONE);
         if (mBlurCard != null) mBlurCard.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
-        if (mSubBlur != null) mSubBlur.setText(blurOn() ? R.string.gb_on : R.string.gb_off);
+        if (mSubBlur != null) {
+            boolean bo = blurOn();
+            mSubBlur.setText(bo ? R.string.gb_on : R.string.gb_off);
+            mSubBlur.setTextColor(bo ? ThemePrefs.accentColor() : getColor(R.color.text_dim));
+        }
         // notifiche, toast, dialog e bordo sfumato come overlay: solo su Android puro (RisingOS, crDroid, ecc.); su OxygenOS li fa il modulo Oxydian
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);

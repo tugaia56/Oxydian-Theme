@@ -136,9 +136,16 @@ public final class AospTheme {
         }
         // Stile del volume: il fondo delle barre del volume (Compose) usa questi due ruoli di superficie; con uno stile scelto
         // prendono background_leanback_dark (#3e424d), un po' piu' chiaro del solito
-        if ("Leanback".equals(ThemePrefs.getOption(SystemColorsDialog.PKG, "volumetrack"))) {
-            m.put("system_surface_container_highest_dark", 0xFF3E424D);
-            m.put("system_surface_variant_dark", 0xFF3E424D);
+        String vtrack = ThemePrefs.getOption(SystemColorsDialog.PKG, "volumetrack");
+        if ("Leanback".equals(vtrack)) {
+            // barre del pannello laterale (ruoli "piu' alta" e "variante") e del foglio grande + pillola dei sottotitoli ("alta"): holo_primary
+            m.put("system_surface_container_highest_dark", 0xFF282C36);
+            m.put("system_surface_variant_dark", 0xFF282C36);
+            m.put("system_surface_container_high_dark", 0xFF282C36);
+            // sfondo del foglio grande del volume (verificato con una prova a colori): ruolo "effetto 0", di serie un azzurro a meta' trasparenza
+            Integer tb = m.get("system_surface_dark");
+            if (tb == null && bg != null) tb = 0xFF000000 | bg;
+            m.put("system_surface_effect_0_dark", 0xFF000000 | ((tb != null ? tb : 0xFF1B2029) & 0xFFFFFF));
         }
         // Colore scelto per le icone della barra di stato (comando unico): la percentuale della batteria e le altre icone a un
         // solo colore leggono questi colori di SystemUI (verificato su OxygenOS 16); Wi-Fi e segnale li fa lo stile (WIFI1/SIG1)
