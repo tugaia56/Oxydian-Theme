@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Come values/colors.xml, ma per il tema scuro: il colore di serie ha una versione "night" che altrimenti vince -->
+    <!-- Il pannello del volume prende il suo colore di riempimento da questi due colori ("velo"): con la sfocatura accesa il primo,
+         spenta il secondo. Qui diventano il colore dello stile. -->
     <color name="volume_dialog_view_background_blur">#00000000</color>
     <color name="volume_dialog_view_background_blur_fallback">#00000000</color>
 </resources>

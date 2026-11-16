@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Velo del pannello del volume: di serie e' un azzurro a meta' trasparenza che schiarisce lo sfondo; qui si toglie
-         cosi' il pannello ha esattamente il colore dello stile -->
-    <color name="volume_dialog_view_background_blur">#00000000</color>
-    <color name="volume_dialog_view_background_blur_fallback">#00000000</color>
+    <!-- Il pannello del volume prende il suo colore di riempimento da questi due colori ("velo"): con la sfocatura accesa il primo,
+         spenta il secondo. Qui diventano il colore dello stile. -->
+    <color name="volume_dialog_view_background_blur">@*android:color/accent_material_dark</color>
+    <color name="volume_dialog_view_background_blur_fallback">@*android:color/accent_material_dark</color>
 </resources>
