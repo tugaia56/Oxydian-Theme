@@ -31,6 +31,8 @@ final class OptionGroupsDialog {
     static String pretty(String n) {
         if (n == null || n.isEmpty()) return "";
         if ("Oxyt".equals(n)) return "Oxydian Theme";   // scelta "sfondo del Theme" (menu di spegnimento): nome intero
+        n = n.replaceFirst("^[0-9]+_", "");   // prefisso numerico solo per l'ordine delle scelte
+        if (n.matches("[0-9]+")) return n + " dp";   // scelte che sono una misura (tondezza degli angoli)
         StringBuilder sb = new StringBuilder();
         for (String p : n.split("_")) {
             if (p.isEmpty()) continue;

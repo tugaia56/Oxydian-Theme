@@ -407,10 +407,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
     private android.widget.LinearLayout mRow3, mRow3b;
-    private View mBlurCard, mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow;
+    private View mBlurCard, mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow, mRoundnessRow;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
-    private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder;
+    private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder, mSubRoundness;
     private android.widget.LinearLayout mClockColorRow;
     private Boolean mStatusRowsPure = null;
     private TextView mSubSCards, mSubClockColor, mSubBlur;
@@ -564,6 +564,15 @@ public class MainActivity extends AppCompatActivity {
         setCardHeight(gbCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3e.addView(gbCard);
         mDialogStyleRow = r3e;
+        // tondezza degli angoli (solo Android puro): finestre di dialogo, fogli in basso, pulsanti
+        android.widget.LinearLayout r3f = new android.widget.LinearLayout(this);
+        r3f.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        r3p.addView(r3f, r3p.indexOfChild(r3e) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        View roundCard = makeCard(R.string.card_roundness, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"roundness"}, R.string.card_roundness));
+        mSubRoundness = s[0];
+        setCardHeight(roundCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r3f.addView(roundCard);
+        mRoundnessRow = r3f;
         // menu di spegnimento (solo Android puro): sfondo e bordo, nella riga del tastierino PIN (al posto del posto libero)
         View pmCard = makeCard(R.string.card_powermenu, s, () -> openGroups(SYSTEMUI_PKG, new String[]{"pmbg", "pmborder", "pmbtnborder"}, R.string.card_powermenu));
         mSubPowerMenu = s[0];
@@ -938,13 +947,13 @@ public class MainActivity extends AppCompatActivity {
         if (SystemColorsDialog.PKG.equals(pkg)) {
             any = !ThemePrefs.getOption(pkg, "accent").isEmpty() || !ThemePrefs.getOption(pkg, "background").isEmpty()
                     || !ThemePrefs.getOption(pkg, "progress").isEmpty() || !ThemePrefs.getOption(pkg, "switch").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "toaststyle").isEmpty() || !ThemePrefs.getOption(pkg, "dialogstyle").isEmpty()
+                    || !ThemePrefs.getOption(pkg, "toaststyle").isEmpty() || !ThemePrefs.getOption(pkg, "dialogstyle").isEmpty() || !ThemePrefs.getOption(pkg, "roundness").isEmpty()
                     || ThemePrefs.getRippleAlpha() > 0;
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
             any = !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
                     || !ThemePrefs.getOption(pkg, "pindots").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty() || usesPinKeys(pkg) || !ThemePrefs.getOption(pkg, "pinkeybg").isEmpty() || !ThemePrefs.getOption(pkg, "pinkeyaction").isEmpty();
+                    || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty() || usesPinKeys(pkg) || !ThemePrefs.getOption(pkg, "pinkeybg").isEmpty() || !ThemePrefs.getOption(pkg, "pinkeyaction").isEmpty() || !ThemePrefs.getOption(pkg, "roundness").isEmpty();
             if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
         }
         for (AppEntry e : mApps) if (e.ds && e.pkg.equals(pkg)) e.enabled = ThemePrefs.isDarkShadowEnabled(pkg);
@@ -959,12 +968,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void openGroups(String pkg, String[] groups, int titleRes) {
         OptionGroupsDialog.show(this, pkg, groups, titleRes, () -> {
+            if (Arrays.asList(groups).contains("roundness")) { applyRoundness(pkg); return; }
             if (Arrays.asList(groups).contains("switch")) applySwitchProp();
             syncEnabled(pkg);
             refreshCards();
             mList.getAdapter().notifyDataSetChanged();
             onApply(pkg, false);
         });
+    }
+
+    /** Tondezza degli angoli: la scelta vale per il sistema (framework) e, se c'e', anche per SystemUI (RisingOS no: li' non serve). */
+    private void applyRoundness(String pkg) {
+        String choice = ThemePrefs.getOption(pkg, "roundness");
+        boolean sysUi = !SystemVariant.isRising();
+        if (sysUi) { ThemePrefs.setOption(SYSTEMUI_PKG, "roundness", choice); syncEnabled(SYSTEMUI_PKG); }
+        syncEnabled(pkg);
+        refreshCards();
+        mList.getAdapter().notifyDataSetChanged();
+        List<AppEntry> t = new ArrayList<>();
+        for (AppEntry e : mApps) if (e.ds && (pkg.equals(e.pkg) || (sysUi && SYSTEMUI_PKG.equals(e.pkg)))) t.add(e);
+        if (!t.isEmpty()) runAction(t, t.get(0).enabled ? ACT_ACTIVATE : ACT_DISABLE);
     }
 
     /** Pallino del colore a sinistra del testo. */
@@ -1230,10 +1253,11 @@ public class MainActivity extends AppCompatActivity {
         // notifiche, toast, dialog e bordo sfumato come overlay: solo su Android puro (RisingOS, crDroid, ecc.); su OxygenOS li fa il modulo Oxydian
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mRoundnessRow != null) mRoundnessRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (SystemVariant.isOos()) {
             // scelte fatte in prove precedenti: via, cosi' al prossimo "Installa" gli overlay si rifanno senza questi stili
             for (String g : new String[]{"notifstyle"}) if (!ThemePrefs.getOption(SYSTEMUI_PKG, g).isEmpty()) ThemePrefs.setOption(SYSTEMUI_PKG, g, "");
-            for (String g : new String[]{"toaststyle", "dialogstyle"}) if (!ThemePrefs.getOption(SystemColorsDialog.PKG, g).isEmpty()) ThemePrefs.setOption(SystemColorsDialog.PKG, g, "");
+            for (String g : new String[]{"toaststyle", "dialogstyle", "roundness"}) if (!ThemePrefs.getOption(SystemColorsDialog.PKG, g).isEmpty()) ThemePrefs.setOption(SystemColorsDialog.PKG, g, "");
         }
         // Il menu di spegnimento in Compose (RisingOS: impostazione secure global_actions_use_compose_dialog=1) non usa questi
         // overlay: la scheda si nasconde e le scelte per quel menu stanno nel modulo Oxydian (Varie)
@@ -1262,6 +1286,7 @@ public class MainActivity extends AppCompatActivity {
         if (mSubToastStyle != null) mSubToastStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "toaststyle"));
         if (mSubGradBorder != null) mSubGradBorder.setText(GradBorderDialog.summary(this));
         if (mSubDialogStyle != null) mSubDialogStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "dialogstyle"));
+        if (mSubRoundness != null) mSubRoundness.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "roundness"));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
         mSubRipple.setText(RippleDialog.summary(this));
@@ -1678,7 +1703,7 @@ public class MainActivity extends AppCompatActivity {
                 if (("pinbg".equals(g) || "pindots".equals(g) || "pinnum".equals(g)) && SystemVariant.isPure()) continue;
                 if (g.startsWith("pinkey") && SystemVariant.isOos()) continue;
                 // stili di notifiche, toast e dialog: solo Android puro (su OxygenOS li fa il modulo)
-                if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g)) && SystemVariant.isOos()) continue;
+                if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g) || "roundness".equals(g)) && SystemVariant.isOos()) continue;
                 String[] items = ctx.getAssets().list(base + "/" + g);
                 if (items == null) continue;
                 OptGroup og = new OptGroup();

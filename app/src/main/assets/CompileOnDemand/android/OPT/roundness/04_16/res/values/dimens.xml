@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tondezza degli angoli: 16 dp per finestre di dialogo, selettore app e compilazione automatica; fogli in basso 11 dp; pulsanti 8 dp -->
+    <dimen name="config_dialogCornerRadius">16dp</dimen>
+    <dimen name="config_bottomDialogCornerRadius">11dp</dimen>
+    <dimen name="config_buttonCornerRadius">8dp</dimen>
+    <dimen name="chooser_corner_radius">16dp</dimen>
+    <dimen name="autofill_dialog_corner_radius">16dp</dimen>
+</resources>
