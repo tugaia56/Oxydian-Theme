@@ -1406,10 +1406,10 @@ public class MainActivity extends AppCompatActivity {
                     String m = sys.get(ov);
                     int s;
                     if ("[x]".equals(m)) s = ST_ACTIVE;
-                    else if ("[ ]".equals(m)) s = ST_DISABLED;
+                    else if ("[ ]".equals(m)) s = (!store.isEmpty() && !store.contains(ov)) ? ST_NONE : ST_DISABLED;   // spento e tolto dallo store = disinstallato (il sistema lo ricorda fino al riavvio)
                     else if (m != null && live.contains(ov)) s = ST_INVALID;  // "---" ma l'APK c'e': davvero non valido
                     else if (store.contains(ov)) s = ST_REBOOT;  // APK pronto, il sistema non lo conosce ancora
-                    else if (m != null) s = ST_DISABLED;         // tolto dallo store, il sistema lo ricorda fino al riavvio
+                    else if (m != null) s = store.isEmpty() ? ST_DISABLED : ST_NONE;   // tolto dallo store (disinstallato): il sistema lo ricorda fino al riavvio, ma per noi non c'e' piu'
                     else s = ST_NONE;
                     st.put(e.name, s);
                 }
