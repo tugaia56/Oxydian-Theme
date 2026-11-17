@@ -1824,6 +1824,7 @@ public class MainActivity extends AppCompatActivity {
             String v;
             if (OptionGroupsDialog.CUSTOM.equals(act)) v = hex8(0xFF000000 | (ThemePrefs.getCustomColor(pkg + "_pinkeyaction") & 0xFFFFFF));
             else if ("Nero".equals(act)) v = "#FF000000";
+            else if ("Blur".equals(act)) v = "#33FFFFFF";   // vetro: si vede lo sfondo sfocato della ROM
             else if ("Accento".equals(act)) v = "@*android:color/accent_material_dark";
             else v = "@*android:color/system_background_dark";
             out.append("    <color name=\"pin_bouncer_action_button_bg\">").append(v).append("</color>\n");
