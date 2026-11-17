@@ -407,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
     private android.widget.LinearLayout mRow3, mRow3b;
-    private View mBlurCard, mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow, mRoundnessRow;
+    private View mBlurCard, mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow, mRoundnessRow, mRoundCard;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder, mSubRoundness, mSubVolume;
@@ -585,6 +585,7 @@ public class MainActivity extends AppCompatActivity {
         r3p.addView(r3f, r3p.indexOfChild(r3e) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         View roundCard = makeCard(R.string.card_roundness, s, () -> openGroups(SystemColorsDialog.PKG, new String[]{"roundness"}, R.string.card_roundness));
         mSubRoundness = s[0];
+        mRoundCard = roundCard;
         setCardHeight(roundCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         r3f.addView(roundCard);
         // stile del pannello del volume (accanto): sfondo e bordo del Theme, solo Android puro
@@ -1295,6 +1296,14 @@ public class MainActivity extends AppCompatActivity {
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mRoundnessRow != null) mRoundnessRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        // Tondezza angoli: su RisingOS non si vede nessun effetto (le finestre di sistema hanno forme proprie e SystemUI non e' del Theme): scheda nascosta
+        if (mRoundCard != null) mRoundCard.setVisibility(SystemVariant.isRising() ? View.GONE : View.VISIBLE);
+        for (String pk : new String[]{SYSTEMUI_PKG, SystemColorsDialog.PKG}) {
+            String rc = ThemePrefs.getOption(pk, "roundness");
+            // RisingOS: niente tondezza; misure tolte dall'elenco (oltre 32 dp non si vede differenza): la scelta torna a Predefinito
+            if (!rc.isEmpty() && (SystemVariant.isRising() || !OptionGroupsDialog.choices(this, pk, "roundness").contains(rc)))
+                ThemePrefs.setOption(pk, "roundness", "");
+        }
         if (SystemVariant.isOos()) {
             // scelte fatte in prove precedenti: via, cosi' al prossimo "Installa" gli overlay si rifanno senza questi stili
             for (String g : new String[]{"notifstyle", "volumestyle", "roundness"}) if (!ThemePrefs.getOption(SYSTEMUI_PKG, g).isEmpty()) ThemePrefs.setOption(SYSTEMUI_PKG, g, "");
@@ -1745,6 +1754,7 @@ public class MainActivity extends AppCompatActivity {
                 if (g.startsWith("pinkey") && SystemVariant.isOos()) continue;
                 // stili di notifiche, toast e dialog: solo Android puro (su OxygenOS li fa il modulo)
                 if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g) || "roundness".equals(g) || "volumestyle".equals(g) || "volumetrack".equals(g)) && SystemVariant.isOos()) continue;
+                if ("roundness".equals(g) && SystemVariant.isRising()) continue;
                 String[] items = ctx.getAssets().list(base + "/" + g);
                 if (items == null) continue;
                 OptGroup og = new OptGroup();
