@@ -107,6 +107,9 @@ public final class AospTheme {
             // Solo sfondo, superficie e card di Impostazioni sono trasparenti; i contenitori (usati anche dalle finestre sfocate di
             // SystemUI) restano pieni: con colori trasparenti li' SystemUI andava in crash ("Cannot round NaN value") e LSPosed
             // entrava in modalita' sicura
+            // colori "vecchi" del framework: li legge l'app del Theme stessa (e le app a colori fissi); su Android puro nessuno li imposta
+            m.put("background_dark", b);
+            m.put("button_material_dark", mix(b, w, 0.04f));
             m.put("system_background_dark", fade(b, ta));
             m.put("system_surface_dark", fade(b, ta));
             m.put("system_surface_dim_dark", b);

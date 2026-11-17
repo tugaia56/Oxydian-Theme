@@ -134,6 +134,15 @@ final class OptionGroupsDialog {
         LinearLayout box = new LinearLayout(ctx);
         box.setOrientation(LinearLayout.VERTICAL);
         box.setPadding(pad, pad / 2, pad, 0);
+        if (java.util.Arrays.asList(groups).contains("switch")) {
+            // spiegazione degli interruttori (prima stava nella scheda)
+            TextView help = new TextView(ctx);
+            help.setText(ctx.getString(R.string.card_switch_sub)
+                    + (it.tugaia56.oxydiantheme.utils.SystemVariant.isPure() ? "\n" + ctx.getString(R.string.card_switch_pure_note) : ""));
+            help.setTextColor(ctx.getColor(R.color.text_dim));
+            help.setPadding(0, 0, 0, pad / 2);
+            box.addView(help);
+        }
         if (java.util.Arrays.asList(groups).contains("progress")) {
             // anteprima: i tre cerchi di sistema (piccolo, medio, grande) col disegno in uso adesso
             LinearLayout row = new LinearLayout(ctx);

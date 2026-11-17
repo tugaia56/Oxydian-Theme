@@ -3,7 +3,7 @@
     <string name="title_apps">Overlays</string>
     <string name="status_no_root">Root access is required. Grant root to Oxydian Theme in your root manager.</string>
     <string name="status_reboot">Module created. Reboot once to activate it, then apply your themes.</string>
-    <string name="status_ok">Module ready.</string>
+    <string name="status_ok">Select all</string>
     <string name="notice">Tick the items you want, then tap the round button at the bottom right and choose Install (builds and turns on), Enable (turns a disabled theme back on), Disable (turns off but stays installed, turn it back on without a reboot) or Uninstall (deletes it, needs a reboot). The boxes clear after every action; the real state is shown by the color. The first time you enable a new item a reboot is needed. In an app\'s Options you can create several variants (for example two backgrounds): build them once, then turn on only one at a time without rebuilding.</string>
     <string name="many_warning">Warning: %1$d apps selected. More than about 10 themed apps slow down the phone at every boot.</string>
     <string name="btn_apply">Apply</string>
@@ -120,6 +120,9 @@
     <string name="card_info">How it works</string>
     <string name="card_info_sub">How it works and color legend</string>
     <string name="card_restart_sub">Reloads the status bar and system UI</string>
+    <string name="card_module">Oxydian Module</string>
+    <string name="card_module_sub">Mods for the status bar, lock screen and more</string>
+    <string name="module_not_installed">Oxydian Module is not installed</string>
     <string name="card_update">Updates</string>
     <string name="card_update_sub">Look for a new version on GitHub</string>
     <string name="card_backup">Backup and restore</string>

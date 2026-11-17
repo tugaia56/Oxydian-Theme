@@ -501,6 +501,21 @@ public class MainActivity extends AppCompatActivity {
         ViewGroup catsParent = (ViewGroup) findViewById(R.id.cards_cats).getParent();
         catsParent.addView(clockRow, catsParent.indexOfChild(findViewById(R.id.cards_row6)) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         mClockColorRow = clockRow;
+        // collegamento al modulo Oxydian (come il modulo ha quello al Theme), in fondo alla pagina Colori
+        android.widget.LinearLayout r8 = new android.widget.LinearLayout(this);
+        r8.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        catsParent.addView(r8, catsParent.indexOfChild(clockRow) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        View modCard = makeCard(R.string.card_module, s, () -> {
+            android.content.Intent mi = getPackageManager().getLaunchIntentForPackage("it.tugaia56.oxydian");
+            if (mi == null) { Toast.makeText(this, R.string.module_not_installed, Toast.LENGTH_LONG).show(); return; }
+            startActivity(mi);
+        });
+        s[0].setText(R.string.card_module_sub);
+        setCardHeight(modCard, ViewGroup.LayoutParams.WRAP_CONTENT);
+        r8.addView(modCard);
+        View r8Spacer = new View(this);
+        r8Spacer.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, 0, 1f));
+        r8.addView(r8Spacer);
         mStatusRowsPure = null;
         // Pagina Mods
         android.widget.LinearLayout r0 = findViewById(R.id.cards_row0);
@@ -804,13 +819,16 @@ public class MainActivity extends AppCompatActivity {
             new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
         });
         View gap = new View(this);
-        gap.setLayoutParams(new android.widget.LinearLayout.LayoutParams(1, (int) (18 * d)));
+        gap.setLayoutParams(new android.widget.LinearLayout.LayoutParams(1, (int) (14 * d)));
         menu.addView(gap);
-        addFabRow(menu, R.string.fab_disable_sel, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
         // Cambia stato: gli attivi si spengono e i spenti si accendono
         addFabRow(menu, R.string.fab_toggle_sel, R.drawable.ic_fab_swap, false, () -> runSelected(ACT_TOGGLE));
+        addFabRow(menu, R.string.fab_disable_sel, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
         // Attiva = riaccendere un overlay gia' costruito; Installa = costruirne uno che ancora non c'e' (la procedura e' la stessa)
         addFabRow(menu, R.string.fab_enable_sel, R.drawable.ic_fab_play, false, () -> runSelected(ACT_ACTIVATE, true));
+        View gap2 = new View(this);
+        gap2.setLayoutParams(new android.widget.LinearLayout.LayoutParams(1, (int) (14 * d)));
+        menu.addView(gap2);
         addFabRow(menu, R.string.fab_uninstall_sel, R.drawable.ic_fab_delete, false, this::uninstallSelected);
         addFabRow(menu, R.string.fab_install_sel, R.drawable.ic_fab_check, false, () -> runSelected(ACT_ACTIVATE, false));
     }
@@ -824,7 +842,7 @@ public class MainActivity extends AppCompatActivity {
         row.setGravity(android.view.Gravity.CENTER_VERTICAL);
         android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.topMargin = (int) (14 * d);
+        lp.topMargin = (int) (10 * d);
         lp.gravity = android.view.Gravity.END;
         row.setLayoutParams(lp);
 
@@ -1334,8 +1352,7 @@ public class MainActivity extends AppCompatActivity {
             // "In uso: nome" subito sotto il titolo (nome nel colore dell'accento), poi la descrizione
             String name = OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "switch");
             String line = getString(R.string.switch_in_use, name);
-            String extra = SystemVariant.isPure() ? "\n" + getString(R.string.card_switch_pure_note) : "";
-            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder(line + "\n" + getString(R.string.card_switch_sub) + extra);
+            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder(line);
             sb.setSpan(new android.text.style.ForegroundColorSpan(getColor(R.color.text)), 0, line.length(), 0);   // "In uso:" bianco
             int st = line.length() - name.length();
             if (st >= 0) sb.setSpan(new android.text.style.ForegroundColorSpan(ThemePrefs.accentColor()), st, line.length(), 0);

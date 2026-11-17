@@ -2,7 +2,7 @@
     <string name="title_apps">Overlay</string>
     <string name="status_no_root">Serve l\'accesso root. Concedilo a Oxydian Theme nel gestore del root.</string>
     <string name="status_reboot">Modulo creato. Riavvia una volta per attivarlo, poi applica i temi.</string>
-    <string name="status_ok">Modulo pronto.</string>
+    <string name="status_ok">Seleziona tutto</string>
     <string name="notice">Spunta le voci che vuoi, poi tocca il pulsante tondo in basso a destra e scegli Installa (compila e accende), Attiva (riaccende un tema spento), Disattiva (spegne ma resta installato, si riaccende senza riavvio) o Disinstalla (toglie del tutto, serve un riavvio). Le caselle si svuotano dopo ogni azione; lo stato vero si legge dal colore. La prima volta che attivi una nuova voce serve un riavvio. Nelle Opzioni di un\'app puoi creare più varianti (per esempio due sfondi): le costruisci una volta, poi ne accendi una sola alla volta senza ricostruire.</string>
     <string name="many_warning">Attenzione: %1$d app selezionate. Più di circa 10 app con il tema rallentano l\'avvio del telefono a ogni riavvio.</string>
     <string name="btn_apply">Applica</string>
@@ -119,6 +119,9 @@
     <string name="card_info">Come funziona</string>
     <string name="card_info_sub">Come funziona e legenda dei colori</string>
     <string name="card_restart_sub">Ricarica la barra di stato e l\'interfaccia</string>
+    <string name="card_module">Oxydian Modulo</string>
+    <string name="card_module_sub">Mod per barra di stato, blocco schermo e altro</string>
+    <string name="module_not_installed">Oxydian Modulo non e installato</string>
     <string name="card_update">Aggiornamenti</string>
     <string name="card_update_sub">Cerca una nuova versione su GitHub</string>
     <string name="card_backup">Backup e ripristino</string>
