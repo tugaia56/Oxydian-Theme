@@ -1295,7 +1295,7 @@ public class MainActivity extends AppCompatActivity {
         // notifiche, toast, dialog e bordo sfumato come overlay: solo su Android puro (RisingOS, crDroid, ecc.); su OxygenOS li fa il modulo Oxydian
         if (mNotifStyleRow != null) mNotifStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
         if (mDialogStyleRow != null) mDialogStyleRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
-        if (mRoundnessRow != null) mRoundnessRow.setVisibility(SystemVariant.isPure() ? View.VISIBLE : View.GONE);
+        if (mRoundnessRow != null) mRoundnessRow.setVisibility(SystemVariant.isPure() && !SystemVariant.isRising() ? View.VISIBLE : View.GONE);   // Tondezza e Stile del volume: su RisingOS niente (SystemUI non e' del Theme)
         // Tondezza angoli: su RisingOS non si vede nessun effetto (le finestre di sistema hanno forme proprie e SystemUI non e' del Theme): scheda nascosta
         if (mRoundCard != null) mRoundCard.setVisibility(SystemVariant.isRising() ? View.GONE : View.VISIBLE);
         for (String pk : new String[]{SYSTEMUI_PKG, SystemColorsDialog.PKG}) {
@@ -1303,6 +1303,11 @@ public class MainActivity extends AppCompatActivity {
             // RisingOS: niente tondezza; misure tolte dall'elenco (oltre 32 dp non si vede differenza): la scelta torna a Predefinito
             if (!rc.isEmpty() && (SystemVariant.isRising() || !OptionGroupsDialog.choices(this, pk, "roundness").contains(rc)))
                 ThemePrefs.setOption(pk, "roundness", "");
+        }
+        if (SystemVariant.isRising()) {
+            // stile del volume: stessa cosa, il pannello e' di SystemUI
+            if (!ThemePrefs.getOption(SYSTEMUI_PKG, "volumestyle").isEmpty()) ThemePrefs.setOption(SYSTEMUI_PKG, "volumestyle", "");
+            if (!ThemePrefs.getOption(SystemColorsDialog.PKG, "volumetrack").isEmpty()) ThemePrefs.setOption(SystemColorsDialog.PKG, "volumetrack", "");
         }
         if (SystemVariant.isOos()) {
             // scelte fatte in prove precedenti: via, cosi' al prossimo "Installa" gli overlay si rifanno senza questi stili
@@ -1754,7 +1759,7 @@ public class MainActivity extends AppCompatActivity {
                 if (g.startsWith("pinkey") && SystemVariant.isOos()) continue;
                 // stili di notifiche, toast e dialog: solo Android puro (su OxygenOS li fa il modulo)
                 if (("notifstyle".equals(g) || "toaststyle".equals(g) || "dialogstyle".equals(g) || "roundness".equals(g) || "volumestyle".equals(g) || "volumetrack".equals(g)) && SystemVariant.isOos()) continue;
-                if ("roundness".equals(g) && SystemVariant.isRising()) continue;
+                if (("roundness".equals(g) || "volumestyle".equals(g) || "volumetrack".equals(g)) && SystemVariant.isRising()) continue;
                 String[] items = ctx.getAssets().list(base + "/" + g);
                 if (items == null) continue;
                 OptGroup og = new OptGroup();
