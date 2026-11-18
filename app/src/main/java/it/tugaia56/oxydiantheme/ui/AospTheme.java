@@ -133,7 +133,6 @@ public final class AospTheme {
             String kb = ThemePrefs.getOption("com.android.systemui", "pinkeybg");
             if ("Sfondo_del_tema".equals(kb)) keyBg = b;
             else if ("Nero".equals(kb)) keyBg = 0xFF000000;
-            else if ("Blur".equals(kb)) keyBg = 0x33FFFFFF;   // vetro: lo sfondo sfocato della ROM si vede attraverso i tasti
             else if ("Accento".equals(kb) && accent != null) keyBg = 0xFF000000 | accent;
             else if (OptionGroupsDialog.CUSTOM.equals(kb)) keyBg = 0xFF000000 | (ThemePrefs.getCustomColor("com.android.systemui_pinkeybg") & 0xFFFFFF);
             m.put("system_surface_effect_1_dark", keyBg);

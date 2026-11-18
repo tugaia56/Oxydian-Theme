@@ -1304,6 +1304,12 @@ public class MainActivity extends AppCompatActivity {
             if (!rc.isEmpty() && (SystemVariant.isRising() || !OptionGroupsDialog.choices(this, pk, "roundness").contains(rc)))
                 ThemePrefs.setOption(pk, "roundness", "");
         }
+        // tasti del PIN: la scelta "Blur" e' stata tolta (colore trasparente: faceva andare in crash la schermata di blocco): torna a Predefinito
+        for (String g : new String[]{"pinkeybg", "pinkeyaction"}) {
+            String pv = ThemePrefs.getOption(SYSTEMUI_PKG, g);
+            if (!pv.isEmpty() && !OptionGroupsDialog.CUSTOM.equals(pv) && !OptionGroupsDialog.choices(this, SYSTEMUI_PKG, g).contains(pv))
+                ThemePrefs.setOption(SYSTEMUI_PKG, g, "");
+        }
         if (SystemVariant.isRising()) {
             // stile del volume: stessa cosa, il pannello e' di SystemUI
             if (!ThemePrefs.getOption(SYSTEMUI_PKG, "volumestyle").isEmpty()) ThemePrefs.setOption(SYSTEMUI_PKG, "volumestyle", "");
@@ -1829,7 +1835,6 @@ public class MainActivity extends AppCompatActivity {
             String v;
             if (OptionGroupsDialog.CUSTOM.equals(act)) v = hex8(0xFF000000 | (ThemePrefs.getCustomColor(pkg + "_pinkeyaction") & 0xFFFFFF));
             else if ("Nero".equals(act)) v = "#FF000000";
-            else if ("Blur".equals(act)) v = "#33FFFFFF";   // vetro: si vede lo sfondo sfocato della ROM
             else if ("Accento".equals(act)) v = "@*android:color/accent_material_dark";
             else v = "@*android:color/system_background_dark";
             out.append("    <color name=\"pin_bouncer_action_button_bg\">").append(v).append("</color>\n");
