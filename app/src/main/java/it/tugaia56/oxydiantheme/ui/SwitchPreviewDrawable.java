@@ -47,6 +47,29 @@ final class SwitchPreviewDrawable extends Drawable {
 
     private void one(Canvas c, float x, float y, boolean on) {
         float w = 52 * d, h = 30 * d, cy = y + h / 2f;
+        if (mVariant.isEmpty() && it.tugaia56.oxydiantheme.utils.SystemVariant.isPure()) {
+            // predefinito su Android puro (RisingOS): barra piena, tondo bianco e, da acceso, la spunta; un po' piu' piccolo dello stile "Spunta"
+            float tw = 46 * d, th = 22 * d, tr = 8.5f * d;
+            float left = x + 3 * d, right = left + tw;
+            p.setStyle(Paint.Style.FILL);
+            p.setColor(on ? mAccent : a(mFg, 0x44));
+            r.set(left, cy - th / 2f, right, cy + th / 2f);
+            c.drawRoundRect(r, th / 2f, th / 2f, p);
+            float cx = on ? right - 2 * d - tr : left + 2 * d + tr;
+            p.setColor(0xFFFFFFFF);
+            c.drawCircle(cx, cy, tr, p);
+            if (on) {
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(1.8f * d);
+                p.setStrokeCap(Paint.Cap.ROUND);
+                p.setColor(mAccent);
+                float s = tr * 0.5f;
+                c.drawLine(cx - s * 0.9f, cy + s * 0.1f, cx - s * 0.25f, cy + s * 0.75f, p);
+                c.drawLine(cx - s * 0.25f, cy + s * 0.75f, cx + s, cy - s * 0.7f, p);
+                p.setStrokeCap(Paint.Cap.BUTT);
+            }
+            return;
+        }
         if (mVariant.isEmpty()) {
             // predefinito: barra piena e tondo bianco
             p.setStyle(Paint.Style.FILL);
