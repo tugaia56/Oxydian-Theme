@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Raggio degli angoli delle notifiche 28 dp (OxygenOS: lo leggono anche le notifiche di sistema, come fa Oxygen Customizer) -->
+    <dimen name="notification_corner_radius">28dp</dimen>
+</resources>

@@ -314,6 +314,8 @@ Continuare?</string>
     <string name="uninstall_confirm">%d selezionate.
 Gli overlay vengono tolti e le varianti spariscono dalla lista. Per toglierli del tutto serve un riavvio.</string>
     <string name="card_switch_pure_note">Non vale per le app di sistema, solo per le altre app</string>
+    <string name="card_notifradius">Raggio angoli notifiche</string>
+    <string name="notifradius_blocked">Il modulo Oxydian ha uno stile notifiche attivo e usa il suo raggio. Mettilo su Nessuno per usare questo.</string>
     <string name="card_roundness">Tondezza angoli</string>
     <string name="card_volumestyle">Stile del volume</string>
 </resources>

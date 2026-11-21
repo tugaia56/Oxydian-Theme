@@ -315,6 +315,8 @@ Continue?</string>
     <string name="uninstall_confirm">%d selected.
 Overlays are removed and variants disappear from the list. A reboot is needed to remove them completely.</string>
     <string name="card_switch_pure_note">Does not apply to system apps, only to other apps</string>
+    <string name="card_notifradius">Notification corner radius</string>
+    <string name="notifradius_blocked">The Oxydian module has a notification style on and uses its own radius. Set its style to None to use this one.</string>
     <string name="card_roundness">Corner roundness</string>
     <string name="card_volumestyle">Volume panel style</string>
 </resources>
