@@ -316,11 +316,11 @@ Continue?</string>
 Overlays are removed and variants disappear from the list. A reboot is needed to remove them completely.</string>
     <string name="card_switch_pure_note">Does not apply to system apps, only to other apps</string>
     <string name="card_notifradius">Notification corner radius</string>
-    <string name="notifradius_blocked">The Oxydian module has a notification style on and uses its own radius. Set its style to None to use this one.</string>
+    <string name="notifradius_blocked">Radius set by the Oxydian module: turn off its corner radius switch.</string>
     <string name="card_toastradius">Toast corner radius</string>
     <string name="card_dialogradius">Dialog corner radius</string>
-    <string name="toastradius_blocked">The Oxydian module has a toast style on and uses its own radius. Set its style to None to use this one.</string>
-    <string name="dialogradius_blocked">The Oxydian module has a dialog style on and uses its own radius. Set its style to None to use this one.</string>
+    <string name="toastradius_blocked">Radius set by the Oxydian module: turn off its corner radius switch.</string>
+    <string name="dialogradius_blocked">Radius set by the Oxydian module: turn off its corner radius switch.</string>
     <string name="card_cornerradius">Corner radius</string>
     <string name="cr_notif">Notifications</string>
     <string name="cr_toast">Toast</string>

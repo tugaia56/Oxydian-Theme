@@ -315,11 +315,11 @@ Continuare?</string>
 Gli overlay vengono tolti e le varianti spariscono dalla lista. Per toglierli del tutto serve un riavvio.</string>
     <string name="card_switch_pure_note">Non vale per le app di sistema, solo per le altre app</string>
     <string name="card_notifradius">Raggio angoli notifiche</string>
-    <string name="notifradius_blocked">Il modulo Oxydian ha uno stile notifiche attivo e usa il suo raggio. Mettilo su Nessuno per usare questo.</string>
+    <string name="notifradius_blocked">Raggio deciso dal modulo Oxydian: spegni il suo interruttore degli angoli.</string>
     <string name="card_toastradius">Raggio angoli toast</string>
     <string name="card_dialogradius">Raggio angoli finestre</string>
-    <string name="toastradius_blocked">Il modulo Oxydian ha uno stile toast attivo e usa il suo raggio. Mettilo su Nessuno per usare questo.</string>
-    <string name="dialogradius_blocked">Il modulo Oxydian ha uno stile finestre attivo e usa il suo raggio. Mettilo su Nessuno per usare questo.</string>
+    <string name="toastradius_blocked">Raggio deciso dal modulo Oxydian: spegni il suo interruttore degli angoli.</string>
+    <string name="dialogradius_blocked">Raggio deciso dal modulo Oxydian: spegni il suo interruttore degli angoli.</string>
     <string name="card_cornerradius">Raggio angoli</string>
     <string name="cr_notif">Notifiche</string>
     <string name="cr_toast">Toast</string>
