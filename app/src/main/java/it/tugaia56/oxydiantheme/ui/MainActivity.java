@@ -997,8 +997,29 @@ public class MainActivity extends AppCompatActivity {
                 getString(R.string.cr_notif) + ": " + cornerSummary(mModuleNotifStyleOn, SYSTEMUI_PKG, "notifradius"),
                 getString(R.string.cr_toast) + ": " + cornerSummary(mModuleToastStyleOn, SYSTEMUI_PKG, "toastradius"),
                 getString(R.string.cr_dialog) + ": " + cornerSummary(mModuleDialogStyleOn, SystemColorsDialog.PKG, "dialogradius")};
-        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.card_cornerradius)
+        com.google.android.material.dialog.MaterialAlertDialogBuilder crb = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this);
+        if (mModuleNotifStyleOn || mModuleToastStyleOn || mModuleDialogStyleOn) {
+            // Un avviso sotto il titolo: il modulo decide il raggio finche' il suo interruttore e' acceso.
+            android.widget.LinearLayout head = new android.widget.LinearLayout(this);
+            head.setOrientation(android.widget.LinearLayout.VERTICAL);
+            int hp = (int) (24 * getResources().getDisplayMetrics().density);
+            head.setPadding(hp, hp, hp, (int) (8 * getResources().getDisplayMetrics().density));
+            android.widget.TextView t1 = new android.widget.TextView(this);
+            t1.setText(R.string.card_cornerradius);
+            t1.setTextSize(20);
+            t1.setTextColor(com.google.android.material.color.MaterialColors.getColor(this, android.R.attr.textColorPrimary, 0xFF000000));
+            android.widget.TextView t2 = new android.widget.TextView(this);
+            t2.setText(R.string.cr_hint);
+            t2.setTextSize(14);
+            t2.setPadding(0, (int) (8 * getResources().getDisplayMetrics().density), 0, 0);
+            t2.setTextColor(com.google.android.material.color.MaterialColors.getColor(this, android.R.attr.textColorSecondary, 0xFF666666));
+            head.addView(t1);
+            head.addView(t2);
+            crb.setCustomTitle(head);
+        } else {
+            crb.setTitle(R.string.card_cornerradius);
+        }
+        Dialogs.show(this, crb
                 .setItems(labels, (dlg, which) -> {
                     final boolean blocked = which == 0 ? mModuleNotifStyleOn : which == 1 ? mModuleToastStyleOn : mModuleDialogStyleOn;
                     if (blocked) {
