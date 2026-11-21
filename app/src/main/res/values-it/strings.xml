@@ -325,6 +325,8 @@ Gli overlay vengono tolti e le varianti spariscono dalla lista. Per toglierli de
     <string name="cr_toast">Toast</string>
     <string name="cr_dialog">Finestre</string>
     <string name="cr_hint">Per mettere il Theme al comando, spegni l’interruttore degli angoli nel modulo.</string>
+    <string name="cr_all">Tutti insieme</string>
+    <string name="cr_mixed">Valori diversi</string>
     <string name="cr_module_on">deciso dal modulo Oxydian</string>
     <string name="card_roundness">Tondezza angoli</string>
     <string name="card_volumestyle">Stile del volume</string>

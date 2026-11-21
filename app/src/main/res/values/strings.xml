@@ -326,6 +326,8 @@ Overlays are removed and variants disappear from the list. A reboot is needed to
     <string name="cr_toast">Toast</string>
     <string name="cr_dialog">Dialogs</string>
     <string name="cr_hint">To let the Theme decide, turn off the corner radius switch in the module.</string>
+    <string name="cr_all">All together</string>
+    <string name="cr_mixed">Different values</string>
     <string name="cr_module_on">set in the Oxydian module</string>
     <string name="card_roundness">Corner roundness</string>
     <string name="card_volumestyle">Volume panel style</string>

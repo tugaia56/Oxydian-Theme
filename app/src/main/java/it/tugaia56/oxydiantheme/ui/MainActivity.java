@@ -993,11 +993,16 @@ public class MainActivity extends AppCompatActivity {
 
     /** Elenco con le tre scelte; una voce spenta (stile del modulo attivo) mostra solo un avviso. */
     private void showCornerRadiusMenu() {
-        final String[] titles = {getString(R.string.cr_notif), getString(R.string.cr_toast), getString(R.string.cr_dialog)};
+        final String no = ThemePrefs.getOption(SYSTEMUI_PKG, "notifradius"), to = ThemePrefs.getOption(SYSTEMUI_PKG, "toastradius"),
+                dlo = ThemePrefs.getOption(SystemColorsDialog.PKG, "dialogradius");
+        final String allSum = mModuleNotifStyleOn ? getString(R.string.cr_module_on)
+                : (no.equals(to) && no.equals(dlo)) ? OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "notifradius") : getString(R.string.cr_mixed);
+        final String[] titles = {getString(R.string.cr_notif), getString(R.string.cr_toast), getString(R.string.cr_dialog), getString(R.string.cr_all)};
         final String[] sums = {
                 cornerSummary(mModuleNotifStyleOn, SYSTEMUI_PKG, "notifradius"),
                 cornerSummary(mModuleToastStyleOn, SYSTEMUI_PKG, "toastradius"),
-                cornerSummary(mModuleDialogStyleOn, SystemColorsDialog.PKG, "dialogradius")};
+                cornerSummary(mModuleDialogStyleOn, SystemColorsDialog.PKG, "dialogradius"),
+                allSum};
         final float dens = getResources().getDisplayMetrics().density;
         // due righe per voce, come nel modulo: titolo e sotto il valore scelto in colore accento
         final android.widget.ListAdapter rows = new android.widget.BaseAdapter() {
@@ -1045,6 +1050,7 @@ public class MainActivity extends AppCompatActivity {
         }
         Dialogs.show(this, crb
                 .setAdapter(rows, (dlg, which) -> {
+                    if (which == 3) { showAllCornersDialog(); return; }
                     final boolean blocked = which == 0 ? mModuleNotifStyleOn : which == 1 ? mModuleToastStyleOn : mModuleDialogStyleOn;
                     if (blocked) {
                         android.widget.Toast.makeText(this, which == 0 ? R.string.notifradius_blocked : which == 1 ? R.string.toastradius_blocked : R.string.dialogradius_blocked,
@@ -1061,6 +1067,40 @@ public class MainActivity extends AppCompatActivity {
                         mList.getAdapter().notifyDataSetChanged();
                         onApply(pkg, false);
                     });
+                })
+                .setNegativeButton(R.string.btn_cancel, null));
+    }
+
+    /** Un solo raggio per notifiche, toast e finestre: una sola scelta e un solo "Installa" (un solo riavvio dell'interfaccia). */
+    private void showAllCornersDialog() {
+        if (mModuleNotifStyleOn) {
+            android.widget.Toast.makeText(this, R.string.notifradius_blocked, android.widget.Toast.LENGTH_LONG).show();
+            return;
+        }
+        final java.util.List<String> ch = OptionGroupsDialog.choices(this, SYSTEMUI_PKG, "notifradius");
+        final String[] names = new String[ch.size() + 1];
+        names[0] = getString(R.string.options_default);
+        for (int i = 0; i < ch.size(); i++) names[i + 1] = OptionGroupsDialog.pretty(ch.get(i));
+        final String cur = ThemePrefs.getOption(SYSTEMUI_PKG, "notifradius");
+        int sel = 0;
+        for (int i = 0; i < ch.size(); i++) if (ch.get(i).equals(cur)) sel = i + 1;
+        final int[] pick = {sel};
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.cr_all)
+                .setSingleChoiceItems(names, sel, (d, w) -> pick[0] = w)
+                .setPositiveButton(R.string.btn_apply, (d, w) -> {
+                    final String c = pick[0] == 0 ? "" : ch.get(pick[0] - 1);
+                    ThemePrefs.setOption(SYSTEMUI_PKG, "notifradius", c);
+                    ThemePrefs.setOption(SYSTEMUI_PKG, "toastradius", c);
+                    ThemePrefs.setOption(SystemColorsDialog.PKG, "dialogradius", c);
+                    syncEnabled(SYSTEMUI_PKG);
+                    syncEnabled(SystemColorsDialog.PKG);
+                    refreshCards();
+                    mList.getAdapter().notifyDataSetChanged();
+                    java.util.List<AppEntry> t = new ArrayList<>();
+                    for (AppEntry e : mApps) if (e.ds && (SystemColorsDialog.PKG.equals(e.pkg) || SYSTEMUI_PKG.equals(e.pkg))) t.add(e);
+                    if (t.isEmpty()) { onApply(SYSTEMUI_PKG, false); return; }
+                    runAction(t, t.get(0).enabled ? ACT_ACTIVATE : ACT_DISABLE);
                 })
                 .setNegativeButton(R.string.btn_cancel, null));
     }
