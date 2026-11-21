@@ -993,10 +993,34 @@ public class MainActivity extends AppCompatActivity {
 
     /** Elenco con le tre scelte; una voce spenta (stile del modulo attivo) mostra solo un avviso. */
     private void showCornerRadiusMenu() {
-        final String[] labels = {
-                getString(R.string.cr_notif) + ": " + cornerSummary(mModuleNotifStyleOn, SYSTEMUI_PKG, "notifradius"),
-                getString(R.string.cr_toast) + ": " + cornerSummary(mModuleToastStyleOn, SYSTEMUI_PKG, "toastradius"),
-                getString(R.string.cr_dialog) + ": " + cornerSummary(mModuleDialogStyleOn, SystemColorsDialog.PKG, "dialogradius")};
+        final String[] titles = {getString(R.string.cr_notif), getString(R.string.cr_toast), getString(R.string.cr_dialog)};
+        final String[] sums = {
+                cornerSummary(mModuleNotifStyleOn, SYSTEMUI_PKG, "notifradius"),
+                cornerSummary(mModuleToastStyleOn, SYSTEMUI_PKG, "toastradius"),
+                cornerSummary(mModuleDialogStyleOn, SystemColorsDialog.PKG, "dialogradius")};
+        final float dens = getResources().getDisplayMetrics().density;
+        // due righe per voce, come nel modulo: titolo e sotto il valore scelto in colore accento
+        final android.widget.ListAdapter rows = new android.widget.BaseAdapter() {
+            @Override public int getCount() { return titles.length; }
+            @Override public Object getItem(int i) { return titles[i]; }
+            @Override public long getItemId(int i) { return i; }
+            @Override public View getView(int i, View cv, android.view.ViewGroup parent) {
+                android.widget.LinearLayout row = new android.widget.LinearLayout(MainActivity.this);
+                row.setOrientation(android.widget.LinearLayout.VERTICAL);
+                row.setPadding((int) (24 * dens), (int) (12 * dens), (int) (24 * dens), (int) (12 * dens));
+                android.widget.TextView t = new android.widget.TextView(MainActivity.this);
+                t.setText(titles[i]);
+                t.setTextSize(16);
+                t.setTextColor(com.google.android.material.color.MaterialColors.getColor(MainActivity.this, android.R.attr.textColorPrimary, 0xFF000000));
+                android.widget.TextView v = new android.widget.TextView(MainActivity.this);
+                v.setText(sums[i]);
+                v.setTextSize(14);
+                v.setTextColor(ThemePrefs.accentColor());
+                row.addView(t);
+                row.addView(v);
+                return row;
+            }
+        };
         com.google.android.material.dialog.MaterialAlertDialogBuilder crb = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this);
         if (mModuleNotifStyleOn || mModuleToastStyleOn || mModuleDialogStyleOn) {
             // Un avviso sotto il titolo: il modulo decide il raggio finche' il suo interruttore e' acceso.
@@ -1020,7 +1044,7 @@ public class MainActivity extends AppCompatActivity {
             crb.setTitle(R.string.card_cornerradius);
         }
         Dialogs.show(this, crb
-                .setItems(labels, (dlg, which) -> {
+                .setAdapter(rows, (dlg, which) -> {
                     final boolean blocked = which == 0 ? mModuleNotifStyleOn : which == 1 ? mModuleToastStyleOn : mModuleDialogStyleOn;
                     if (blocked) {
                         android.widget.Toast.makeText(this, which == 0 ? R.string.notifradius_blocked : which == 1 ? R.string.toastradius_blocked : R.string.dialogradius_blocked,
@@ -1435,15 +1459,18 @@ public class MainActivity extends AppCompatActivity {
         if (SystemVariant.isOos() && mNotifRadiusRow != null) {
             // il modulo con uno stile notifiche acceso usa il suo raggio: la scheda si spegne con una scritta
             com.topjohnwu.superuser.Shell.cmd("echo n=$(getprop persist.obsidian.dst.notif_preset)", "echo t=$(getprop persist.obsidian.dst.toast_preset)", "echo d=$(getprop persist.obsidian.dst.dlg_preset)", "echo c=$(getprop persist.obsidian.dst.corner_on)").submit(r -> {
-                boolean pn = false, pt = false, pd = false, cornerOff = false;
+                boolean pn = false, pt = false, pd = false, cornerOff = false, cornerOn = false;
                 for (String line : r.getOut()) {
                     String l = line.trim();
                     if (l.startsWith("n=")) pn = l.length() > 2;
                     else if (l.startsWith("t=")) pt = l.length() > 2;
                     else if (l.startsWith("d=")) pd = l.length() > 2;
+                    else if (l.equals("c=1")) cornerOn = true;
                     else if (l.equals("c=0")) cornerOff = true;   // interruttore "Raggio angoli del modulo" spento: il raggio lo decide il Theme
                 }
-                final boolean fn = pn && !cornerOff, ft = pt && !cornerOff, fd = pd && !cornerOff;
+                // raggio notifiche: con l'interruttore del modulo acceso lo decide il modulo anche con stile "Nessuno";
+                // toast e finestre solo se hanno uno stile attivo
+                final boolean fn = cornerOn, ft = pt && !cornerOff, fd = pd && !cornerOff;
                 runOnUiThread(() -> {
                     if (fn != mModuleNotifStyleOn || ft != mModuleToastStyleOn || fd != mModuleDialogStyleOn) {
                         mModuleNotifStyleOn = fn; mModuleToastStyleOn = ft; mModuleDialogStyleOn = fd;
