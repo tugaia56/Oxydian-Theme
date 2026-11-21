@@ -1012,7 +1012,7 @@ public class MainActivity extends AppCompatActivity {
             t2.setText(R.string.cr_hint);
             t2.setTextSize(14);
             t2.setPadding(0, (int) (8 * getResources().getDisplayMetrics().density), 0, 0);
-            t2.setTextColor(com.google.android.material.color.MaterialColors.getColor(this, android.R.attr.textColorSecondary, 0xFF666666));
+            t2.setTextColor(ThemePrefs.accentColor());
             head.addView(t1);
             head.addView(t2);
             crb.setCustomTitle(head);
