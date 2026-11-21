@@ -1469,8 +1469,8 @@ public class MainActivity extends AppCompatActivity {
                     else if (l.equals("c=0")) cornerOff = true;   // interruttore "Raggio angoli del modulo" spento: il raggio lo decide il Theme
                 }
                 // raggio notifiche: con l'interruttore del modulo acceso lo decide il modulo anche con stile "Nessuno";
-                // toast e finestre solo se hanno uno stile attivo
-                final boolean fn = cornerOn, ft = pt && !cornerOff, fd = pd && !cornerOff;
+                // idem toast e finestre (dal 2026-11-21 il modulo applica il raggio anche senza stile)
+                final boolean fn = cornerOn, ft = cornerOn, fd = cornerOn;
                 runOnUiThread(() -> {
                     if (fn != mModuleNotifStyleOn || ft != mModuleToastStyleOn || fd != mModuleDialogStyleOn) {
                         mModuleNotifStyleOn = fn; mModuleToastStyleOn = ft; mModuleDialogStyleOn = fd;
