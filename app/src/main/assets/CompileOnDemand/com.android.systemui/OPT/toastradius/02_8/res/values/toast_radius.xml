@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Raggio dei toast di OxygenOS 8 dp (toast a una, due e piu' righe) -->
+    <dimen name="oplus_toast_double_line_radius">8dp</dimen>
+    <dimen name="oplus_toast_mutl_line_radius">8dp</dimen>
+</resources>

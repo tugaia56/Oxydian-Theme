@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Raggio di base dei toast del Theme: 24 dp. Il gruppo "Raggio angoli toast" (stesso nome di file) lo sostituisce. -->
+    <dimen name="oplus_toast_double_line_radius">24dp</dimen>
+    <dimen name="oplus_toast_mutl_line_radius">24dp</dimen>
+</resources>

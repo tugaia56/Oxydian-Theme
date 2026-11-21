@@ -412,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mSubBatPct;
     private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder, mSubRoundness, mSubVolume, mSubNotifRadius;
     private View mNotifRadiusRow, mNotifRadiusCard;
+    private boolean mModuleToastStyleOn = false, mModuleDialogStyleOn = false;
     /** OxygenOS: il modulo Oxydian ha uno stile notifiche acceso (proprieta' persist.obsidian.dst.notif_preset): vince il suo raggio. */
     private boolean mModuleNotifStyleOn = false;
     private android.widget.LinearLayout mClockColorRow;
@@ -601,15 +602,7 @@ public class MainActivity extends AppCompatActivity {
         android.widget.LinearLayout r3g = new android.widget.LinearLayout(this);
         r3g.setOrientation(android.widget.LinearLayout.HORIZONTAL);
         r3p.addView(r3g, r3p.indexOfChild(r3f) + 1, new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        View nrCard = makeCard(R.string.card_notifradius, s, () -> {
-            if (mModuleNotifStyleOn) { android.widget.Toast.makeText(this, R.string.notifradius_blocked, android.widget.Toast.LENGTH_LONG).show(); return; }
-            OptionGroupsDialog.show(this, SYSTEMUI_PKG, new String[]{"notifradius"}, R.string.card_notifradius, () -> {
-                syncEnabled(SYSTEMUI_PKG);
-                refreshCards();
-                mList.getAdapter().notifyDataSetChanged();
-                onApply(SYSTEMUI_PKG, false);
-            });
-        });
+        View nrCard = makeCard(R.string.card_cornerradius, s, this::showCornerRadiusMenu);
         mNotifRadiusCard = nrCard;
         mSubNotifRadius = s[0];
         setCardHeight(nrCard, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -986,12 +979,45 @@ public class MainActivity extends AppCompatActivity {
         onApply(SYSTEMUI_PKG, false);
     }
 
-    /** Scheda "Raggio angoli notifiche": grigia con una spiegazione se il modulo Oxydian ha uno stile notifiche acceso. */
+    /** Una scheda "Raggio angoli" per notifiche, toast e finestre (OxygenOS); la parte spenta dal modulo si vede nel riassunto. */
+    private String cornerSummary(boolean blocked, String pkg, String group) {
+        return blocked ? getString(R.string.cr_module_on) : OptionGroupsDialog.summary(this, pkg, group);
+    }
+
     private void updateNotifRadiusCard() {
         if (mSubNotifRadius == null) return;
-        if (mModuleNotifStyleOn) mSubNotifRadius.setText(R.string.notifradius_blocked);
-        else mSubNotifRadius.setText(OptionGroupsDialog.summary(this, SYSTEMUI_PKG, "notifradius"));
-        if (mNotifRadiusCard != null) mNotifRadiusCard.setAlpha(mModuleNotifStyleOn ? 0.5f : 1f);
+        mSubNotifRadius.setText(getString(R.string.cr_notif) + ": " + cornerSummary(mModuleNotifStyleOn, SYSTEMUI_PKG, "notifradius")
+                + "\n" + getString(R.string.cr_toast) + ": " + cornerSummary(mModuleToastStyleOn, SYSTEMUI_PKG, "toastradius")
+                + "\n" + getString(R.string.cr_dialog) + ": " + cornerSummary(mModuleDialogStyleOn, SystemColorsDialog.PKG, "dialogradius"));
+    }
+
+    /** Elenco con le tre scelte; una voce spenta (stile del modulo attivo) mostra solo un avviso. */
+    private void showCornerRadiusMenu() {
+        final String[] labels = {
+                getString(R.string.cr_notif) + ": " + cornerSummary(mModuleNotifStyleOn, SYSTEMUI_PKG, "notifradius"),
+                getString(R.string.cr_toast) + ": " + cornerSummary(mModuleToastStyleOn, SYSTEMUI_PKG, "toastradius"),
+                getString(R.string.cr_dialog) + ": " + cornerSummary(mModuleDialogStyleOn, SystemColorsDialog.PKG, "dialogradius")};
+        Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.card_cornerradius)
+                .setItems(labels, (dlg, which) -> {
+                    final boolean blocked = which == 0 ? mModuleNotifStyleOn : which == 1 ? mModuleToastStyleOn : mModuleDialogStyleOn;
+                    if (blocked) {
+                        android.widget.Toast.makeText(this, which == 0 ? R.string.notifradius_blocked : which == 1 ? R.string.toastradius_blocked : R.string.dialogradius_blocked,
+                                android.widget.Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    final String pkg = which <= 1 ? SYSTEMUI_PKG : SystemColorsDialog.PKG;
+                    final String group = which == 0 ? "notifradius" : which == 1 ? "toastradius" : "dialogradius";
+                    final int title = which == 0 ? R.string.card_notifradius : which == 1 ? R.string.card_toastradius : R.string.card_dialogradius;
+                    OptionGroupsDialog.show(this, pkg, new String[]{group}, title, () -> {
+                        if (which == 1) { applyToastRadius(); return; }
+                        syncEnabled(pkg);
+                        refreshCards();
+                        mList.getAdapter().notifyDataSetChanged();
+                        onApply(pkg, false);
+                    });
+                })
+                .setNegativeButton(R.string.btn_cancel, null));
     }
 
     /** Il tema di un bersaglio (colori di sistema / SystemUI) si accende da solo se si sceglie qualcosa. */
@@ -1000,11 +1026,12 @@ public class MainActivity extends AppCompatActivity {
         if (SystemColorsDialog.PKG.equals(pkg)) {
             any = !ThemePrefs.getOption(pkg, "accent").isEmpty() || !ThemePrefs.getOption(pkg, "background").isEmpty()
                     || !ThemePrefs.getOption(pkg, "progress").isEmpty() || !ThemePrefs.getOption(pkg, "switch").isEmpty()
+                    || !ThemePrefs.getOption(pkg, "dialogradius").isEmpty()
                     || !ThemePrefs.getOption(pkg, "toaststyle").isEmpty() || !ThemePrefs.getOption(pkg, "dialogstyle").isEmpty() || !ThemePrefs.getOption(pkg, "roundness").isEmpty() || !ThemePrefs.getOption(pkg, "volumetrack").isEmpty()
                     || ThemePrefs.getRippleAlpha() > 0;
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
-            any = !ThemePrefs.getOption(pkg, "notifradius").isEmpty() || !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
+            any = !ThemePrefs.getOption(pkg, "notifradius").isEmpty() || !ThemePrefs.getOption(pkg, "toastradius").isEmpty() || !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
                     || !ThemePrefs.getOption(pkg, "pindots").isEmpty()
                     || !ThemePrefs.getOption(pkg, "icons").isEmpty() || !ThemePrefs.getIconColor("nav").isEmpty() || usesPinKeys(pkg) || !ThemePrefs.getOption(pkg, "pinkeybg").isEmpty() || !ThemePrefs.getOption(pkg, "pinkeyaction").isEmpty() || !ThemePrefs.getOption(pkg, "roundness").isEmpty() || !ThemePrefs.getOption(pkg, "volumestyle").isEmpty();
             if (any) ThemePrefs.setDarkShadowEnabled(pkg, true);
@@ -1041,6 +1068,14 @@ public class MainActivity extends AppCompatActivity {
         List<AppEntry> t = new ArrayList<>();
         for (AppEntry e : mApps) if (e.ds && (pkg.equals(e.pkg) || (sysUi && SYSTEMUI_PKG.equals(e.pkg)))) t.add(e);
         if (!t.isEmpty()) runAction(t, t.get(0).enabled ? ACT_ACTIVATE : ACT_DISABLE);
+    }
+
+    /** Raggio dei toast di OxygenOS: li disegna SystemUI (toast_*_line_bg, misure oplus_toast_*_radius): stesso bersaglio delle notifiche. */
+    private void applyToastRadius() {
+        syncEnabled(SYSTEMUI_PKG);
+        refreshCards();
+        mList.getAdapter().notifyDataSetChanged();
+        onApply(SYSTEMUI_PKG, false);
     }
 
     /** Stile del volume: lo sfondo e' di SystemUI, il fondo della barra e' un colore di sistema (framework): la scelta vale per tutti e due. */
@@ -1378,9 +1413,22 @@ public class MainActivity extends AppCompatActivity {
         if (mSubNotifRadius != null) updateNotifRadiusCard();
         if (SystemVariant.isOos() && mNotifRadiusRow != null) {
             // il modulo con uno stile notifiche acceso usa il suo raggio: la scheda si spegne con una scritta
-            com.topjohnwu.superuser.Shell.cmd("getprop persist.obsidian.dst.notif_preset").submit(r -> {
-                final boolean on = !String.join("", r.getOut()).trim().isEmpty();
-                runOnUiThread(() -> { if (on != mModuleNotifStyleOn) { mModuleNotifStyleOn = on; updateNotifRadiusCard(); } });
+            com.topjohnwu.superuser.Shell.cmd("echo n=$(getprop persist.obsidian.dst.notif_preset)", "echo t=$(getprop persist.obsidian.dst.toast_preset)", "echo d=$(getprop persist.obsidian.dst.dlg_preset)", "echo c=$(getprop persist.obsidian.dst.corner_on)").submit(r -> {
+                boolean pn = false, pt = false, pd = false, cornerOff = false;
+                for (String line : r.getOut()) {
+                    String l = line.trim();
+                    if (l.startsWith("n=")) pn = l.length() > 2;
+                    else if (l.startsWith("t=")) pt = l.length() > 2;
+                    else if (l.startsWith("d=")) pd = l.length() > 2;
+                    else if (l.equals("c=0")) cornerOff = true;   // interruttore "Raggio angoli del modulo" spento: il raggio lo decide il Theme
+                }
+                final boolean fn = pn && !cornerOff, ft = pt && !cornerOff, fd = pd && !cornerOff;
+                runOnUiThread(() -> {
+                    if (fn != mModuleNotifStyleOn || ft != mModuleToastStyleOn || fd != mModuleDialogStyleOn) {
+                        mModuleNotifStyleOn = fn; mModuleToastStyleOn = ft; mModuleDialogStyleOn = fd;
+                        updateNotifRadiusCard();
+                    }
+                });
             });
         }
         if (mSubToastStyle != null) mSubToastStyle.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "toaststyle"));
