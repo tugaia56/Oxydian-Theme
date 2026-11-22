@@ -1,0 +1,13 @@
+Added:
+- "Corner radius" card (OxygenOS, Mods tab): notifications, toast and dialogs in one place, 2-32 dp, with an "All together" entry for one value and one Install. The chosen value is shown in the accent colour. When the Oxydian module decides the radius (its corner switch is on) the card says so: turn that switch off to use the Theme
+- Pure Android: corner roundness (4-32 dp) for the framework and System UI, one card in Mods (hidden on RisingOS)
+- Pure Android: volume panel style card (Theme background, thin or thick border, solid accent, transparent with border, black)
+- Mods: "Oxydian Module" link card on the Colours page; "Select all" label for the ticked apps
+Changed:
+- Overlay list: an overlay removed from the module store shows "Not installed" instead of "Disabled" until the next reboot
+- Overlay page: the round action button has its menu in a better order with more space between the entries
+- Pure Android: the old background_dark and button_material_dark colours follow the Theme background
+- Switches: the Default preview on pure Android shows the check thumb; the Interruttori description is now inside its dialog
+- Calculator: options removed, it is an overlay only
+- RisingOS: Volume style card hidden (System UI is not themed there); stored choices cleared
+- Toast radius on OxygenOS uses the System UI toast drawables, so it is no longer a fixed 24 dp
