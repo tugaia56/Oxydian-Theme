@@ -16,8 +16,8 @@ android {
         applicationId  = "it.tugaia56.oxydian.theme"
         minSdk         = 31
         targetSdk      = 34
-        versionCode    = 12
-        versionName    = "1.1.9"
+        versionCode    = 13
+        versionName    = "1.1.10"
         buildConfigField("int", "MIN_SDK_VERSION", "$minSdk")
     }
     compileOptions {
