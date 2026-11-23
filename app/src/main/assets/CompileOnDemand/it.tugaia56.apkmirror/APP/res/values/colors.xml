@@ -12,5 +12,6 @@
     <color name="card_bg_2">@*android:color/button_material_dark</color>
     <color name="card_bg_3">@*android:color/button_material_dark</color>
     <color name="header_bg">@*android:color/button_material_dark</color>
+    <color name="bars_bg">@*android:color/background_dark</color>
     <color name="dialog_bg">@*android:color/button_material_dark</color>
 </resources>
