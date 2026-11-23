@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- le barre usano l'accento del Theme invece dell'arancione della pagina del sito -->
+    <bool name="use_page_color">false</bool>
+</resources>

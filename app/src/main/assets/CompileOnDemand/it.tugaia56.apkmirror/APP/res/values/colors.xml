@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- APKMirror dark (it.tugaia56.apkmirror): pagine, card, barre e accenti sul Theme -->
+    <color name="colorPrimary">@*android:color/accent_material_dark</color>
+    <color name="colorPrimaryDark">@*android:color/accent_material_dark</color>
+    <color name="colorAccent">@*android:color/accent_material_dark</color>
+    <color name="background_dark">@*android:color/background_dark</color>
+    <color name="surface_dark">@*android:color/button_material_dark</color>
+    <!-- usati anche dallo script della pagina del sito (assets/dark.js) -->
+    <color name="page_bg">@*android:color/background_dark</color>
+    <color name="card_bg">@*android:color/button_material_dark</color>
+    <color name="card_bg_2">@*android:color/button_material_dark</color>
+    <color name="card_bg_3">@*android:color/button_material_dark</color>
+    <color name="header_bg">@*android:color/button_material_dark</color>
+    <color name="dialog_bg">@*android:color/button_material_dark</color>
+</resources>
