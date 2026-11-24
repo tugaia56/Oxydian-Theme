@@ -62,7 +62,7 @@
     <color name="mosaic_bottom_bar_indicator_selected">@*android:color/accent_material_dark</color>
     <color name="mosaic_bottom_bar_text_selected">@*android:color/accent_material_dark</color>
     <color name="mosaic_bottom_bar_text_unselected">#ffc7c8ca</color>
-    <color name="mosaic_bottom_sheet_background">@*android:color/holo_light_primary_dark</color>
+    <color name="mosaic_bottom_sheet_background">@*android:color/background_dark</color>
     <color name="mosaic_bottom_sheet_border">#ff3e4349</color>
     <color name="mosaic_bottom_sheet_handle_background">#ff3e4349</color>
     <color name="mosaic_button_app_default_background_secondary_default">#ff072d4e</color>
@@ -1236,4 +1236,9 @@
     <color name="voice_ui_od_scrim_hint_title_color">#99ffffff</color>
     <color name="splash_blue">@*android:color/background_dark</color>
     <color name="splashscreen_background">@*android:color/background_dark</color>
+    <color name="bottomsheet_background_color">@*android:color/background_dark</color>
+    <color name="bottom_sheet_ui_alexa_chat_bubble_start_color">@*android:color/accent_material_dark</color>
+    <color name="bottom_sheet_ui_alexa_chat_bubble_end_color">@*android:color/accent_material_dark</color>
+    <color name="bottom_sheet_ui_alexa_thinking_chat_bubble_start_color">@*android:color/ripple_material_dark</color>
+    <color name="bottom_sheet_ui_alexa_thinking_chat_bubble_end_color">@*android:color/ripple_material_dark</color>
 </resources>
