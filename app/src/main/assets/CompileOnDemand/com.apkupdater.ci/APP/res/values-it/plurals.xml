@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="notification_update_description">
+        <item quantity="other">Trovato %1$d aggiornamenti.</item>
+        <item quantity="zero">Nessun aggiornamento trovato.</item>
+        <item quantity="one">Trovato %1$d aggiornamento.</item>
+    </plurals>
+</resources>
