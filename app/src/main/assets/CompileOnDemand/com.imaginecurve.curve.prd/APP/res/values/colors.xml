@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Curve: dark values are the default ones of the app (the light ones are in values-notnight, left alone) -->
+    <!-- page, bars -->
+    <color name="crvM3Background">@*android:color/background_dark</color>
+    <color name="crvColorBackgroundVariant">@*android:color/background_dark</color>
+    <color name="crvColorNavigationBar">@*android:color/background_dark</color>
+    <color name="crvColorStatusBarColor">@*android:color/background_dark</color>
+    <color name="crvM3SurfaceContainer">@*android:color/background_dark</color>
+    <color name="crvM3SurfaceContainerLow">@*android:color/background_dark</color>
+    <color name="crvM3SurfaceContainerLowest">@*android:color/background_dark</color>
+    <!-- cards and surfaces -->
+    <color name="crvM3Surface">@*android:color/button_material_dark</color>
+    <color name="crvM3SurfaceBright">@*android:color/button_material_dark</color>
+    <color name="crvColorStatusBarSurfaceColor">@*android:color/button_material_dark</color>
+    <color name="crvM3SurfaceContainerHigh">@*android:color/holo_light_primary_dark</color>
+    <color name="crvM3SurfaceContainerHighest">@*android:color/holo_light_primary_dark</color>
+    <color name="crvM3SurfaceDim">@*android:color/holo_light_primary_dark</color>
+    <!-- brand red -> accent -->
+    <color name="crvM3Primary">@*android:color/accent_material_dark</color>
+    <color name="crvM3ButtonPrimary">@*android:color/accent_material_dark</color>
+    <color name="crvM3InversePrimary">@*android:color/accent_material_dark</color>
+    <color name="crvM3ButtonTertiary">@*android:color/accent_material_dark</color>
+    <color name="crvColorPrimaryVariant">@*android:color/accent_material_dark</color>
+    <color name="crvM3OnPrimaryContainer">@*android:color/accent_material_dark</color>
+    <color name="crvM3OnPrimaryFixedVariant">@*android:color/accent_material_dark</color>
+</resources>
