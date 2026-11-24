@@ -668,9 +668,9 @@
     <color name="vis2020_dig_color_dark_disabled_on_base">@*android:color/background_dark</color>
     <color name="vis2020_dig_color_dark_disabled_on_surface">#ff8c8279</color>
     <color name="vis2020_dig_color_dark_disabled_surface">#ff44403d</color>
-    <color name="vis2020_dig_color_dark_folder_closed">#ffb4d1ff</color>
-    <color name="vis2020_dig_color_dark_folder_inside">#ff75aaff</color>
-    <color name="vis2020_dig_color_dark_folder_outside">#ffb4d1ff</color>
+    <color name="vis2020_dig_color_dark_folder_closed">#ffffffff</color>
+    <color name="vis2020_dig_color_dark_folder_inside">@*android:color/accent_material_dark</color>
+    <color name="vis2020_dig_color_dark_folder_outside">#ffffffff</color>
     <color name="vis2020_dig_color_dark_glyph_accent">@*android:color/accent_material_dark</color>
     <color name="vis2020_dig_color_dark_glyph_primary">#ff696663</color>
     <color name="vis2020_dig_color_dark_highlight_blue">#ff002969</color>
@@ -760,9 +760,9 @@
     <color name="vis2020_dig_color_disabled_on_base">#fff7f5f2</color>
     <color name="vis2020_dig_color_disabled_on_surface">#ff8c8279</color>
     <color name="vis2020_dig_color_disabled_surface">#ffd3cec9</color>
-    <color name="vis2020_dig_color_folder_closed">#ffb4d1ff</color>
-    <color name="vis2020_dig_color_folder_inside">#ff75aaff</color>
-    <color name="vis2020_dig_color_folder_outside">#ffb4d1ff</color>
+    <color name="vis2020_dig_color_folder_closed">#ffffffff</color>
+    <color name="vis2020_dig_color_folder_inside">@*android:color/accent_material_dark</color>
+    <color name="vis2020_dig_color_folder_outside">#ffffffff</color>
     <color name="vis2020_dig_color_glyph_accent">@*android:color/accent_material_dark</color>
     <color name="vis2020_dig_color_glyph_primary">@*android:color/background_dark</color>
     <color name="vis2020_dig_color_highlight_blue">#ffb4d1ff</color>

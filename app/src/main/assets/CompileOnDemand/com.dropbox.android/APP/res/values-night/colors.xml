@@ -20,4 +20,6 @@
     <color name="color__inverse__standard__border">#33a69171</color>
     <color name="color__inverse__standard__text">@*android:color/background_dark</color>
     <color name="standard_text">#ffffffff</color>
+    <!-- splash screen background (light token used by Theme.Dropbox.Splash): Theme background in dark mode -->
+    <color name="vis2020_dig_color_glyph_accent">@*android:color/background_dark</color>
 </resources>
