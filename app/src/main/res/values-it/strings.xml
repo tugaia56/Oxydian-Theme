@@ -3,7 +3,7 @@
     <string name="status_no_root">Serve l\'accesso root. Concedilo a Oxydian Theme nel gestore del root.</string>
     <string name="status_reboot">Modulo creato. Riavvia una volta per attivarlo, poi applica i temi.</string>
     <string name="status_ok">Seleziona tutto</string>
-    <string name="notice">Spunta le voci che vuoi, poi tocca il pulsante tondo in basso a destra e scegli Installa (compila e accende), Attiva (riaccende un tema spento), Disattiva (spegne ma resta installato, si riaccende senza riavvio) o Disinstalla (toglie del tutto, serve un riavvio). Le caselle si svuotano dopo ogni azione; lo stato vero si legge dal colore. La prima volta che attivi una nuova voce serve un riavvio. Nelle Opzioni di un\'app puoi creare più varianti (per esempio due sfondi): le costruisci una volta, poi ne accendi una sola alla volta senza ricostruire.</string>
+    <string name="notice">Spunta le voci che vuoi, poi tocca il pulsante tondo in basso a destra e scegli Installa (compila e accende), Abilita (riaccende un tema spento), Disabilita (spegne ma resta installato, si riaccende senza riavvio) o Disinstalla (toglie del tutto, serve un riavvio). Le caselle si svuotano dopo ogni azione; lo stato vero si legge dal colore. La prima volta che attivi una nuova voce serve un riavvio. Nelle Opzioni di un\'app puoi creare più varianti (per esempio due sfondi): le costruisci una volta, poi ne accendi una sola alla volta senza ricostruire.</string>
     <string name="many_warning">Attenzione: %1$d app selezionate. Più di circa 10 app con il tema rallentano l\'avvio del telefono a ogni riavvio.</string>
     <string name="btn_apply">Applica</string>
     <string name="btn_select_all">Tutte</string>
@@ -26,8 +26,8 @@
     <string name="legend_invalid_desc">Il sistema rifiuta questo tema (per esempio se l\'app è cambiata).</string>
     <string name="legend_none_desc">Nessun tema è stato creato per questa app.</string>
     <string name="legend_close">Chiudi</string>
-    <string name="off_title">Temi disattivati</string>
-    <string name="off_message">Sono già spenti. Riavvia una volta per rimuoverli del tutto.</string>
+    <string name="off_title">Temi disinstallati</string>
+    <string name="off_message">Sono già spenti, non serve riavviare subito. Quando riavvii, vengono tolti del tutto.</string>
     <string name="btn_styles">Icone</string>
     <string name="title_styles">Stili icone</string>
     <string name="section_wifi">Icona Wi-Fi</string>
@@ -199,7 +199,7 @@
     <string name="scards_reboot">Riavvia il telefono una volta per attivare questo stile</string>
     <string name="ripple_hint">L\'onda colorata che compare quando premi un pulsante o una voce della lista. Più alta è l\'opacità, più si vede.</string>
     <string name="card_default_tab">Pagina iniziale</string>
-    <string name="btn_disable">Disattiva</string>
+    <string name="btn_disable">Disabilita</string>
     <string name="btn_remove">Rimuovi</string>
     <string name="select_first">Spunta almeno una voce</string>
     <string name="btn_activate">Installa</string>
@@ -232,9 +232,9 @@ Costruire e attivare i loro temi?</item>
     </plurals>
     <plurals name="confirm_disable">
         <item quantity="one">%d app selezionata.
-Disattivare il suo tema?</item>
+Disabilitare il suo tema?</item>
         <item quantity="other">%d app selezionate.
-Disattivare i loro temi?</item>
+Disabilitare i loro temi?</item>
     </plurals>
     <plurals name="confirm_remove">
         <item quantity="one">%d app selezionata.
@@ -276,10 +276,10 @@ Rimuovere i loro temi? Serve un riavvio.</item>
     <string name="fab_reboot_msg">Riavviare il telefono ora?</string>
     <string name="master_check_desc">Seleziona tutte o nessuna</string>
     <string name="fab_install_sel">Installa selezionate</string>
-    <string name="fab_enable_sel">Attiva selezionate</string>
-    <string name="fab_disable_sel">Disattiva selezionate</string>
+    <string name="fab_enable_sel">Abilita selezionate</string>
+    <string name="fab_disable_sel">Disabilita selezionate</string>
     <string name="fab_remove_sel">Rimuovi selezionate</string>
-    <string name="btn_enable">Attiva</string>
+    <string name="btn_enable">Abilita</string>
     <plurals name="confirm_enable">
         <item quantity="one">%d app selezionata.
 Riattivare il suo tema?</item>
@@ -287,7 +287,7 @@ Riattivare il suo tema?</item>
 Riattivare i loro temi?</item>
     </plurals>
     <string name="welcome_title">Benvenuto in Oxydian Theme</string>
-    <string name="welcome_body">Con Oxydian Theme dai ai tuoi telefoni colori e stile uniformi, senza programmi complicati.\n\nOverlay: spunta le app, poi usa il pulsante tondo in basso a destra per installare, attivare, disattivare o rimuovere i loro temi. Il check in alto spunta tutte le voci o nessuna, e il numero nel pulsante dice quante ne hai scelte.\n\nColori: scegli accento, sfondo e colori di sistema.\n\nMods: icone, stili, barra di navigazione e altre personalizzazioni.\n\nImpostazioni: aggiornamenti, backup, pagina iniziale e guida.\n\nDopo il primo overlay nuovo serve un riavvio. Il colore del nome di ogni app ne dice lo stato: tocca l\'icona (i) in alto per la legenda.</string>
+    <string name="welcome_body">Con Oxydian Theme dai ai tuoi telefoni colori e stile uniformi, senza programmi complicati.\n\nOverlay: spunta le app, poi usa il pulsante tondo in basso a destra per installare, abilitare, disabilitare o disinstallare i loro temi. Il check in alto spunta tutte le voci o nessuna, e il numero nel pulsante dice quante ne hai scelte.\n\nColori: scegli accento, sfondo e colori di sistema.\n\nMods: icone, stili, barra di navigazione e altre personalizzazioni.\n\nImpostazioni: aggiornamenti, backup, pagina iniziale e guida.\n\nDopo il primo overlay nuovo serve un riavvio. Il colore del nome di ogni app ne dice lo stato: tocca l\'icona (i) in alto per la legenda.</string>
     <string name="welcome_ok">Ho capito</string>
     <string name="welcome_option">Mostra il benvenuto all\'avvio</string>
     <string name="welcome_show_now">Mostra il benvenuto adesso</string>

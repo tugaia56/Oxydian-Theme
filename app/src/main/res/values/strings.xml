@@ -27,8 +27,8 @@
     <string name="legend_invalid_desc">The system rejects this theme (for example the app changed).</string>
     <string name="legend_none_desc">No theme has been built for this app.</string>
     <string name="legend_close">Close</string>
-    <string name="off_title">Themes turned off</string>
-    <string name="off_message">They are off right now. Reboot once to remove them completely.</string>
+    <string name="off_title">Themes uninstalled</string>
+    <string name="off_message">They are already off, no need to reboot right away. The next reboot removes them completely.</string>
     <string name="btn_styles">Icons</string>
     <string name="title_styles">Icon styles</string>
     <string name="section_wifi">Wi-Fi icon</string>
