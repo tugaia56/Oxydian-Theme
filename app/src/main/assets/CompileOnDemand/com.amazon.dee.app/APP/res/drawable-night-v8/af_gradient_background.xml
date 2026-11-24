@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Alexa home header (night): the blue arcs become the Theme background with lighter fades (Oxydian Theme) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="440dp"
+    android:height="956dp"
+    android:viewportWidth="440"
+    android:viewportHeight="956">
+    <path
+        android:fillColor="@*android:color/background_dark"
+        android:pathData="M0,0h440v956h-440z" />
+    <group>
+        <clip-path android:pathData="M0,0h440v956h-440z" />
+        <path
+            android:fillAlpha="1"
+            android:pathData="M82,922C269.78,922 422,769.78 422,582C422,394.22 269.78,242 82,242C-105.78,242 -258,394.22 -258,582C-258,769.78 -105.78,922 82,922Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:centerX="82"
+                    android:centerY="582"
+                    android:gradientRadius="340"
+                    android:type="radial">
+                    <item android:color="@*android:color/holo_light_primary_dark" android:offset="0" />
+                    <item android:color="@*android:color/background_dark" android:offset="1" />
+                </gradient>
+            </aapt:attr>
+        </path>
+        <path
+            android:fillAlpha="0.9"
+            android:pathData="M220.5,721C419.05,721 580,514.16 580,259C580,3.84 419.05,-203 220.5,-203C21.95,-203 -139,3.84 -139,259C-139,514.16 21.95,721 220.5,721Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:centerX="220.5"
+                    android:centerY="259"
+                    android:gradientRadius="462"
+                    android:type="radial">
+                    <item android:color="@*android:color/holo_light_primary_dark" android:offset="0" />
+                    <item android:color="@*android:color/background_dark" android:offset="1" />
+                </gradient>
+            </aapt:attr>
+        </path>
+        <path
+            android:fillAlpha="0.7"
+            android:pathData="M175.51,1203.92C373.82,1203.92 534.58,957.56 534.58,653.65C534.58,349.75 373.82,103.38 175.51,103.38C-22.8,103.38 -183.55,349.75 -183.55,653.65C-183.55,957.56 -22.8,1203.92 175.51,1203.92Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:centerX="175.51"
+                    android:centerY="653.65"
+                    android:gradientRadius="550.27"
+                    android:type="radial">
+                    <item android:color="@*android:color/holo_light_primary_dark" android:offset="0" />
+                    <item android:color="@*android:color/background_dark" android:offset="1" />
+                </gradient>
+            </aapt:attr>
+        </path>
+        <path
+            android:fillAlpha="0.7"
+            android:pathData="M430.5,976C641.75,976 813,810.12 813,605.5C813,400.88 641.75,235 430.5,235C219.25,235 48,400.88 48,605.5C48,810.12 219.25,976 430.5,976Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:centerX="430.5"
+                    android:centerY="605.5"
+                    android:gradientRadius="370.5"
+                    android:type="radial">
+                    <item android:color="@*android:color/holo_light_primary_dark" android:offset="0" />
+                    <item android:color="@*android:color/background_dark" android:offset="1" />
+                </gradient>
+            </aapt:attr>
+        </path>
+    </group>
+</vector>
