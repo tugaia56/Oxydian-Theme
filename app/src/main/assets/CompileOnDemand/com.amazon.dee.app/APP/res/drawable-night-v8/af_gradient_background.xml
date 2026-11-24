@@ -24,8 +24,8 @@
     </path>
     <path
         android:fillColor="@*android:color/button_material_dark"
-        android:pathData="M165,214A91.3,91.3 0,1 1 275,214Z" />
+        android:pathData="M160,210A91.3,91.3 0,1 1 280,210Z" />
     <path
         android:fillColor="@*android:color/accent_material_dark"
-        android:pathData="M165,205A55,12 0,0 0 275,205A55,6 0,0 1 165,205Z" />
+        android:pathData="M155,205A65,12 0,0 0 285,205A65,6 0,0 1 155,205Z" />
 </vector>
