@@ -200,11 +200,19 @@ public final class ThemePrefs {
         return sp().getString("varname_" + pkg + "#" + id, String.valueOf(id));
     }
 
+    /** Riga base nascosta: l'utente l'ha disinstallata e restano delle varianti (la riga torna quando le varianti finiscono). */
+    public static boolean isBaseHidden(String pkg) { return sp().getBoolean("base_hidden_" + pkg, false); }
+    public static void setBaseHidden(String pkg, boolean hidden) {
+        if (hidden) sp().edit().putBoolean("base_hidden_" + pkg, true).commit();
+        else sp().edit().remove("base_hidden_" + pkg).commit();
+    }
+
     /** Toglie una variante e tutte le sue scelte salvate. */
     public static void removeVariant(String pkg, int id) {
         java.util.List<Integer> ids = getVariantIds(pkg);
         ids.remove(Integer.valueOf(id));
         putVariantIds(pkg, ids);
+        if (ids.isEmpty()) setBaseHidden(pkg, false);   // senza varianti la riga base torna
         String key = pkg + "#" + id;
         android.content.SharedPreferences.Editor ed = sp().edit();
         ed.remove("varname_" + key);

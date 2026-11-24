@@ -1781,6 +1781,8 @@ public class MainActivity extends AppCompatActivity {
                 variants.add(new AppEntry(b.pkg, b.label + " \u00b7 " + variantDisplay(b.pkg, id), b.label, id, ThemePrefs.isAppEnabled(b.pkg + "#" + id)));
         }
         mApps.addAll(variants);
+        // riga base disinstallata dall'utente mentre esistono varianti: sparisce dalla vista (le varianti restano)
+        mApps.removeIf(e -> e.vid == 0 && !e.ds && ThemePrefs.isBaseHidden(e.pkg) && !ThemePrefs.getVariantIds(e.pkg).isEmpty());
         mApps.sort(Comparator.comparing(e -> e.label.toLowerCase(Locale.ROOT)));
         List<AppEntry> dsList = new ArrayList<>();
         for (String[] t : DS_TARGETS) {
@@ -2301,7 +2303,9 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.btn_cancel, null)
                 .setPositiveButton(R.string.btn_uninstall, (d, w) -> {
                     for (AppEntry e : targets) if (e.vid != 0) ThemePrefs.removeVariant(e.pkg, e.vid);
-                    loadApps();   // le righe delle varianti spariscono subito
+                    // riga base con varianti: si nasconde anche lei (la ritrovi quando togli le varianti)
+                    for (AppEntry e : targets) if (e.vid == 0 && !e.ds && !ThemePrefs.getVariantIds(e.pkg).isEmpty()) ThemePrefs.setBaseHidden(e.pkg, true);
+                    loadApps();   // le righe delle varianti e della base nascosta spariscono subito
                     runAction(targets, ACT_REMOVE);
                 }));
     }
