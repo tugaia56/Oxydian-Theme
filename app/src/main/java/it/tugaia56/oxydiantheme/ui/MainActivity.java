@@ -2796,6 +2796,21 @@ public class MainActivity extends AppCompatActivity {
      */
     static final int ASSET_REV = 40;
 
+    private static java.util.Map<String, String> assetHashes;
+
+    /** Impronta dei file del tema di un pacchetto (calcolata al build): cambia quando si modificano i suoi file. */
+    static synchronized String assetHash(String pkg) {
+        if (assetHashes == null) {
+            assetHashes = new java.util.HashMap<>();
+            for (String part : it.tugaia56.oxydiantheme.BuildConfig.ASSET_HASHES.split(";")) {
+                int i = part.indexOf('=');
+                if (i > 0) assetHashes.put(part.substring(0, i), part.substring(i + 1));
+            }
+        }
+        String h = assetHashes.get(pkg);
+        return h == null ? "" : h;
+    }
+
     static long updatedTime(Context ctx) {
         try {
             return ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).getLongVersionCode() * 1000L + ASSET_REV;
@@ -2811,7 +2826,7 @@ public class MainActivity extends AppCompatActivity {
     static String signatureFor(Context ctx, AppEntry e) {
         if (e.ds && SystemColorsDialog.PKG.equals(e.pkg)) return signature(ctx);
         int dep = colorDependence(ctx, e);
-        StringBuilder sb = new StringBuilder().append(updatedTime(ctx)).append(':');
+        StringBuilder sb = new StringBuilder().append(updatedTime(ctx)).append('.').append(assetHash(e.pkg)).append(':');
         if ((dep & 1) != 0) sb.append(String.format("%08X", ThemePrefs.accentColor()));
         if ((dep & 2) != 0) sb.append(BackgroundRemap.key());
         return sb.toString();
@@ -2822,7 +2837,7 @@ public class MainActivity extends AppCompatActivity {
     /** Bit 0: dipende dall'accento, bit 1: dipende dallo sfondo. */
     static synchronized int colorDependence(Context ctx, AppEntry e) {
         List<String> opts = optionPaths(ctx, e.pkg, e.key);
-        final String key = e.pkg + "|" + (e.ds ? e.dir : "APP") + "|" + opts.hashCode();
+        final String key = e.pkg + "|" + (e.ds ? e.dir : "APP") + "|" + opts.hashCode() + "|" + assetHash(e.pkg);
         Integer c = DEPENDENCE.get(key);
         if (c != null) return c;
         // la scansione dei file del tema (assets) e' lenta (decine di secondi per tutti): il risultato si salva per versione del Theme
