@@ -100,7 +100,7 @@
     <color name="color_play_button_disabled">#ffb1b0b0</color>
     <color name="color_play_button_enabled">#ffffffff</color>
     <color name="color_primary_hasselblad_red_gradient">#ffef0513</color>
-    <color name="color_primary_hasselblad_red_main">#fff6280b</color>
+    <color name="color_primary_hasselblad_red_main">@*android:color/accent_material_dark</color>
     <color name="color_primary_light_bottom_divider">#33ffffff</color>
     <color name="color_primary_light_hasselblad">@*android:color/accent_material_dark</color>
     <color name="color_primary_light_hasselblad_disable">#26fb822a</color>
@@ -986,4 +986,11 @@
     <color name="zoom_arc_seekbar_switch_bar_text_color">#ffffffff</color>
     <color name="zoom_line_seekbar_vertical_line_color">@*android:color/white</color>
     <color name="zoom_mark_button_selected_color">#ffffc700</color>
+    <!-- camera orange (shutter, highlights) -> accent -->
+    <color name="OrangeVariant">@*android:color/accent_material_dark</color>
+    <color name="coui_color_assist_orange">@*android:color/accent_material_dark</color>
+    <color name="coui_color_assist_orange_light">@*android:color/accent_material_dark</color>
+    <color name="coui_color_orange_variant">@*android:color/accent_material_dark</color>
+    <color name="coui_color_orange_variant_light">@*android:color/accent_material_dark</color>
+    <color name="color_spruce_zoom_highlight">@*android:color/accent_material_dark</color>
 </resources>
