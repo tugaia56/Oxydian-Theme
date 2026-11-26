@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="m3_sys_color_dynamic_dark_background">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_secondary_container">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface_variant">#ffffffff</color>
     <color name="m3_sys_color_dynamic_dark_outline">@*android:color/ripple_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_outline_variant">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_primary">@*android:color/accent_material_dark</color>

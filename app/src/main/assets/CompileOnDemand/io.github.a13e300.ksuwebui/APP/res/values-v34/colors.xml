@@ -2,6 +2,8 @@
 <resources>
     <color name="coui_snack_bar_background_shadow_color">#ee000000</color>
     <color name="m3_sys_color_dynamic_dark_background">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface_variant">#ffbdbdbd</color>
     <color name="m3_sys_color_dynamic_dark_primary">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_surface">@*android:color/background_dark</color>
     <color name="m3_sys_color_dynamic_dark_surface_container">@*android:color/background_dark</color>

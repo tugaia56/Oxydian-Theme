@@ -2,6 +2,12 @@
 <resources>
     <color name="m3_sys_color_dynamic_dark_background">@*android:color/background_dark</color>
     <color name="m3_sys_color_dynamic_dark_on_background">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary_container">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_secondary">#00ffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_secondary_container">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface_variant">#ffffffff</color>
     <color name="m3_sys_color_dynamic_dark_on_tertiary_container">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_outline">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_primary">@*android:color/accent_material_dark</color>

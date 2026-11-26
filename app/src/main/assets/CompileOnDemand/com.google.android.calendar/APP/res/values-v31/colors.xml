@@ -3,14 +3,6 @@
     <color name="aag_widget_adjusted_color_primary">#c8e6c9</color>
     <color name="aag_widget_background_color">#a5d6a7</color>
     <color name="aag_widget_color_surface_variant">#81c784</color>
-    <color name="settingslib_materialColorOnPrimary">#66bb6a</color>
-    <color name="settingslib_materialColorOnPrimaryContainer">#4caf50</color>
-    <color name="settingslib_materialColorOnSurface">#43a047</color>
-    <color name="settingslib_materialColorOnSurfaceVariant">#388e3c</color>
-    <color name="settingslib_materialColorOutline">#b9f6ca</color>
-    <color name="settingslib_materialColorPrimary">#69f0ae</color>
-    <color name="settingslib_materialColorPrimaryContainer">#00e676</color>
-    <color name="settingslib_materialColorSecondaryContainer">#00c853</color>
     <color name="settingslib_materialColorSecondaryFixed">#5e35b1</color>
     <color name="settingslib_materialColorSurfaceContainerHighest">#512da8</color>
     <color name="settingslib_materialColorSurfaceVariant">#4527a0</color>
@@ -91,16 +83,7 @@
     <color name="m3_ref_palette_dynamic_tertiary80">#f50057</color>
     <color name="m3_ref_palette_dynamic_tertiary90">#ff4081</color>
     <color name="settingslib_colorSurfaceVariant">#ff80ab</color>
-    <color name="settingslib_dialog_accent">#d7ccc8</color>
     <color name="settingslib_dialog_colorError">#ffd93025</color>
     <color name="settingslib_list_divider_color">#880e4f</color>
     <color name="settingslib_ripple_color">#ad1457</color>
-    <color name="settingslib_spinner_dropdown_color">#bcaaa4</color>
-    <color name="settingslib_state_on_color">#a1887f</color>
-    <color name="settingslib_text_color_preference_category_title">#8d6e63</color>
-    <color name="settingslib_text_color_primary_device_default">#795548</color>
-    <color name="settingslib_text_color_secondary_device_default">#6d4c41</color>
-    <color name="settingslib_thumb_disabled_color">#3e2723</color>
-    <color name="settingslib_thumb_off_color">#4e342e</color>
-    <color name="settingslib_track_on_color">#5d4037</color>
 </resources>

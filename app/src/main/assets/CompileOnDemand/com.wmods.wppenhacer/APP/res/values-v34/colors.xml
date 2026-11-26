@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="m3_sys_color_dynamic_dark_on_error">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_error_container">#000fff</color>
     <color name="m3_sys_color_dynamic_dark_on_primary">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_on_primary_container">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_secondary">#ffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_secondary_container">#ffffff</color>
     <color name="m3_sys_color_dynamic_dark_on_surface">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_on_surface_variant">@*android:color/darker_gray</color>
     <color name="m3_sys_color_dynamic_dark_on_tertiary">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_outline">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_primary">#ffffff</color>
     <color name="m3_sys_color_dynamic_dark_primary_container">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_surface">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container_highest">#26a69a</color>
     <color name="m3_sys_color_dynamic_dark_surface_variant">@*android:color/holo_primary</color>
     <color name="m3_sys_color_dynamic_light_on_primary_container">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_tertiary_fixed">#c51162</color>
+    <color name="m3_sys_color_dynamic_tertiary_fixed_dim">#ff80ab</color>
 </resources>

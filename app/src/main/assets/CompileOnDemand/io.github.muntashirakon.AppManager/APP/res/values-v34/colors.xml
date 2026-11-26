@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="m3_sys_color_dynamic_dark_background">@*android:color/background_dark</color>		<!-- background -->
+    <color name="m3_sys_color_dynamic_dark_inverse_on_surface">#ffffffff</color>
     <color name="m3_sys_color_dynamic_dark_inverse_surface">@*android:color/button_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary_container">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface_variant">#ffffffff</color>
     <color name="m3_sys_color_dynamic_dark_outline">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_outline_variant">#ffffffff</color>
     <color name="m3_sys_color_dynamic_dark_primary">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_primary_container">@*android:color/button_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_secondary">@*android:color/accent_material_dark</color>

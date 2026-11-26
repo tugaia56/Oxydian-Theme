@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="m3_sys_color_dynamic_dark_background">#6200ea</color>
     <color name="m3_sys_color_dynamic_dark_error_container">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_error_container">#ffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary">#ffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary_container">#ffffff</color>										<!-- icona fab -->
+    <color name="m3_sys_color_dynamic_dark_on_secondary_container">#ffffff</color>										<!-- icona selezionata navbar -->
+    <color name="m3_sys_color_dynamic_dark_on_surface">#ffffff</color>													<!-- testo selezionato navbar -->
+    <color name="m3_sys_color_dynamic_dark_on_surface_variant">#ffffff</color>											<!-- icone navbar -->
+    <color name="m3_sys_color_dynamic_dark_on_tertiary">#ffffff</color>													<!-- testo verifica aggiornamento -->
+    <color name="m3_sys_color_dynamic_dark_on_tertiary_container">#ffffff</color>
     <color name="m3_sys_color_dynamic_dark_outline">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_outline_variant">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_primary">@*android:color/accent_material_dark</color>
@@ -14,4 +23,6 @@
     <color name="m3_sys_color_dynamic_dark_surface_variant">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_tertiary">@*android:color/accent_material_dark</color>						<!-- verifica aggiornamento -->
     <color name="m3_sys_color_dynamic_dark_tertiary_container">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_tertiary_fixed">#c51162</color>
+    <color name="m3_sys_color_dynamic_tertiary_fixed_dim">#ff80ab</color>
 </resources>

@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="m3_sys_color_dynamic_dark_background">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_inverse_on_surface">#ffffffff</color>
     <color name="m3_sys_color_dynamic_dark_inverse_surface">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_primary_container">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_secondary_container">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface">#ffffffff</color>
+    <color name="m3_sys_color_dynamic_dark_on_surface_variant">#ffffffff</color>
     <color name="m3_sys_color_dynamic_dark_outline">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_outline_variant">@*android:color/accent_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_primary">@*android:color/accent_material_dark</color>
@@ -11,11 +17,13 @@
     <color name="m3_sys_color_dynamic_dark_surface">@*android:color/background_dark</color>
     <color name="m3_sys_color_dynamic_dark_surface_container">@*android:color/background_dark</color>
     <color name="m3_sys_color_dynamic_dark_surface_container_high">@*android:color/background_dark</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container_highest">#00000000</color>
     <color name="m3_sys_color_dynamic_dark_surface_container_low">@*android:color/background_floating_material_dark</color>
     <color name="m3_sys_color_dynamic_dark_surface_container_lowest">@*android:color/button_material_dark</color>
     <color name="m3_sys_color_dynamic_light_on_tertiary">@*android:color/button_material_dark</color>
     <color name="m3_sys_color_dynamic_light_outline">@*android:color/background_dark</color>
     <color name="m3_sys_color_dynamic_dark_error">@*android:color/holo_red_dark</color>
     <color name="m3_sys_color_dynamic_dark_error_container">@*android:color/accent_material_dark</color>
+    <color name="m3_sys_color_dynamic_dark_on_error">#ffffffff</color>
     <color name="m3_sys_color_dynamic_dark_on_error_container">@*android:color/accent_material_dark</color>
 </resources>

@@ -1,3 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="m3_sys_color_dynamic_dark_background">#6200ea</color>
+    <color name="m3_sys_color_dynamic_dark_on_error_container">#000fff</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container_highest">#26a69a</color>
+    <color name="m3_sys_color_dynamic_tertiary_fixed">#c51162</color>
+    <color name="m3_sys_color_dynamic_tertiary_fixed_dim">#ff80ab</color>
 </resources>
