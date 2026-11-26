@@ -55,7 +55,7 @@
     <color name="city_ui_on_inverse_secondary">#c01b2029</color>
     <color name="city_ui_on_status_critical">@*android:color/background_dark</color>
     <color name="city_ui_on_surface">#ffffffff</color>
-    <color name="city_ui_on_surface_extra_light_08">#14ffffff</color>
+    <color name="city_ui_on_surface_extra_light_08">#33908dff</color>
     <color name="city_ui_status_attention">@*android:color/accent_material_dark</color>
     <color name="city_ui_status_critical">@*android:color/holo_red_dark</color>
     <color name="city_ui_status_ok">@*android:color/accent_material_dark</color>
@@ -93,7 +93,7 @@
     <color name="desert_ui_on_inverse_secondary">#c0210000</color>
     <color name="desert_ui_on_status_critical">#ff210000</color>
     <color name="desert_ui_on_surface">#ffffffff</color>
-    <color name="desert_ui_on_surface_extra_light_08">#14ffffff</color>
+    <color name="desert_ui_on_surface_extra_light_08">#33908dff</color>
     <color name="desert_ui_status_attention">@*android:color/accent_material_dark</color>
     <color name="desert_ui_status_critical">@*android:color/holo_red_dark</color>
     <color name="desert_ui_status_ok">@*android:color/accent_material_dark</color>
@@ -166,7 +166,7 @@
     <color name="jungle_ui_on_inverse_secondary">#c00a0f00</color>
     <color name="jungle_ui_on_status_critical">#ff0a0f00</color>
     <color name="jungle_ui_on_surface">#ffffffff</color>
-    <color name="jungle_ui_on_surface_extra_light_08">#14ffffff</color>
+    <color name="jungle_ui_on_surface_extra_light_08">#33908dff</color>
     <color name="jungle_ui_status_attention">@*android:color/accent_material_dark</color>
     <color name="jungle_ui_status_critical">@*android:color/holo_red_dark</color>
     <color name="jungle_ui_status_ok">@*android:color/accent_material_dark</color>
@@ -319,7 +319,7 @@
     <color name="mountains_ui_on_inverse_secondary">@*android:color/group_button_dialog_focused_holo_light</color>
     <color name="mountains_ui_on_status_critical">@*android:color/background_dark</color>
     <color name="mountains_ui_on_surface">#ffffffff</color>
-    <color name="mountains_ui_on_surface_extra_light_08">@*android:color/button_material_dark</color>				<!-- selezione navbar -->
+    <color name="mountains_ui_on_surface_extra_light_08">#33908dff</color>				<!-- selezione navbar -->
     <color name="mountains_ui_status_attention">@*android:color/accent_material_dark</color>
     <color name="mountains_ui_status_critical">@*android:color/holo_red_dark</color>
     <color name="mountains_ui_status_ok">@*android:color/accent_material_dark</color>
