@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="coui_color_background">@*android:color/background_dark</color>
+    <color name="coui_color_background_elevated">@*android:color/background_dark</color>
+    <color name="coui_color_background_elevatedWithCard">@*android:color/background_dark</color>
+    <color name="coui_color_surface">@*android:color/background_dark</color>
+    <color name="coui_color_surface_with_card">@*android:color/background_dark</color>
+    <color name="coui_color_bar">@*android:color/background_dark</color>
+    <color name="coui_color_bottom_bar">@*android:color/background_dark</color>
+    <color name="coui_navigation_enlarge_default_bg">@*android:color/background_dark</color>
+    <color name="main_category_item_bg_color">@*android:color/background_dark</color>
+    <color name="anima_view_background">@*android:color/background_dark</color>
+    <color name="coui_color_card">@*android:color/button_material_dark</color>
+    <color name="coui_color_card_background">@*android:color/button_material_dark</color>
+    <color name="preview_widget_card_bg_color">@*android:color/button_material_dark</color>
+    <color name="coui_color_background_with_card">@*android:color/background_dark</color>
+    <color name="bg_max_container_bg">@*android:color/background_dark</color>
+</resources>
