@@ -159,8 +159,8 @@
     <color name="secondary_text_default_material_light">#8a000000</color>
     <color name="secondary_text_disabled_material_dark">#36ffffff</color>
     <color name="secondary_text_disabled_material_light">#24000000</color>
-    <color name="support_donate_button">#ffb221</color>
-    <color name="support_github_button">#2f80ed</color>
+    <color name="support_donate_button">@*android:color/accent_material_dark</color>
+    <color name="support_github_button">@*android:color/accent_material_dark</color>
     <color name="switch_thumb_disabled_material_dark">#ff616161</color>
     <color name="switch_thumb_disabled_material_light">#ffbdbdbd</color>
     <color name="switch_thumb_normal_material_dark">#ffbdbdbd</color>
