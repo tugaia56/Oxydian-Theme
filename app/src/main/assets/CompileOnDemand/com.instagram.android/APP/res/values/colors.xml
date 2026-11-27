@@ -19,9 +19,9 @@
     <color name="background">#cc000000</color>
     <color name="background_floating_material_light">@*android:color/white</color>
     <color name="badge_color">@*android:color/accent_material_dark</color>
-    <color name="basel_bottom_sheet_background_color">#ff1c1f24</color>
+    <color name="basel_bottom_sheet_background_color">@*android:color/background_dark</color>
     <color name="basel_purple_5_strong">#ff5806e0</color>
-    <color name="basel_track_background_color">#ff191c1f</color>
+    <color name="basel_track_background_color">@*android:color/background_dark</color>
     <color name="baseline_neutral_0_alpha_10">#19000000</color>
     <color name="baseline_neutral_10">@*android:color/background_dark</color>
     <color name="baseline_neutral_100_alpha_10">#19ffffff</color>
@@ -29,7 +29,7 @@
     <color name="baseline_neutral_10_alpha_38">#611f1f1f</color>
     <color name="baseline_neutral_10_with_surface_tint_dark_alpha_11">#ff313336</color>
     <color name="baseline_neutral_10_with_surface_tint_dark_alpha_14">#ff37393d</color>
-    <color name="baseline_neutral_10_with_surface_tint_dark_alpha_5">#ff28282a</color>
+    <color name="baseline_neutral_10_with_surface_tint_dark_alpha_5">@*android:color/button_material_dark</color>
     <color name="baseline_neutral_20">@*android:color/background_dark</color>
     <color name="baseline_neutral_70">#ffababab</color>
     <color name="baseline_neutral_80">#ffc7c7c7</color>
@@ -97,7 +97,7 @@
     <color name="bds_grey_2">#ffdbdbdb</color>
     <color name="bds_grey_21">#ff32353e</color>
     <color name="bds_grey_22">@*android:color/background_dark</color>
-    <color name="bds_grey_24">#ff212328</color>
+    <color name="bds_grey_24">@*android:color/button_material_dark</color>
     <color name="bds_grey_24_20_transparent_color">#29292e33</color>
     <color name="bds_grey_2_20_transparent">#33dbdbdb</color>
     <color name="bds_grey_2_75_transparent">#bfdbdbdb</color>
@@ -193,7 +193,7 @@
     <color name="cds_gray_07">#ff465a69</color>
     <color name="cds_gray_08">#ff344854</color>
     <color name="cds_gray_08_a40">#66344854</color>
-    <color name="cds_gray_10">#ff1c2b33</color>
+    <color name="cds_gray_10">@*android:color/button_material_dark</color>
     <color name="cds_gray_10_a10">#191c2b33</color>
     <color name="cds_gray_10_a15">#261c2b33</color>
     <color name="cds_gray_10_a25">#3f1c2b33</color>
@@ -299,8 +299,8 @@
     <color name="fbui_bluegrey_60">#ff373e4d</color>
     <color name="fbui_bluegrey_70">#ff232937</color>
     <color name="fbui_bluegrey_70_f0">#f0232937</color>
-    <color name="fbui_bluegrey_80">#ff141823</color>
-    <color name="fbui_bluegrey_90">#ff080a10</color>
+    <color name="fbui_bluegrey_80">@*android:color/background_dark</color>
+    <color name="fbui_bluegrey_90">@*android:color/background_dark</color>
     <color name="fbui_btn_dark_primary_stroke_disabled">#ff3a465c</color>
     <color name="fbui_btn_dark_special_bg_pressed">#ff4773cc</color>
     <color name="fbui_btn_light_primary_stroke_pressed">#ff4673cc</color>
@@ -451,16 +451,16 @@
     <color name="igds_prism_gray_09">@*android:color/button_material_dark</color>
     <color name="igds_prism_gray_0900">#ff686f78</color>
     <color name="igds_prism_gray_09_alpha_95">#f225292e</color>
-    <color name="igds_prism_gray_10">#ff212328</color>
+    <color name="igds_prism_gray_10">@*android:color/button_material_dark</color>
     <color name="igds_prism_gray_1000">#ff57606b</color>
     <color name="igds_prism_gray_10_alpha_50">#80212328</color>
     <color name="igds_prism_gray_10_alpha_70">#b3212328</color>
     <color name="igds_prism_gray_10_alpha_95">#f2212328</color>
-    <color name="igds_prism_gray_11">#ff25292f</color>
+    <color name="igds_prism_gray_11">@*android:color/button_material_dark</color>
     <color name="igds_prism_gray_1100">#ff48505b</color>
     <color name="igds_prism_gray_13">#ff32353e</color>
     <color name="igds_prism_gray_14">@*android:color/background_dark</color>
-    <color name="igds_prism_gray_1500">#ff191c1f</color>
+    <color name="igds_prism_gray_1500">@*android:color/background_dark</color>
     <color name="igds_prism_green_01">#ffd3f9e2</color>
     <color name="igds_prism_green_02">#ffa7f3c6</color>
     <color name="igds_prism_green_03">#ff6feca0</color>
@@ -680,4 +680,6 @@
     <color name="zero_rating_video_settings_drawer_confirm_background_color">#ff3897f0</color>
     <color name="zero_rating_video_settings_drawer_subtitle_color">#ff999999</color>
     <color name="zero_rating_video_settings_drawer_unchecked_border_color">#ffdbdbdb</color>
+    <color name="camera_settings_background">@*android:color/background_dark</color>
+    <color name="camera_settings_secondary_background">@*android:color/button_material_dark</color>
 </resources>
