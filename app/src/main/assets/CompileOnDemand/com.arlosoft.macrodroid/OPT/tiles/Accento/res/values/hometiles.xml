@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="home_tile_action_blocks">@*android:color/accent_material_dark</color>
+    <color name="home_tile_add_macro">@*android:color/accent_material_dark</color>
+    <color name="home_tile_ai_macro_builder">@*android:color/accent_material_dark</color>
+    <color name="home_tile_auto_backup">@*android:color/accent_material_dark</color>
+    <color name="home_tile_categories">@*android:color/accent_material_dark</color>
+    <color name="home_tile_cell_towers">@*android:color/accent_material_dark</color>
+    <color name="home_tile_drawer">@*android:color/accent_material_dark</color>
+    <color name="home_tile_export_import">@*android:color/accent_material_dark</color>
+    <color name="home_tile_favourites">@*android:color/accent_material_dark</color>
+    <color name="home_tile_forum">@*android:color/accent_material_dark</color>
+    <color name="home_tile_geofences">@*android:color/accent_material_dark</color>
+    <color name="home_tile_last_edited_macro">@*android:color/accent_material_dark</color>
+    <color name="home_tile_last_opened_action_block">@*android:color/accent_material_dark</color>
+    <color name="home_tile_macro_toggle">@*android:color/accent_material_dark</color>
+    <color name="home_tile_macros">@*android:color/accent_material_dark</color>
+    <color name="home_tile_modes">@*android:color/accent_material_dark</color>
+    <color name="home_tile_notification_bar">@*android:color/accent_material_dark</color>
+    <color name="home_tile_plugins">@*android:color/accent_material_dark</color>
+    <color name="home_tile_quick_run_macro">@*android:color/accent_material_dark</color>
+    <color name="home_tile_quick_settings">@*android:color/accent_material_dark</color>
+    <color name="home_tile_remote_control">@*android:color/accent_material_dark</color>
+    <color name="home_tile_settings">@*android:color/accent_material_dark</color>
+    <color name="home_tile_stopwatches">@*android:color/accent_material_dark</color>
+    <color name="home_tile_system_log">@*android:color/accent_material_dark</color>
+    <color name="home_tile_user_log">@*android:color/accent_material_dark</color>
+    <color name="home_tile_variables">@*android:color/accent_material_dark</color>
+    <color name="home_tile_videos">@*android:color/accent_material_dark</color>
+    <color name="home_tile_widgets">@*android:color/accent_material_dark</color>
+</resources>
