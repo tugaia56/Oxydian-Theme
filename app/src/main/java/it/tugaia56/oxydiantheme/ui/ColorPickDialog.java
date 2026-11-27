@@ -43,6 +43,11 @@ final class ColorPickDialog {
     }
 
     static void show(Context ctx, int initial, int titleRes, Listener listener) {
+        show(ctx, initial, titleRes, false, listener);
+    }
+
+    /** withAlpha: in piu' un cursore "Opacita'" (0-100%), il colore restituito ha quella trasparenza. */
+    static void show(Context ctx, int initial, int titleRes, boolean withAlpha, Listener listener) {
         float d = ctx.getResources().getDisplayMetrics().density;
         int pad = (int) (16 * d);
         LinearLayout box = new LinearLayout(ctx);
@@ -80,6 +85,28 @@ final class ColorPickDialog {
         hex.setFilters(new InputFilter[]{new InputFilter.LengthFilter(6)});
         hex.setHint("RRGGBB");
         box.addView(hex, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        final int[] percent = {withAlpha ? Math.round((initial >>> 24) * 100 / 255f) : 100};
+        if (withAlpha) {
+            TextView alphaLabel = new TextView(ctx);
+            alphaLabel.setTextColor(ctx.getColor(R.color.text_dim));
+            alphaLabel.setPadding(0, pad, 0, 0);
+            alphaLabel.setText(ctx.getString(R.string.pick_opacity, percent[0]));
+            box.addView(alphaLabel);
+            android.widget.SeekBar bar = new android.widget.SeekBar(ctx);
+            bar.setMax(100);
+            bar.setProgress(percent[0]);
+            bar.setProgressTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+            bar.setThumbTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
+            bar.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {
+                @Override public void onProgressChanged(android.widget.SeekBar s, int value, boolean fromUser) {
+                    percent[0] = value;
+                    alphaLabel.setText(ctx.getString(R.string.pick_opacity, value));
+                }
+                @Override public void onStartTrackingTouch(android.widget.SeekBar s) {}
+                @Override public void onStopTrackingTouch(android.widget.SeekBar s) {}
+            });
+            box.addView(bar, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
         ScrollView sv = new ScrollView(ctx);
         sv.addView(box);
         Dialogs.show(ctx, new MaterialAlertDialogBuilder(ctx)
@@ -92,6 +119,7 @@ final class ColorPickDialog {
                     if (t.length() == 6) {
                         try { color = 0xFF000000 | Integer.parseInt(t, 16); } catch (NumberFormatException ignored) {}
                     }
+                    if (withAlpha) color = (Math.round(percent[0] * 2.55f) << 24) | (color & 0xFFFFFF);
                     listener.onPicked(color);
                 }));
     }

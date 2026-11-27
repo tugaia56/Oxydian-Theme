@@ -1974,7 +1974,7 @@ public class MainActivity extends AppCompatActivity {
                         og.choices.add(item);
                     }
                 }
-                if (!og.choices.isEmpty()) out.add(og);
+                if (!og.choices.isEmpty() || appAllowsCustom(pkg, g)) out.add(og);
             }
         } catch (Exception ignored) {}
         return out;
@@ -2090,7 +2090,7 @@ public class MainActivity extends AppCompatActivity {
             body.append(gradColors(pkg));
             return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
         }
-        String rpl = ((ds || usesRipple(pkg)) ? rippleColors(ctx, pkg) : "") + gradColors(pkg) + pinKeyValues(pkg);
+        String rpl = ((ds || usesRipple(pkg)) ? rippleColors(ctx, pkg) : "") + gradColors(pkg) + pinKeyValues(pkg) + appCustomValues(pkg);
         if (!ds || !"com.android.systemui".equals(pkg))
             return rpl.isEmpty() ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n" + rpl + "</resources>";
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n");
@@ -2161,6 +2161,26 @@ public class MainActivity extends AppCompatActivity {
             any = true;
         }
         return any ? sb.append("</resources>").toString() : null;
+    }
+
+    /** Opzioni delle app con colore a scelta libera: pacchetto, gruppo (cartella OPT), colore dell'app da cambiare. */
+    private static final String[][] APP_CUSTOM = {
+            {"com.wunderground.android.weather", "widget", "background_light"},   // sfondo del widget (di serie trasparente)
+    };
+
+    private static boolean appAllowsCustom(String pkg, String group) {
+        for (String[] c : APP_CUSTOM) if (c[0].equals(pkg) && c[1].equals(group)) return true;
+        return false;
+    }
+
+    private static String appCustomValues(String pkg) {
+        StringBuilder sb = new StringBuilder();
+        for (String[] c : APP_CUSTOM) {
+            if (!c[0].equals(pkg) || !OptionGroupsDialog.CUSTOM.equals(ThemePrefs.getOption(pkg, c[1]))) continue;
+            sb.append("    <color name=\"").append(c[2]).append("\">")
+                    .append(hex8(ThemePrefs.getCustomColor(pkg + "_" + c[1]))).append("</color>\n");   // con la trasparenza scelta
+        }
+        return sb.toString();
     }
 
     /**
@@ -2369,14 +2389,20 @@ public class MainActivity extends AppCompatActivity {
             List<String> all = new ArrayList<>();
             all.add("");
             all.addAll(g.choices);
+            if (e.vid == 0 && appAllowsCustom(e.pkg, g.id)) all.add(OptionGroupsDialog.CUSTOM);
             for (String c : all) {
                 android.widget.RadioButton rb = new android.widget.RadioButton(this);
-                rb.setText(c.isEmpty() ? getString(R.string.options_default) : c.replace('_', ' '));
+                rb.setText(c.isEmpty() ? getString(R.string.options_default)
+                        : OptionGroupsDialog.CUSTOM.equals(c) ? getString(R.string.opt_custom) : c.replace('_', ' '));
                 rb.setId(View.generateViewId());
                 rb.setChecked(c.equals(cur));
                 rb.setButtonTintList(android.content.res.ColorStateList.valueOf(ThemePrefs.accentColor()));
                 final String choice = c;
                 rb.setOnClickListener(v -> {
+                    if (OptionGroupsDialog.CUSTOM.equals(choice)) {
+                        ColorPickDialog.show(this, ThemePrefs.getCustomColor(e.key + "_" + g.id), R.string.opt_custom, true,
+                                color -> ThemePrefs.setCustomColor(e.key + "_" + g.id, color));
+                    }
                     ThemePrefs.setOption(e.key, g.id, choice);
                     // gruppi alternativi: scegliendone uno, l'altro torna su Predefinito
                     String other = choice.isEmpty() ? null : excludedGroup(e.pkg, g.id);

@@ -330,4 +330,5 @@ Gli overlay vengono tolti e le varianti spariscono dalla lista. Per toglierli de
     <string name="cr_module_on">deciso dal modulo Oxydian</string>
     <string name="card_roundness">Tondezza angoli</string>
     <string name="card_volumestyle">Stile del volume</string>
+    <string name="pick_opacity">Opacità: %1$d%%</string>
 </resources>
