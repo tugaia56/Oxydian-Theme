@@ -804,7 +804,11 @@ public class MainActivity extends AppCompatActivity {
             r.setTranslationY(16 * d);
             r.animate().alpha(1f).translationY(0f).setStartDelay(i * 25L).setDuration(160).start();
         }
-        ((com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton) findViewById(R.id.fab)).setIconResource(R.drawable.ic_fab_close);
+        // col menu aperto il pulsante sparisce e il riquadro scende al suo posto (si chiude toccando fuori o con "indietro")
+        findViewById(R.id.fab).setVisibility(View.INVISIBLE);
+        android.view.ViewGroup.MarginLayoutParams mlp = (android.view.ViewGroup.MarginLayoutParams) menu.getLayoutParams();
+        mlp.bottomMargin = (int) (16 * d);
+        menu.setLayoutParams(mlp);
     }
 
     private void closeFab() {
@@ -815,13 +819,25 @@ public class MainActivity extends AppCompatActivity {
         final android.widget.LinearLayout menu = findViewById(R.id.fab_menu);
         scrim.animate().alpha(0f).setDuration(120).withEndAction(() -> { if (!mFabOpen) scrim.setVisibility(View.GONE); }).start();
         menu.animate().alpha(0f).setDuration(120).withEndAction(() -> { if (!mFabOpen) menu.setVisibility(View.GONE); }).start();
-        ((com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton) findViewById(R.id.fab)).setIconResource(R.drawable.ic_fab_menu);
+        findViewById(R.id.fab).setVisibility(mTab == R.id.nav_themes ? View.VISIBLE : View.GONE);
     }
 
     private void buildFabMenu() {
         android.widget.LinearLayout menu = findViewById(R.id.fab_menu);
         menu.removeAllViews();
         float d = getResources().getDisplayMetrics().density;
+        // un unico riquadro con il bordo (quello delle card del Theme) che contiene tutte le voci
+        android.graphics.drawable.Drawable panel = GradBorder.card(getColor(R.color.card), 14 * d, d, ThemePrefs.accentColor());
+        if (panel == null) {
+            android.graphics.drawable.GradientDrawable pb = new android.graphics.drawable.GradientDrawable();
+            pb.setColor(getColor(R.color.card));
+            pb.setCornerRadius(14 * d);
+            pb.setStroke((int) (1.5f * d), ThemePrefs.accentColor());
+            panel = pb;
+        }
+        menu.setBackground(panel);
+        menu.setPadding((int) (6 * d), (int) (6 * d), (int) (6 * d), (int) (6 * d));
+        menu.setElevation(6 * d);
         // dall'alto in basso; in fondo (vicino al FAB) le azioni sugli overlay spuntati
         addFabRow(menu, R.string.fab_reboot, R.drawable.ic_fab_power, false, () ->
                 Dialogs.show(this, new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
@@ -833,58 +849,59 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.restart_ui_toast, Toast.LENGTH_SHORT).show();
             new Thread(() -> it.tugaia56.oxydiantheme.utils.UiRestart.run()).start();
         });
-        View gap = new View(this);
-        gap.setLayoutParams(new android.widget.LinearLayout.LayoutParams(1, (int) (14 * d)));
-        menu.addView(gap);
+        addFabDivider(menu);
         // Cambia stato: gli attivi si spengono e i spenti si accendono
         addFabRow(menu, R.string.fab_toggle_sel, R.drawable.ic_fab_swap, false, () -> runSelected(ACT_TOGGLE));
         addFabRow(menu, R.string.fab_disable_sel, R.drawable.ic_fab_block, false, () -> runSelected(ACT_DISABLE));
         // Attiva = riaccendere un overlay gia' costruito; Installa = costruirne uno che ancora non c'e' (la procedura e' la stessa)
         addFabRow(menu, R.string.fab_enable_sel, R.drawable.ic_fab_play, false, () -> runSelected(ACT_ACTIVATE, true));
-        View gap2 = new View(this);
-        gap2.setLayoutParams(new android.widget.LinearLayout.LayoutParams(1, (int) (14 * d)));
-        menu.addView(gap2);
+        addFabDivider(menu);
         addFabRow(menu, R.string.fab_uninstall_sel, R.drawable.ic_fab_delete, false, this::uninstallSelected);
         addFabRow(menu, R.string.fab_install_sel, R.drawable.ic_fab_check, false, () -> runSelected(ACT_ACTIVATE, false));
     }
 
-    /** Una riga del menu: etichetta a pillola e cerchio con l'icona; "main" = cerchio pieno in accento. */
+    /** Riga sottile che separa i gruppi di voci dentro il riquadro. */
+    private void addFabDivider(android.widget.LinearLayout menu) {
+        float d = getResources().getDisplayMetrics().density;
+        // non deve allargare il riquadro: nella prima misura vale zero, poi prende la larghezza della voce piu' lunga
+        View line = new View(this) {
+            @Override protected void onMeasure(int w, int h) {
+                setMeasuredDimension(MeasureSpec.getMode(w) == MeasureSpec.EXACTLY ? MeasureSpec.getSize(w) : 0, MeasureSpec.getSize(h));
+            }
+        };
+        android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Math.max(1, (int) d));
+        lp.setMargins((int) (8 * d), (int) (3 * d), (int) (8 * d), (int) (3 * d));
+        line.setLayoutParams(lp);
+        line.setBackgroundColor((ThemePrefs.accentColor() & 0x00FFFFFF) | 0x40000000);
+        menu.addView(line);
+    }
+
+    /** Una voce del menu: icona in accento e testo, senza sfondo proprio (il riquadro e' unico). */
     private void addFabRow(android.widget.LinearLayout menu, int label, int icon, boolean main, Runnable action) {
         float d = getResources().getDisplayMetrics().density;
         int acc = ThemePrefs.accentColor();
         android.widget.LinearLayout row = new android.widget.LinearLayout(this);
         row.setOrientation(android.widget.LinearLayout.HORIZONTAL);
         row.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.topMargin = (int) (10 * d);
-        lp.gravity = android.view.Gravity.END;
-        row.setLayoutParams(lp);
+        row.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        row.setPadding((int) (10 * d), (int) (8 * d), (int) (14 * d), (int) (8 * d));
+        android.util.TypedValue ripple = new android.util.TypedValue();
+        getTheme().resolveAttribute(android.R.attr.selectableItemBackground, ripple, true);
+        row.setBackgroundResource(ripple.resourceId);
+
+        android.widget.ImageView ic = new android.widget.ImageView(this);
+        ic.setLayoutParams(new android.widget.LinearLayout.LayoutParams((int) (18 * d), (int) (18 * d)));
+        ic.setImageResource(icon);
+        ic.setImageTintList(android.content.res.ColorStateList.valueOf(acc));
+        row.addView(ic);
 
         TextView t = new TextView(this);
         t.setText(label);
         t.setTextColor(getColor(R.color.text));
-        t.setTextSize(18);
-        t.setPadding((int) (20 * d), (int) (12 * d), (int) (20 * d), (int) (12 * d));
-        android.graphics.drawable.GradientDrawable tb = new android.graphics.drawable.GradientDrawable();
-        tb.setColor(getColor(R.color.card));
-        tb.setCornerRadius(24 * d);
-        t.setBackground(tb);
+        t.setTextSize(14);
+        t.setPadding((int) (12 * d), 0, 0, 0);
         row.addView(t);
-
-        android.widget.ImageView ic = new android.widget.ImageView(this);
-        int size = (int) (56 * d), pad = (int) (14 * d);
-        android.widget.LinearLayout.LayoutParams ilp = new android.widget.LinearLayout.LayoutParams(size, size);
-        ilp.setMarginStart((int) (12 * d));
-        ic.setLayoutParams(ilp);
-        ic.setPadding(pad, pad, pad, pad);
-        ic.setImageResource(icon);
-        android.graphics.drawable.GradientDrawable cb = new android.graphics.drawable.GradientDrawable();
-        cb.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-        cb.setColor(main ? acc : getColor(R.color.card));
-        ic.setBackground(cb);
-        ic.setImageTintList(android.content.res.ColorStateList.valueOf(main ? 0xFFFFFFFF : acc));
-        row.addView(ic);
 
         row.setOnClickListener(v -> { closeFab(); action.run(); });
         menu.addView(row);
