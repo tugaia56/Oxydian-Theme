@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="actions_primary">@*android:color/button_material_dark</color>
+    <color name="forum_primary">@*android:color/button_material_dark</color>
+    <color name="export_import_primary">@*android:color/button_material_dark</color>
+    <color name="md_cyan_800">@*android:color/button_material_dark</color>
+    <color name="stopwatches_primary">@*android:color/button_material_dark</color>
+    <color name="geofences_primary">@*android:color/button_material_dark</color>
+    <color name="md_blue_grey_600">@*android:color/button_material_dark</color>
+    <color name="system_log_primary">@*android:color/button_material_dark</color>
+    <color name="videos_primary">@*android:color/button_material_dark</color>
+    <color name="blue_600">@*android:color/button_material_dark</color>
+    <color name="plugins_primary">@*android:color/button_material_dark</color>
+    <color name="home_screen_tile_last_edited_macro">@*android:color/button_material_dark</color>
+    <color name="favourites_primary">@*android:color/button_material_dark</color>
+    <color name="home_screen_tile_quick_run_macro">@*android:color/button_material_dark</color>
+    <color name="user_log_primary">@*android:color/button_material_dark</color>
+    <color name="auto_backup_primary">@*android:color/button_material_dark</color>
+    <color name="drawer_primary">@*android:color/button_material_dark</color>
+    <color name="quick_settings_config_primary">@*android:color/button_material_dark</color>
+    <color name="md_indigo_400">@*android:color/button_material_dark</color>
+    <color name="notification_bar_primary">@*android:color/button_material_dark</color>
+    <color name="ai_macro_builder_primary">@*android:color/button_material_dark</color>
+    <color name="remote_control_primary">@*android:color/button_material_dark</color>
+    <color name="widgets_primary">@*android:color/button_material_dark</color>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="actions_primary">@*android:color/accent_material_dark</color>
+    <color name="forum_primary">#ff6e40</color>
+    <color name="export_import_primary">#33691e</color>
+    <color name="md_cyan_800">#33691e</color>
+    <color name="stopwatches_primary">#33691e</color>
+    <color name="geofences_primary">#00b8d4</color>
+    <color name="md_blue_grey_600">#00b8d4</color>
+    <color name="system_log_primary">#00b8d4</color>
+    <color name="videos_primary">#6200ea</color>
+    <color name="blue_600">#6200ea</color>
+    <color name="plugins_primary">#6200ea</color>
+    <color name="home_screen_tile_last_edited_macro">#880e4f</color>
+    <color name="favourites_primary">#880e4f</color>
+    <color name="home_screen_tile_quick_run_macro">#880e4f</color>
+    <color name="user_log_primary">#d50000</color>
+    <color name="auto_backup_primary">#d50000</color>
+    <color name="drawer_primary">#d50000</color>
+    <color name="quick_settings_config_primary">#2962ff</color>
+    <color name="md_indigo_400">#2962ff</color>
+    <color name="notification_bar_primary">#2962ff</color>
+    <color name="ai_macro_builder_primary">#ff6d00</color>
+    <color name="remote_control_primary">#ff3f7cac</color>
+    <color name="widgets_primary">#ff5c8a72</color>
+</resources>

@@ -2,33 +2,13 @@
 <resources>
     <color name="primary">@*android:color/background_dark</color>								<!-- 1° pulsante - statusbar e navbar -->
 												<!-- 2° pulsante -->
-    <color name="forum_primary">#ff6e40</color>													<!-- 3°	pulsante -->
 	
-    <color name="export_import_primary">#33691e</color>											<!-- 4°	pulsante -->
-    <color name="md_cyan_800">#33691e</color>													<!-- 5°	pulsante -->
-    <color name="stopwatches_primary">#33691e</color>											<!-- 6°	pulsante -->
 	
-    <color name="geofences_primary">#00b8d4</color>												<!-- 7°	pulsante -->
-    <color name="md_blue_grey_600">#00b8d4</color>												<!-- 8°	pulsante -->
-    <color name="system_log_primary">#00b8d4</color>											<!-- 9°	pulsante -->
 	
-    <color name="videos_primary">#6200ea</color>												<!-- 10° pulsante -->
-    <color name="blue_600">#6200ea</color>														<!-- 11° pulsante -->
-    <color name="plugins_primary">#6200ea</color>												<!-- 12° pulsante -->
 	
-    <color name="home_screen_tile_last_edited_macro">#880e4f</color>							<!-- 13° pulsante -->
-    <color name="favourites_primary">#880e4f</color>											<!-- 14° pulsante -->
-    <color name="home_screen_tile_quick_run_macro">#880e4f</color>								<!-- 15° pulsante -->
 	
-    <color name="user_log_primary">#d50000</color>												<!-- 16° pulsante -->
-    <color name="auto_backup_primary">#d50000</color>											<!-- 17° pulsante -->
-    <color name="drawer_primary">#d50000</color>												<!-- 18° pulsante -->
 	
-    <color name="quick_settings_config_primary">#2962ff</color>									<!-- 19° pulsante -->
-	<color name="md_indigo_400">#2962ff</color>													<!-- 20° pulsante -->
-	<color name="notification_bar_primary">#2962ff</color>										<!-- 21° pulsante -->
 	
-	<color name="ai_macro_builder_primary">#ff6d00</color>										<!-- 22° pulsante -->
 	
     <color name="action_ok_button_disabled">#888888</color>
     <color name="actions_accent">#90caf9</color>
@@ -160,7 +140,6 @@
     <color name="home_tile_widgets">#ff69b287</color>
     <color name="section_card_background">#ff1b2029</color>
     <!-- Lista macro: icone A (azioni) e E (eventi) e chip selezionato nell'accento, chip disattivati con lo sfondo del tema, testo del chip selezionato bianco -->
-    <color name="actions_primary">@*android:color/accent_material_dark</color>
     <color name="actions_primary_bit_dark">@*android:color/accent_material_dark</color>
     <color name="actions_primary_dark">#ff1b2029</color>
     <color name="trigger_primary">@*android:color/accent_material_dark</color>
