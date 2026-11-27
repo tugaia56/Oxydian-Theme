@@ -2343,6 +2343,12 @@ public class MainActivity extends AppCompatActivity {
                 }));
     }
 
+    /** MacroDroid: le due opzioni valgono per due stili diversi della schermata iniziale, se ne tiene una sola. */
+    private static String excludedGroup(String pkg, String group) {
+        if (!"com.arlosoft.macrodroid".equals(pkg)) return null;
+        return "tiles".equals(group) ? "buttons" : "buttons".equals(group) ? "tiles" : null;
+    }
+
     private void showOptions(AppEntry e) {
         List<OptGroup> groups = optionGroups(this, e.pkg);
         if (groups.isEmpty()) return;
@@ -2350,6 +2356,7 @@ public class MainActivity extends AppCompatActivity {
         box.setOrientation(android.widget.LinearLayout.VERTICAL);
         int pad = (int) (20 * getResources().getDisplayMetrics().density);
         box.setPadding(pad, pad / 2, pad, 0);
+        final Map<String, android.widget.RadioGroup> radios = new HashMap<>();
         for (OptGroup g : groups) {
             TextView t = new TextView(this);
             t.setText(g.title);
@@ -2371,6 +2378,17 @@ public class MainActivity extends AppCompatActivity {
                 final String choice = c;
                 rb.setOnClickListener(v -> {
                     ThemePrefs.setOption(e.key, g.id, choice);
+                    // gruppi alternativi: scegliendone uno, l'altro torna su Predefinito
+                    String other = choice.isEmpty() ? null : excludedGroup(e.pkg, g.id);
+                    android.widget.RadioGroup org = other == null ? null : radios.get(other);
+                    if (org != null) {
+                        ThemePrefs.setOption(e.key, other, "");
+                        ((android.widget.RadioButton) org.getChildAt(0)).setChecked(true);
+                        for (int i = 0; i < org.getChildCount(); i++) {
+                            android.widget.RadioButton o = (android.widget.RadioButton) org.getChildAt(i);
+                            o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
+                        }
+                    }
                     if (!e.ds) mList.getAdapter().notifyDataSetChanged();   // il nome della riga segue le opzioni scelte
                     for (int i = 0; i < rg.getChildCount(); i++) {
                         android.widget.RadioButton o = (android.widget.RadioButton) rg.getChildAt(i);
@@ -2384,6 +2402,7 @@ public class MainActivity extends AppCompatActivity {
                 o.setTextColor(o.isChecked() ? ThemePrefs.accentColor() : getColor(R.color.text));
             }
             box.addView(rg);
+            radios.put(g.id, rg);
         }
         android.widget.ScrollView sv = new android.widget.ScrollView(this);
         sv.addView(box);
