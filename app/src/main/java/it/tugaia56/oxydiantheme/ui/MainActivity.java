@@ -2623,10 +2623,8 @@ public class MainActivity extends AppCompatActivity {
             if (sysTarget) AospTheme.apply(MainActivity.this, groupAction == ACT_ACTIVATE);
             // icone Wi-Fi/segnale e pack icone Impostazioni hanno l'accento scritto dentro: si rifanno anche loro
             if (sysTarget && groupAction == ACT_ACTIVATE) { busyUpdate(getString(R.string.busy_styles)); it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale start"); StyleActivity.rebuildStale(MainActivity.this); it.tugaia56.oxydiantheme.utils.OxyLog.log("rebuildStale end"); }
-            // Oxydian "cuoce" l'accento nel colore del pulsante Recenti del launcher: si rifa' col colore nuovo
-            if (sysTarget && groupAction == ACT_ACTIVATE) { it.tugaia56.oxydiantheme.utils.OxyLog.log("refreshRecentsButton"); it.tugaia56.oxydiantheme.utils.OxydianLink.refreshRecentsButton(ThemePrefs.accentColor()); }
             // colori di sistema gia' scelti: si riapplicano anche quando si installa un'altra app
-            else if (anyActivate && ThemePrefs.isDarkShadowEnabled(SystemColorsDialog.PKG)) AospTheme.apply(MainActivity.this, true);
+            if (!(sysTarget && groupAction == ACT_ACTIVATE) && anyActivate && ThemePrefs.isDarkShadowEnabled(SystemColorsDialog.PKG)) AospTheme.apply(MainActivity.this, true);
 
             Set<String> after = enabledOverlays();
             int notYetActive = 0;
