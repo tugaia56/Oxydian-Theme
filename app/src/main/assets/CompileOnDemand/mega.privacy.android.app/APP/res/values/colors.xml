@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_background_pageBackground">@*android:color/background_dark</color>
+    <color name="dark_grey">@*android:color/background_dark</color>
+    <color name="color_background_surface_1">@*android:color/button_material_dark</color>
+    <color name="color_button_secondary">@*android:color/button_material_dark</color>
+    <color name="color_icon_fill">@*android:color/button_material_dark</color>
+    <color name="color_background_surface_2">@*android:color/button_material_light</color>
+    <color name="color_button_brand">@*android:color/accent_material_dark</color>
+    <color name="color_border_brand">@*android:color/accent_material_dark</color>
+    <color name="color_border_interactive">@*android:color/accent_material_dark</color>
+    <color name="color_icon_brand">@*android:color/accent_material_dark</color>
+    <color name="color_text_brand">@*android:color/accent_material_dark</color>
+    <color name="color_primary_400">@*android:color/accent_material_dark</color>
+    <color name="color_components_interactive">@*android:color/accent_material_dark</color>
+    <color name="color_link_primary">@*android:color/accent_material_dark</color>
+    <color name="color_button_primary">@*android:color/accent_material_dark</color>
+    <color name="color_text_inverse">@android:color/white</color>
+    <color name="color_icon_inverse">@android:color/white</color>
+</resources>
