@@ -407,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mSubAccent, mSubBg, mSubWifi, mSubSignal, mSubNav, mSubSettings;
     private View mSwitchCard, mSwitchSpacer, mIconPackCard, mIconPackSpacer;
     private android.widget.LinearLayout mRow3, mRow3b;
-    private View mBlurCard, mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mClockColorCard, mRippleCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow, mRoundnessRow, mRoundCard;
+    private View mBlurCard, mPinCard, mNotifCard, mWifiCard, mSignalCard, mSCardsCard, mClockColorCard, mSbColorCard, mBatPctCard, mNotifStyleRow, mPowerMenuCard, mDialogStyleRow, mRoundnessRow, mRoundCard;
     private TextView mSubPowerMenu;
     private TextView mSubBatPct;
     private TextView mSubNotifStyle, mSubToastStyle, mSubDialogStyle, mSubGradBorder, mSubRoundness, mSubVolume, mSubNotifRadius;
@@ -418,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
     private android.widget.LinearLayout mClockColorRow;
     private Boolean mStatusRowsPure = null;
     private TextView mSubSCards, mSubClockColor, mSubBlur;
-    private TextView mSubPin, mSubRipple, mSubDefaultTab, mSubSbColor;
+    private TextView mSubPin, mSubDefaultTab, mSubSbColor;
 
     private View makeCard(int titleRes, TextView[] subOut, Runnable onClick) {
         return makeCard(getString(titleRes), subOut, onClick);
@@ -483,14 +483,6 @@ public class MainActivity extends AppCompatActivity {
         r1.addView(makeCard(R.string.card_background, s, () -> openColors(1)));
         mSubBg = s[0];
         android.widget.LinearLayout r6 = findViewById(R.id.cards_row6);
-        mRippleCard = makeCard(R.string.card_ripple, s, () -> RippleDialog.show(this, () -> {
-            syncEnabled(SystemColorsDialog.PKG);
-            refreshCards();
-            mList.getAdapter().notifyDataSetChanged();
-            onApply(SystemColorsDialog.PKG, false);
-        }));
-        r6.addView(mRippleCard);
-        mSubRipple = s[0];
         mSbColorCard = makeCard(R.string.card_sbcolor, s, this::statusBarColorDialog);
         r6.addView(mSbColorCard);
         mSubSbColor = s[0];
@@ -1129,8 +1121,7 @@ public class MainActivity extends AppCompatActivity {
             any = !ThemePrefs.getOption(pkg, "accent").isEmpty() || !ThemePrefs.getOption(pkg, "background").isEmpty()
                     || !ThemePrefs.getOption(pkg, "progress").isEmpty() || !ThemePrefs.getOption(pkg, "switch").isEmpty()
                     || !ThemePrefs.getOption(pkg, "dialogradius").isEmpty()
-                    || !ThemePrefs.getOption(pkg, "toaststyle").isEmpty() || !ThemePrefs.getOption(pkg, "dialogstyle").isEmpty() || !ThemePrefs.getOption(pkg, "roundness").isEmpty() || !ThemePrefs.getOption(pkg, "volumetrack").isEmpty()
-                    || ThemePrefs.getRippleAlpha() > 0;
+                    || !ThemePrefs.getOption(pkg, "toaststyle").isEmpty() || !ThemePrefs.getOption(pkg, "dialogstyle").isEmpty() || !ThemePrefs.getOption(pkg, "roundness").isEmpty() || !ThemePrefs.getOption(pkg, "volumetrack").isEmpty();
             ThemePrefs.setDarkShadowEnabled(pkg, any);
         } else {
             any = !ThemePrefs.getOption(pkg, "notifradius").isEmpty() || !ThemePrefs.getOption(pkg, "toastradius").isEmpty() || !ThemePrefs.getOption(pkg, "pinnum").isEmpty() || !ThemePrefs.getOption(pkg, "pinbg").isEmpty()
@@ -1253,27 +1244,22 @@ public class MainActivity extends AppCompatActivity {
      * Un solo colore per le icone della barra di stato: Wi-Fi e segnale (scritto nei loro overlay) e la batteria
      * (colori di SystemUI creati al volo). Poi si riavvia l'interfaccia per vederlo.
      */
-    /**
-     * Su Android puro: icone e orologio della barra di stato uno accanto all'altro e "Opacita' tocco" nella riga sotto (da sola);
-     * su OxygenOS (niente colore orologio separato) restano "Opacita' tocco" e "Colore icone" insieme.
-     */
+    /** Icone e orologio della barra di stato uno accanto all'altro, "% batteria" nella riga sotto. */
     private void arrangeStatusRows(boolean pure) {
-        if (mClockColorRow == null || mRippleCard == null) return;
+        if (mClockColorRow == null || mBatPctCard == null) return;
         if (mStatusRowsPure != null) return;
         mStatusRowsPure = pure;
         android.widget.LinearLayout r6 = findViewById(R.id.cards_row6);
-        for (View v : new View[]{mRippleCard, mSbColorCard, mClockColorCard, mBatPctCard}) {
+        for (View v : new View[]{mSbColorCard, mClockColorCard, mBatPctCard}) {
             if (v.getParent() instanceof ViewGroup) ((ViewGroup) v.getParent()).removeView(v);
         }
-        // stessa disposizione su OxygenOS e Android puro: icone e orologio vicini, sotto "Opacita' tocco" e "% batteria"
+        // stessa disposizione su OxygenOS e Android puro: icone e orologio vicini, sotto "% batteria"
         setCardHeight(mSbColorCard, ViewGroup.LayoutParams.MATCH_PARENT);
         setCardHeight(mClockColorCard, ViewGroup.LayoutParams.MATCH_PARENT);
         r6.addView(mSbColorCard);
         r6.addView(mClockColorCard);
         // l'altezza della riga sotto viene dalle card (con MATCH_PARENT e senza altro contenuto si schiaccia)
-        setCardHeight(mRippleCard, ViewGroup.LayoutParams.WRAP_CONTENT);
         setCardHeight(mBatPctCard, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mClockColorRow.addView(mRippleCard);
         mClockColorRow.addView(mBatPctCard);
         mClockColorRow.setVisibility(View.VISIBLE);
     }
@@ -1542,7 +1528,6 @@ public class MainActivity extends AppCompatActivity {
         if (mSubRoundness != null) mSubRoundness.setText(OptionGroupsDialog.summary(this, SystemColorsDialog.PKG, "roundness"));
         String nv = ThemePrefs.getStyle("NAV1");
         mSubNav.setText(nv.isEmpty() ? def : pretty(nv));
-        mSubRipple.setText(RippleDialog.summary(this));
         if (mSubSbColor != null) mSubSbColor.setText(IconColorDialog.summary(this, "all"));
         // colori separati di orologio e numero della batteria (li applica il modulo Oxydian)
         arrangeStatusRows(SystemVariant.isPure());
@@ -1986,11 +1971,9 @@ public class MainActivity extends AppCompatActivity {
     static String optsKey(Context ctx, String pkg, boolean ds, String key) {
         StringBuilder sb = new StringBuilder();
         if (ds && SystemColorsDialog.PKG.equals(pkg)) {
-            sb.append("|ripple=").append(ThemePrefs.getRippleAlpha());
             sb.append("|tw=").append(ThemePrefs.getAccSat()).append(',').append(ThemePrefs.getBgSat())
                     .append(',').append(ThemePrefs.getBgLight());
         }
-        if ((ds && !SystemColorsDialog.PKG.equals(pkg)) || usesRipple(pkg)) sb.append("|rpl=").append(ThemePrefs.getRippleAlpha());
         if (ds && SYSTEMUI_PKG.equals(pkg)) sb.append("|nav=").append(ThemePrefs.getIconColor("nav")).append("|pmv=2");   // pmv: versione dei colori del menu di spegnimento (Emergenza rosso fisso)
         for (OptGroup g : optionGroups(ctx, pkg)) {
             String c = ThemePrefs.getOption(key, g.id);
@@ -2075,22 +2058,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 body.append(b);
             }
-            int rp = ThemePrefs.getRippleAlpha();
-            if (rp > 0) {
-                // onda del tocco: colore dell'accento con l'opacita' scelta
-                Integer acc = SystemColorsDialog.effAccent(ctx);
-                int base = (acc != null ? acc : ThemePrefs.accentColor()) & 0xFFFFFF;
-                String hex = String.format("#%02X%06X", Math.round(rp * 2.55f), base);
-                String cleaned = body.toString().replaceAll("<color name=\"ripple_material_(dark|light)\">[^<]*</color>", "");
-                body.setLength(0);
-                body.append(cleaned);
-                body.append("<color name=\"ripple_material_dark\">").append(hex).append("</color>")
-                    .append("<color name=\"ripple_material_light\">").append(hex).append("</color>");
-            }
             body.append(gradColors(pkg));
             return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
         }
-        String rpl = ((ds || usesRipple(pkg)) ? rippleColors(ctx, pkg) : "") + gradColors(pkg) + pinKeyValues(pkg) + appCustomValues(pkg);
+        String rpl = gradColors(pkg) + pinKeyValues(pkg) + appCustomValues(pkg);
         if (!ds || !"com.android.systemui".equals(pkg))
             return rpl.isEmpty() ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n" + rpl + "</resources>";
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n");
@@ -2180,57 +2151,6 @@ public class MainActivity extends AppCompatActivity {
             sb.append("    <color name=\"").append(c[2]).append("\">")
                     .append(hex8(ThemePrefs.getCustomColor(pkg + "_" + c[1]))).append("</color>\n");   // con la trasparenza scelta
         }
-        return sb.toString();
-    }
-
-    /**
-     * Onda del tocco nelle app OnePlus: le liste usano colori propri (coui_color_press...), non quello del
-     * sistema, e un riferimento al colore di sistema non basta: serve il colore vero, scritto qui.
-     */
-    private static final java.util.Set<String> RIPPLE_APP_PKGS = new java.util.HashSet<>(java.util.Arrays.asList(
-            "com.android.phone", "com.android.server.telecom", "com.android.printspooler", "com.oppo.quicksearchbox"));
-
-    /** Colori dell'onda nelle app Google (Material): stessi nomi in quasi tutte, quelli assenti non fanno danni. */
-    private static final String[] GOOGLE_RIPPLE_NAMES = {
-            "dialpad_key_ripple_color", "dialpad_key_button_ripple_color", "dialer_ripple_color",
-            "ripple_material_dark", "ripple_material_light",
-            "m3_button_ripple_color_selector", "m3_card_ripple_color", "m3_chip_ripple_color",
-            "m3_control_ripple_color_selector", "m3_efab_ripple_color_selector", "m3_fab_ripple_color_selector",
-            "m3_list_item_ripple_color_selector", "m3_navigation_bar_ripple_color_selector",
-            "m3_navigation_item_ripple_color", "m3_navigation_rail_ripple_color_selector",
-            "m3_selection_control_ripple_color_selector", "m3_simple_item_ripple_color",
-            "m3_tabs_ripple_color", "m3_tabs_ripple_color_secondary", "m3_text_button_ripple_color_selector",
-            "m3_tonal_button_ripple_color_selector",
-            "mtrl_btn_ripple_color", "mtrl_btn_text_btn_ripple_color", "mtrl_card_view_ripple",
-            "mtrl_choice_chip_ripple_color", "mtrl_fab_ripple_color", "mtrl_navigation_bar_ripple_color",
-            "mtrl_on_surface_ripple_color", "mtrl_tabs_ripple_color",
-            "google_bottom_nav_ripple_color_selector", "google_btn_filled_btn_ripple_color", "google_btn_ripple_color",
-            "google_card_ripple", "google_chip_ripple_color", "google_fab_ripple_color",
-            "google_tabs_ripple_color_selector", "google_navigation_rail_item_ripple_color"};
-
-    private static boolean isGoogleApp(String pkg) {
-        return pkg != null && (pkg.startsWith("com.google.") || "app.revanced.android.gms".equals(pkg));
-    }
-
-    private static boolean usesRipple(String pkg) {
-        return RIPPLE_APP_PKGS.contains(pkg) || isGoogleApp(pkg);
-    }
-
-    private static String rippleColors(Context ctx, String pkg) {
-        int rp = ThemePrefs.getRippleAlpha();
-        if (rp <= 0) return "";
-        Integer acc = SystemColorsDialog.effAccent(ctx);
-        int base = (acc != null ? acc : ThemePrefs.accentColor()) & 0xFFFFFF;
-        String hex = String.format("#%02X%06X", Math.round(rp * 2.55f), base);
-        StringBuilder sb = new StringBuilder();
-        if (isGoogleApp(pkg)) {
-            for (String n : GOOGLE_RIPPLE_NAMES)
-                sb.append("    <color name=\"").append(n).append("\">").append(hex).append("</color>\n");
-            return sb.toString();
-        }
-        for (String n : new String[]{"coui_color_press", "coui_color_press_dark", "coui_color_press_light",
-                "coui_color_card_pressed", "coui_color_card_pressed_dark", "coui_color_card_pressed_light"})
-            sb.append("    <color name=\"").append(n).append("\">").append(hex).append("</color>\n");
         return sb.toString();
     }
 

@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#ffffffff</color>
+    <!-- Accento trasparente per i temi delle app: car_cyan_N00 = accento al N0% (seguono l'accento senza rifare le app) -->
+    <color name="car_cyan_100">#1a908dff</color>
+    <color name="car_cyan_200">#33908dff</color>
+    <color name="car_cyan_300">#4d908dff</color>
+    <color name="car_cyan_400">#66908dff</color>
+    <color name="car_cyan_500">#80908dff</color>
+    <color name="car_cyan_600">#99908dff</color>
+    <color name="car_cyan_700">#b3908dff</color>
+    <color name="car_cyan_800">#cc908dff</color>
+    <color name="car_cyan_900">#e6908dff</color>
 </resources>

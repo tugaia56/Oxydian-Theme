@@ -105,24 +105,24 @@
     <color name="widget_selection_icon_bg">#252525</color>
 
     <!-- Home (nuova interfaccia): sfondo, barre e tessere in Blue Gray Dark, bordi delle tessere piu' accesi, accento sui tasti principali. Solo notte: se uguale al valore di base il compilatore scarta la voce e vince quella dell'app. -->
-    <color name="home_app_bar_gradient_end">#ff1b2029</color>
-    <color name="home_app_bar_gradient_start">#ff1b2029</color>
-    <color name="home_bottom_nav_background">#ff1b2029</color>
-    <color name="home_bottom_nav_indicator">#40908dff</color>
-    <color name="home_dashboard_background">#ff1b2029</color>
-    <color name="section_card_background">#ff1b2029</color>
+    <color name="home_app_bar_gradient_end">@*android:color/background_dark</color>
+    <color name="home_app_bar_gradient_start">@*android:color/background_dark</color>
+    <color name="home_bottom_nav_background">@*android:color/background_dark</color>
+    <color name="home_bottom_nav_indicator">@*android:color/keyguard_avatar_frame_pressed_color</color>
+    <color name="home_dashboard_background">@*android:color/background_dark</color>
+    <color name="section_card_background">@*android:color/background_dark</color>
     <!-- Lista macro: icone A (azioni) e E (eventi) e chip selezionato nell'accento, chip disattivati con lo sfondo del tema, testo del chip selezionato bianco -->
     <color name="actions_primary_bit_dark">@*android:color/accent_material_dark</color>
-    <color name="actions_primary_dark">#ff1b2029</color>
+    <color name="actions_primary_dark">@*android:color/background_dark</color>
     <color name="trigger_primary">@*android:color/accent_material_dark</color>
-    <color name="macro_list_chip_background">#ff1b2029</color>
+    <color name="macro_list_chip_background">@*android:color/background_dark</color>
     <color name="macro_list_chip_background_selected">@*android:color/accent_material_dark</color>
     <color name="macro_list_chip_text_selected">#ffffffff</color>
     <!-- Esempi e Impostazioni: barra delle Impostazioni nel colore di sfondo, schede degli Esempi scure, icone/selettori (accent) nell'accento -->
-    <color name="accent">#fe908dff</color>
-    <color name="template_accent">#fe908dff</color>
-    <color name="settings_app_bar_gradient_start">#ff1b2029</color>
-    <color name="settings_app_bar_gradient_end">#ff1b2029</color>
-    <color name="template_card_background">#ff242832</color>
-    <color name="template_card_footer_background">#ff2d323e</color>
+    <color name="accent">@*android:color/accent_material_dark</color>
+    <color name="template_accent">@*android:color/accent_material_dark</color>
+    <color name="settings_app_bar_gradient_start">@*android:color/background_dark</color>
+    <color name="settings_app_bar_gradient_end">@*android:color/background_dark</color>
+    <color name="template_card_background">@*android:color/button_material_dark</color>
+    <color name="template_card_footer_background">@*android:color/button_material_light</color>
 </resources>
