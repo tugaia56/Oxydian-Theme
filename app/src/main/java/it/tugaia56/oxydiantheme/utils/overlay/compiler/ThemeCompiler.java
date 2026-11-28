@@ -58,7 +58,9 @@ public final class ThemeCompiler {
 
     // ── Giro completo ────────────────────────────────────────────────────────
 
-    public static void beginBatch() {
+    // synchronized (come buildNamedInBatch): piu' parti dell'app compilano in thread diversi e questo giro svuota la cartella
+    // di lavoro comune; senza la fila poteva cancellare i file a una compilazione in corso (overlay a meta')
+    public static synchronized void beginBatch() {
         symLinkBinaries();
         Shell.cmd("rm -rf " + ModuleConstants.TEMP_OVERLAY_DIR,
                 "rm -rf " + ModuleConstants.DATA_DIR + "/CompileOnDemand",
@@ -160,9 +162,21 @@ public final class ThemeCompiler {
      * @param iconColor  se non nullo, il nero dei disegni (con la sua trasparenza) diventa questo colore: SystemUI mostra i
      *                   colori scritti nei disegni delle icone Wi-Fi/segnale, non serve nessun hook (provato su OxygenOS 16)
      */
-    public static boolean buildNamedInBatch(String targetPackage, String assetDir, String name,
+    public static synchronized boolean buildNamedInBatch(String targetPackage, String assetDir, String name,
                                             List<String> optionAssetPaths, String extraValuesXml,
                                             int iconSizeDp, Integer iconColor) throws IOException {
+        for (int attempt = 1; attempt <= 2; attempt++) {
+            int r = build(targetPackage, assetDir, name, optionAssetPaths, extraValuesXml, iconSizeDp, iconColor);
+            if (r != INCOMPLETE) return r != OK;
+        }
+        return true;
+    }
+
+    private static final int OK = 0, FAILED = 1, INCOMPLETE = 2;
+
+    private static int build(String targetPackage, String assetDir, String name,
+                             List<String> optionAssetPaths, String extraValuesXml,
+                             int iconSizeDp, Integer iconColor) throws IOException {
         String cacheRoot = ModuleConstants.TEMP_CACHE_DIR + "/" + targetPackage;
         String source = cacheRoot + "/" + name;
 
@@ -291,13 +305,19 @@ public final class ThemeCompiler {
         // Sempre: se la variante "notte" dell'overlay e' uguale a quella base, aapt2 la toglie, ma se l'app ha una sua variante
         // "notte" (piu' specifica) vince quella dell'app e il colore dell'overlay non si vede (es. titolo di OneSync dopo l'aggiornamento).
         OverlayCompiler.keepNightDuplicates = true;
-        if (OverlayCompiler.createManifest(name, targetPackage, source)) return true;
-        if (OverlayCompiler.runAapt(source, targetPackage)) return true;
-        if (OverlayCompiler.zipAlign(ModuleConstants.UNSIGNED_UNALIGNED_DIR + "/" + name + "-unsigned-unaligned.apk")) return true;
-        if (OverlayCompiler.apkSigner(ModuleConstants.UNSIGNED_DIR + "/" + name + "-unsigned.apk")) return true;
+        if (OverlayCompiler.createManifest(name, targetPackage, source)) return FAILED;
+        if (OverlayCompiler.runAapt(source, targetPackage)) return FAILED;
+        if (OverlayCompiler.zipAlign(ModuleConstants.UNSIGNED_UNALIGNED_DIR + "/" + name + "-unsigned-unaligned.apk")) return FAILED;
+        if (OverlayCompiler.apkSigner(ModuleConstants.UNSIGNED_DIR + "/" + name + "-unsigned.apk")) return FAILED;
 
         String apkName = PREFIX + name + ".apk";
         String signed = ModuleConstants.SIGNED_DIR + "/" + apkName;
+        // controllo: ogni disegno del tema deve essere nel file compilato, altrimenti non si installa (si riprova)
+        List<String> missing = missingDrawables("CompileOnDemand/" + assetPkg + "/" + assetDir + "/res", signed);
+        if (!missing.isEmpty()) {
+            it.tugaia56.oxydiantheme.utils.OxyLog.log("overlay " + name + " incompleto, mancano " + missing.size() + ": " + missing);
+            return INCOMPLETE;
+        }
         String inStore = ModuleConstants.STORE_DIR + "/" + apkName;
         String inSystem = ModuleConstants.LIVE_UPPER_DIR + "/" + apkName;
         // Lo store e' quello che il modulo monta ad ogni avvio; la copia in /product/overlay serve
@@ -320,7 +340,35 @@ public final class ThemeCompiler {
                         + "[ $h = 0 ] && break; sleep 0.25; i=$((i+1)); done; "
                         + "fi; cp -f " + signed + " " + inSystem + " 2>/dev/null; }",
                 "chmod 644 " + inSystem + " 2>/dev/null").exec();
-        return false;
+        return OK;
+    }
+
+    /** Disegni presenti negli asset del tema ma non nell'APK compilato (nomi senza estensione). */
+    private static List<String> missingDrawables(String assetRes, String apk) {
+        List<String> missing = new java.util.ArrayList<>();
+        try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(apk)) {
+            java.util.Set<String> built = new java.util.HashSet<>();
+            java.util.Enumeration<? extends java.util.zip.ZipEntry> entries = zip.entries();
+            while (entries.hasMoreElements()) {
+                String n = entries.nextElement().getName();
+                if (n.startsWith("res/")) built.add(baseName(n.substring(n.lastIndexOf('/') + 1)));
+            }
+            android.content.res.AssetManager am = it.tugaia56.oxydiantheme.ThemeApp.getAppContext().getAssets();
+            String[] dirs = am.list(assetRes);
+            if (dirs != null) for (String dir : dirs) {
+                if (!dir.startsWith("drawable")) continue;
+                String[] files = am.list(assetRes + "/" + dir);
+                if (files != null) for (String f : files) if (!built.contains(baseName(f))) missing.add(baseName(f));
+            }
+        } catch (IOException e) {
+            it.tugaia56.oxydiantheme.utils.OxyLog.log("controllo overlay non riuscito: " + e);
+        }
+        return missing;
+    }
+
+    private static String baseName(String file) {
+        int dot = file.indexOf('.');
+        return dot < 0 ? file : file.substring(0, dot);
     }
 
     /** @param refresh pacchetti (overlay) gia' attivi che vanno spenti e riaccesi per ricaricare l'APK */
