@@ -2061,7 +2061,7 @@ public class MainActivity extends AppCompatActivity {
             body.append(gradColors(pkg));
             return body.length() == 0 ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>" + body + "</resources>";
         }
-        String rpl = gradColors(pkg) + pinKeyValues(pkg) + appCustomValues(pkg);
+        String rpl = (ds ? "" : rippleRefs(pkg)) + gradColors(pkg) + pinKeyValues(pkg) + appCustomValues(pkg);
         if (!ds || !"com.android.systemui".equals(pkg))
             return rpl.isEmpty() ? null : "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n" + rpl + "</resources>";
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n");
@@ -2151,6 +2151,47 @@ public class MainActivity extends AppCompatActivity {
             sb.append("    <color name=\"").append(c[2]).append("\">")
                     .append(hex8(ThemePrefs.getCustomColor(pkg + "_" + c[1]))).append("</color>\n");   // con la trasparenza scelta
         }
+        return sb.toString();
+    }
+
+    private static final java.util.Set<String> RIPPLE_APP_PKGS = new java.util.HashSet<>(java.util.Arrays.asList(
+            "com.android.phone", "com.android.server.telecom", "com.android.printspooler", "com.oppo.quicksearchbox"));
+
+    /** Colori dell'onda nelle app Google (Material): stessi nomi in quasi tutte, quelli assenti non fanno danni. */
+    private static final String[] GOOGLE_RIPPLE_NAMES = {
+            "dialpad_key_ripple_color", "dialpad_key_button_ripple_color", "dialer_ripple_color",
+            "ripple_material_dark", "ripple_material_light",
+            "m3_button_ripple_color_selector", "m3_card_ripple_color", "m3_chip_ripple_color",
+            "m3_control_ripple_color_selector", "m3_efab_ripple_color_selector", "m3_fab_ripple_color_selector",
+            "m3_list_item_ripple_color_selector", "m3_navigation_bar_ripple_color_selector",
+            "m3_navigation_item_ripple_color", "m3_navigation_rail_ripple_color_selector",
+            "m3_selection_control_ripple_color_selector", "m3_simple_item_ripple_color",
+            "m3_tabs_ripple_color", "m3_tabs_ripple_color_secondary", "m3_text_button_ripple_color_selector",
+            "m3_tonal_button_ripple_color_selector",
+            "mtrl_btn_ripple_color", "mtrl_btn_text_btn_ripple_color", "mtrl_card_view_ripple",
+            "mtrl_choice_chip_ripple_color", "mtrl_fab_ripple_color", "mtrl_navigation_bar_ripple_color",
+            "mtrl_on_surface_ripple_color", "mtrl_tabs_ripple_color",
+            "google_bottom_nav_ripple_color_selector", "google_btn_filled_btn_ripple_color", "google_btn_ripple_color",
+            "google_card_ripple", "google_chip_ripple_color", "google_fab_ripple_color",
+            "google_tabs_ripple_color_selector", "google_navigation_rail_item_ripple_color"};
+
+    private static boolean isGoogleApp(String pkg) {
+        return pkg != null && (pkg.startsWith("com.google.") || "app.revanced.android.gms".equals(pkg));
+    }
+
+    private static boolean usesRipple(String pkg) {
+        return RIPPLE_APP_PKGS.contains(pkg) || isGoogleApp(pkg);
+    }
+
+    /** Onda del tocco in accento nelle app che usano nomi propri: riferimenti al colore di sistema, seguono l'accento senza rifarle. */
+    private static String rippleRefs(String pkg) {
+        String[] names;
+        if (isGoogleApp(pkg)) names = GOOGLE_RIPPLE_NAMES;
+        else if (RIPPLE_APP_PKGS.contains(pkg)) names = new String[]{"coui_color_press", "coui_color_press_dark", "coui_color_press_light",
+                "coui_color_card_pressed", "coui_color_card_pressed_dark", "coui_color_card_pressed_light"};
+        else return "";
+        StringBuilder sb = new StringBuilder();
+        for (String n : names) sb.append("    <color name=\"").append(n).append("\">@*android:color/ripple_material_dark</color>\n");
         return sb.toString();
     }
 
@@ -2743,7 +2784,8 @@ public class MainActivity extends AppCompatActivity {
                     if (!e.enabled || (e.ds && SystemColorsDialog.PKG.equals(e.pkg))) continue;
                     String b = e.builtSig();
                     // confronto completo (la firma e' seguita da "|"): con lo sfondo predefinito la firma e' piu' corta e prima combaciava con qualsiasi sfondo
-                    if (b != null && !b.isEmpty() && !b.startsWith(signatureFor(this, e) + "|")) stale.add(e);
+                    // "|rpl=" = fatto con la vecchia opzione del tocco, che scriveva il colore dentro il tema
+                    if (b != null && !b.isEmpty() && (!b.startsWith(signatureFor(this, e) + "|") || b.contains("|rpl="))) stale.add(e);
                 }
                 ThemePrefs.setUiRestartPending(true);
                 if (!stale.isEmpty()) {

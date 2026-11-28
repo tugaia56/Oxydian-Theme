@@ -18,7 +18,7 @@
     <color name="m3_sys_color_dynamic_dark_surface">@*android:color/background_dark</color>								<!-- background toolbar -->
     <color name="m3_sys_color_dynamic_dark_surface_bright">#4db6ac</color>
     <color name="m3_sys_color_dynamic_dark_surface_container">@*android:color/button_material_dark</color>				<!-- background schede -->
-    <color name="m3_sys_color_dynamic_dark_surface_container_high">#009688</color>
+    <color name="m3_sys_color_dynamic_dark_surface_container_high">@*android:color/background_dark</color>
     <color name="m3_sys_color_dynamic_dark_surface_container_highest">@*android:color/button_material_dark</color>		<!-- background switch disattivo -->
     <color name="m3_sys_color_dynamic_dark_surface_container_low">#00e5ff</color>
     <color name="m3_sys_color_dynamic_dark_surface_container_lowest">#00695c</color>

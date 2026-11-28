@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- dialog senza la velatura di accento dell'effetto sollevato: resta lo sfondo del Theme -->
+    <dimen name="m3_alert_dialog_elevation">0dp</dimen>
+    <color name="m3_sys_color_dark_surface_container_high">@*android:color/background_dark</color>
+</resources>
