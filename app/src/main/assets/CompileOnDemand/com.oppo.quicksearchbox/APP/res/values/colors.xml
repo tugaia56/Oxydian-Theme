@@ -584,9 +584,9 @@
     <color name="coui_color_ripple_press_background">#1f000000</color>
     <color name="coui_color_ripple_press_background_dark">#1affffff</color>
     <color name="coui_color_ripple_press_background_light">#1f000000</color>
-    <color name="coui_color_secondary_blue">#26908dff</color>
+    <color name="coui_color_secondary_blue">@*android:color/car_cyan_50</color>
     <color name="coui_color_secondary_blue_dark">@*android:color/keyguard_avatar_frame_pressed_color</color>
-    <color name="coui_color_secondary_blue_light">#26908dff</color>
+    <color name="coui_color_secondary_blue_light">@*android:color/car_cyan_50</color>
     <color name="coui_color_secondary_green">#2600bd13</color>
     <color name="coui_color_secondary_green_dark">@*android:color/keyguard_avatar_frame_pressed_color</color>
     <color name="coui_color_secondary_green_light">#2600bd13</color>

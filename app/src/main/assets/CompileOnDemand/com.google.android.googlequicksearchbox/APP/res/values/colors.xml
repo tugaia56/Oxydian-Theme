@@ -31,7 +31,7 @@
     <color name="agsa_color_dark_secondary_variant">@*android:color/background_dark</color>
     <color name="agsa_color_dark_surface_elevation_2">@*android:color/background_dark</color>
     <color name="agsa_color_logo_unselected_color">#615f6368</color>
-    <color name="agsa_color_ptab_tab_divider_color">#471b2029</color>
+    <color name="agsa_color_ptab_tab_divider_color">@*android:color/list_divider_color_dark</color>
     <color name="agsa_color_ptab_tab_shading_color_end">#fffafafa</color>
     <color name="ai_mode_sys_color_brand_on_surface">#ff0a0a0a</color>
     <color name="ai_mode_sys_color_brand_on_surface_de_emphasis">#ff56595e</color>
@@ -150,8 +150,8 @@
     <color name="assistant_aag_widget_style_page_bg_color_2">#ffcdecfe</color>
     <color name="assistant_aag_widget_style_page_bg_color_3">#ff7ac5ec</color>
     <color name="assistant_aag_widget_style_page_bg_color_4">#ffcdecfe</color>
-    <color name="assistant_background_gradient_end_color">#fa1b2029</color>
-    <color name="assistant_background_gradient_start_color">#fa1b2029</color>
+    <color name="assistant_background_gradient_end_color">@*android:color/background_dark</color>
+    <color name="assistant_background_gradient_start_color">@*android:color/background_dark</color>
     <color name="assistant_black_opacity_60">#99000000</color>
     <color name="assistant_canvas_transparent_background">@*android:color/transparent</color>
     <color name="assistant_dark_color">@*android:color/background_dark</color>
@@ -878,7 +878,7 @@
     <color name="google_dark_yellow600">#fff3b713</color>
     <color name="google_default_color_on_surface_disabled">#603c4043</color>
     <color name="google_grey200_alpha08_on_grey900">@*android:color/background_dark</color>
-    <color name="google_grey900_alpha50">#801b2029</color>
+    <color name="google_grey900_alpha50">@*android:color/group_button_dialog_pressed_holo_light</color>
     <color name="google_maps_logo_dark_gray">@*android:color/background_dark</color>
     <color name="google_maps_logo_white">#ffffffff</color>
     <color name="google_red">@*android:color/accent_material_dark</color>
@@ -1201,7 +1201,7 @@
     <color name="og_consent_gradient_color_4">#ffd96570</color>
     <color name="og_consent_gradient_color_5">#fff49c46</color>
     <color name="og_elevation_dark_5">@*android:color/background_dark</color>
-    <color name="og_express_sign_in_scrim_bg_color">#991b2029</color>
+    <color name="og_express_sign_in_scrim_bg_color">@*android:color/group_button_dialog_pressed_holo_dark</color>
     <color name="og_material3_elevation_dark_2">@*android:color/background_dark</color>
     <color name="og_tooltip_shadow">#50202020</color>
     <color name="omnient_ai_complement_fallback">#fffdacee</color>
@@ -1306,8 +1306,8 @@
     <color name="recurrence_picker_background">#fff2f2f2</color>
     <color name="recurrence_pressed">#33999999</color>
     <color name="recurrence_spinner_text_color_normal">@*android:color/black</color>
-    <color name="region_mask_color">#661b2029</color>
-    <color name="replay_background_color">#b31b2029</color>
+    <color name="region_mask_color">@*android:color/holo_light_button_pressed</color>
+    <color name="replay_background_color">@*android:color/holo_light_button_normal</color>
     <color name="replay_count_down_text_color">#fff1f3f4</color>
     <color name="replay_cta_button_border_color">#80ffffff</color>
     <color name="rfw_background">#ff2e3134</color>
@@ -1585,7 +1585,7 @@
     <color name="tooltip_background_light">#e6ffffff</color>
     <color name="transparent_background">#00000000</color>
     <color name="transparent_black">#7f000000</color>
-    <color name="video_background_color">#601b2029</color>
+    <color name="video_background_color">@*android:color/holo_light_button_pressed</color>
     <color name="visual_suggest_chip_background_color">#e6ffffff</color>
     <color name="web_image_view_placeholder">#ffefeeee</color>
     <color name="widgets_chart_mask_alpha_0x99">#99000000</color>

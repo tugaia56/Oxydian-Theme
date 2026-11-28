@@ -258,7 +258,7 @@
     <color name="coui_color_fill_thin">#14ffffff</color>
     <color name="coui_color_focus_blue">#33247cff</color>
     <color name="coui_color_focus_outline_blue">#665c9dff</color>
-    <color name="coui_color_focus_outline_red">#66908dff</color>
+    <color name="coui_color_focus_outline_red">@*android:color/car_cyan_400</color>
     <color name="coui_color_focus_red">#33eb493d</color>
     <color name="coui_color_green">#ff24b232</color>
     <color name="coui_color_green_variant">#ff43a84e</color>

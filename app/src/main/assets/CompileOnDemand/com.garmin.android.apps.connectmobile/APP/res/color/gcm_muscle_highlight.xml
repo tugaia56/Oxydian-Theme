@@ -6,5 +6,5 @@
         android:color="@*android:color/accent_material_dark" />
     <item
         android:state_enabled="false"
-        android:color="#80908dff" />
+        android:color="@*android:color/car_cyan_500" />
 </selector>

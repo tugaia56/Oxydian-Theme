@@ -45,10 +45,10 @@
     <color name="ad_nv_action_background_second_color_os14">#ffe2e3fa</color>
     <color name="ad_progress_btn_background_color">@*android:color/accent_material_dark</color>
     <color name="ad_progress_btn_background_color_lock_screen">#74ffffff</color>
-    <color name="ad_progress_btn_background_color_normal">#26908dff</color>
+    <color name="ad_progress_btn_background_color_normal">@*android:color/car_cyan_50</color>
     <color name="ad_progress_btn_background_color_normal_full_screen">#4dffffff</color>
     <color name="ad_progress_btn_background_color_os15">@*android:color/accent_material_dark</color>
-    <color name="ad_progress_btn_background_second_color_os15">#26908dff</color>
+    <color name="ad_progress_btn_background_second_color_os15">@*android:color/car_cyan_50</color>
     <color name="ad_progress_btn_text_color_normal">@*android:color/accent_material_dark</color>
     <color name="ad_progress_btn_text_cover_color">@*android:color/white</color>
     <color name="ad_publish_text_color">#8a000000</color>
@@ -515,7 +515,7 @@
     <color name="coui_color_container_solid">#ffebebeb</color>
     <color name="coui_color_container_solid_light">#ffebebeb</color>
     <color name="coui_color_container_theme_blue">@*android:color/accent_material_dark</color>
-    <color name="coui_color_container_theme_halftone_blue">#26908dff</color>
+    <color name="coui_color_container_theme_halftone_blue">@*android:color/car_cyan_50</color>
     <color name="coui_color_container_theme_halftone_red">#26eb3b2f</color>
     <color name="coui_color_container_theme_red">#ffeb3b2f</color>
     <color name="coui_color_container_theme_red_dark">@*android:color/accent_material_dark</color>
@@ -527,7 +527,7 @@
     <color name="coui_color_controls_light">#29000000</color>
     <color name="coui_color_cyan">#ff1dbacc</color>
     <color name="coui_color_cyan_variant">#ff39afbd</color>
-    <color name="coui_color_disable_blue">#4d908dff</color>
+    <color name="coui_color_disable_blue">@*android:color/car_cyan_300</color>
     <color name="coui_color_disable_red">#4deb3b2f</color>
     <color name="coui_color_disabled_neutral">#42000000</color>
     <color name="coui_color_disabled_neutral_dark">#4dffffff</color>
@@ -538,8 +538,8 @@
     <color name="coui_color_fill_solid">#ffebebeb</color>
     <color name="coui_color_fill_solid_light">#ffebebeb</color>
     <color name="coui_color_fill_thin">#0a000000</color>
-    <color name="coui_color_focus_blue">#1f908dff</color>
-    <color name="coui_color_focus_outline_blue">#66908dff</color>
+    <color name="coui_color_focus_blue">@*android:color/car_cyan_100</color>
+    <color name="coui_color_focus_outline_blue">@*android:color/car_cyan_400</color>
     <color name="coui_color_focus_outline_red">#66db382c</color>
     <color name="coui_color_focus_red">#1feb3b2f</color>
     <color name="coui_color_green">#ff00bd13</color>
@@ -582,7 +582,7 @@
     <color name="coui_color_red_dark">@*android:color/accent_material_dark</color>
     <color name="coui_color_red_variant">#ffe56e65</color>
     <color name="coui_color_ripple_press_background">#1f000000</color>
-    <color name="coui_color_secondary_blue">#26908dff</color>
+    <color name="coui_color_secondary_blue">@*android:color/car_cyan_50</color>
     <color name="coui_color_secondary_neutral">#8a000000</color>
     <color name="coui_color_secondary_red">#26eb3b2f</color>
     <color name="coui_color_success">#ff00bd13</color>

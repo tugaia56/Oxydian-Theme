@@ -2832,10 +2832,10 @@ public class MainActivity extends AppCompatActivity {
         if (saved >= 0) { DEPENDENCE.put(key, saved); return saved; }
         int dep = 3;   // nel dubbio dipende da tutti e due
         try {
-            java.util.regex.Pattern accent = java.util.regex.Pattern.compile("908dff", java.util.regex.Pattern.CASE_INSENSITIVE);
+            java.util.regex.Pattern accent = java.util.regex.Pattern.compile("#([0-9a-f]{2})?908dff", java.util.regex.Pattern.CASE_INSENSITIVE);   // solo i colori scritti (con #), non i nomi che li contengono
             StringBuilder re = new StringBuilder();
             for (int p : BackgroundRemap.defaultPalette(ctx)) re.append(re.length() == 0 ? "" : "|").append(String.format("%06x", p));
-            java.util.regex.Pattern bg = re.length() == 0 ? null : java.util.regex.Pattern.compile(re.toString(), java.util.regex.Pattern.CASE_INSENSITIVE);
+            java.util.regex.Pattern bg = re.length() == 0 ? null : java.util.regex.Pattern.compile("#([0-9a-f]{2})?(" + re + ")", java.util.regex.Pattern.CASE_INSENSITIVE);
             // i temi di sistema (DS) hanno anche il riferimento al colore del framework "cotto" dentro: dipendono dall'accento
             java.util.regex.Pattern ref = null;   // il riferimento al colore del framework resta tale anche nei temi di sistema (tranne DS_SYS)
             List<String> paths = new ArrayList<>();

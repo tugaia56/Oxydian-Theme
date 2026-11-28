@@ -11,4 +11,9 @@
     <color name="car_cyan_700">#b3908dff</color>
     <color name="car_cyan_800">#cc908dff</color>
     <color name="car_cyan_900">#e6908dff</color>
+    <!-- car_cyan_50 = accento al 15%; sfondo al 30%, 40% e 70% -->
+    <color name="car_cyan_50">#26908dff</color>
+    <color name="list_divider_color_dark">#4d1b2029</color>
+    <color name="holo_light_button_pressed">#661b2029</color>
+    <color name="holo_light_button_normal">#b31b2029</color>
 </resources>

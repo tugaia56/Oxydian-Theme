@@ -251,7 +251,7 @@
     <color name="coui_btn_radio_color_on_disabled">#29ffffff</color>
     <color name="coui_btn_radio_on_disabled_bg">#33ffffff</color>
     <color name="coui_btn_secondary_text_color_disable">#28ffffff</color>
-    <color name="coui_button_main_disable">#4d908dff</color>
+    <color name="coui_button_main_disable">@*android:color/car_cyan_300</color>
     <color name="coui_button_main_disable_text">#29ffffff</color>
     <color name="coui_button_neutral_color">#4cffffff</color>
     <color name="coui_button_neutral_color_disable">#4cffffff</color>
@@ -312,7 +312,7 @@
     <color name="coui_color_container_solid">@*android:color/background_leanback_dark</color>
     <color name="coui_color_container_theme_blue">@*android:color/accent_material_dark</color>
     <color name="coui_color_container_theme_green">@*android:color/accent_material_dark</color>
-    <color name="coui_color_container_theme_halftone_blue">#40908dff</color>
+    <color name="coui_color_container_theme_halftone_blue">@*android:color/car_cyan_200</color>
     <color name="coui_color_container_theme_halftone_green">@*android:color/keyguard_avatar_frame_pressed_color</color>
     <color name="coui_color_container_theme_halftone_orange">#40f08222</color>
     <color name="coui_color_container_theme_halftone_red">#40eb493d</color>
@@ -326,7 +326,7 @@
     <color name="coui_color_controls">#40ffffff</color>
     <color name="coui_color_cyan">@*android:color/accent_material_dark</color>
     <color name="coui_color_cyan_variant">#ff329da8</color>
-    <color name="coui_color_disable_blue">#4d908dff</color>
+    <color name="coui_color_disable_blue">@*android:color/car_cyan_300</color>
     <color name="coui_color_disable_green">#4d24b232</color>
     <color name="coui_color_disable_orange">#66f08222</color>
     <color name="coui_color_disable_red">#4deb493d</color>
@@ -337,7 +337,7 @@
     <color name="coui_color_error_text_bg">@*android:color/accent_material_dark</color>
     <color name="coui_color_fill_solid">@*android:color/background_leanback_dark</color>
     <color name="coui_color_fill_thin">#14ffffff</color>
-    <color name="coui_color_focus_blue">#33908dff</color>
+    <color name="coui_color_focus_blue">@*android:color/car_cyan_200</color>
     <color name="coui_color_focus_green">#3324b232</color>
     <color name="coui_color_focus_orange">#33f08222</color>
     <color name="coui_color_focus_outline_blue">#665c9dff</color>

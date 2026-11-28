@@ -2,5 +2,5 @@
 <shape
   xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="12.0dip" />
-    <solid android:color="#851b2029" />
+    <solid android:color="@*android:color/group_button_dialog_pressed_holo_light" />
 </shape>

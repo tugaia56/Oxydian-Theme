@@ -17,7 +17,7 @@
     <layer-list>
         <item android:width="60dp" android:height="60dp" android:gravity="center">
             <shape android:shape="oval">
-                <solid android:color="#55908dff" />
+                <solid android:color="@*android:color/car_cyan_300" />
                 <stroke android:width="1.5dp" android:color="@*android:color/accent_material_dark" />
             </shape>
         </item>
@@ -30,7 +30,7 @@
     <layer-list>
         <item android:width="60dp" android:height="60dp" android:gravity="center">
             <shape android:shape="oval">
-                <solid android:color="#55908dff" />
+                <solid android:color="@*android:color/car_cyan_300" />
                 <stroke android:width="1.5dp" android:color="@*android:color/accent_material_dark" />
             </shape>
         </item>

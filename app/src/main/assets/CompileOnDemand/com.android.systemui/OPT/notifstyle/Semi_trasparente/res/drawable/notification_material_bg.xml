@@ -3,7 +3,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
             <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-                <solid android:color="#801B2029" />
+                <solid android:color="@*android:color/group_button_dialog_pressed_holo_light" />
                 <corners android:radius="24dp" />
             </shape>
     </item>

@@ -313,7 +313,7 @@
     <color name="fable_color_prime_300">#ff1375ec</color>
     <color name="fable_color_prime_500">@*android:color/accent_material_dark</color>
     <color name="fable_color_prime_700">#ff045ed9</color>
-    <color name="fable_color_prime_tint_050">#7f908dff</color>
+    <color name="fable_color_prime_tint_050">@*android:color/car_cyan_500</color>
     <color name="fable_color_trailblazer_100">#ffadd4ad</color>
     <color name="fable_color_trailblazer_300">#ff99c999</color>
     <color name="fable_color_trailblazer_500">#ff80bb80</color>
